@@ -12,24 +12,24 @@ defined('MOODLE_INTERNAL') || die();
 
 class external_get_grades extends external_api {
     /**
-     * Defines the input parameters for the web service.
+     * Define the input parameters for the web service.
      *
      * @return external_function_parameters
      */
     public static function get_grades_parameters() {
         return new external_function_parameters([
-            'course_id' => new external_value(PARAM_INT),
-            'cmid' => new external_value(PARAM_INT),
-            'modid' => new external_value(PARAM_INT),
-            'mod_type' => new external_value(PARAM_ALPHA),
-            'actual_page' => new external_value(PARAM_INT, VALUE_DEFAULT, 0),
-            'sifirst' => new external_value(PARAM_TEXT, VALUE_DEFAULT, 'all'),
-            'silast' => new external_value(PARAM_TEXT, VALUE_DEFAULT, 'all'),
-            'separator_decimals' => new external_value(PARAM_TEXT, VALUE_DEFAULT, '.'),
-            'points_decimals' => new external_value(PARAM_INT, VALUE_DEFAULT, 2)
+            'course_id' => new external_value(PARAM_INT, 'Course ID'),
+            'cmid' => new external_value(PARAM_INT, 'Course module ID'),
+            'modid' => new external_value(PARAM_INT, 'Module ID'),
+            'mod_type' => new external_value(PARAM_ALPHA, 'Module type'),
+            'actual_page' => new external_value(PARAM_INT, 'Current page', VALUE_DEFAULT, 0),
+            'sifirst' => new external_value(PARAM_TEXT, 'Filter by first name', VALUE_DEFAULT, 'all'),
+            'silast' => new external_value(PARAM_TEXT, 'Filter by last name', VALUE_DEFAULT, 'all'),
+            'separator_decimals' => new external_value(PARAM_TEXT, 'Decimal separator', VALUE_DEFAULT, '.'),
+            'points_decimals' => new external_value(PARAM_INT, 'Number of decimal places for points', VALUE_DEFAULT, '2')
         ]);
     }
-
+    
     /**
      * Web service logic to retrieve complete grades.
      *
@@ -210,7 +210,7 @@ class external_get_grades extends external_api {
     }
 
     /**
-     * Defines the output structure of the web service.
+     * Define the output structure for the web service.
      *
      * @return external_single_structure
      */
@@ -218,22 +218,22 @@ class external_get_grades extends external_api {
         return new external_single_structure([
             'data' => new external_multiple_structure(
                 new external_single_structure([
-                    'userid' => new external_value(PARAM_INT),
-                    'grade' => new external_value(PARAM_TEXT),
-                    'grade_placeholder' => new external_value(PARAM_TEXT),
-                    'grade_action_description' => new external_value(PARAM_TEXT),
-                    'timecreated' => new external_value(PARAM_INT),
-                    'timemodified' => new external_value(PARAM_INT),
-                    'user_name' => new external_value(PARAM_TEXT),
-                    'submission_date' => new external_value(PARAM_TEXT),
-                    'submission_graded' => new external_value(PARAM_TEXT),
-                    'date_to_grade' => new external_value(PARAM_TEXT),
-                    'context_id' => new external_value(PARAM_INT),
-                    'course_id' => new external_value(PARAM_INT),
-                    'modid' => new external_value(PARAM_INT),
-                    'grade_clean' => new external_value(PARAM_TEXT),
-                    'status' => new external_value(PARAM_TEXT),
-                    'mod_type' => new external_value(PARAM_TEXT),
+                    'userid' => new external_value(PARAM_INT, 'User ID'),
+                    'grade' => new external_value(PARAM_TEXT, 'Grade'),
+                    'grade_placeholder' => new external_value(PARAM_TEXT, 'Placeholder?'),
+                    'grade_action_description' => new external_value(PARAM_TEXT, 'Placeholder?'),
+                    'timecreated' => new external_value(PARAM_INT, 'Creation date'),
+                    'timemodified' => new external_value(PARAM_INT, 'Modification date'),
+                    'user_name' => new external_value(PARAM_TEXT, 'User name'),
+                    'submission_date' => new external_value(PARAM_TEXT, 'Submission date'),
+                    'submission_graded' => new external_value(PARAM_TEXT, 'Grading date'),
+                    'date_to_grade' => new external_value(PARAM_TEXT, 'Date to grade'),
+                    'context_id' => new external_value(PARAM_INT, 'Context ID'),
+                    'course_id' => new external_value(PARAM_INT, 'Course ID'),
+                    'modid' => new external_value(PARAM_INT, 'Module ID'),
+                    'grade_clean' => new external_value(PARAM_TEXT, 'Clean grade'),
+                    'status' => new external_value(PARAM_TEXT, 'Status'),
+                    'mod_type' => new external_value(PARAM_TEXT, 'Module type')
                 ])
             )
         ]);
