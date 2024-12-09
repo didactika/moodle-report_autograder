@@ -120,20 +120,6 @@ if ($silast !== 'all')
 $sifirst = ( !empty($USER->preference['ifirst']) ) ? $USER->preference['ifirst'] : 'all';
 
 $silast = ( !empty($USER->preference['ilast']) ) ? $USER->preference['ilast'] : 'all';
-
-// Generate where clause
-$where = [];
-$where_params = [];
-
-if ($sifirst !== 'all') {
-    $where[] = $DB->sql_like('u.firstname', ':sifirst', false, false);
-    $where_params['sifirst'] = $sifirst . "%";
-}
-
-if ($silast !== 'all') {
-    $where[] = $DB->sql_like('u.lastname', ':silast', false, false);
-    $where_params['silast'] = $silast . "%";
-}
 /*********************************************
  * -------- END INITIALS BAR FILTER --------
  *********************************************/
@@ -145,73 +131,6 @@ if ($silast !== 'all') {
 /** The default number of results to be shown per page. */
 define("COMPLETION_REPORT_PAGE", get_config('report_autograder', 'limitpagination') ?? 5);
 
-$start_from = ( $actual_page) * COMPLETION_REPORT_PAGE;
-if ($mod_type == 'forum') {
-    $sql_report = "SELECT  laed.id,
-                           laed.courseid, 
-                           laed.relateduserid,
-                           laed.timecreated,
-                           laed.score_to_assign,
-                           laed.date_to_grade,
-                           laed.contextid,
-                           laed.instanceid,
-                           fg.id as fg_id,
-                           fg.forum, 
-                           fg.grade,
-                           fg.timecreated as activity_created_at,
-                           fg.timemodified as activity_modified_at";
-    $sql = "  FROM {local_autograder_event_data} laed
-              JOIN {user} u ON u.id = laed.relateduserid
-              LEFT JOIN {forum_grades} fg 
-                 ON (fg.forum = laed.instanceid AND fg.userid = laed.relateduserid)
-              WHERE laed.id = (SELECT max(laed.id)
-                               FROM {local_autograder_event_data} laed
-                               WHERE laed.contextinstanceid = :cmi
-                               AND laed.instanceid = :instanceid
-                               AND laed.userid = u.id )";
-} elseif ($mod_type == 'assign') {
-    $sql_report = "SELECT  laed.id,
-                           laed.courseid, 
-                           laed.relateduserid,
-                           laed.timecreated,
-                           laed.score_to_assign,
-                           laed.date_to_grade,
-                           laed.contextid,
-                           laed.instanceid, 
-                           ag.id as ag_id,
-                           ag.assignment,
-                           ag.grade,
-                           ag.timecreated as activity_created_at,
-                           ag.timemodified as activity_modified_at";
-    $sql = " FROM {local_autograder_event_data} laed 
-              JOIN {user} u ON u.id = laed.relateduserid              
-         LEFT JOIN {assign_grades} ag ON (ag.assignment = laed.instanceid 
-             AND ag.userid = laed.relateduserid )
-             WHERE laed.id = (SELECT max(laed.id)
-                               FROM {local_autograder_event_data} laed
-                               WHERE laed.contextinstanceid = :cmi
-                               AND laed.instanceid = :instanceid
-                               AND laed.userid = u.id )";
-} else print_error('invalidaction');
-
-$sql_count = "SELECT COUNT(laed.id)";
-$sql_params = ['cmi' => $cmid, 'instanceid'=>$modid];
-$sort = "laed.timecreated DESC";
-
-if ($where) {
-    $where_string = implode(' AND ', $where);
-    $sql .= " AND $where_string";
-    $sql_params = array_merge($sql_params, $where_params);
-}
-
-if ($sort) {
-    $sql .= " ORDER BY " . $sort;
-}
-
-
-/** @var moodle_recordset $record_set */
-$record_set = $DB->get_recordset_sql($sql_report. $sql, $sql_params, $start_from, COMPLETION_REPORT_PAGE);
-$total_records = $DB->count_records_sql($sql_count . $sql, $sql_params);
 //if (!$record_set->valid()){
 //    $renderable = new index_page([]);
 //    echo $OUTPUT->render($renderable);
@@ -227,10 +146,7 @@ $total_records = $DB->count_records_sql($sql_count . $sql, $sql_params);
  * Definición de las variables necesarias para la paginación
  *********************************************/
 
-$pages = ceil($total_records / COMPLETION_REPORT_PAGE);
-$next_page = $actual_page >= $pages ? $pages : $actual_page + 1;
-$last_page_active = isset($page_data->pages);
-$last_url = isset($page_data->pages) ? count($page_data->pages) : 1;
+
 /*********************************************
  * -------- END PAGINATION --------
  *********************************************/
@@ -240,6 +156,13 @@ $last_url = isset($page_data->pages) ? count($page_data->pages) : 1;
  *  INITIALS BAR
  *********************************************/
 //---- RENDERING
+$points_decimals =  grade_get_setting($course_id, 'decimalpoints', $CFG->grade_decimalpoints);
+$separator_decimals = get_string('decsep', 'langconfig');
+
+$result = report_autograder\external_get_grades::get_grades($course_id, $cmid, $modid, $mod_type, $actual_page, $sifirst, $silast, $separator_decimals, $points_decimals);
+    
+$grades_data = $result['data'];
+$total_records = $result['total_records'];
 $pagingbar = '';
 
 // Initials bar.
@@ -265,64 +188,9 @@ print $pagingbar;
  * //$date_to_grade = date('d/m/Y', $DB->get_field('local_autograder', 'datetograde', ['cmid' => $cmid]));
  * //$grade_to_apply = $DB->get_field('local_autograder', 'autogradergrade', ['cmid' => $cmid]);
  *********************************************/
-$objects = [];
-//get points decimal configured
-$points_decimals =  grade_get_setting($course_id, 'decimalpoints', $CFG->grade_decimalpoints);
-$separator_decimals = get_string('decsep', 'langconfig');
-
-foreach ($record_set as $record) {
-    if (!is_enrolledstudent($record->relateduserid, $record->courseid)) {
-        continue;
-    }
-    $student_info = \core_user::get_user($record->relateduserid);
-    $student_name = fullname($student_info);
-    $submission_date = $record->timecreated;
-    $submission_graded = !is_null($record->activity_modified_at)
-        ? $record->activity_modified_at
-        : $submission_date;
-    $score_created_at = userdate($submission_date, get_string('strftimedatetime', 'core_langconfig'));
-    $score_modified_at = userdate($submission_graded, get_string('strftimedatetime', 'core_langconfig'));
-    $grade_to_apply = $record->score_to_assign;
-    $date_to_grade = userdate($record->date_to_grade, get_string('strftimedatetime', 'core_langconfig'));
-    $url_to_edit = new moodle_url("/report/autograder/{$mod_type}_save.php");
-    $description = get_string('gradeverb');
-    $general_status = get_string('status:placeholder', 'report_autograder');
-    // Chequeamos el estatus y la nota a ser enviada al template
-    if (is_null($record->grade) || $record->grade == -1 || $record->grade == '-1.00000') {
-        $status = get_string('status:pending', 'report_autograder');
-        $grade_clean = $grade_to_apply;
-        $grade_to_show = 0.00;
-        $placeholder = $general_status . ": " . $grade_to_apply;
-    } else {
-        $status = get_string('status:graded', 'report_autograder');
-        $grade_clean = $record->grade;
-        $grade_to_show = format_float(unformat_float($record->grade),$points_decimals);
-        $placeholder = null;
-    }
-
-    $objects[] = [
-        "userid"                   => $student_info->id,
-        "grade"                    => $grade_to_show,
-        "grade_placeholder"        => $placeholder,
-        "grade_action_description" => $description,
-        "timecreated"              => $record->timecreated,
-        "timemodified"             => $record->timemodified ?? 0,
-        "user_name"                => $student_name,
-        "submission_date"          => $score_created_at,
-        "submission_graded"        => $score_modified_at,
-        "date_to_grade"            => $date_to_grade ? : get_string('status:nothing_to_show', 'report_autograder'),
-        "context_id"               => $record->contextid,
-        "course_id"                => $record->courseid,
-        "modid"                    => $record->instanceid,
-        "grade_clean"              => $grade_clean,
-        "status"                   => $status,
-        "mod_type"                 => $mod_type,
-    ];
-}
-$record_set->close();
 
 //Renderización de la tabla
-$renderable = new index_page($objects, [
+$renderable = new index_page($grades_data, [
     'points_decimals' => $points_decimals,
     'separator_decimals' =>$separator_decimals
 ]);
