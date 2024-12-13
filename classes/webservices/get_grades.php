@@ -1,5 +1,5 @@
 <?php
-namespace report_autograder;
+namespace report_autograder\webservices;
 
 use external_api;
 use external_function_parameters;
@@ -10,7 +10,7 @@ use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
-class external_get_grades extends external_api {
+class get_grades extends external_api {
     /**
      * Define the input parameters for the web service.
      *
@@ -80,7 +80,7 @@ class external_get_grades extends external_api {
             
         $start_from = ( $actual_page) * COMPLETION_REPORT_PAGE;
         if ($mod_type == 'forum') {
-            $sql_report = "SELECT  laed.id,
+            $sql_report = "SELECT laed.id,
                                    laed.courseid, 
                                    laed.relateduserid,
                                    laed.timecreated,
@@ -92,8 +92,9 @@ class external_get_grades extends external_api {
                                    fg.forum, 
                                    fg.grade,
                                    fg.timecreated as activity_created_at,
-                                   fg.timemodified as activity_modified_at";
-            $sql = "  FROM {local_autograder_event_data} laed
+                                   fg.timemodified as activity_modified_at,
+                                   COUNT(laed.id) OVER() as total_records";
+            $sql = " FROM {local_autograder_event_data} laed
                       JOIN {user} u ON u.id = laed.relateduserid
                       LEFT JOIN {forum_grades} fg 
                          ON (fg.forum = laed.instanceid AND fg.userid = laed.relateduserid)
@@ -101,9 +102,9 @@ class external_get_grades extends external_api {
                                        FROM {local_autograder_event_data} laed
                                        WHERE laed.contextinstanceid = :cmi
                                        AND laed.instanceid = :instanceid
-                                       AND laed.userid = u.id )";
+                                       AND laed.userid = u.id ) ";
         } elseif ($mod_type == 'assign') {
-            $sql_report = "SELECT  laed.id,
+            $sql_report = "SELECT laed.id,
                                    laed.courseid, 
                                    laed.relateduserid,
                                    laed.timecreated,
@@ -115,41 +116,34 @@ class external_get_grades extends external_api {
                                    ag.assignment,
                                    ag.grade,
                                    ag.timecreated as activity_created_at,
-                                   ag.timemodified as activity_modified_at";
+                                   ag.timemodified as activity_modified_at,
+                                   COUNT(laed.id) OVER() as total_records";
             $sql = " FROM {local_autograder_event_data} laed 
                       JOIN {user} u ON u.id = laed.relateduserid              
-                 LEFT JOIN {assign_grades} ag ON (ag.assignment = laed.instanceid 
-                     AND ag.userid = laed.relateduserid )
-                     WHERE laed.id = (SELECT max(laed.id)
+                      LEFT JOIN {assign_grades} ag ON (ag.assignment = laed.instanceid 
+                          AND ag.userid = laed.relateduserid )
+                      WHERE laed.id = (SELECT max(laed.id)
                                        FROM {local_autograder_event_data} laed
                                        WHERE laed.contextinstanceid = :cmi
                                        AND laed.instanceid = :instanceid
                                        AND laed.userid = u.id )";
-        } else print_error('invalidaction');
+        } else {
+            print_error('invalidaction');
+        }
         
-        $sql_count = "SELECT COUNT(laed.id)";
-        $sql_params = ['cmi' => $cmid, 'instanceid'=>$modid];
-        $sort = "laed.timecreated DESC";
+        $sql_params = ['cmi' => $cmid, 'instanceid' => $modid];
         
         if ($where) {
             $where_string = implode(' AND ', $where);
             $sql .= " AND $where_string";
             $sql_params = array_merge($sql_params, $where_params);
         }
-        
-        if ($sort) {
-            $sql .= " ORDER BY " . $sort;
-        }
-        
+
+        $sort = "ORDER BY laed.timecreated DESC";
         
         /** @var moodle_recordset $record_set */
-        $record_set = $DB->get_recordset_sql($sql_report. $sql, $sql_params, $start_from, COMPLETION_REPORT_PAGE);
-        $total_records = $DB->count_records_sql($sql_count . $sql, $sql_params);
-
-        $pages = ceil($total_records / COMPLETION_REPORT_PAGE);
-        $next_page = $actual_page >= $pages ? $pages : $actual_page + 1;
-        $last_page_active = isset($page_data->pages);
-        $last_url = isset($page_data->pages) ? count($page_data->pages) : 1;
+        $record_set = $DB->get_recordset_sql($sql_report . $sql . $sort, $sql_params, $start_from, COMPLETION_REPORT_PAGE);
+        $total_records = $record_set->valid() ? $record_set->current()->total_records : 0;
 
         $objects = [];
         //get points decimal configured
@@ -197,7 +191,7 @@ class external_get_grades extends external_api {
                 "context_id"               => $record->contextid,
                 "course_id"                => $record->courseid,
                 "modid"                    => $record->instanceid,
-                "grade_clean"              => $grade_clean,
+                "grade_clean"              => $grade_clean ?? null,
                 "status"                   => $status,
                 "mod_type"                 => $mod_type,
             ];

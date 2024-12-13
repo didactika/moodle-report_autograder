@@ -159,7 +159,7 @@ define("COMPLETION_REPORT_PAGE", get_config('report_autograder', 'limitpaginatio
 $points_decimals =  grade_get_setting($course_id, 'decimalpoints', $CFG->grade_decimalpoints);
 $separator_decimals = get_string('decsep', 'langconfig');
 
-$result = report_autograder\external_get_grades::get_grades($course_id, $cmid, $modid, $mod_type, $actual_page, $sifirst, $silast, $separator_decimals, $points_decimals);
+$result = report_autograder\webservices\get_grades::get_grades($course_id, $cmid, $modid, $mod_type, $actual_page, $sifirst, $silast, $separator_decimals, $points_decimals);
     
 $grades_data = $result['data'];
 $total_records = $result['total_records'];
