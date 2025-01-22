@@ -35,10 +35,9 @@ class get_grades extends external_api {
      * Web service logic to retrieve complete grades.
      */
     public static function get_grades($course_id, $cmid, $modid, $mod_type, $actual_page, $sifirst, $silast, $separator_decimals, $points_decimals) {
-        global $DB, $CFG;
-        require_once($CFG->libdir . '/gradelib.php');
+        global $DB;
 
-        // Define paginación
+        // Configuración de paginación
         $limit_per_page = get_config('report_autograder', 'limitpagination') ?? 20;
         $start_from = $actual_page * $limit_per_page;
 
@@ -56,7 +55,7 @@ class get_grades extends external_api {
             ]
         );
 
-        // Filtro WHERE
+        // Construcción de filtros WHERE
         $where = [];
         $where_params = ['cmi' => $cmid, 'instanceid' => $modid];
 
@@ -69,69 +68,61 @@ class get_grades extends external_api {
             $where_params['silast'] = $silast . "%";
         }
 
-        // Query SQL según el tipo de módulo
-        $sql_report = "SELECT laed.id,
-                               laed.courseid, 
-                               laed.relateduserid,
-                               laed.timecreated,
-                               laed.score_to_assign,
-                               laed.date_to_grade,
-                               laed.contextid,
-                               laed.instanceid,
-                               CASE 
-                                   WHEN fg.id IS NOT NULL THEN fg.grade
-                                   WHEN ag.id IS NOT NULL THEN ag.grade
-                                   ELSE NULL
-                               END AS grade,
-                               CASE 
-                                   WHEN fg.timecreated IS NOT NULL THEN fg.timecreated
-                                   WHEN ag.timecreated IS NOT NULL THEN ag.timecreated
-                                   ELSE NULL
-                               END AS activity_created_at,
-                               CASE 
-                                   WHEN fg.timemodified IS NOT NULL THEN fg.timemodified
-                                   WHEN ag.timemodified IS NOT NULL THEN ag.timemodified
-                                   ELSE NULL
-                               END AS activity_modified_at,
-                               COUNT(*) OVER() AS total_records";
+        // Configuración inicial de SQL
+        $base_sql = "SELECT laed.id,
+                            laed.courseid, 
+                            laed.relateduserid,
+                            laed.timecreated,
+                            laed.score_to_assign,
+                            laed.date_to_grade,
+                            laed.contextid,
+                            laed.instanceid,
+                            COUNT(*) OVER() AS total_records";
 
-        $sql_from = " FROM {local_autograder_event_data} laed
-                      JOIN {user} u ON u.id = laed.relateduserid";
-
+        // Configuración de columnas y tablas según el tipo de módulo
         if ($mod_type === 'forum') {
-            $sql_from .= " LEFT JOIN {forum_grades} fg 
-                           ON fg.forum = laed.instanceid AND fg.userid = laed.relateduserid";
+            $additional_columns = ", fg.grade AS grade,
+                                   fg.timecreated AS activity_created_at,
+                                   fg.timemodified AS activity_modified_at";
+            $join_tables = "LEFT JOIN {forum_grades} fg 
+                            ON fg.forum = laed.instanceid AND fg.userid = laed.relateduserid";
         } elseif ($mod_type === 'assign') {
-            $sql_from .= " LEFT JOIN {assign_grades} ag 
-                           ON ag.assignment = laed.instanceid AND ag.userid = laed.relateduserid";
+            $additional_columns = ", ag.grade AS grade,
+                                   ag.timecreated AS activity_created_at,
+                                   ag.timemodified AS activity_modified_at";
+            $join_tables = "LEFT JOIN {assign_grades} ag 
+                            ON ag.assignment = laed.instanceid AND ag.userid = laed.relateduserid";
         } else {
-            throw new \moodle_exception('invalidaction');
+            throw new \moodle_exception('invalidaction', 'report_autograder');
         }
 
-        $sql_where = " WHERE laed.contextinstanceid = :cmi
-                         AND laed.instanceid = :instanceid";
+        // Finalización de SQL
+        $final_sql = $base_sql . $additional_columns . " 
+                      FROM {local_autograder_event_data} laed
+                      JOIN {user} u ON u.id = laed.relateduserid
+                      $join_tables
+                      WHERE laed.contextinstanceid = :cmi 
+                        AND laed.instanceid = :instanceid";
 
-        if ($where) {
-            $sql_where .= " AND " . implode(' AND ', $where);
+        if (!empty($where)) {
+            $final_sql .= " AND " . implode(" AND ", $where);
         }
 
-        $sql_order = " ORDER BY laed.timecreated DESC";
+        $final_sql .= " ORDER BY laed.timecreated DESC";
 
-        // Concatenar la consulta
-        $final_sql = $sql_report . $sql_from . $sql_where . $sql_order;
-
-        // Obtener los datos paginados
+        // Obtener registros paginados
         $record_set = $DB->get_recordset_sql($final_sql, $where_params, $start_from, $limit_per_page);
 
         $objects = [];
         $total_records = 0;
 
-        // Cachear los usuarios inscritos
+        // Cache de usuarios inscritos
         $enrolled_users = get_enrolled_users(context_course::instance($course_id));
         $enrolled_ids = array_column($enrolled_users, 'id');
 
+        // Procesar resultados
         foreach ($record_set as $record) {
-            // Verificar si el usuario está inscrito
+            // Verificar enrolamiento
             if (!in_array($record->relateduserid, $enrolled_ids)) {
                 continue;
             }
@@ -139,17 +130,25 @@ class get_grades extends external_api {
             $student_info = \core_user::get_user($record->relateduserid);
             $student_name = fullname($student_info);
 
+            // Fechas formateadas
             $submission_date = userdate($record->timecreated, get_string('strftimedatetime', 'core_langconfig'));
-            $submission_graded = userdate($record->activity_modified_at, get_string('strftimedatetime', 'core_langconfig'));
+            $submission_graded = !empty($record->activity_modified_at) 
+                ? userdate($record->activity_modified_at, get_string('strftimedatetime', 'core_langconfig')) 
+                : get_string('status:pending', 'report_autograder');
             $date_to_grade = userdate($record->date_to_grade, get_string('strftimedatetime', 'core_langconfig'));
 
-            $grade = is_null($record->grade) ? 0.00 : format_float($record->grade, $points_decimals);
+            // Calificaciones
+            $grade = !is_null($record->grade) ? format_float($record->grade, $points_decimals) : 0.00;
             $grade_clean = $record->score_to_assign;
 
-            $status = is_null($record->grade) ? get_string('status:pending', 'report_autograder') : get_string('status:graded', 'report_autograder');
-            $grade_placeholder = $grade_clean ?? null;
+            // Estado y placeholders
+            $status = is_null($record->grade) 
+                ? get_string('status:pending', 'report_autograder') 
+                : get_string('status:graded', 'report_autograder');
+            $grade_placeholder = is_null($record->grade) ? $grade_clean : null;
             $description = get_string('gradeverb', 'report_autograder');
 
+            // Construcción del objeto de resultado
             $objects[] = [
                 "userid" => $student_info->id,
                 "grade" => $grade,
@@ -161,7 +160,7 @@ class get_grades extends external_api {
                 "user_name" => $student_name,
                 "submission_date" => $submission_date,
                 "submission_graded" => $submission_graded,
-                "date_to_grade" => $date_to_grade ?? get_string('status:nothing_to_show', 'report_autograder'),
+                "date_to_grade" => $date_to_grade,
                 "context_id" => $record->contextid,
                 "course_id" => $record->courseid,
                 "modid" => $record->instanceid,
@@ -169,7 +168,7 @@ class get_grades extends external_api {
                 "mod_type" => $mod_type,
             ];
 
-            $total_records = $record->total_records; // Obtener el total desde la primera fila
+            $total_records = $record->total_records;
         }
 
         $record_set->close();
