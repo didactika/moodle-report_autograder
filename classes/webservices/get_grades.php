@@ -146,7 +146,7 @@ class get_grades extends external_api {
                 ? get_string('status:pending', 'report_autograder') 
                 : get_string('status:graded', 'report_autograder');
             $grade_placeholder = is_null($record->grade) ? $grade_clean : null;
-            $description = get_string('gradeverb', 'report_autograder');
+            $description = get_string('gradeverb');
 
             // Construcción del objeto de resultado
             $objects[] = [
