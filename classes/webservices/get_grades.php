@@ -75,8 +75,7 @@ $sql_report = "SELECT
                FROM mdl_local_autograder_event_data laed
                JOIN mdl_user u ON u.id = laed.relateduserid
                WHERE laed.contextinstanceid = :cmi
-                 AND laed.instanceid = :instanceid
-               ORDER BY laed.timecreated DESC";
+                 AND laed.instanceid = :instanceid";
 
 
         $sql_params = [
