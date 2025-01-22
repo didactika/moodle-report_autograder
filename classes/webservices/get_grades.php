@@ -68,21 +68,21 @@ class get_grades extends external_api {
         $start_from = $actual_page * COMPLETION_REPORT_PAGE;
 
         $sql_report = "SELECT 
-                           laed.id, laed.courseid, laed.relateduserid, laed.timecreated,
-                           laed.score_to_assign, laed.date_to_grade, laed.contextid,
-                           laed.instanceid, 
-                           {$mod_type}_grades.id AS grade_id,
-                           {$mod_type}_grades.grade, 
-                           {$mod_type}_grades.timecreated AS activity_created_at,
-                           {$mod_type}_grades.timemodified AS activity_modified_at,
-                           COUNT(*) OVER() AS total_records
-                       FROM {local_autograder_event_data} laed
-                       JOIN {user} u ON u.id = laed.relateduserid
-                       LEFT JOIN {{$mod_type}_grades} 
-                          ON ({$mod_type}_grades.{$mod_type} = laed.instanceid 
-                              AND {$mod_type}_grades.userid = laed.relateduserid)
-                       WHERE laed.contextinstanceid = :cmi
-                         AND laed.instanceid = :instanceid";
+                        laed.id, laed.courseid, laed.relateduserid, laed.timecreated,
+                        laed.score_to_assign, laed.date_to_grade, laed.contextid,
+                        laed.instanceid,
+                        {$mod_type}_grades.grade,
+                        {$mod_type}_grades.timecreated AS activity_created_at,
+                        {$mod_type}_grades.timemodified AS activity_modified_at,
+                        COUNT(*) OVER() AS total_records
+                    FROM {local_autograder_event_data} laed
+                    JOIN {user} u ON u.id = laed.relateduserid
+                    LEFT JOIN {{$mod_type}_grades} 
+                        ON ({$mod_type}_grades.{$mod_type} = laed.instanceid 
+                            AND {$mod_type}_grades.userid = laed.relateduserid)
+                    WHERE laed.contextinstanceid = :cmi
+                        AND laed.instanceid = :instanceid";
+
 
         $sql_params = [
             'cmi' => $cmid,
