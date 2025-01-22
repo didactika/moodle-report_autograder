@@ -76,7 +76,7 @@ $sql_report = "SELECT
                JOIN mdl_user u ON u.id = laed.relateduserid
                WHERE laed.contextinstanceid = :cmi
                  AND laed.instanceid = :instanceid
-               ORDER BY laed.timecreated DESC;
+               ORDER BY laed.timecreated DESC";
 
 
         $sql_params = [
