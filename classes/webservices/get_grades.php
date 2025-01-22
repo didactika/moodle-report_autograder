@@ -49,7 +49,7 @@ class get_grades extends external_api {
 
         if (!defined('COMPLETION_REPORT_PAGE')) {
             define("COMPLETION_REPORT_PAGE", get_config('report_autograder', 'limitpagination') ?? 5);
-        }        
+        }
 
         // Validate parameters
         $params = self::validate_parameters(
@@ -67,16 +67,19 @@ class get_grades extends external_api {
 
         $start_from = $actual_page * COMPLETION_REPORT_PAGE;
 
-$sql_report = "SELECT 
-                   laed.id, laed.courseid, laed.relateduserid, laed.timecreated,
-                   laed.score_to_assign, laed.date_to_grade, laed.contextid,
-                   laed.instanceid,
-                   COUNT(*) OVER() AS total_records
-               FROM mdl_local_autograder_event_data laed
-               JOIN mdl_user u ON u.id = laed.relateduserid
-               WHERE laed.contextinstanceid = :cmi
-                 AND laed.instanceid = :instanceid";
-
+        $sql_report = "SELECT 
+                        laed.id, laed.courseid, laed.relateduserid, laed.timecreated,
+                        laed.score_to_assign, laed.date_to_grade, laed.contextid,
+                        laed.instanceid, 
+                        fg.grade, fg.timecreated AS activity_created_at, fg.timemodified AS activity_modified_at,
+                        COUNT(*) OVER() AS total_records
+                    FROM mdl_local_autograder_event_data laed
+                    JOIN mdl_user u ON u.id = laed.relateduserid
+                    LEFT JOIN mdl_{$mod_type}_grades fg 
+                        ON fg.{$mod_type} = laed.instanceid 
+                        AND fg.userid = laed.relateduserid
+                    WHERE laed.contextinstanceid = :cmi
+                        AND laed.instanceid = :instanceid";
 
         $sql_params = [
             'cmi' => $cmid,
