@@ -14,27 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace report_autograder\output;
-/**
- * Rederer for report_autograder.
- *
- * @package    report_autograder
- * @copyright  2022 antonio.carmona antonio.carmona@funiber.org
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace report\report_autograder\classes\output;
 
 use plugin_renderer_base;
+use report\report_autograder\classes\output\index_page;
 
 class renderer extends plugin_renderer_base
 {
-    /**
-     * Defer to template.
-     *
-     * @param index_page $page
-     *
-     * @return string html for the page
-     */
-    public function render_index_page($page)
+    public function render_index_page(index_page $page)
     {
         $data = $page->export_for_template($this);
         return parent::render_from_template('report_autograder/index_page', $data);

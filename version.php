@@ -18,18 +18,18 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     report_autograder
- * @copyright   2022 Antonio Carmona <antonio.carmona@funiber.org>
+ * @copyright   2025 ADSDR <eduardo.cubias@ct.uneatlantico.es>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'report_autograder';
-$plugin->release = '0.1.0';
-$plugin->version = 2022122900;
+$plugin->release = '2.0.1 (MOODLE 401+)';
+$plugin->version = 2025112802;
 $plugin->requires = 2020061500;
-$plugin->maturity = MATURITY_ALPHA;
+$plugin->maturity = MATURITY_STABLE;
+$plugin->supported = [401, 405];
 $plugin->dependencies = [
-    'local_autograder' => ANY_VERSION,
-    'local_additional_web_service'=> 2022122801
+    'local_autograder' => 2025111103,
 ];

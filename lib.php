@@ -27,21 +27,19 @@ function report_autograder_extend_navigation_module($navigation, $cm)
 {
     global $PAGE, $DB;
 
-    $is_autograded = $DB->get_record('local_autograder', ['cmid' => $cm->id])->isautograded ?? false; // Check if the instance exist and the activity is autograded
+    // First, check if the module is one of the supported types.
+    $supported_modules = ['assign', 'quiz', 'forum'];
+    if (!in_array($cm->modname, $supported_modules)) {
+        return;
+    }
 
-    if ($is_autograded && has_capability('gradereport/grader:view', $PAGE->context)) {
-        $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
-        $cm = get_coursemodule_from_id($cm->modname, $cm->id, $course->id, false, MUST_EXIST);
-        $url = new moodle_url('/report/autograder/index.php', ['id' => $cm->course, 'cmid' => $cm->id, 'modname' => $cm->modname, 'modid' => $cm->instance]);
-        $navigation->add(get_string('pluginname', 'report_autograder'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+    if (!\get_config('local_autograder', 'enable')) return; // get_config() is a critical global function, good to be explicit.
+
+    $is_autograded = $DB->get_record('local_autograder', ['cmid' => $cm->id])->enable ?? false;
+
+    if ($is_autograded && \has_capability('gradereport/grader:view', $PAGE->context)) {
+        $url = new \moodle_url('/report/autograder/index.php', ['cmid' => $cm->id]);
+        $navigation->add(get_string('pluginname', 'report_autograder'), $url, \navigation_node::TYPE_SETTING, null, null, new \pix_icon('i/report', ''));
     }
 }
 
-function is_enrolledstudent($userid, $courseid)
-{
-    global $DB;
-    $role = $DB->get_record('role', ['shortname' => 'student']);
-    $context = context_course::instance($courseid);
-    $enrolled = is_enrolled($context, $userid, '', true);
-    return !empty($role) && user_has_role_assignment($userid, $role->id) && $enrolled;
-}

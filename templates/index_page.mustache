@@ -19,7 +19,11 @@
 
     This template is used to render the index page of the autograder report.
 }}
-<div id="report-autograder">
+<div
+    id="report-autograder-root"
+    data-points-decimals="{{additionalData.points_decimals}}"
+    data-separator-decimals="{{additionalData.separator_decimals}}"
+>
     <nav role="navigation">
         <ol class="breadcrumb">
             {{#items}}
@@ -39,83 +43,67 @@
             {{/items}}
         </ol>
     </nav>
+    <div class="report-search-box input-group mb-3">
+        <span class="input-group-text" id="report-search-icon" style="border-top-left-radius: 0.25rem;
+            border-bottom-left-radius: 0.25rem;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;">
+            <i class="fa fa-search"></i>
+        </span>
+        <input type="text" id="report-search-input" class="form-control"
+               placeholder="{{#str}} search, core {{/str}}"
+               aria-describedby="report-search-icon"
+               style="border-top-left-radius: 0;
+                   border-bottom-left-radius: 0;
+                   border-top-right-radius: 0.25rem;
+                   border-bottom-right-radius: 0.25rem;">
+    </div>
     <div class="hero-unit">
         <table class="table">
             <thead class="table-light">
             <tr>
                 <th scope="col">{{#str}} header:student, report_autograder {{/str}}</th>
                 <th scope="col">{{#str}} header:delivery_date, report_autograder {{/str}}</th>
-                <th scope="col">{{#str}} header:modifcation_date, report_autograder {{/str}}</th>
-                <th scope="col">{{#str}} header:grade_date, report_autograder {{/str}}</th>
-                <th scope="col">{{#str}} header:status, report_autograder {{/str}}</th>
                 <th scope="col">{{#str}} header:grade, report_autograder {{/str}}</th>
+                <th scope="col">{{#str}} header:external_status, report_autograder {{/str}}</th>
+                <th scope="col">{{#str}} header:completed_at, report_autograder {{/str}}</th>
             </tr>
             </thead>
             <tbody>
-            {{^data_to_render}}
+            {{^dataToRender.data}}
                 <tr>
-                    <td colspan="6" class="align-content-center"><h4>{{#str}} nothingtodisplay {{/str}}</h4></td>
+                    <td colspan="5" class="align-content-center"><h4>{{#str}} feedback:nothing_to_show, report_autograder {{/str}}</h4></td>
                 </tr>
-            {{/data_to_render}}
-            {{#data_to_render}}
+            {{/dataToRender.data}}
+            {{#dataToRender.data}}
                 <tr>
                     <td>{{user_name}} </td>
                     <td>{{submission_date}}</td>
-                    <td>{{submission_graded}}</td>
-                    <td>{{date_to_grade}}</td>
-                    <td>{{status}} </td>
-                    <td>
-                        <form class="form-grade" method="post" target="_self" role="form" enctype="multipart/form-data">
-                            <div class="row">
-                                <div class="col-6">
-                                    <input type="text"
-                                        {{#grade}} value="{{grade}}" {{/grade}}
-                                        {{^grade}} placeholder="{{grade_placeholder}}" {{/grade}}
-                                           class="number form-control"
-                                           name="grade"
-                                           data-toggle="tooltip"
-                                           data-placement="top"
-                                           title=""/>
-                                    <input type="hidden" value="{{userid}}" name="userid">
-                                    <input type="hidden" value="{{context_id}}" name="context_id">
-                                    <input type="hidden" value="{{course_id}}" name="course_id">
-                                    <input type="hidden" value="{{modid}}" name="modid">
-                                    <input type="hidden" value="{{mod_type}}" name="module">
-                                </div>
-                                <div class="col-6">
-                                    <button class="btn btn-primary" style="min-width: 6rem" >
-                                        <span class="text-action-description">
-                                            {{grade_action_description}}
-                                        </span>
-                                        <span class="loading hide">
-                                            {{> core/loading }}
-                                        </span>
-                                        <span class="success-icon hide">
-                                            <i class="fa fa-check" aria-hidden="true"></i>
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-
-                    </td>
+                    <td>{{grade}}</td>
+                    <td>{{status}}</td>
+                    <td>{{completed_at}}</td>
                 </tr>
-            {{/data_to_render}}
+            {{/dataToRender.data}}
             </tbody>
         </table>
     </div>
 </div>
-
-{{#js}}
-    require(
-    ['jquery','report_autograder/main'],
-    function($,Main,str) {
-    var root = $('#report-autograder');
-    var config = {};
-    {{#additional_data}}
-        config.points_decimals = {{points_decimals}};
-        config.separator_decimals = "{{separator_decimals}}";
-    {{/additional_data}}
-    Main.init(root,config);
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('report-search-input');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const tableRows = document.querySelectorAll('#report-autograder-root table tbody tr');
+                tableRows.forEach(row => {
+                    const rowText = row.textContent.toLowerCase();
+                    if (rowText.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
     });
-{{/js}}
+</script>

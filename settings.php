@@ -15,18 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version info
+ * Plugin version and other meta-data are defined here.
  *
- * @package    report_autograder
- * @copyright  2022 Michael Alejandro
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     report_autograder
+ * @copyright   2025 ADSDR <eduardo.cubias@ct.uneatlantico.es>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
 
-$settings->add(new admin_setting_configtext('report_autograder/limitpagination',
-    get_string('limitpagination', 'report_autograder'),
-    get_string('limitpagination_desc', 'report_autograder'),
-    5,
-    PARAM_INT));
+
+
+$settings->add(new admin_setting_configtext('report_autograder/url_field',
+    get_string('url_field_name', 'report_autograder'),
+    get_string('url_field_desc', 'report_autograder'),
+    '',
+    PARAM_URL));

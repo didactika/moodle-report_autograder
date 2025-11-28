@@ -24,20 +24,34 @@
  */
 
 $string['pluginname'] = 'Autograder Report';
-$string['header:student'] = 'Student';
-$string['header:delivery_date'] = 'Delivery date';
-$string['header:modifcation_date'] = 'Last modification (grading)';
+$string['header:student'] = 'Name';
+$string['header:delivery_date'] = 'Delivered Date';
+$string['header:modification_date'] = 'Last modification (grading)';
 $string['header:grade_date'] = 'Date to be graded';
 $string['header:grade'] = 'Grade';
 $string['header:status'] = 'Status';
-$string['status:pending'] = 'Pending to publish';
-$string['status:nothing_to_show'] = 'No records found';
+$string['header:external_status'] = 'Status';
+$string['header:completed_at'] = 'Graded Date';
+$string['status:pending'] = 'Pending';
+$string['status:waiting_for_due_date'] = 'Waiting for due date';
+$string['status:waiting_for_grading'] = 'Waiting for grading';
+$string['status:ready_to_grade'] = 'Ready to grade';
+$string['status:grading'] = 'Grading';
 $string['status:graded'] = 'Graded';
-$string['status:placeholder'] = 'Automatic grade';
+$string['status:failed'] = 'Failed';
+$string['status:skipped'] = 'Skipped';
+$string['feedback:nothing_to_show'] = 'No records found';
+$string['placeholder:automatic_grade'] = 'Automatic grade';
 $string['navigation:go_back'] = 'Go back';
 $string['navigation:location'] = 'Automatic Grades Report';
-$string['grade_required'] = 'Grade is required';
-$string['limitpagination'] = 'Item limit';
-$string['limitpagination_desc'] = 'Limit of items to show in the report';
+$string['error:grade_required'] = 'Grade is required';
+$string['action:grade'] = 'Grade';
+$string['setting:url_field_name'] = 'External service URL';
+$string['setting:url_field_desc'] = 'URL of the external service to send grade data to';
+$string['error:missing_config'] = 'The configuration for {$a} is missing. Please contact the administrator.';
+$string['error:building_report_data'] = 'Error building report data. Please contact the administrator.';
+$string['feedback:no_status'] = 'No Status';
+
+
 
 
