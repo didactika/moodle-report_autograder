@@ -71,7 +71,7 @@ const updateUserGrade = (completionId, grade, button) => {
 
     const params = {
         completion_id: completionId,
-        status: 'GRADING',
+        status: 'MANUAL_GRADINGS',
         grade: parseFloat(grade)
     };
 
