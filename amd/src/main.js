@@ -2,7 +2,6 @@ import $ from 'jquery';
 import ajax from 'core/ajax';
 import templates from 'core/templates';
 import { get_string as getString } from 'core/str';
-import notification from 'core/notification';
 
 // eslint-disable-next-line no-console
 console.error("DEBUG: main.js from report_autograder loaded and executed!"); // Force a visible sign of execution
@@ -39,22 +38,16 @@ const attachManualGradeButtonListeners = () => {
         console.log('Grade input value:', grade);
 
         if (grade === '' || isNaN(parseFloat(grade))) {
-            const message = await getString('error:invalidgrade', 'report_autograder');
-            notification.add(message, 'error');
             return;
         }
 
         const gradeVal = parseFloat(grade);
 
         if (maxGrade !== null && gradeVal > maxGrade) {
-            const message = await getString('error:gradetoolarge', 'report_autograder', {maxgrade: maxGrade});
-            notification.add(message, 'error');
             return;
         }
 
         if (gradeVal < 0) {
-            const message = await getString('error:negativegrade', 'report_autograder');
-            notification.add(message, 'error');
             return;
         }
 
@@ -78,7 +71,7 @@ const updateUserGrade = (completionId, grade, button) => {
 
     const params = {
         completion_id: completionId,
-        status: 'MANUAL_GRADING',
+        status: 'GRADING',
         grade: parseFloat(grade)
     };
 
@@ -92,15 +85,11 @@ const updateUserGrade = (completionId, grade, button) => {
     .then(async (response) => {
         // eslint-disable-next-line no-console
         console.log('API Response after grade update:', response); // Log API response.
-        const message = await getString('success:gradeupdated', 'report_autograder');
-        notification.add(message, 'success');
         getReportData(currentPage); // Reload the data after successful update.
     })
     .catch(async (error) => {
         // eslint-disable-next-line no-console
         console.error('Error: Update webservice call failed:', error); // Log detailed error.
-        const message = await getString('error:updatefailed', 'report_autograder');
-        notification.add(`${message} ${error.message}`, 'error');
     })
     .always(() => {
         // eslint-disable-next-line no-console
