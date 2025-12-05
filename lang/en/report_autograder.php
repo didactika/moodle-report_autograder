@@ -40,6 +40,7 @@ $string['status:grading'] = 'Grading';
 $string['status:graded'] = 'Graded';
 $string['status:failed'] = 'Failed';
 $string['status:skipped'] = 'Skipped';
+    $string['status:manual_grading'] = 'Manual grading';
 $string['feedback:nothing_to_show'] = 'No records found';
 $string['placeholder:automatic_grade'] = 'Automatic grade';
 $string['navigation:go_back'] = 'Go back';
@@ -51,7 +52,14 @@ $string['setting:url_field_desc'] = 'URL of the external service to send grade d
 $string['error:missing_config'] = 'The configuration for {$a} is missing. Please contact the administrator.';
 $string['error:building_report_data'] = 'Error building report data. Please contact the administrator.';
 $string['feedback:no_status'] = 'No Status';
-
-
-
-
+$string['setting:pagination_limit_name'] = 'Pagination Limit';
+$string['setting:pagination_limit_desc'] = 'The number of items to display per page in the Autograder report.';
+$string['report/autograder:view'] = 'View autograder report';
+$string['filter_all'] = 'All';
+$string['manual_grading'] = 'Manual Grading';
+$string['manual_grading_send'] = 'Send Grade';
+$string['success:gradeupdated'] = 'Grade updated successfully!';
+$string['error:updatefailed'] = 'Failed to update grade:';
+$string['error:invalidgrade'] = 'Please enter a valid numeric grade.';
+$string['error:gradetoolarge'] = 'The grade cannot be higher than {$a->maxgrade}.';
+$string['error:negativegrade'] = 'The grade cannot be a negative value.';

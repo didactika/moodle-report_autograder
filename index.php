@@ -1,36 +1,41 @@
 <?php
-// This file is part of Moodle - https://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
-
-/**
- * @package     report_autograder
- * @category    report
- * @copyright   2025 ADSDR <eduardo.cubias@ct.uneatlantico.es>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 require_once('../../config.php');
 
-$cmid = \required_param('cmid', PARAM_INT);
-
+// We need to output the header first, so we can see error messages.
 try {
-    $manager = new \report_autograder\page_manager($cmid);
-    $manager->display();
-} catch (\Exception $e) {
-    global $OUTPUT;
+    defined('MOODLE_INTERNAL') || die();
+    global $PAGE, $OUTPUT;
+
+    $cmid = required_param('cmid', PARAM_INT);
+
+    list($course, $cm) = get_course_and_cm_from_cmid($cmid);
+    if (!$course || !$cm) {
+        throw new \moodle_exception('invalidcourseorcm');
+    }
+
+    require_login($course, true, $cm);
+    $context = \context_module::instance($cm->id);
+    require_capability('report/autograder:view', $context);
+
+    $PAGE->set_url('/report/autograder/index.php', ['cmid' => $cmid]);
+    $PAGE->set_pagelayout('report');
+    $PAGE->set_title(get_string('pluginname', 'report_autograder'));
+    $PAGE->set_heading(get_string('pluginname', 'report_autograder'));
+    $PAGE->set_context($context);
+
+    $PAGE->requires->js_call_amd('report_autograder/main', 'init', [$cmid]);
+
     echo $OUTPUT->header();
-    echo $OUTPUT->notification($e->getMessage());
+    echo $OUTPUT->render_from_template('report_autograder/partials/_filters', []);
+    echo '<div id="autograder-report-container"></div>';
     echo $OUTPUT->footer();
+
+} catch (\Exception $e) {
+    // If an exception was thrown, we display it here.
+    // This is to help debug issues like missing cmid, permissions, etc.
+    echo $OUTPUT->header();
+    echo $OUTPUT->notification('A critical error occurred: ' . $e->getMessage() . '<br><pre>' . $e->getTraceAsString() . '</pre>', 'error');
+    echo $OUTPUT->footer();
+    die();
 }

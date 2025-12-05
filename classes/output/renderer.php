@@ -14,16 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace report\report_autograder\classes\output;
-
+namespace report_autograder\output;
+defined('MOODLE_INTERNAL') || die;
 use plugin_renderer_base;
-use report\report_autograder\classes\output\index_page;
-
+use renderable;
 class renderer extends plugin_renderer_base
 {
-    public function render_index_page(index_page $page)
-    {
-        $data = $page->export_for_template($this);
-        return parent::render_from_template('report_autograder/index_page', $data);
-    }
+    /**
+     * Return the index_page content for the autograder report.
+     *
+     * @param index_page $main The index_page renderable
+     * @return string HTML string
+     */
+     public function render_index_page(index_page $page){
+         return $this->render_from_template('report_autograder/index_page', $page->export_for_template($this));
+     }
 }

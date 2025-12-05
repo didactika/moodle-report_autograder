@@ -1,0 +1,10 @@
+<div class="mb-3">
+    <label for="autograder-status-filter" class="form-label">{{#str}} header:status, report_autograder {{/str}}</label>
+    <select id="autograder-status-filter" class="form-select">
+        <option value="">{{#str}} filter_all, report_autograder {{/str}}</option>
+        <option value="pending">{{#str}} status:pending, report_autograder {{/str}}</option>
+        <option value="graded">{{#str}} status:graded, report_autograder {{/str}}</option>
+        <option value="grading">{{#str}} status:grading, report_autograder {{/str}}</option>
+        <option value="failed">{{#str}} status:failed, report_autograder {{/str}}</option>
+    </select>
+</div>

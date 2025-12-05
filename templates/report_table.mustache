@@ -1,0 +1,20 @@
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>{{#str}} header:student, report_autograder {{/str}}</th>
+            <th>{{#str}} header:delivery_date, report_autograder {{/str}}</th>
+            <th>{{#str}} header:grade, report_autograder {{/str}}</th>
+            <th>{{#str}} header:status, report_autograder {{/str}}</th>
+            <th>{{#str}} header:completed_at, report_autograder {{/str}}</th>
+            <th>{{#str}} manual_grading, report_autograder {{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="loading-row">
+            <td colspan="6" class="text-center">
+                {{#pix}}i/loading, core{{/pix}} {{#str}} loading, core {{/str}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div id="autograder-pagination-container"></div>

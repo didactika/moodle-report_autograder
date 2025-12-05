@@ -1,0 +1,14 @@
+<tr data-record-id="{{id}}">
+    <td>{{user_name}}</td>
+    <td data-sort-value="{{submission_date_sort}}">{{submission_date}}</td>
+    <td>
+        <input type="number" class="form-control manual-grade-input" value="{{#grade}}{{grade}}{{/grade}}" step="any" />
+    </td>
+    <td>{{status}}</td>
+    <td data-sort-value="{{completed_at_sort}}">{{completed_at}}</td>
+    <td>
+        <button class="btn btn-success manual-grade-btn" data-completion-id="{{id}}" title="{{#str}} manual_grading_send, report_autograder {{/str}}">
+             <i class="fa fa-paper-plane"></i>
+        </button>
+    </td>
+</tr>
