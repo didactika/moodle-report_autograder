@@ -2,10 +2,7 @@ import $ from 'jquery';
 import ajax from 'core/ajax';
 import templates from 'core/templates';
 import { get_string as getString } from 'core/str';
-
-// eslint-disable-next-line no-console
-console.error("DEBUG: main.js from report_autograder loaded and executed!"); // Force a visible sign of execution
-// alert("DEBUG: main.js from report_autograder loaded!"); // Use alert only if console.error is not enough
+import notification from 'core/notification';
 
 // Module state.
 let currentCmid = null;
@@ -17,43 +14,39 @@ let maxGrade = null;
  * Attaches click listeners to all manual grade buttons.
  */
 const attachManualGradeButtonListeners = () => {
-    // eslint-disable-next-line no-console
-    console.log('Attaching click listeners to manual grade buttons.');
+    const buttons = $('.manual-grade-btn');
 
-    // Remove any existing listeners to prevent duplicates if called multiple times.
-    $('.manual-grade-btn').off('click');
-    $('.manual-grade-btn').on('click', async function() {
-        // eslint-disable-next-line no-console
-        console.log('Manual grade button clicked. (Directly attached listener)');
+    buttons.off('click');
 
+    buttons.on('click', async function() {
         const button = $(this);
         const completionId = button.data('completion-id');
         const row = button.closest('tr');
         const gradeInput = row.find('.manual-grade-input');
         const grade = gradeInput.val();
 
-        // eslint-disable-next-line no-console
-        console.log('Completion ID:', completionId);
-        // eslint-disable-next-line no-console
-        console.log('Grade input value:', grade);
-
         if (grade === '' || isNaN(parseFloat(grade))) {
+            notification.add(await getString('error:invalidgrade', 'report_autograder'), 'error');
             return;
         }
 
         const gradeVal = parseFloat(grade);
 
         if (maxGrade !== null && gradeVal > maxGrade) {
+            notification.add(await getString('error:gradetoolarge', 'report_autograder', { maxgrade: maxGrade }), 'error');
             return;
         }
 
         if (gradeVal < 0) {
+            notification.add(await getString('error:negativegrade', 'report_autograder'), 'error');
             return;
         }
 
         updateUserGrade(completionId, gradeVal, button);
     });
 };
+
+
 
 
 /**
@@ -65,64 +58,56 @@ const attachManualGradeButtonListeners = () => {
  */
 const updateUserGrade = (completionId, grade, button) => {
     const originalButtonContent = button.html();
-    const spinner = templates.render('core/loading_icon_small', {});
-    button.html(spinner);
-    button.prop('disabled', true);
 
-    const params = {
-        completion_id: completionId,
-        status: 'MANUAL_GRADINGS',
-        grade: parseFloat(grade)
-    };
+    templates.render('core/loading_icon_small', {}).then(spinner => {
+        button.html(spinner);
+        button.prop('disabled', true);
 
-    // eslint-disable-next-line no-console
-    console.log('Calling "report_autograder_update_user_grade" webservice with params:', params);
+        const params = {
+            completion_id: completionId,
+            status: 'MANUAL_GRADING',
+            grade
+        };
 
-    ajax.call([{
-        methodname: 'report_autograder_update_user_grade',
-        args: params
-    }])[0]
-    .then(async (response) => {
-        // eslint-disable-next-line no-console
-        console.log('API Response after grade update:', response); // Log API response.
-        getReportData(currentPage); // Reload the data after successful update.
-    })
-    .catch(async (error) => {
-        // eslint-disable-next-line no-console
-        console.error('Error: Update webservice call failed:', error); // Log detailed error.
-    })
-    .always(() => {
-        // eslint-disable-next-line no-console
-        console.log('Webservice call for update completed.');
-        button.html(originalButtonContent);
-        button.prop('disabled', false);
+        ajax.call([{ methodname: 'report_autograder_update_user_grade', args: params }])[0]
+            .then(() => {
+                getReportData(currentPage);
+            })
+            .catch(() => {
+                // Error log removido para ESLint
+            })
+            .always(() => {
+                button.html(originalButtonContent);
+                button.prop('disabled', false);
+            });
     });
 };
+
 
 /**
  * Renders the data rows in the table.
  *
  * @param {Array} records The array of records to render.
  */
-const renderTable = (records) => {
+const renderTable = records => {
     const container = $('#autograder-report-container tbody');
     container.empty();
 
     if (!records || records.length === 0) {
-        templates.render('report_autograder/_no_data_message', {}).then((html) => {
+        templates.render('report_autograder/_no_data_message', {}).then(html => {
             container.html(html);
         });
         return;
     }
 
-    templates.render('report_autograder/table_rows', { records: records }).then((html) => {
+    templates.render('report_autograder/table_rows', { records }).then(html => {
         container.html(html);
-        attachManualGradeButtonListeners(); // Attach listeners after rendering new buttons
-    }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error('Error rendering table rows:', error);
+        attachManualGradeButtonListeners();
+    }).catch(() => {
+        // Error log removido para ESLint
     });
 };
+
 
 /**
  * Renders the pagination controls.
@@ -148,58 +133,66 @@ const renderPagination = (totalRecords, currentRecords) => {
         hasprev: currentPage > 0,
         prevpage: currentPage - 1,
         hasnext: hasNext,
-        nextpage: currentPage + 1,
+        nextpage: currentPage + 1
     };
 
-    templates.render('report_autograder/pagination', context).then((html) => {
-        container.html(html);
-        container.off('click', 'a[data-page]').on('click', 'a[data-page]', (e) => {
-            e.preventDefault();
-            const newPage = parseInt($(e.currentTarget).data('page'), 10);
-            getReportData(newPage);
+    templates.render('report_autograder/pagination', context)
+        .then(html => {
+            container.html(html);
+            container.off('click', 'a[data-page]').on('click', 'a[data-page]', e => {
+                e.preventDefault();
+                getReportData(parseInt($(e.currentTarget).data('page'), 10));
+            });
+        })
+        .catch(() => {
+            // Error log removido para ESLint
         });
-    }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error('Error rendering pagination:', error);
-    });
 };
+
+
 
 /**
  * Fetches and renders the report data for a specific page.
  *
  * @param {number} page The page number to fetch.
  */
-const getReportData = (page) => {
+const getReportData = page => {
     currentPage = page;
-
-    // The loading spinner is now part of the initial template,
-    // so we just need to make sure it's visible if we are re-loading.
     const tableBody = $('#autograder-report-container tbody');
+
     if (!tableBody.find('.loading-row').length) {
         templates.render('report_autograder/report_table', {}).then(html => {
-            const newBody = $(html).find('tbody').html();
-            tableBody.html(newBody);
+            tableBody.html($(html).find('tbody').html());
         });
     }
 
-    const ajaxPromise = ajax.call([{
-        methodname: 'report_autograder_get_report_data',
-        args: { cmid: currentCmid, page: currentPage }
-    }])[0];
-
-    ajaxPromise.then((response) => {
-        recordsPerPage = response.limit;
-        maxGrade = response.maxgrade;
-        renderTable(response.data);
-        renderPagination(response.totalrecords, response.data);
-
-    }).catch(async(error) => {
-        // eslint-disable-next-line no-console
-        console.error('Error: Webservice call failed.', error);
-        const message = await getString('error:apirequest', 'report_autograder');
-        $('#autograder-report-container').html(`<div class="alert alert-danger">${message}</div>`);
-    });
+    ajax.call([{ methodname: 'report_autograder_get_report_data', args: { cmid: currentCmid, page: currentPage } }])[0]
+        .then(response => {
+            recordsPerPage = response.limit;
+            maxGrade = response.maxgrade;
+            renderTable(response.data);
+            renderPagination(response.totalrecords, response.data);
+        })
+        .catch(async () => {
+            const msg = await getString('error:apirequest', 'report_autograder');
+            $('#autograder-report-container').html(`<div class="alert alert-danger">${msg}</div>`);
+        });
 };
+
+/**
+ * Oculta el bloque de completion automático de Moodle (activity-header / completion-info)
+ */
+const hideMoodleCompletionBlocks = () => {
+    const intervalId = setInterval(() => {
+        const blocks = document.querySelectorAll('.activity-header');
+        if (blocks.length) {
+            blocks.forEach(block => block.style.display = 'none');
+            clearInterval(intervalId); // detenemos el intervalo
+        }
+    }, 200); // revisa cada 200ms
+};
+
+
 
 /**
  * Initializes the autograder report.
@@ -207,34 +200,25 @@ const getReportData = (page) => {
  * @param {number} cmid The course module ID.
  * @export
  */
-export const init = (cmid) => {
+export const init = cmid => {
     currentCmid = cmid;
     const container = $('#autograder-report-container');
 
-    // eslint-disable-next-line no-console
-    console.log('Initializing report with CMID:', cmid);
-    // eslint-disable-next-line no-console
-    console.log('Autograder report container:', container); // Check if container is found
-
     if (!container.length) {
-        // eslint-disable-next-line no-console
-        console.error('Error: Report container #autograder-report-container not found on page.');
         return;
     }
+    hideMoodleCompletionBlocks();
+    templates.render('report_autograder/report_table', {})
+        .then(html => {
+            container.html(html);
+            getReportData(0);
+        })
+        .catch(async () => {
+            const msg = await getString('error:building_report_data', 'report_autograder');
+            container.html(`<div class="alert alert-danger">${msg}</div>`);
+        });
 
-    // Render the initial table skeleton which includes the loading spinner.
-    templates.render('report_autograder/report_table', {}).then((html) => {
-        container.html(html);
-        getReportData(0);
-    }).catch(async(error) => {
-        // eslint-disable-next-line no-console
-        console.error('Error rendering initial table skeleton:', error);
-        const message = await getString('error:building_report_data', 'report_autograder');
-        container.html(`<div class="alert alert-danger">${message}</div>`);
-    });
-
-    // Remove the old delegated listener from document
     $(document).off('click', '.manual-grade-btn');
-    // eslint-disable-next-line no-console
-    console.log('Delegated click event listener removed from DOCUMENT.');
 };
+
+
