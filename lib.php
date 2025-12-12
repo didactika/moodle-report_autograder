@@ -36,7 +36,6 @@ function report_autograder_extend_navigation_module($navigation, $cm)
     if (!\get_config('local_autograder', 'enable')) return; // get_config() is a critical global function, good to be explicit.
 
     $is_autograded = $DB->get_record('local_autograder', ['cmid' => $cm->id])->enable ?? false;
-
     if ($is_autograded && \has_capability('gradereport/grader:view', $PAGE->context)) {
         $url = new \moodle_url('/report/autograder/index.php', ['cmid' => $cm->id]);
         $navigation->add(get_string('pluginname', 'report_autograder'), $url, \navigation_node::TYPE_SETTING, null, null, new \pix_icon('i/report', ''));

@@ -63,3 +63,21 @@ $string['error:updatefailed'] = 'Failed to update grade:';
 $string['error:invalidgrade'] = 'Please enter a valid numeric grade.';
 $string['error:gradetoolarge'] = 'The grade cannot be higher than {$a->maxgrade}.';
 $string['error:negativegrade'] = 'The grade cannot be a negative value.';
+
+$string['filter_button'] = 'Filter';
+$string['filter_searchname'] = 'Search by name';
+$string['filter_search_placeholder'] = 'Enter name to search';
+$string['filter_datefrom'] = 'Date from';
+$string['filter_dateto'] = 'Date to';
+$string['filter_grade'] = 'Grade';
+$string['filter_grade_placeholder'] = 'Enter grade';
+$string['filter_status'] = 'Status';
+$string['filter_clear'] = 'Clear filters';
+$string['filter_search'] = 'Search';
+$string['filter_active'] = 'Active filters:';
+$string['filter_active_searchname'] = 'Name: {$a}';
+$string['filter_active_datefrom'] = 'From: {$a}';
+$string['filter_active_dateto'] = 'To: {$a}';
+$string['filter_active_grade'] = 'Grade: {$a}';
+$string['filter_active_status'] = 'Status: {$a}';
+

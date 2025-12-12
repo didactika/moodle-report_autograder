@@ -1,0 +1,133 @@
+{{!
+    @template report_autograder/partials/_filters
+
+    Filter form for autograder report.
+
+    Context variables:
+    * filters.searchname - Search name filter value
+    * filters.datefrom - Date from filter value
+    * filters.dateto - Date to filter value
+    * filters.grade - Grade filter value
+    * filters.status - Selected status filter value
+    * filters.status_pending - Boolean if pending status is selected
+    * filters.status_waiting_for_due_date - Boolean if waiting_for_due_date status is selected
+    * filters.status_waiting_for_grading - Boolean if waiting_for_grading status is selected
+    * filters.status_ready_to_grade - Boolean if ready_to_grade status is selected
+    * filters.status_grading - Boolean if grading status is selected
+    * filters.status_graded - Boolean if graded status is selected
+    * filters.status_failed - Boolean if failed status is selected
+    * filters.status_skipped - Boolean if skipped status is selected
+    * filters.status_manual_grading - Boolean if manual_grading status is selected
+    * filters.has_active_filters - Boolean if any filter is active
+    * filters.active_count - Number of active filters
+    * filters.active_searchname - Label for active search name filter
+    * filters.active_datefrom - Label for active date from filter
+    * filters.active_dateto - Label for active date to filter
+    * filters.active_grade - Label for active grade filter
+    * filters.active_status_label - Label for active status filter
+    * filter_action_url - URL to submit the filter form to (typically index.php)
+}}
+
+<div class="d-flex justify-content-end mb-3">
+    <div class="btn-group">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="autograder-filter-dropdown-btn">
+            <i class="fa fa-filter"></i> {{#str}}filter_button, report_autograder{{/str}}
+            {{#filters.has_active_filters}}
+            <span class="badge badge-pill badge-primary ml-1">{{filters.active_count}}</span>
+            {{/filters.has_active_filters}}
+        </button>
+        <div class="dropdown-menu dropdown-menu-right autograder-filter-dropdown-menu" style="min-width: 350px;" onclick="event.stopPropagation();">
+            <form method="get" action="{{filter_action_url}}" id="autograder-filter-form">
+                <div class="px-4 py-3">
+                    {{! Input de búsqueda para el nombre }}
+                    <div class="mb-3">
+                        <label for="searchname">{{#str}}filter_searchname, report_autograder{{/str}}</label>
+                        <input type="text" name="searchname" id="searchname" value="{{filters.searchname}}" class="form-control" placeholder="{{#str}}filter_search_placeholder, report_autograder{{/str}}">
+                    </div>
+
+                    {{! Inputs de fechas }}
+                    <div class="mb-3">
+                        <label for="datefrom">{{#str}}filter_datefrom, report_autograder{{/str}}</label>
+                        <input type="date" name="datefrom" id="datefrom" value="{{filters.datefrom}}" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="dateto">{{#str}}filter_dateto, report_autograder{{/str}}</label>
+                        <input type="date" name="dateto" id="dateto" value="{{filters.dateto}}" class="form-control">
+                    </div>
+
+                    {{! Input de números para el grade }}
+                    <div class="mb-3">
+                        <label for="grade">{{#str}}filter_grade, report_autograder{{/str}}</label>
+                        <input type="number" name="grade" id="grade" value="{{filters.grade}}" class="form-control" placeholder="{{#str}}filter_grade_placeholder, report_autograder{{/str}}">
+                    </div>
+
+                    {{! Input de opciones select para status }}
+                    <div class="mb-3">
+                        <label for="status">{{#str}}filter_status, report_autograder{{/str}}</label>
+                        <select name="status" id="status" class="form-control">
+                            <option value="">{{#str}}filter_all, report_autograder{{/str}}</option>
+                            <option value="pending" {{#filters.status_pending}}selected{{/filters.status_pending}}>
+                                {{#str}}status:pending, report_autograder{{/str}}
+                            </option>
+                            <option value="waiting_for_due_date" {{#filters.status_waiting_for_due_date}}selected{{/filters.status_waiting_for_due_date}}>
+                                {{#str}}status:waiting_for_due_date, report_autograder{{/str}}
+                            </option>
+                            <option value="waiting_for_grading" {{#filters.status_waiting_for_grading}}selected{{/filters.status_waiting_for_grading}}>
+                                {{#str}}status:waiting_for_grading, report_autograder{{/str}}
+                            </option>
+                            <option value="ready_to_grade" {{#filters.status_ready_to_grade}}selected{{/filters.status_ready_to_grade}}>
+                                {{#str}}status:ready_to_grade, report_autograder{{/str}}
+                            </option>
+                            <option value="grading" {{#filters.status_grading}}selected{{/filters.status_grading}}>
+                                {{#str}}status:grading, report_autograder{{/str}}
+                            </option>
+                            <option value="graded" {{#filters.status_graded}}selected{{/filters.status_graded}}>
+                                {{#str}}status:graded, report_autograder{{/str}}
+                            </option>
+                            <option value="failed" {{#filters.status_failed}}selected{{/filters.status_failed}}>
+                                {{#str}}status:failed, report_autograder{{/str}}
+                            </option>
+                            <option value="skipped" {{#filters.status_skipped}}selected{{/filters.status_skipped}}>
+                                {{#str}}status:skipped, report_autograder{{/str}}
+                            </option>
+                            <option value="manual_grading" {{#filters.status_manual_grading}}selected{{/filters.status_manual_grading}}>
+                                {{#str}}status:manual_grading, report_autograder{{/str}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="dropdown-divider"></div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{filter_action_url}}" class="btn btn-secondary btn-sm">
+                            <i class="fa fa-times"></i> {{#str}}filter_clear, report_autograder{{/str}}
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fa fa-search"></i> {{#str}}filter_search, report_autograder{{/str}}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{#filters.has_active_filters}}
+<div class="alert alert-info mb-3">
+    <strong>{{#str}}filter_active, report_autograder{{/str}}</strong>
+    {{#filters.active_searchname}}
+    <span class="badge badge-secondary ml-1">{{#str}}filter_active_searchname, report_autograder{{/str}} {{filters.active_searchname}}</span>
+    {{/filters.active_searchname}}
+    {{#filters.active_datefrom}}
+    <span class="badge badge-secondary ml-1">{{#str}}filter_active_datefrom, report_autograder{{/str}} {{filters.active_datefrom}}</span>
+    {{/filters.active_datefrom}}
+    {{#filters.active_dateto}}
+    <span class="badge badge-secondary ml-1">{{#str}}filter_active_dateto, report_autograder{{/str}} {{filters.active_dateto}}</span>
+    {{/filters.active_dateto}}
+    {{#filters.active_grade}}
+    <span class="badge badge-secondary ml-1">{{#str}}filter_active_grade, report_autograder{{/str}} {{filters.active_grade}}</span>
+    {{/filters.active_grade}}
+    {{#filters.active_status_label}}
+    <span class="badge badge-primary ml-1">{{#str}}filter_active_status, report_autograder{{/str}} {{filters.active_status_label}}</span>
+    {{/filters.active_status_label}}
+</div>
+{{/filters.has_active_filters}}
