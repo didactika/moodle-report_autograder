@@ -15,50 +15,68 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Lang strings
- *
- * @package    report
- * @subpackage autograder
- * @copyright  2022
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+* Lang strings
+*
+* @package    report
+* @subpackage autograder
+* @copyright  2025
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*/
 
-$string["pluginname"] = "Relatório automático de notas";
-$string["header:student"] = "Aluno";
-$string["header:delivery_date"] = "Data de entrega";
-$string["header:modification_date"] = "Última modificação (avaliação)";
-$string["header:grade_date"] = "Data a ser avaliada";
-$string["header:grade"] = "Nota";
-$string["header:status"] = "Status";
-$string["header:external_status"] = "Status";
-$string["header:completed_at"] = "Data de avaliação";
-$string["status:pending"] = "Pendente";
-$string["status:waiting_for_due_date"] = "Aguardando a data de vencimento";
-$string["status:waiting_for_grading"] = "Aguardando classificação";
-$string["status:ready_to_grade"] = "Pronto para classificar";
-$string["status:grading"] = "Classificando";
-$string["status:graded"] = "Classificado";
-$string["status:failed"] = "Falhou";
-$string["status:skipped"] = "Ignorado";
+$string['pluginname'] = 'Relatório do Avaliador Automático';
+$string['header:student'] = 'Nome';
+$string['header:delivery_date'] = 'Data de entrega';
+$string['header:modification_date'] = 'Última modificação (avaliação)';
+$string['header:grade_date'] = 'Data a ser avaliada';
+$string['header:grade'] = 'Nota';
+$string['header:status'] = 'Status';
+$string['header:external_status'] = 'Status';
+$string['header:completed_at'] = 'Data avaliada';
+$string['status:pending'] = 'Pendente';
+$string['status:waiting_for_due_date'] = 'Aguardando data de entrega';
+$string['status:waiting_for_grading'] = 'Aguardando avaliação';
+$string['status:ready_to_grade'] = 'Pronto para avaliar';
+$string['status:grading'] = 'Avaliando';
+$string['status:graded'] = 'Avaliado';
+$string['status:failed'] = 'Falhou';
+$string['status:skipped'] = 'Ignorado';
 $string['status:manual_grading'] = 'Avaliação manual';
-$string["feedback:nothing_to_show"] = "Nenhum registro foi encontrado";
+$string['feedback:nothing_to_show'] = 'Nenhum registro encontrado';
 $string['placeholder:automatic_grade'] = 'Nota automática';
-$string["navigation:go_back"] = "Voltar";
-$string["navigation:location"] = "Relatório automático de notas";
-$string['error:grade_required'] = 'A nota é necessária';
-$string['action:grade'] = 'Classificar';
+$string['navigation:go_back'] = 'Voltar';
+$string['navigation:location'] = 'Relatório de Notas Automáticas';
+$string['error:grade_required'] = 'A nota é obrigatória';
+$string['action:grade'] = 'Avaliar';
 $string['setting:url_field_name'] = 'URL do serviço externo';
-$string['setting:url_field_desc'] = 'URL do serviço externo para obter os dados de qualificação';
-$string['error:missing_config'] = 'A configuração para {$a} está faltando. Entre em contato com o administrador.';
-$string['error:building_report_data'] = 'Erro ao construir os dados do relatório. Entre em contato com o administrador.';
+$string['setting:url_field_desc'] = 'URL do serviço externo do qual os dados de notas serão solicitados';
+$string['error:apirequest'] = 'Erro ao comunicar-se com o serviço externo: {$a}';
+$string['error:missing_config'] = 'A configuração de {$a} está ausente. Entre em contato com o administrador.';
+$string['error:building_report_data'] = 'Erro ao gerar dados do relatório. Entre em contato com o administrador.';
 $string['feedback:no_status'] = 'Sem status';
 $string['setting:pagination_limit_name'] = 'Limite de paginação';
-$string['setting:pagination_limit_desc'] = 'Número de itens a serem exibidos por página no relatório do Autograder.';
-$string['report/autograder:view'] = 'Visualizar relatório do autograduador';
-$string['manual_grading'] = 'Classificação Manual';
-$string['manual_grading_send'] = 'Enviar Nota';
+$string['setting:pagination_limit_desc'] = 'Número de itens a exibir por página no relatório do Avaliador Automático.';
+$string['report/autograder:view'] = 'Ver relatório do Avaliador Automático';
+$string['filter_all'] = 'Todos';
+$string['manual_grading'] = 'Avaliação manual';
+$string['manual_grading_send'] = 'Enviar nota';
 $string['success:gradeupdated'] = 'Nota atualizada com sucesso!';
 $string['error:updatefailed'] = 'Falha ao atualizar a nota:';
 $string['error:invalidgrade'] = 'Por favor, insira uma nota numérica válida.';
 $string['error:gradetoolarge'] = 'A nota não pode ser maior que {$a->maxgrade}.';
-$string['error:negativegrade'] = 'A nota não pode ser um valor negativo.';
+$string['error:negativegrade'] = 'A nota não pode ser negativa.';
+$string['filter_button'] = 'Filtrar';
+$string['filter_searchname'] = 'Pesquisar por nome';
+$string['filter_search_placeholder'] = 'Digite um nome para pesquisar';
+$string['filter_datefrom'] = 'Data de entrega a partir de';
+$string['filter_dateto'] = 'Data avaliada a partir de';
+$string['filter_grade'] = 'Nota a partir de';
+$string['filter_grade_placeholder'] = 'Digite a nota';
+$string['filter_status'] = 'Status';
+$string['filter_clear'] = 'Limpar filtros';
+$string['filter_search'] = 'Pesquisar';
+$string['filter_active'] = 'Filtros ativos:';
+$string['filter_active_searchname'] = 'Nome: {$a}';
+$string['filter_active_datefrom'] = 'De: {$a}';
+$string['filter_active_dateto'] = 'De: {$a}';
+$string['filter_active_grade'] = 'Nota: {$a}';
+$string['filter_active_status'] = 'Status: {$a}';

@@ -15,51 +15,69 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Lang strings
- *
- * @package    report
- * @subpackage autograder
- * @copyright  2022
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+* Lang strings
+*
+* @package    report
+* @subpackage autograder
+* @copyright  2025
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*/
 
-$string["pluginname"] = "Rapporto di valutazione automatico";
-$string["header:student"] = "Alunno";
-$string["header:delivery_date"] = "Scadenza";
-$string["header:modification_date"] = "Ultima modifica (valutazione)";
-$string["header:grade_date"] = "Data da valutare";
-$string["header:grade"] = "Voto";
-$string["header:status"] = "Stato";
-$string["header:external_status"] = "Stato";
-$string["header:completed_at"] = "Data di valutazione";
-$string["status:pending"] = "In attesa";
-$string["status:waiting_for_due_date"] = "In attesa della data di scadenza";
-$string["status:waiting_for_grading"] = "In attesa di valutazione";
-$string["status:ready_to_grade"] = "Pronto per la valutazione";
-$string["status:grading"] = "Valutazione in corso";
-$string["status:graded"] = "Valutato";
-$string["status:failed"] = "Fallito";
-$string["status:skipped"] = "Saltato";
+
+$string['pluginname'] = 'Rapporto dell’Auto Valutatore';
+$string['header:student'] = 'Nome';
+$string['header:delivery_date'] = 'Data di consegna';
+$string['header:modification_date'] = 'Ultima modifica (valutazione)';
+$string['header:grade_date'] = 'Data da valutare';
+$string['header:grade'] = 'Voto';
+$string['header:status'] = 'Stato';
+$string['header:external_status'] = 'Stato';
+$string['header:completed_at'] = 'Data valutata';
+$string['status:pending'] = 'In attesa';
+$string['status:waiting_for_due_date'] = 'In attesa della scadenza';
+$string['status:waiting_for_grading'] = 'In attesa di valutazione';
+$string['status:ready_to_grade'] = 'Pronto per la valutazione';
+$string['status:grading'] = 'Valutazione in corso';
+$string['status:graded'] = 'Valutato';
+$string['status:failed'] = 'Fallito';
+$string['status:skipped'] = 'Saltato';
 $string['status:manual_grading'] = 'Valutazione manuale';
-$string['status:manual_grading'] = 'Classificato manualmente';
-$string["feedback:nothing_to_show"] = "Nessun record trovato";
-$string['placeholder:automatic_grade'] = "Voto automatico";
-$string["navigation:go_back"] = "Tornare";
-$string["navigation:location"] = "Rapporto di valutazione automatico";
-$string['error:grade_required'] = 'Il voto è richiesto';
-$string['action:grade'] = 'Voto';
+$string['feedback:nothing_to_show'] = 'Nessun record trovato';
+$string['placeholder:automatic_grade'] = 'Voto automatico';
+$string['navigation:go_back'] = 'Indietro';
+$string['navigation:location'] = 'Rapporto dei voti automatici';
+$string['error:grade_required'] = 'Il voto è obbligatorio';
+$string['action:grade'] = 'Valuta';
 $string['setting:url_field_name'] = 'URL del servizio esterno';
-$string['setting:url_field_desc'] = 'URL del servizio esterno per ottenere i dati di valutazione';
-$string['error:missing_config'] = 'La configurazione per {$a} è mancante. Si prega di contattare l\'amministratore.';
-$string['error:building_report_data'] = 'Errore durante la costruzione dei dati del rapporto. Si prega di contattare l\'amministratore.';
+$string['setting:url_field_desc'] = "URL del servizio esterno da cui verranno richiesti i dati dei voti";
+$string['error:apirequest'] = 'Errore nella comunicazione con il servizio esterno: {$a}';
+$string['error:missing_config'] = 'La configurazione per {$a} è mancante. Contattare l’amministratore.';
+$string['error:building_report_data'] = 'Errore nella generazione del rapporto. Contattare l’amministratore.';
 $string['feedback:no_status'] = 'Nessuno stato';
 $string['setting:pagination_limit_name'] = 'Limite di paginazione';
-$string['setting:pagination_limit_desc'] = 'Numero di elementi da visualizzare per pagina nel report Autograder.';
-$string['report/autograder:view'] = 'Visualizza rapporto autovalutatore';
-$string['manual_grading'] = 'Valutazione Manuale';
-$string['manual_grading_send'] = 'Invia Voto';
+$string['setting:pagination_limit_desc'] = 'Numero di elementi da visualizzare per pagina nel rapporto dell’Auto Valutatore.';
+$string['report/autograder:view'] = 'Visualizza rapporto dell’Auto Valutatore';
+$string['filter_all'] = 'Tutti';
+$string['manual_grading'] = 'Valutazione manuale';
+$string['manual_grading_send'] = 'Invia voto';
 $string['success:gradeupdated'] = 'Voto aggiornato con successo!';
 $string['error:updatefailed'] = 'Impossibile aggiornare il voto:';
-$string['error:invalidgrade'] = 'Inserire un voto numerico valido.';
+$string['error:invalidgrade'] = 'Inserisci un voto numerico valido.';
 $string['error:gradetoolarge'] = 'Il voto non può essere superiore a {$a->maxgrade}.';
-$string['error:negativegrade'] = 'Il voto non può essere un valore negativo.';
+$string['error:negativegrade'] = 'Il voto non può essere negativo.';
+$string['filter_button'] = 'Filtra';
+$string['filter_searchname'] = 'Cerca per nome';
+$string['filter_search_placeholder'] = 'Inserisci un nome da cercare';
+$string['filter_datefrom'] = 'Data di consegna da';
+$string['filter_dateto'] = 'Data valutata da';
+$string['filter_grade'] = 'Voto da';
+$string['filter_grade_placeholder'] = 'Inserisci il voto';
+$string['filter_status'] = 'Stato';
+$string['filter_clear'] = 'Cancella filtri';
+$string['filter_search'] = 'Cerca';
+$string['filter_active'] = 'Filtri attivi:';
+$string['filter_active_searchname'] = 'Nome: {$a}';
+$string['filter_active_datefrom'] = 'Da: {$a}';
+$string['filter_active_dateto'] = 'Da: {$a}';
+$string['filter_active_grade'] = 'Voto: {$a}';
+$string['filter_active_status'] = 'Stato: {$a}';

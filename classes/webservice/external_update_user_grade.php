@@ -1,4 +1,11 @@
 <?php
+    /**
+     * Core of webservice update grade user with external service
+     *
+     * @package     report_autograder
+     * @copyright   2025 ADSDR <eduardo.cubias@ct.uneatlantico.es>
+     * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+     */
     namespace report_autograder\webservice;
     defined('MOODLE_INTERNAL') || die();
 
@@ -39,20 +46,15 @@
         public static function update_user_grade($completion_id, $status, $grade) {
             global $USER;
 
-            // Validate parameters.
             $params = self::validate_parameters(self::update_user_grade_parameters(), [
                 'completion_id' => $completion_id,
                 'status' => $status,
                 'grade' => $grade
             ]);
 
-            // Optional: add context/permission checks if needed.
-            // For example, require_capability('report/autograder:grade', $context);
-
             try {
                 $response = user_grades::post_user_grades($params['completion_id'], $params['status'], $params['grade']);
             } catch (\Exception $e) {
-                // Re-throw as Moodle exception.
                 throw new \moodle_exception('error:apirequest', 'report_autograder', null, $e->getMessage());
             }
 

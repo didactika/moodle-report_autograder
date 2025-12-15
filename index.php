@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * Index.php.
+     *
+     * @package     report_autograder
+     * @copyright   2025 ADSDR <eduardo.cubias@ct.uneatlantico.es>
+     * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+     */
     require_once('../../config.php');
 
 // We need to output the header first, so we can see error messages.

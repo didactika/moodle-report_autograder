@@ -1,5 +1,11 @@
 <?php
-
+    /**
+     * This file defines the API calls for the service
+     *
+     * @package     report_autograder
+     * @copyright   2025 ADSDR <eduardo.cubias@ct.uneatlantico.es>
+     * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+     */
 namespace report_autograder\external_service;
 
 defined('MOODLE_INTERNAL') || die();
@@ -19,6 +25,8 @@ class user_grades
      * @param int $cmid The course module ID, sent as 'externalId'.
      * @param string $campusUuid The user's unique identifier.
      * @param string $pagination The pagination string as expected by the external API.
+     * @param array $status
+     * @param array $cmid_completions
      * @return array The full response from the service, including 'total' and 'data' keys.
      * @throws moodle_exception if the service is not configured, the request fails, or the response is invalid.
      */
@@ -45,22 +53,17 @@ class user_grades
 
         $url = new moodle_url(rtrim($serviceUrl, '/') . '/usergrades/', $params);
 
-        debugging('Calling external API with URL: ' . $url->out(false), DEBUG_ALL);
-
         try {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url->out(false));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_FAILONERROR, false);
             curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 
             $responseBody = curl_exec($ch);
 
             if ($responseBody === false) {
                 $error = curl_error($ch);
-                $error_no = curl_errno($ch);
                 curl_close($ch);
-                debugging("cURL request for \"" . $url->out(false) . "\" failed with: $error ($error_no)", DEBUG_ALL);
                 throw new moodle_exception('error:apirequest', 'report_autograder', null, $error);
             }
 
@@ -68,28 +71,23 @@ class user_grades
             curl_close($ch);
 
             if ($httpcode >= 400) {
-                $error = 'HTTP status code: ' . $httpcode;
-                debugging("cURL request for \"" . $url->out(false) . "\" returned non-2xx status: $httpcode", DEBUG_ALL);
-                throw new moodle_exception('error:apirequest', 'report_autograder', null, $error);
+                throw new moodle_exception('error:apirequest', 'report_autograder', null, 'HTTP status code: ' . $httpcode);
             }
 
             $data = json_decode($responseBody, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                debugging('Failed to decode JSON response: ' . json_last_error_msg(), DEBUG_ALL);
                 throw new moodle_exception('error:jsondecode', 'report_autograder', null, json_last_error_msg());
             }
 
             if (!is_array($data) || !isset($data['data']) || !isset($data['total'])) {
-                debugging('API response is not in the expected format or is missing keys. Response: ' . $responseBody, DEBUG_ALL);
                 throw new moodle_exception('error:invalidapiresponse', 'report_autograder');
             }
 
             return $data;
 
         } catch (\Exception $e) {
-            debugging('Generic exception caught during API call: ' . $e->getMessage(), DEBUG_ALL);
-            throw new moodle_exception('error:apirequest', 'report_autograder', null, $e->getMessage());
+            throw new moodle_exception('error:apirequest', 'report_autograder', null, json_encode($url));
         }
     }
 
@@ -102,7 +100,8 @@ class user_grades
      * @return array The API response decoded as an associative array
      * @throws moodle_exception
      */
-    public static function post_user_grades(int $completion_id, string $status, float $grade): array {
+    public static function post_user_grades(int $completion_id, string $status, float $grade): array
+    {
         $serviceUrl = get_config('report_autograder', 'serviceurl');
         if (empty($serviceUrl)) {
             throw new moodle_exception('error:serviceurlconfig', 'report_autograder');
@@ -119,7 +118,6 @@ class user_grades
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_FAILONERROR, true);
             curl_setopt($ch, CURLOPT_TIMEOUT, 15);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
@@ -143,12 +141,10 @@ class user_grades
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new moodle_exception('error:jsondecode', 'report_autograder', null, json_last_error_msg());
             }
-
             return $data;
 
         } catch (\Exception $e) {
             throw new moodle_exception('error:apirequest', 'report_autograder', null, $e->getMessage());
         }
     }
-
 }

@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Lang strings
- *
- * @package    report
- * @subpackage autograder
- * @copyright  2022
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+* Lang strings
+*
+* @package    report
+* @subpackage autograder
+* @copyright  2025
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*/
 
 $string['pluginname'] = 'Autograder Report';
 $string['header:student'] = 'Name';
@@ -40,7 +40,7 @@ $string['status:grading'] = 'Grading';
 $string['status:graded'] = 'Graded';
 $string['status:failed'] = 'Failed';
 $string['status:skipped'] = 'Skipped';
-    $string['status:manual_grading'] = 'Manual grading';
+$string['status:manual_grading'] = 'Manual grading';
 $string['feedback:nothing_to_show'] = 'No records found';
 $string['placeholder:automatic_grade'] = 'Automatic grade';
 $string['navigation:go_back'] = 'Go back';
@@ -48,7 +48,8 @@ $string['navigation:location'] = 'Automatic Grades Report';
 $string['error:grade_required'] = 'Grade is required';
 $string['action:grade'] = 'Grade';
 $string['setting:url_field_name'] = 'External service URL';
-$string['setting:url_field_desc'] = 'URL of the external service to send grade data to';
+$string['setting:url_field_desc'] = 'URL of the external service from which grade data will be requested';
+$string['error:apirequest'] = 'Error communicating with the external service: {$a}';
 $string['error:missing_config'] = 'The configuration for {$a} is missing. Please contact the administrator.';
 $string['error:building_report_data'] = 'Error building report data. Please contact the administrator.';
 $string['feedback:no_status'] = 'No Status';
@@ -67,9 +68,9 @@ $string['error:negativegrade'] = 'The grade cannot be a negative value.';
 $string['filter_button'] = 'Filter';
 $string['filter_searchname'] = 'Search by name';
 $string['filter_search_placeholder'] = 'Enter name to search';
-$string['filter_datefrom'] = 'Date from';
-$string['filter_dateto'] = 'Date to';
-$string['filter_grade'] = 'Grade';
+$string['filter_datefrom'] = 'Delivery date from';
+$string['filter_dateto'] = 'Graded date from';
+$string['filter_grade'] = 'Grade from';
 $string['filter_grade_placeholder'] = 'Enter grade';
 $string['filter_status'] = 'Status';
 $string['filter_clear'] = 'Clear filters';
@@ -77,7 +78,7 @@ $string['filter_search'] = 'Search';
 $string['filter_active'] = 'Active filters:';
 $string['filter_active_searchname'] = 'Name: {$a}';
 $string['filter_active_datefrom'] = 'From: {$a}';
-$string['filter_active_dateto'] = 'To: {$a}';
+$string['filter_active_dateto'] = 'From: {$a}';
 $string['filter_active_grade'] = 'Grade: {$a}';
 $string['filter_active_status'] = 'Status: {$a}';
 

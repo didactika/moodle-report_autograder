@@ -15,23 +15,24 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Lang strings
- *
- * @package    report
- * @subpackage autograder
- * @copyright  2022
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+* Lang strings
+*
+* @package    report
+* @subpackage autograder
+* @copyright  2025
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*/
 
-$string['pluginname'] = 'Reporte de calificaciones automáticas';
+
+$string['pluginname'] = 'Informe del Auto Calificador';
 $string['header:student'] = 'Nombre';
-$string['header:delivery_date'] = 'Fecha entregada';
+$string['header:delivery_date'] = 'Fecha de entrega';
 $string['header:modification_date'] = 'Última modificación (calificación)';
-$string['header:grade_date'] = 'Fecha a ser calificado';
+$string['header:grade_date'] = 'Fecha a calificar';
 $string['header:grade'] = 'Calificación';
 $string['header:status'] = 'Estado';
 $string['header:external_status'] = 'Estado';
-$string['header:completed_at'] = 'Fecha de calificación';
+$string['header:completed_at'] = 'Fecha calificada';
 $string['status:pending'] = 'Pendiente';
 $string['status:waiting_for_due_date'] = 'Esperando fecha de entrega';
 $string['status:waiting_for_grading'] = 'Esperando calificación';
@@ -41,24 +42,43 @@ $string['status:graded'] = 'Calificado';
 $string['status:failed'] = 'Fallido';
 $string['status:skipped'] = 'Omitido';
 $string['status:manual_grading'] = 'Calificación manual';
-$string['feedback:nothing_to_show'] = 'No se han encontrado registros';
-$string['placeholder:automatic_grade'] = 'Nota automática';
-$string['navigation:go_back'] = 'Regresar';
-$string['navigation:location'] = 'Reporte de Calificaciones Automáticas';
-$string['error:grade_required'] = 'La calificación es requerida';
+$string['feedback:nothing_to_show'] = 'No se encontraron registros';
+$string['placeholder:automatic_grade'] = 'Calificación automática';
+$string['navigation:go_back'] = 'Volver';
+$string['navigation:location'] = 'Informe de Calificaciones Automáticas';
+$string['error:apirequest'] = 'Error al comunicarse con el servicio externo: {$a}';
+$string['error:grade_required'] = 'La calificación es obligatoria';
 $string['action:grade'] = 'Calificar';
 $string['setting:url_field_name'] = 'URL del servicio externo';
-$string['setting:url_field_desc'] = 'URL del servicio externo para obtener los datos de calificación';
-$string['error:missing_config'] = 'Falta la configuración para {$a}. Por favor, contacte al administrador.';
-$string['error:building_report_data'] = 'Error al construir los datos del reporte. Por favor, contacte al administrador.';
+$string['setting:url_field_desc'] = 'URL del servicio externo al que se pedirán los datos de calificación';
+$string['error:missing_config'] = 'Falta la configuración de {$a}. Por favor, contacte al administrador.';
+$string['error:building_report_data'] = 'Error al generar los datos del informe. Por favor, contacte al administrador.';
 $string['feedback:no_status'] = 'Sin estado';
 $string['setting:pagination_limit_name'] = 'Límite de paginación';
-$string['setting:pagination_limit_desc'] = 'Número de elementos a mostrar por página en el informe del Autograder.';
-$string['report/autograder:view'] = 'Ver informe de autocalificador';
-$string['manual_grading'] = 'Calificación Manual';
-$string['manual_grading_send'] = 'Enviar Calificación';
-$string['success:gradeupdated'] = '¡Calificación actualizada con éxito!';
-$string['error:updatefailed'] = 'Fallo al actualizar la calificación:';
-$string['error:invalidgrade'] = 'Por favor, ingrese una calificación numérica válida.';
-$string['error:gradetoolarge'] = 'La calificación no puede ser mayor a {$a->maxgrade}.';
-$string['error:negativegrade'] = 'La calificación no puede ser un valor negativo.';
+$string['setting:pagination_limit_desc'] = 'Número de elementos a mostrar por página en el informe del Auto Calificador.';
+$string['report/autograder:view'] = 'Ver informe del Auto Calificador';
+$string['filter_all'] = 'Todos';
+$string['manual_grading'] = 'Calificación manual';
+$string['manual_grading_send'] = 'Enviar calificación';
+$string['success:gradeupdated'] = '¡Calificación actualizada correctamente!';
+$string['error:updatefailed'] = 'Error al actualizar la calificación:';
+$string['error:invalidgrade'] = 'Ingrese una calificación numérica válida.';
+$string['error:gradetoolarge'] = 'La calificación no puede ser mayor que {$a->maxgrade}.';
+$string['error:negativegrade'] = 'La calificación no puede ser negativa.';
+$string['filter_button'] = 'Filtrar';
+$string['filter_searchname'] = 'Buscar por nombre';
+$string['filter_search_placeholder'] = 'Ingrese un nombre para buscar';
+$string['filter_datefrom'] = 'Fecha de entrega desde';
+$string['filter_dateto'] = 'Fecha calificada desde';
+$string['filter_grade'] = 'Calificación desde';
+$string['filter_grade_placeholder'] = 'Ingrese la calificación';
+$string['filter_status'] = 'Estado';
+$string['filter_clear'] = 'Limpiar filtros';
+$string['filter_search'] = 'Buscar';
+$string['filter_active'] = 'Filtros activos:';
+$string['filter_active_searchname'] = 'Nombre: {$a}';
+$string['filter_active_datefrom'] = 'Desde: {$a}';
+$string['filter_active_dateto'] = 'Desde: {$a}';
+$string['filter_active_grade'] = 'Calificación: {$a}';
+$string['filter_active_status'] = 'Estado: {$a}';
+
