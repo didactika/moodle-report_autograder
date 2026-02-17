@@ -100,17 +100,16 @@ class user_grades
      * @return array The API response decoded as an associative array
      * @throws moodle_exception
      */
-    public static function post_user_grades(int $completion_id, string $status, float $grade): array
+    public static function post_user_grades(string $userUuid, int $cmid, float $grade): array
     {
         $serviceUrl = get_config('report_autograder', 'serviceurl');
         if (empty($serviceUrl)) {
             throw new moodle_exception('error:serviceurlconfig', 'report_autograder');
         }
 
-        $url = rtrim($serviceUrl, '/') . '/usergrades/' . $completion_id;
+        $url = rtrim($serviceUrl, '/') . '/usergrades/' . $userUuid . '/' . $cmid;
 
         $payload = json_encode([
-            'status' => $status,
             'grade' => $grade
         ]);
 

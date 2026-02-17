@@ -21,25 +21,23 @@ class data_enricher {
 
         $useruuids = array_map(fn($item) => $item['userUuid'], $external_data);
         $users_by_id = $DB->get_records_list('user', 'idnumber', $useruuids, '', 'id, idnumber, firstname, lastname');
+
         $users_by_uuid = [];
+        $user_ids_list = [];
+
         foreach ($users_by_id as $user_record) {
             if (!empty($user_record->idnumber)) {
                 $users_by_uuid[$user_record->idnumber] = $user_record;
+                $user_ids_list[] = $user_record->id;
             }
         }
 
-        $userids = array_keys($users_by_id);
+        $userids_keys = array_keys($users_by_id);
         $cm = get_coursemodule_from_id(null, $cmid, 0, false, MUST_EXIST);
-        $gradesinfo = \grade_get_grades($courseid, 'mod', $cm->modname, $cm->instance, $userids);
+        $gradesinfo = \grade_get_grades($courseid, 'mod', $cm->modname, $cm->instance, $userids_keys);
         $gradesbyuserid = !empty($gradesinfo->items[0]->grades) ? $gradesinfo->items[0]->grades : [];
 
-        $completionids = [];
-        foreach ($external_data as $item) {
-            if (!empty($item['externalId'])) {
-                $completionids[] = (int)$item['externalId'];
-            }
-        }
-        $completionRecords = self::get_completion_records($completionids);
+        $completionRecords = self::get_completion_records_by_users($cmid, $user_ids_list);
 
         $final_results = [];
         foreach ($external_data as $external_item) {
@@ -47,8 +45,9 @@ class data_enricher {
 
             $user = $users_by_uuid[$external_item_obj->userUuid] ?? null;
             $grade = $user && isset($gradesbyuserid[$user->id]) ? $gradesbyuserid[$user->id] : null;
-            $completion = !empty($external_item['externalId']) && isset($completionRecords[$external_item['externalId']])
-                ? $completionRecords[$external_item['externalId']]
+
+            $completion = ($user && isset($completionRecords[$user->id]))
+                ? $completionRecords[$user->id]
                 : null;
 
             $local_data = self::extract_moodle_details($user, $grade, $completion);
@@ -60,8 +59,11 @@ class data_enricher {
                 ? \userdate($local_data->submission_date_timestamp)
                 : '-';
 
+            // CORRECCIÓN CLAVE: Usamos el ID de completion de Moodle si existe, no el externo.
+            $moodle_completion_id = $completion ? (int)$completion->id : 0;
+
             $final_results[] = [
-                'id' => $external_item['id'],
+                'id' => $moodle_completion_id,
                 'user_name' => $local_data->user_name ?? \get_string('unknownuser'),
                 'grade' => $local_data->grade,
                 'submission_date' => $submission_date_display,
@@ -75,21 +77,21 @@ class data_enricher {
         return $final_results;
     }
 
-    private static function get_completion_records(array $completionids): array {
+    private static function get_completion_records_by_users(int $cmid, array $userids): array {
         global $DB;
-        if (empty($completionids)) {
+        if (empty($userids)) {
             return [];
         }
-        list($insql, $params) = $DB->get_in_or_equal($completionids, SQL_PARAMS_NAMED);
-        $sql = "SELECT id, userid, timemodified, completionstate
+
+        list($insql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        $params['cmid'] = $cmid;
+
+        $sql = "SELECT userid, id, timemodified, completionstate
                   FROM {course_modules_completion}
-                 WHERE id $insql";
-        $rows = $DB->get_records_sql($sql, $params);
-        $completionRecords = [];
-        foreach ($rows as $row) {
-            $completionRecords[$row->id] = $row;
-        }
-        return $completionRecords;
+                 WHERE coursemoduleid = :cmid
+                   AND userid $insql";
+
+        return $DB->get_records_sql($sql, $params);
     }
 
     private static function extract_moodle_details(?\stdClass $user, ?\stdClass $grade, ?\stdClass $completion): \stdClass {
@@ -129,14 +131,12 @@ class data_enricher {
     private static function format_completion_date(array $external_item): array {
         $completed_at_display = '-';
         $completed_at_timestamp = 0;
-        if (!empty($external_item['completedAt'])) {
+        if (!empty($external_item['scheduledGradingTime'])) {
             try {
-                $datetime = new \DateTime($external_item['completedAt']);
+                $datetime = new \DateTime($external_item['scheduledGradingTime']);
                 $completed_at_timestamp = $datetime->getTimestamp();
                 $completed_at_display = \userdate($completed_at_timestamp);
-            } catch (\Exception $e) {
-                // Ignore invalid date format
-            }
+            } catch (\Exception $e) {}
         }
         return [$completed_at_display, $completed_at_timestamp];
     }

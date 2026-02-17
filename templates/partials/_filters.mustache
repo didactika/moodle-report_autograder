@@ -66,31 +66,40 @@
                         <label for="status">{{#str}}filter_status, report_autograder{{/str}}</label>
                         <select name="status" id="status" class="form-control">
                             <option value="">{{#str}}filter_all, report_autograder{{/str}}</option>
-                            <option value="pending" {{#filters.status_pending}}selected{{/filters.status_pending}}>
+
+                            <option value="PENDING" {{#filters.status_pending}}selected{{/filters.status_pending}}>
                                 {{#str}}status:pending, report_autograder{{/str}}
                             </option>
-                            <option value="waiting_for_due_date" {{#filters.status_waiting_for_due_date}}selected{{/filters.status_waiting_for_due_date}}>
-                                {{#str}}status:waiting_for_due_date, report_autograder{{/str}}
+
+                            <option value="AWAITING_CONFIRMATION_OF_RATING" {{#filters.status_awaiting_confirmation_of_rating}}selected{{/filters.status_awaiting_confirmation_of_rating}}>
+                                {{#str}}status:awaiting_confirmation_of_rating, report_autograder{{/str}}
                             </option>
-                            <option value="waiting_for_grading" {{#filters.status_waiting_for_grading}}selected{{/filters.status_waiting_for_grading}}>
-                                {{#str}}status:waiting_for_grading, report_autograder{{/str}}
-                            </option>
-                            <option value="ready_to_grade" {{#filters.status_ready_to_grade}}selected{{/filters.status_ready_to_grade}}>
+
+                            <option value="READY_TO_GRADE" {{#filters.status_ready_to_grade}}selected{{/filters.status_ready_to_grade}}>
                                 {{#str}}status:ready_to_grade, report_autograder{{/str}}
                             </option>
-                            <option value="grading" {{#filters.status_grading}}selected{{/filters.status_grading}}>
-                                {{#str}}status:grading, report_autograder{{/str}}
+
+                            <option value="RETRY" {{#filters.status_retry}}selected{{/filters.status_retry}}>
+                                {{#str}}status:retry, report_autograder{{/str}}
                             </option>
-                            <option value="graded" {{#filters.status_graded}}selected{{/filters.status_graded}}>
+
+                            <option value="GRADED" {{#filters.status_graded}}selected{{/filters.status_graded}}>
                                 {{#str}}status:graded, report_autograder{{/str}}
                             </option>
-                            <option value="failed" {{#filters.status_failed}}selected{{/filters.status_failed}}>
+
+                            <option value="FAILED" {{#filters.status_failed}}selected{{/filters.status_failed}}>
                                 {{#str}}status:failed, report_autograder{{/str}}
                             </option>
-                            <option value="skipped" {{#filters.status_skipped}}selected{{/filters.status_skipped}}>
+
+                            <option value="FAILED_NOTIFIED" {{#filters.status_failed_notified}}selected{{/filters.status_failed_notified}}>
+                                {{#str}}status:failed_notified, report_autograder{{/str}}
+                            </option>
+
+                            <option value="SKIPPED" {{#filters.status_skipped}}selected{{/filters.status_skipped}}>
                                 {{#str}}status:skipped, report_autograder{{/str}}
                             </option>
-                            <option value="manual_grading" {{#filters.status_manual_grading}}selected{{/filters.status_manual_grading}}>
+
+                            <option value="MANUAL_GRADING" {{#filters.status_manual_grading}}selected{{/filters.status_manual_grading}}>
                                 {{#str}}status:manual_grading, report_autograder{{/str}}
                             </option>
                         </select>
