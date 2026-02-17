@@ -107,7 +107,12 @@ class user_grades
             throw new moodle_exception('error:serviceurlconfig', 'report_autograder');
         }
 
-        $url = rtrim($serviceUrl, '/') . '/usergrades/' . $userUuid . '/' . $cmid;
+        $campusUuid = get_config('local_message_broker', 'siteexternalid');
+        if (empty($campusUuid)) {
+            throw new moodle_exception('error:missing_config', 'report_autograder', null, 'siteexternalid (local_message_broker)');
+        }
+
+        $url = rtrim($serviceUrl, '/') . '/usergrades/' . $userUuid . '/' . $cmid . '?campusUuid=' . $campusUuid;
 
         $payload = json_encode([
             'grade' => $grade
