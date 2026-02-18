@@ -30,7 +30,7 @@ class user_grades
      * @return array The full response from the service, including 'total' and 'data' keys.
      * @throws moodle_exception if the service is not configured, the request fails, or the response is invalid.
      */
-    public static function get_user_grades(int $cmid, string $campusUuid, string $pagination, array $status, array $cmid_completions): array
+    public static function get_user_grades(int $cmid, string $campusUuid, string $pagination, array $api_filters, array $cmid_completions): array
     {
         $serviceUrl = get_config('report_autograder', 'serviceurl');
         if (empty($serviceUrl)) {
@@ -43,8 +43,12 @@ class user_grades
             'pagination' => $pagination
         ];
 
-        if (!empty($status)) {
-            $params['status'] = $status[0];
+        if (!empty($api_filters['status'])) {
+            $params['status'] = $api_filters['status'];
+        }
+
+        if (!empty($api_filters['dateGraded'])) {
+            $params['scheduledDate'] = $api_filters['dateGraded'];
         }
 
         if (!empty($cmid_completions)) {

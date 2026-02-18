@@ -50,15 +50,6 @@ class filter_handler {
                         $whereClauses[] = "g$joinCounter.finalgrade >= :mingrade$joinCounter";
                         $params["mingrade$joinCounter"] = $mingrade;
                         break;
-
-                    case 'dateGraded':
-                        $timestamp = strtotime($filter_value);
-                        $joinCounter++;
-                        $joins .= " JOIN {grade_grades} g$joinCounter ON g$joinCounter.userid = c.userid";
-                        $joins .= " JOIN {grade_items} i$joinCounter ON i$joinCounter.id = g$joinCounter.itemid";
-                        $whereClauses[] = "g$joinCounter.timemodified >= :gradedate$joinCounter";
-                        $params["gradedate$joinCounter"] = $timestamp;
-                        break;
                 }
             }
 
@@ -68,7 +59,7 @@ class filter_handler {
                      WHERE " . implode(' AND ', $whereClauses);
 
             $cmid_completions = $DB->get_fieldset_sql($sql, $params);
-            return array_unique($cmid_completions);
+            return empty($cmid_completions) ? [0] : array_unique($cmid_completions);
 
         } catch (\dml_exception $e) {
             error_log('[AUTOGRADER][FILTER_COMBINED][DML_EXCEPTION] ' . $e->getMessage());
@@ -78,7 +69,7 @@ class filter_handler {
 
     public static function get_moodle_filters(array $filters): array {
         $filter_moodle = [];
-        $filter_type_moodle = ['nameUser', 'dateDelivered', 'grade', 'dateGraded'];
+        $filter_type_moodle = ['nameUser', 'dateDelivered', 'grade'];
 
         if (empty($filters)) {
             return [];
@@ -101,7 +92,7 @@ class filter_handler {
 
     public static function get_api_filters(array $filters): array {
         $filter_api = [];
-        $filter_type_api = ['status'];
+        $filter_type_api = ['status', 'dateGraded'];
 
         if (empty($filters)) {
             return [];
@@ -120,11 +111,15 @@ class filter_handler {
             }
         }
 
-        $filter_status = [];
+        $processed_filters = [];
         if (!empty($filter_api['status'])) {
-            $filter_status = [strtoupper($filter_api['status'])];
+            $processed_filters['status'] = strtoupper($filter_api['status']);
         }
 
-        return $filter_status;
+        if (!empty($filter_api['dateGraded'])) {
+            $processed_filters['dateGraded'] = $filter_api['dateGraded'];
+        }
+
+        return $processed_filters;
     }
 }
