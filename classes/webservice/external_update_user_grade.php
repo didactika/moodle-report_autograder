@@ -44,7 +44,7 @@
          * @throws \moodle_exception
          */
         public static function update_user_grade($completion_id, $status, $grade) {
-            global $DB; // Necesario para consultar la base de datos de Moodle
+            global $DB;
 
             $params = self::validate_parameters(self::update_user_grade_parameters(), [
                 'completion_id' => $completion_id,
@@ -52,10 +52,8 @@
                 'grade' => $grade
             ]);
 
-            // 1. Busquemos el registro de 'completion' en Moodle usando el ID que envió el JS
             $completion = $DB->get_record('course_modules_completion', ['id' => $params['completion_id']], '*', MUST_EXIST);
 
-            // 2. Con el userid del completion, buscamos al usuario para obtener su IDNUMBER (UUID)
             $user = $DB->get_record('user', ['id' => $completion->userid], 'id, idnumber', MUST_EXIST);
 
             if (empty($user->idnumber)) {
@@ -63,12 +61,10 @@
             }
 
             try {
-                // 3. Llamamos al servicio 'user_grades' usando los datos traducidos:
-                // En lugar de enviar IDs internos, enviamos el UUID del usuario y el ID del módulo (cmid)
-                $response = user_grades::post_user_grades(
-                    $user->idnumber,            // UUID del alumno
-                    $completion->coursemoduleid,// Course Module ID
-                    $params['grade']            // Nota
+               $response = user_grades::update_user_grade(
+                    $user->idnumber,
+                    $completion->coursemoduleid,
+                    $params['grade']
                 );
             } catch (\Exception $e) {
                 throw new \moodle_exception('error:apirequest', 'report_autograder', null, $e->getMessage());
