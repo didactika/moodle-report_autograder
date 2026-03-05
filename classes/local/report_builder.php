@@ -51,7 +51,13 @@ class report_builder {
             $final_results = data_enricher::enrich_data($external_response['data'], $course->id, $cm->id);
         }
 
-        $grade_item = \grade_item::fetch(['itemtype' => 'mod', 'itemmodule' => $cm->modname, 'iteminstance' => $cm->instance, 'courseid' => $course->id]);
+        $grade_item = \grade_item::fetch([
+            'itemtype' => 'mod',
+            'itemmodule' => $cm->modname,
+            'iteminstance' => $cm->instance,
+            'courseid' => $course->id,
+            'itemnumber' => 0
+        ]);
         $maxgrade = $grade_item ? $grade_item->grademax : null;
 
         return [
