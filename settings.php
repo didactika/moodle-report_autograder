@@ -25,15 +25,26 @@
 defined('MOODLE_INTERNAL') || die;
 
 
-$settings->add(new admin_setting_configtext('report_autograder/serviceurl',
+$settings->add(new admin_setting_configtext(
+    'report_autograder/siteexternalid',
+    get_string('setting:site_external_id', 'report_autograder'),
+    get_string('setting:site_externalid_desc', 'report_autograder'),
+    '',
+    PARAM_TEXT
+));
+
+$settings->add(new admin_setting_configtext(
+    'report_autograder/serviceurl',
     get_string('setting:url_field_name', 'report_autograder'),
     get_string('setting:url_field_desc', 'report_autograder'),
     'http://autograder-service-app-1:8085',
-    PARAM_URL));
+    PARAM_URL
+));
 
-$settings->add(new admin_setting_configtext('report_autograder/paginationlimit',
+$settings->add(new admin_setting_configtext(
+    'report_autograder/paginationlimit',
     get_string('setting:pagination_limit_name', 'report_autograder'),
     get_string('setting:pagination_limit_desc', 'report_autograder'),
     20,
-    PARAM_INT));
-
+    PARAM_INT
+));

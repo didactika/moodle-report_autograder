@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
-* Lang strings
-*
-* @package    report
-* @subpackage autograder
-* @copyright  2025
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Lang strings
+ *
+ * @package    report
+ * @subpackage autograder
+ * @copyright  2025
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 
 $string['pluginname'] = 'Rapporto dell’Auto Valutatore';
@@ -48,6 +48,8 @@ $string['navigation:go_back'] = 'Indietro';
 $string['navigation:location'] = 'Rapporto dei voti automatici';
 $string['error:grade_required'] = 'Il voto è obbligatorio';
 $string['action:grade'] = 'Valuta';
+$string['setting:site_external_id'] = 'ID esterno del sito';
+$string['setting:site_externalid_desc'] = "L'identificatore esterno per questo sito Moodle utilizzato dal servizio di valutazione automatica";
 $string['setting:url_field_name'] = 'URL del servizio esterno';
 $string['setting:url_field_desc'] = "URL del servizio esterno da cui verranno richiesti i dati dei voti";
 $string['error:apirequest'] = 'Errore nella comunicazione con il servizio esterno: {$a}';
