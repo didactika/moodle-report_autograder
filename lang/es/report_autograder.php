@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
-* Lang strings
-*
-* @package    report
-* @subpackage autograder
-* @copyright  2025
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Lang strings
+ *
+ * @package    report
+ * @subpackage autograder
+ * @copyright  2025
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 
 $string['pluginname'] = 'Informe del Auto Calificador';
@@ -49,6 +49,8 @@ $string['navigation:location'] = 'Informe de Calificaciones Automáticas';
 $string['error:apirequest'] = 'Error al comunicarse con el servicio externo: {$a}';
 $string['error:grade_required'] = 'La calificación es obligatoria';
 $string['action:grade'] = 'Calificar';
+$string['setting:site_external_id'] = 'ID externo del sitio';
+$string['setting:site_externalid_desc'] = 'El identificador externo para este sitio Moodle utilizado por el servicio de calificación automática';
 $string['setting:url_field_name'] = 'URL del servicio externo';
 $string['setting:url_field_desc'] = 'URL del servicio externo al que se pedirán los datos de calificación';
 $string['error:missing_config'] = 'Falta la configuración de {$a}. Por favor, contacte al administrador.';
@@ -81,4 +83,3 @@ $string['filter_active_datefrom'] = 'Desde: {$a}';
 $string['filter_active_dateto'] = 'Desde: {$a}';
 $string['filter_active_grade'] = 'Calificación: {$a}';
 $string['filter_active_status'] = 'Estado: {$a}';
-

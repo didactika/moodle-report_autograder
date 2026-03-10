@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
-* Lang strings
-*
-* @package    report
-* @subpackage autograder
-* @copyright  2025
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Lang strings
+ *
+ * @package    report
+ * @subpackage autograder
+ * @copyright  2025
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['pluginname'] = 'Autograder Report';
 $string['header:student'] = 'Name';
@@ -47,6 +47,8 @@ $string['navigation:go_back'] = 'Go back';
 $string['navigation:location'] = 'Automatic Grades Report';
 $string['error:grade_required'] = 'Grade is required';
 $string['action:grade'] = 'Grade';
+$string['setting:site_external_id'] = 'Site External ID';
+$string['setting:site_externalid_desc'] = 'The external identifier for this Moodle site used by the autograder service';
 $string['setting:url_field_name'] = 'External service URL';
 $string['setting:url_field_desc'] = 'URL of the external service from which grade data will be requested';
 $string['error:apirequest'] = 'Error communicating with the external service: {$a}';
@@ -81,4 +83,3 @@ $string['filter_active_datefrom'] = 'From: {$a}';
 $string['filter_active_dateto'] = 'From: {$a}';
 $string['filter_active_grade'] = 'Grade: {$a}';
 $string['filter_active_status'] = 'Status: {$a}';
-
