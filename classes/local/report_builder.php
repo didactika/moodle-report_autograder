@@ -1,5 +1,7 @@
 <?php
+
 namespace report_autograder\local;
+
 /**
  * This file communicates requests to the appropriate flow between the API and Moodle, in addition to parsing pagination details and checking if there are filters to be processed.
  *
@@ -15,9 +17,11 @@ require_once($CFG->libdir . '/gradelib.php');
 
 use report_autograder\external_service\user_grades;
 
-class report_builder {
+class report_builder
+{
 
-    public static function get_report_data(int $cmid, int $page, array $filters): array {
+    public static function get_report_data(int $cmid, int $page, array $filters): array
+    {
         list($course, $cm) = get_course_and_cm_from_cmid($cmid);
         if (!$course || !$cm) {
             throw new \moodle_exception('invalidcoursemodule');
@@ -36,7 +40,7 @@ class report_builder {
         $end = $start + $limit;
         $paginationstring = "{$start},{$end}";
 
-        $campusuuid = get_config('local_message_broker', 'siteexternalid');
+        $campusuuid = get_config('report_autograder', 'siteexternalid');
         if (empty($campusuuid)) {
             throw new \moodle_exception('error:missing_config', 'report_autograder', null, 'siteexternalid');
         }

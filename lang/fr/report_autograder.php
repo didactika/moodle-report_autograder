@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
-* Lang strings
-*
-* @package    report
-* @subpackage autograder
-* @copyright  2025
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Lang strings
+ *
+ * @package    report
+ * @subpackage autograder
+ * @copyright  2025
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['pluginname'] = "Rapport de l'Auto Évaluateur";
 $string['header:student'] = 'Nom';
@@ -47,6 +47,8 @@ $string['navigation:go_back'] = 'Retour';
 $string['navigation:location'] = 'Rapport de notes automatiques';
 $string['error:grade_required'] = 'La note est obligatoire';
 $string['action:grade'] = 'Noter';
+$string['setting:site_external_id'] = 'ID externe du site';
+$string['setting:site_externalid_desc'] = "L'identifiant externe de ce site Moodle utilisé par le service de notation automatique";
 $string['setting:url_field_name'] = 'URL du service externe';
 $string['setting:url_field_desc'] = "URL du service externe à partir duquel les données de notes seront demandées";
 $string['error:missing_config'] = 'La configuration pour {$a} est manquante. Veuillez contacter l’administrateur.';

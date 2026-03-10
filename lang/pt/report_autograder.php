@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
-* Lang strings
-*
-* @package    report
-* @subpackage autograder
-* @copyright  2025
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Lang strings
+ *
+ * @package    report
+ * @subpackage autograder
+ * @copyright  2025
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $string['pluginname'] = 'Relatório do Avaliador Automático';
 $string['header:student'] = 'Nome';
@@ -47,6 +47,8 @@ $string['navigation:go_back'] = 'Voltar';
 $string['navigation:location'] = 'Relatório de Notas Automáticas';
 $string['error:grade_required'] = 'A nota é obrigatória';
 $string['action:grade'] = 'Avaliar';
+$string['setting:site_external_id'] = 'ID externo do site';
+$string['setting:site_externalid_desc'] = 'O identificador externo para este site Moodle usado pelo serviço de avaliação automática';
 $string['setting:url_field_name'] = 'URL do serviço externo';
 $string['setting:url_field_desc'] = 'URL do serviço externo do qual os dados de notas serão solicitados';
 $string['error:apirequest'] = 'Erro ao comunicar-se com o serviço externo: {$a}';
