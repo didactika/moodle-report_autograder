@@ -26,13 +26,14 @@ class user_grades
      *
      * @param int $cmid The course module ID, sent as 'externalId'.
      * @param string $campusUuid The campus unique identifier.
-     * @param string $pagination The pagination string as expected by the external API.
+     * @param int $page The pagination int as expected by the external API.
+     * @param int $limit The pagination int as expected by the external API.
      * @param array $api_filters
      * @param array $cmid_completions Array of user UUIDs
      * @return array The full response from the service, including 'total' and 'data' keys.
      * @throws moodle_exception if the service is not configured, the request fails, or the response is invalid.
      */
-    public static function get_user_grades(int $cmid, string $campusUuid, string $pagination, array $api_filters, array $cmid_completions): array
+    public static function get_user_grades(int $cmid, string $campusUuid, int $page, int $limit, array $api_filters, array $cmid_completions): array
     {
         $serviceUrl = get_config('report_autograder', 'serviceurl');
         if (empty($serviceUrl)) {
@@ -40,9 +41,10 @@ class user_grades
         }
 
         $params = [
-            'campusUuid' => $campusUuid,
-            'externalId' => $cmid,
-            'pagination' => $pagination
+            'campus[uuid]' => $campusUuid,
+            'courseModuleExternalId' => $cmid,
+            'page' => $page,
+            'limit' => $limit
         ];
 
         if (!empty($api_filters['status'])) {
@@ -75,6 +77,17 @@ class user_grades
 
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
+
+            if ($httpcode == 404 || empty(trim($responseBody))) {
+                return [
+                    'data' => [],
+                    'pagination' => [
+                        'total' => 0,
+                        'page' => $page,
+                        'limit' => $limit
+                    ]
+                ];
+            }
 
             if ($httpcode >= 400) {
                 throw new moodle_exception('error:apirequest', 'report_autograder', null, 'HTTP status code: ' . $httpcode);

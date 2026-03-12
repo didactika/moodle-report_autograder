@@ -23,26 +23,18 @@ export const renderTable = (records, onRenderComplete) => {
         if (typeof onRenderComplete === 'function') {
             onRenderComplete();
         }
-    }).catch(() => {
-        // Handle error
-    });
+    }).catch(() => {});
 };
 
-/**
- * Shows a loading state in the table.
- */
 export const showLoading = () => {
     const container = $('#autograder-report-container tbody');
     container.empty();
-    templates.render('core/loading', {}).then(html => {
+    const context = { rows: [1, 2, 3] };
+    templates.render('report_autograder/_skeleton_rows', context).then(html => {
         container.html(html);
     });
 };
 
-/**
- * Renders the initial report table structure.
- * @param {Function} onRenderComplete Callback to be executed after rendering.
- */
 export const renderReportTable = (onRenderComplete) => {
     const container = $('#autograder-report-container');
     templates.render('report_autograder/report_table', {})

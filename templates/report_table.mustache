@@ -1,20 +1,27 @@
-<table class="table table-striped">
-    <thead>
+<table class="table table-striped table-hover">
+    <thead class="table-light">
         <tr>
-            <th>{{#str}} header:student, report_autograder {{/str}}</th>
-            <th>{{#str}} header:delivery_date, report_autograder {{/str}}</th>
-            <th>{{#str}} header:grade, report_autograder {{/str}}</th>
-            <th>{{#str}} header:status, report_autograder {{/str}}</th>
-            <th>{{#str}} header:completed_at, report_autograder {{/str}}</th>
-            <th>{{#str}} manual_grading, report_autograder {{/str}}</th>
+            <th scope="col">
+                <span class="autograder-sortable-header" style="cursor: pointer;" data-sortby="user_name" data-sorttype="string">
+                    <i class="fa fa-sort"></i> {{#str}} header:student, report_autograder {{/str}}
+                </span>
+            </th>
+            <th scope="col">
+                <span class="autograder-sortable-header" style="cursor: pointer;" data-sortby="submission_date" data-sorttype="number">
+                    <i class="fa fa-sort"></i> {{#str}} header:delivery_date, report_autograder {{/str}}
+                </span>
+            </th>
+            <th scope="col">{{#str}} header:external_status, report_autograder {{/str}}</th>
+            <th scope="col">
+                <span class="autograder-sortable-header" style="cursor: pointer;" data-sortby="completed_at" data-sorttype="number">
+                    <i class="fa fa-sort"></i> {{#str}} header:completed_at, report_autograder {{/str}}
+                </span>
+            </th>
+            <th scope="col">{{#str}} header:grade, report_autograder {{/str}}</th>
+            <th scope="col"></th>
         </tr>
     </thead>
-    <tbody>
-        <tr class="loading-row">
-            <td colspan="6" class="text-center">
-                {{#pix}}i/loading, core{{/pix}} {{#str}} loading, core {{/str}}
-            </td>
-        </tr>
-    </tbody>
+    <tbody id="autograder-table-body">
+        </tbody>
 </table>
-<div id="autograder-pagination-container"></div>
+<div id="autograder-pagination-container" class="mt-4"></div>
