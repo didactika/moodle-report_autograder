@@ -18,12 +18,6 @@ import { showLoading, renderTable, renderReportTable } from './ui/report';
 import { renderPagination } from './ui/pagination';
 import { attachFilterListeners, attachManualGradeButtonListeners } from './ui/form';
 
-/**
- * Handles the logic for updating a user's grade.
- * @param {number} completionId The completion ID.
- * @param {number} grade The new grade.
- * @param {Function} onComplete Callback to restore button state.
- */
 const handleGradeUpdate = (completionId, grade, onComplete) => {
     updateUserGrade(completionId, grade)
         .then(() => {
@@ -32,7 +26,8 @@ const handleGradeUpdate = (completionId, grade, onComplete) => {
         .catch(async (error) => {
             // eslint-disable-next-line no-console
             console.error('Error updating grade:', error);
-            notification.add(await getString('error:updatefailed', 'report_autograder'), 'error');
+            const msg = await getString('error:updatefailed', 'report_autograder');
+            notification.addNotification({ message: msg, type: 'error' });
         })
         .always(() => {
             if (typeof onComplete === 'function') {
@@ -41,11 +36,6 @@ const handleGradeUpdate = (completionId, grade, onComplete) => {
         });
 };
 
-/**
- * Fetches data and renders the complete report view.
- * @param {number} page The page number to fetch.
- * @param {Array} filters Optional filters.
- */
 const fetchAndRenderReport = (page, filters = []) => {
     setCurrentPage(page);
     setFilters(filters);
@@ -63,13 +53,12 @@ const fetchAndRenderReport = (page, filters = []) => {
         })
         .catch(async (error) => {
             const msg = await getString('error:apirequest', 'report_autograder', error.message);
-            $('#autograder-report-container tbody').html(`<div class="alert alert-danger">${msg}</div>`);
+            notification.addNotification({ message: msg, type: 'error' });
+
+            renderTable([]);
         });
 };
 
-/**
- * Oculta el bloque de completion automático de Moodle (activity-header / completion-info)
- */
 const hideMoodleCompletionBlocks = () => {
     const intervalId = setInterval(() => {
         const blocks = document.querySelectorAll('.activity-header');
@@ -82,13 +71,6 @@ const hideMoodleCompletionBlocks = () => {
     }, 200);
 };
 
-
-/**
- * Initializes the autograder report.
- *
- * @param {number} cmid The course module ID.
- * @export
- */
 export const init = cmid => {
     initState(cmid);
     const container = $('#autograder-report-container');

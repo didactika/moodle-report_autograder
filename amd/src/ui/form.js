@@ -3,12 +3,6 @@ import notification from 'core/notification';
 import { get_string as getString } from 'core/str';
 import templates from 'core/templates';
 
-/**
- * Attaches event listeners to the filter buttons.
- *
- * @param {Function} onFilterChange Callback for when filters are applied.
- * @param {Function} onFilterClear Callback for when filters are cleared.
- */
 export const attachFilterListeners = (onFilterChange, onFilterClear) => {
     $('#autograder-filter-form').on('submit', e => {
         e.preventDefault();
@@ -59,11 +53,6 @@ export const attachFilterListeners = (onFilterChange, onFilterClear) => {
     });
 };
 
-/**
- * Attaches click listeners to all manual grade buttons.
- * @param {number} maxGrade The maximum allowed grade.
- * @param {Function} onGradeUpdate Callback for when a grade should be updated.
- */
 export const attachManualGradeButtonListeners = (maxGrade, onGradeUpdate) => {
     const buttons = $('.manual-grade-btn');
 
@@ -78,32 +67,22 @@ export const attachManualGradeButtonListeners = (maxGrade, onGradeUpdate) => {
 
         const validateAndProceed = async () => {
             if (grade === '' || isNaN(parseFloat(grade))) {
-                notification.add(
-                    await getString('error:invalidgrade', 'report_autograder'),
-                    'error'
-                );
+                const msg = await getString('error:invalidgrade', 'report_autograder');
+                notification.addNotification({ message: msg, type: 'error' });
                 return;
             }
 
             const gradeVal = parseFloat(grade);
 
             if (maxGrade !== null && gradeVal > maxGrade) {
-                notification.add(
-                    await getString(
-                        'error:gradetoolarge',
-                        'report_autograder',
-                        { maxgrade: maxGrade }
-                    ),
-                    'error'
-                );
+                const msg = await getString('error:gradetoolarge', 'report_autograder', { maxgrade: maxGrade });
+                notification.addNotification({ message: msg, type: 'error' });
                 return;
             }
 
             if (gradeVal < 0) {
-                notification.add(
-                    await getString('error:negativegrade', 'report_autograder'),
-                    'error'
-                );
+                const msg = await getString('error:negativegrade', 'report_autograder');
+                notification.addNotification({ message: msg, type: 'error' });
                 return;
             }
 
@@ -126,4 +105,3 @@ export const attachManualGradeButtonListeners = (maxGrade, onGradeUpdate) => {
         await validateAndProceed();
     });
 };
-
