@@ -1,0 +1,34 @@
+#page-report-autograder-index {
+    @keyframes autograder-skeleton-pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.8; }
+        100% { opacity: 1; }
+    }
+
+    .autograder-skeleton {
+        animation: autograder-skeleton-pulse 3.5s ease-in-out infinite;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        display: inline-block;
+        height: 20px;
+        width: 100%;
+    }
+
+    .autograder-skeleton.avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+    }
+
+    .autograder-skeleton.button {
+        width: 42px;
+        height: 38px;
+        border-radius: 4px;
+    }
+
+    .autograder-skeleton.badge {
+        width: 80px;
+        height: 24px;
+        border-radius: 12px;
+    }
+}

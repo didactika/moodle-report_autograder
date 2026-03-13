@@ -19,7 +19,6 @@ use report_autograder\external_service\user_grades;
 
 class report_builder
 {
-
     public static function get_report_data(int $cmid, int $page, array $filters): array
     {
         list($course, $cm) = get_course_and_cm_from_cmid($cmid);
@@ -36,16 +35,16 @@ class report_builder
 
         $limit = get_config('report_autograder', 'paginationlimit');
         $limit = (empty($limit) || $limit <= 0) ? 20 : (int)$limit;
-        $start = $page * $limit;
-        $end = $start + $limit;
-        $paginationstring = "{$start},{$end}";
+
+        $api_page = $page + 1;
 
         $campusuuid = get_config('report_autograder', 'siteexternalid');
         if (empty($campusuuid)) {
             throw new \moodle_exception('error:missing_config', 'report_autograder', null, 'siteexternalid');
         }
+
         try {
-            $external_response = user_grades::get_user_grades($cm->id, $campusuuid, $paginationstring, $api_filters, $cmid_completions);
+            $external_response = user_grades::get_user_grades($cm->id, $campusuuid, $api_page, $limit, $api_filters, $cmid_completions);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -63,9 +62,10 @@ class report_builder
             'itemnumber' => 0
         ]);
         $maxgrade = $grade_item ? $grade_item->grademax : null;
+        $totalrecords = isset($external_response['pagination']['total']) ? (int)$external_response['pagination']['total'] : 0;
 
         return [
-            'totalrecords' => $external_response['total'],
+            'totalrecords' => $totalrecords,
             'limit' => $limit,
             'maxgrade' => $maxgrade,
             'data' => $final_results

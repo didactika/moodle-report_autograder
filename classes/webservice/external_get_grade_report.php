@@ -6,60 +6,80 @@
      * @copyright   2025 ADSDR <eduardo.cubias@ct.uneatlantico.es>
      * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
      */
-namespace report_autograder\webservice;
-defined('MOODLE_INTERNAL') || die();
+    namespace report_autograder\webservice;
+    defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->libdir . '/externallib.php');
-require_once($CFG->libdir . '/gradelib.php');
+    global $CFG;
+    require_once($CFG->libdir . '/externallib.php');
+    require_once($CFG->libdir . '/gradelib.php');
 
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-use report_autograder\local\report_builder;
+    use external_api;
+    use external_function_parameters;
+    use external_multiple_structure;
+    use external_single_structure;
+    use external_value;
+    use report_autograder\local\report_builder;
 
-class external_get_grade_report extends external_api {
+    class external_get_grade_report extends external_api {
 
-    public static function get_report_data_parameters() {
-        return new external_function_parameters([
-            'cmid' => new external_value(PARAM_INT, 'The course module ID', VALUE_REQUIRED),
-            'page' => new external_value(PARAM_INT, 'The page number to fetch', VALUE_DEFAULT, 0),
-            'filters' => new external_multiple_structure(
-                new external_single_structure([
-                    'name' => new external_value(PARAM_TEXT, 'The name of the filter'),
-                    'value' => new external_value(PARAM_TEXT, 'The value of the filter'),
-                ]),
-                'Optional filters for the report',
-                VALUE_OPTIONAL
-            )
-        ]);
+        /**
+         * Returns the description of parameters.
+         *
+         * @return external_function_parameters
+         */
+        public static function get_report_data_parameters() {
+            return new external_function_parameters([
+                'cmid' => new external_value(PARAM_INT, 'The course module ID', VALUE_REQUIRED),
+                'page' => new external_value(PARAM_INT, 'The page number to fetch', VALUE_DEFAULT, 0),
+                'filters' => new external_multiple_structure(
+                    new external_single_structure([
+                        'name' => new external_value(PARAM_TEXT, 'The name of the filter'),
+                        'value' => new external_value(PARAM_TEXT, 'The value of the filter'),
+                    ]),
+                    'Optional filters for the report',
+                    VALUE_OPTIONAL
+                )
+            ]);
+        }
+
+        /**
+         * Executes the report data retrieval.
+         *
+         * @param int $cmid
+         * @param int $page
+         * @param array $filters
+         * @return array
+         */
+        public static function get_report_data($cmid, $page, $filters = []) {
+            $params = self::validate_parameters(self::get_report_data_parameters(), ['cmid' => $cmid, 'page' => $page, 'filters' => $filters]);
+
+            return report_builder::get_report_data($params['cmid'], $params['page'], $params['filters']);
+        }
+
+        /**
+         * Returns the description of the response structure.
+         *
+         * @return external_single_structure
+         */
+        public static function get_report_data_returns() {
+            return new external_single_structure([
+                'totalrecords' => new external_value(PARAM_INT, 'Total number of records available'),
+                'limit' => new external_value(PARAM_INT, 'The number of records per page'),
+                'maxgrade' => new external_value(PARAM_FLOAT, 'Maximum possible grade for the activity', VALUE_OPTIONAL),
+                'data' => new external_multiple_structure(
+                    new external_single_structure([
+                        'id' => new external_value(PARAM_INT, 'The external completion ID'),
+                        'user_name' => new external_value(PARAM_TEXT, 'Student full name'),
+                        'user_profile_url' => new external_value(PARAM_URL, 'URL to user profile'),
+                        'user_picture_url' => new external_value(PARAM_URL, 'URL to user picture'),
+                        'grade' => new external_value(PARAM_FLOAT, 'The final grade', VALUE_OPTIONAL),
+                        'submission_date' => new external_value(PARAM_TEXT, 'The submission date, formatted'),
+                        'submission_date_sort' => new external_value(PARAM_INT, 'The submission date, as a timestamp for sorting'),
+                        'status' => new external_value(PARAM_TEXT, 'The current status of the grading process'),
+                        'completed_at' => new external_value(PARAM_TEXT, 'The date the grading was completed, formatted'),
+                        'completed_at_sort' => new external_value(PARAM_INT, 'The completion date, as a timestamp for sorting'),
+                    ])
+                )
+            ]);
+        }
     }
-
-    public static function get_report_data($cmid, $page, $filters = []) {
-        self::validate_parameters(self::get_report_data_parameters(), ['cmid' => $cmid, 'page' => $page, 'filters' => $filters]);
-
-        return report_builder::get_report_data($cmid, $page, $filters);
-    }
-
-    public static function get_report_data_returns() {
-        return new external_single_structure([
-            'totalrecords' => new external_value(PARAM_INT, 'Total number of records available'),
-            'limit' => new external_value(PARAM_INT, 'The number of records per page'),
-            'maxgrade' => new external_value(PARAM_FLOAT, 'Maximum possible grade for the activity', VALUE_OPTIONAL),
-            'data' => new external_multiple_structure(
-                new external_single_structure([
-                    'id' => new external_value(PARAM_INT, 'The external completion ID'),
-                    'user_name' => new external_value(PARAM_TEXT, 'Student full name'),
-                    'grade' => new external_value(PARAM_FLOAT, 'The final grade', VALUE_OPTIONAL),
-                    'submission_date' => new external_value(PARAM_TEXT, 'The submission date, formatted'),
-                    'submission_date_sort' => new external_value(PARAM_INT, 'The submission date, as a timestamp for sorting'),
-                    'status' => new external_value(PARAM_TEXT, 'The current status of the grading process'),
-                    'completed_at' => new external_value(PARAM_TEXT, 'The date the grading was completed, formatted'),
-                    'completed_at_sort' => new external_value(PARAM_INT, 'The completion date, as a timestamp for sorting'),
-                ])
-            )
-        ]);
-    }
-}
