@@ -24,7 +24,12 @@
     </td>
 
     <td>
-        <button class="btn btn-primary manual-grade-btn" data-completion-id="{{id}}" title="{{#str}} manual_grading_send, report_autograder {{/str}}">
+        <button class="btn btn-primary manual-grade-btn"
+                data-userid="{{moodle_userid}}"
+                data-courseid="{{courseid}}"
+                data-instanceid="{{instanceid}}"
+                data-modname="{{modname}}"
+                title="{{#str}} manual_grading_send, report_autograder {{/str}}">
              <i class="fa fa-paper-plane"></i>
         </button>
     </td>

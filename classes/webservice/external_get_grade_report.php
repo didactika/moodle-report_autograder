@@ -22,11 +22,6 @@
 
     class external_get_grade_report extends external_api {
 
-        /**
-         * Returns the description of parameters.
-         *
-         * @return external_function_parameters
-         */
         public static function get_report_data_parameters() {
             return new external_function_parameters([
                 'cmid' => new external_value(PARAM_INT, 'The course module ID', VALUE_REQUIRED),
@@ -42,25 +37,12 @@
             ]);
         }
 
-        /**
-         * Executes the report data retrieval.
-         *
-         * @param int $cmid
-         * @param int $page
-         * @param array $filters
-         * @return array
-         */
         public static function get_report_data($cmid, $page, $filters = []) {
             $params = self::validate_parameters(self::get_report_data_parameters(), ['cmid' => $cmid, 'page' => $page, 'filters' => $filters]);
 
             return report_builder::get_report_data($params['cmid'], $params['page'], $params['filters']);
         }
 
-        /**
-         * Returns the description of the response structure.
-         *
-         * @return external_single_structure
-         */
         public static function get_report_data_returns() {
             return new external_single_structure([
                 'totalrecords' => new external_value(PARAM_INT, 'Total number of records available'),
@@ -78,6 +60,10 @@
                         'status' => new external_value(PARAM_TEXT, 'The current status of the grading process'),
                         'completed_at' => new external_value(PARAM_TEXT, 'The date the grading was completed, formatted'),
                         'completed_at_sort' => new external_value(PARAM_INT, 'The completion date, as a timestamp for sorting'),
+                        'moodle_userid' => new external_value(PARAM_INT, 'Moodle internal user ID', VALUE_OPTIONAL),
+                        'courseid' => new external_value(PARAM_INT, 'Moodle course ID', VALUE_OPTIONAL),
+                        'instanceid' => new external_value(PARAM_INT, 'Module instance ID', VALUE_OPTIONAL),
+                        'modname' => new external_value(PARAM_TEXT, 'Module name (e.g., assign, quiz)', VALUE_OPTIONAL),
                     ])
                 )
             ]);
