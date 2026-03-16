@@ -12,16 +12,9 @@
 
     class data_enricher {
 
-        /**
-         * Enriches external data with Moodle local data for all enrolled users.
-         *
-         * @param array $external_data
-         * @param int $courseid
-         * @param int $cmid
-         * @return array
-         */
         public static function enrich_data(array $external_data, int $courseid, int $cmid): array {
-            global $PAGE;
+            global $PAGE, $DB, $CFG;
+            require_once($CFG->libdir . '/gradelib.php');
 
             if (empty($external_data)) {
                 return [];
@@ -37,6 +30,26 @@
                 }
             }
 
+            $moodle_grades = [];
+            $cm = get_coursemodule_from_id('', $cmid, 0, false, MUST_EXIST);
+            $grade_item = \grade_item::fetch([
+                'itemtype' => 'mod',
+                'itemmodule' => $cm->modname,
+                'iteminstance' => $cm->instance,
+                'courseid' => $courseid,
+                'itemnumber' => 0
+            ]);
+
+            if ($grade_item) {
+                $grades = $DB->get_records('grade_grades', ['itemid' => $grade_item->id], '', 'userid, finalgrade');
+                foreach ($grades as $g) {
+                    $moodle_grades[$g->userid] = $g->finalgrade;
+                }
+            }
+
+            $instanceid = (int)$cm->instance;
+            $modname = $cm->modname;
+
             $final_results = [];
             $date_format = \get_string('strftimedatetimeshort', 'core_langconfig');
 
@@ -47,8 +60,10 @@
                 $user_name = \get_string('unknownuser');
                 $user_profile_url = '';
                 $user_picture_url = '';
+                $moodle_userid = null;
 
                 if ($moodle_user) {
+                    $moodle_userid = (int)$moodle_user->id;
                     $user_name = \fullname($moodle_user);
                     $user_profile_url = (new \moodle_url('/user/view.php', ['id' => $moodle_user->id, 'course' => $courseid]))->out(false);
                     $user_picture = new \user_picture($moodle_user);
@@ -61,12 +76,21 @@
                 $grading_date_raw = $api_item['gradingTime'] ?? $api_item['scheduledGradingTime'] ?? null;
                 list($completed_at_display, $completed_at_timestamp) = self::format_api_date($grading_date_raw, $date_format);
 
+                $raw_status = strtoupper(trim($api_item['status'] ?? ''));
                 $api_grade = null;
-                if (isset($api_item['grade']) && $api_item['grade'] !== null && $api_item['grade'] !== '') {
-                    $api_grade = round((float)$api_item['grade'], 2);
+                if ($moodle_userid && isset($moodle_grades[$moodle_userid]) && $moodle_grades[$moodle_userid] !== null) {
+                    $api_grade = round((float)$moodle_grades[$moodle_userid], 2);
                 }
 
-                $final_status_string = self::parse_and_translate_status($api_item['status'] ?? null);
+                if (!in_array($raw_status, ['GRADED', 'MANUAL_GRADING'])) {
+                    if ($api_grade === null) {
+                       $api_grade = 0;
+                    } else {
+                        $raw_status = 'MANUAL_GRADING';
+                    }
+                }
+
+                $final_status_string = self::parse_and_translate_status($raw_status);
 
                 $final_results[] = [
                     'id' => (int)($api_item['id'] ?? 0),
@@ -79,16 +103,16 @@
                     'status' => $final_status_string,
                     'completed_at' => $completed_at_display,
                     'completed_at_sort' => $completed_at_timestamp,
+                    'moodle_userid' => $moodle_userid,
+                    'courseid' => $courseid,
+                    'instanceid' => $instanceid,
+                    'modname' => $modname,
                 ];
             }
 
             return $final_results;
         }
 
-        /**
-         * Parses the raw API status and groups it into either PENDING or GRADED,
-         * returning the translated Moodle string.
-         */
         private static function parse_and_translate_status(?string $raw_status): string {
             if (empty($raw_status)) {
                 return \get_string('status:pending', 'report_autograder');
@@ -110,13 +134,6 @@
             return \get_string('status:pending', 'report_autograder');
         }
 
-        /**
-         * Formats the scheduled completion date.
-         *
-         * @param string|null $date_string
-         * @param string $date_format
-         * @return array
-         */
         private static function format_api_date(?string $date_string, string $date_format): array {
             if (empty($date_string)) {
                 return ['-', 0];

@@ -17,14 +17,5 @@ $functions = [
         'type'        => 'read',
         'requirelogin' => true,
         'ajax'        => true,
-    ],
-    'report_autograder_update_user_grade' => [
-        'classname'   => 'report_autograder\\webservice\\external_update_user_grade',
-        'methodname'  => 'update_user_grade',
-        'classpath'   => 'report_autograder/webservice/external_update_user_grade',
-        'description' => 'Update a user grade for autograder via POST.',
-        'type'        => 'write',
-        'requirelogin' => true,
-        'ajax'        => true,
-    ],
+    ]
 ];

@@ -5,36 +5,16 @@ import notification from 'core/notification';
 import {
     init as initState,
     getCmid,
-    getCurrentPage,
-    getFilters,
     getMaxGrade,
     setCurrentPage,
     setFilters,
-    setMaxGrade,
-    setRecordsPerPage
+    setRecordsPerPage,
+    setMaxGrade
 } from './state';
-import { getReportData, updateUserGrade } from './service/api';
+import { getReportData } from './service/api';
 import { showLoading, renderTable, renderReportTable } from './ui/report';
 import { renderPagination } from './ui/pagination';
 import { attachFilterListeners, attachManualGradeButtonListeners } from './ui/form';
-
-const handleGradeUpdate = (completionId, grade, onComplete) => {
-    updateUserGrade(completionId, grade)
-        .then(() => {
-            fetchAndRenderReport(getCurrentPage(), getFilters());
-        })
-        .catch(async (error) => {
-            // eslint-disable-next-line no-console
-            console.error('Error updating grade:', error);
-            const msg = await getString('error:updatefailed', 'report_autograder');
-            notification.addNotification({ message: msg, type: 'error' });
-        })
-        .always(() => {
-            if (typeof onComplete === 'function') {
-                onComplete();
-            }
-        });
-};
 
 const fetchAndRenderReport = (page, filters = []) => {
     setCurrentPage(page);
@@ -47,7 +27,7 @@ const fetchAndRenderReport = (page, filters = []) => {
             setMaxGrade(response.maxgrade);
 
             renderTable(response.data, () => {
-                attachManualGradeButtonListeners(getMaxGrade(), handleGradeUpdate);
+                attachManualGradeButtonListeners(getMaxGrade(), getCmid());
             });
             renderPagination(response.totalrecords, response.data, page, response.limit, fetchAndRenderReport);
         })

@@ -16,19 +16,3 @@ export const getReportData = (cmid, page, filters = []) => {
     };
     return ajax.call([{ methodname: 'report_autograder_get_report_data', args: params }])[0];
 };
-
-/**
- * Calls the webservice to update a user's grade.
- *
- * @param {number} completionId The completion ID from the record.
- * @param {number} grade The new grade.
- * @returns {Promise}
- */
-export const updateUserGrade = (completionId, grade) => {
-    const params = {
-        completion_id: completionId,
-        status: 'MANUAL_GRADING',
-        grade
-    };
-    return ajax.call([{ methodname: 'report_autograder_update_user_grade', args: params }])[0];
-};
