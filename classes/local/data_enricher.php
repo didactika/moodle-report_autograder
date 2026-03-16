@@ -32,19 +32,24 @@
 
             $moodle_grades = [];
             $cm = get_coursemodule_from_id('', $cmid, 0, false, MUST_EXIST);
-            $grade_item = \grade_item::fetch([
-                'itemtype' => 'mod',
-                'itemmodule' => $cm->modname,
-                'iteminstance' => $cm->instance,
-                'courseid' => $courseid,
-                'itemnumber' => 0
+
+            $sql = "SELECT g.userid, g.finalgrade
+                      FROM {grade_items} gi
+                      JOIN {grade_grades} g ON g.itemid = gi.id
+                     WHERE gi.itemtype = 'mod'
+                       AND gi.itemmodule = :modname
+                       AND gi.iteminstance = :instance
+                       AND gi.courseid = :courseid
+                       AND g.finalgrade IS NOT NULL";
+
+            $grades = $DB->get_records_sql($sql, [
+                'modname' => $cm->modname,
+                'instance' => $cm->instance,
+                'courseid' => $courseid
             ]);
 
-            if ($grade_item) {
-                $grades = $DB->get_records('grade_grades', ['itemid' => $grade_item->id], '', 'userid, finalgrade');
-                foreach ($grades as $g) {
-                    $moodle_grades[$g->userid] = $g->finalgrade;
-                }
+            foreach ($grades as $g) {
+                $moodle_grades[$g->userid] = $g->finalgrade;
             }
 
             $instanceid = (int)$cm->instance;
@@ -57,19 +62,16 @@
                 $uuid = $api_item['userUuid'] ?? null;
                 $moodle_user = $users_by_uuid[$uuid] ?? null;
 
-                $user_name = \get_string('unknownuser');
-                $user_profile_url = '';
-                $user_picture_url = '';
-                $moodle_userid = null;
-
-                if ($moodle_user) {
-                    $moodle_userid = (int)$moodle_user->id;
-                    $user_name = \fullname($moodle_user);
-                    $user_profile_url = (new \moodle_url('/user/view.php', ['id' => $moodle_user->id, 'course' => $courseid]))->out(false);
-                    $user_picture = new \user_picture($moodle_user);
-                    $user_picture->size = 100;
-                    $user_picture_url = $user_picture->get_url($PAGE)->out(false);
+                if (!$moodle_user) {
+                    continue;
                 }
+
+                $moodle_userid = (int)$moodle_user->id;
+                $user_name = \fullname($moodle_user);
+                $user_profile_url = (new \moodle_url('/user/view.php', ['id' => $moodle_user->id, 'course' => $courseid]))->out(false);
+                $user_picture = new \user_picture($moodle_user);
+                $user_picture->size = 100;
+                $user_picture_url = $user_picture->get_url($PAGE)->out(false);
 
                 list($submission_display, $submission_timestamp) = self::format_api_date($api_item['completedAt'] ?? null, $date_format);
 
@@ -78,13 +80,14 @@
 
                 $raw_status = strtoupper(trim($api_item['status'] ?? ''));
                 $api_grade = null;
-                if ($moodle_userid && isset($moodle_grades[$moodle_userid]) && $moodle_grades[$moodle_userid] !== null) {
+
+                if (isset($moodle_grades[$moodle_userid]) && $moodle_grades[$moodle_userid] !== null) {
                     $api_grade = round((float)$moodle_grades[$moodle_userid], 2);
                 }
 
                 if (!in_array($raw_status, ['GRADED', 'MANUAL_GRADING'])) {
                     if ($api_grade === null) {
-                       $api_grade = 0;
+                        $api_grade = 0;
                     } else {
                         $raw_status = 'MANUAL_GRADING';
                     }
@@ -120,8 +123,11 @@
 
             $status = strtoupper(trim($raw_status));
 
+            if ($status === 'MANUAL_GRADING') {
+                return \get_string('status:manual_grading', 'report_autograder');
+            }
+
             $graded_statuses = [
-                'MANUAL_GRADING',
                 'READY_TO_GRADE',
                 'GRADING',
                 'GRADED'

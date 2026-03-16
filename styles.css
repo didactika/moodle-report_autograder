@@ -13,6 +13,9 @@
         height: 20px;
         width: 100%;
     }
+    .activity-information{
+        display: none;
+    }
 
     .autograder-skeleton.avatar {
         width: 35px;
