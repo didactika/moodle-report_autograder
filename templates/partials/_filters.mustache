@@ -28,7 +28,7 @@
     * filter_action_url - URL to submit the filter form to (typically index.php)
 }}
 
-<div class="d-flex justify-content-end mb-3">
+<div class="d-flex justify-content-end mb-3 mt-3">
     <div class="btn-group">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="autograder-filter-dropdown-btn">
             <i class="fa fa-filter"></i> {{#str}}filter_button, report_autograder{{/str}}
@@ -39,13 +39,11 @@
         <div class="dropdown-menu dropdown-menu-right autograder-filter-dropdown-menu" style="min-width: 350px;" onclick="event.stopPropagation();">
             <form method="get" action="{{filter_action_url}}" id="autograder-filter-form">
                 <div class="px-4 py-3">
-                    {{! Input de búsqueda para el nombre }}
                     <div class="mb-3">
                         <label for="searchname">{{#str}}filter_searchname, report_autograder{{/str}}</label>
                         <input type="text" name="searchname" id="searchname" value="{{filters.searchname}}" class="form-control" placeholder="{{#str}}filter_search_placeholder, report_autograder{{/str}}">
                     </div>
 
-                    {{! Inputs de fechas }}
                     <div class="mb-3">
                         <label for="datefrom">{{#str}}filter_datefrom, report_autograder{{/str}}</label>
                         <input type="date" name="datefrom" id="datefrom" value="{{filters.datefrom}}" class="form-control">
@@ -55,13 +53,12 @@
                         <input type="date" name="dateto" id="dateto" value="{{filters.dateto}}" class="form-control">
                     </div>
 
-                    {{! Input de números para el grade }}
                     <div class="mb-3">
                         <label for="grade">{{#str}}filter_grade, report_autograder{{/str}}</label>
                         <input type="number" name="grade" id="grade" value="{{filters.grade}}" class="form-control" placeholder="{{#str}}filter_grade_placeholder, report_autograder{{/str}}">
                     </div>
 
-                    {{! Input de opciones select para status }}
+
                     <div class="mb-3">
                         <label for="status">{{#str}}filter_status, report_autograder{{/str}}</label>
                         <div class="mb-3">
