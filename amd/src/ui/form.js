@@ -1,39 +1,47 @@
 import $ from 'jquery';
 import notification from 'core/notification';
-import { get_string as getString } from 'core/str';
+import {get_string as getString} from 'core/str';
 import templates from 'core/templates';
 
 export const attachFilterListeners = (onFilterChange, onFilterClear) => {
     $('#autograder-filter-form').on('submit', e => {
         e.preventDefault();
         // eslint-disable-next-line no-console
-        console.log('Filter form submitted'); //NoEslint
+        console.log('Filter form submitted'); // NoEslint
 
         const filters = [];
         const searchName = $('#searchname').val();
         if (searchName) {
-            filters.push({ name: 'nameUser', value: searchName });
+            filters.push({name: 'nameUser', value: searchName});
         }
-        const dateFrom = $('#datefrom').val();
-        if (dateFrom) {
-            filters.push({ name: 'dateDelivered', value: dateFrom });
+        const submissionDateFrom = $('#submission_date_from').val();
+        if (submissionDateFrom) {
+            filters.push({name: 'dateDelivered', value: submissionDateFrom});
         }
-        const dateTo = $('#dateto').val();
-        if (dateTo) {
-            filters.push({ name: 'dateGraded', value: dateTo });
+        const submissionDateTo = $('#submission_date_to').val();
+        if (submissionDateTo) {
+            filters.push({name: 'dateDeliveredTo', value: submissionDateTo});
+        }
+        const gradingDateFrom = $('#grading_date_from').val();
+        if (gradingDateFrom) {
+            filters.push({name: 'dateGraded', value: gradingDateFrom});
+        }
+        const gradingDateTo = $('#grading_date_to').val();
+        if (gradingDateTo) {
+            filters.push({name: 'dateGradedTo', value: gradingDateTo});
         }
         const grade = $('#grade').val();
         if (grade) {
-            filters.push({ name: 'grade', value: grade });
+            filters.push({name: 'grade', value: grade});
         }
         const status = $('#status').val();
         if (status) {
-            filters.push({ name: 'status', value: status });
+            filters.push({name: 'status', value: status});
         }
 
         if (typeof onFilterChange === 'function') {
             // eslint-disable-next-line no-console
-            console.log('Applying filters:', filters); //NoEslint
+            console.log('Applying filters:', filters); // NoEslint
             onFilterChange(filters);
         }
     });
@@ -41,10 +49,14 @@ export const attachFilterListeners = (onFilterChange, onFilterClear) => {
     $('.autograder-filter-dropdown-menu .btn-secondary').on('click', e => {
         e.preventDefault();
         // eslint-disable-next-line no-console
-        console.log('Clear filters clicked'); //NoEslint
+        console.log('Clear filters clicked'); // NoEslint
         $('#searchname').val('');
-        $('#datefrom').val('');
-        $('#dateto').val('');
+        $('#submission_date_range').val('');
+        $('#submission_date_from').val('');
+        $('#submission_date_to').val('');
+        $('#grading_date_range').val('');
+        $('#grading_date_from').val('');
+        $('#grading_date_to').val('');
         $('#grade').val('');
         $('#status').val('');
         if (typeof onFilterClear === 'function') {
@@ -73,21 +85,21 @@ export const attachManualGradeButtonListeners = (maxGrade, cmid) => {
 
         if (grade === '' || isNaN(parseFloat(grade))) {
             const msg = await getString('error:invalidgrade', 'report_autograder');
-            notification.addNotification({ message: msg, type: 'error' });
+            notification.addNotification({message: msg, type: 'error'});
             return;
         }
 
         const gradeVal = parseFloat(grade);
 
         if (maxGrade !== null && gradeVal > maxGrade) {
-            const msg = await getString('error:gradetoolarge', 'report_autograder', { maxgrade: maxGrade });
-            notification.addNotification({ message: msg, type: 'error' });
+            const msg = await getString('error:gradetoolarge', 'report_autograder', {maxgrade: maxGrade});
+            notification.addNotification({message: msg, type: 'error'});
             return;
         }
 
         if (gradeVal < 0) {
             const msg = await getString('error:negativegrade', 'report_autograder');
-            notification.addNotification({ message: msg, type: 'error' });
+            notification.addNotification({message: msg, type: 'error'});
             return;
         }
 

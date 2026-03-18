@@ -5,8 +5,10 @@
 
     Context variables:
     * filters.searchname - Search name filter value
-    * filters.datefrom - Date from filter value
-    * filters.dateto - Date to filter value
+    * filters.submission_date_from - Submission date start value
+    * filters.submission_date_to - Submission date end value
+    * filters.grading_date_from - Grading date start value
+    * filters.grading_date_to - Grading date end value
     * filters.grade - Grade filter value
     * filters.status - Selected status filter value
     * filters.status_pending - Boolean if pending status is selected
@@ -46,20 +48,18 @@
             <form method="get" action="{{filter_action_url}}" id="autograder-filter-form">
                 <div class="px-4 py-3">
 
-                    <!-- Date Range Component -->
                     <div class="mb-3">
-                        <label class="d-block mb-2">{{#str}}filter_submission_date, report_autograder{{/str}}</label>
-                        <div class="input-group input-group-sm">
-                            <input type="date" name="submission_date_from" id="submission_date_from" value="{{filters.submission_date_from}}" class="form-control" aria-label="From">
-                            <span class="input-group-text">—</span>
-                            <input type="date" name="submission_date_to" id="submission_date_to" value="{{filters.submission_date_to}}" class="form-control" aria-label="To">
-                        </div>
-                        <label class="d-block mt-3 mb-2">{{#str}}filter_grading_date, report_autograder{{/str}}</label>
-                        <div class="input-group input-group-sm">
-                            <input type="date" name="grading_date_from" id="grading_date_from" value="{{filters.grading_date_from}}" class="form-control" aria-label="From">
-                            <span class="input-group-text">—</span>
-                            <input type="date" name="grading_date_to" id="grading_date_to" value="{{filters.grading_date_to}}" class="form-control" aria-label="To">
-                        </div>
+                        <label for="submission_date_range" class="d-block mb-2">{{#str}}filter_submission_date, report_autograder{{/str}}</label>
+                        <input type="text" id="submission_date_range" class="form-control form-control-sm autograder-daterange-input" autocomplete="off" placeholder="YYYY-MM-DD - YYYY-MM-DD">
+                        <input type="hidden" name="submission_date_from" id="submission_date_from" value="{{filters.submission_date_from}}">
+                        <input type="hidden" name="submission_date_to" id="submission_date_to" value="{{filters.submission_date_to}}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="grading_date_range" class="d-block mb-2">{{#str}}filter_grading_date, report_autograder{{/str}}</label>
+                        <input type="text" id="grading_date_range" class="form-control form-control-sm autograder-daterange-input" autocomplete="off" placeholder="YYYY-MM-DD - YYYY-MM-DD">
+                        <input type="hidden" name="grading_date_from" id="grading_date_from" value="{{filters.grading_date_from}}">
+                        <input type="hidden" name="grading_date_to" id="grading_date_to" value="{{filters.grading_date_to}}">
                     </div>
 
                     <div class="mb-3">
@@ -91,6 +91,132 @@
         </div>
     </div>
 </div>
+{{#js}}
+require(['jquery'], function($) {
+    var format = 'YYYY-MM-DD';
+    var separator = ' - ';
+
+    var loadCss = function(href) {
+        return new Promise(function(resolve) {
+            if (document.querySelector('link[href="' + href + '"]')) {
+                resolve();
+                return;
+            }
+
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = href;
+            link.onload = resolve;
+            link.onerror = resolve;
+            document.head.appendChild(link);
+        });
+    };
+
+    var loadScript = function(src, forceGlobal) {
+        return new Promise(function(resolve, reject) {
+            if (document.querySelector('script[src="' + src + '"]')) {
+                resolve();
+                return;
+            }
+
+            var previousDefine = null;
+            if (forceGlobal && typeof window.define === 'function' && window.define.amd) {
+                previousDefine = window.define;
+                window.define = undefined;
+            }
+
+            var restoreDefine = function() {
+                if (previousDefine) {
+                    window.define = previousDefine;
+                }
+            };
+
+            var script = document.createElement('script');
+            script.src = src;
+            script.async = true;
+            script.onload = function() {
+                restoreDefine();
+                resolve();
+            };
+            script.onerror = function() {
+                restoreDefine();
+                reject();
+            };
+            document.head.appendChild(script);
+        });
+    };
+
+    var ensureDateRangeAssets = function() {
+        var cssUrl = 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css';
+        var momentUrl = 'https://cdn.jsdelivr.net/npm/moment@2.30.1/min/moment.min.js';
+        var pickerUrl = 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js';
+
+        return loadCss(cssUrl)
+            .then(function() {
+                if (typeof window.moment === 'undefined') {
+                    return loadScript(momentUrl, true);
+                }
+                return Promise.resolve();
+            })
+            .then(function() {
+                if (!$.fn.daterangepicker) {
+                    return loadScript(pickerUrl, true);
+                }
+                return Promise.resolve();
+            });
+    };
+
+    var initRangePicker = function(inputSelector, fromSelector, toSelector) {
+        var input = $(inputSelector);
+        var fromInput = $(fromSelector);
+        var toInput = $(toSelector);
+
+        if (!input.length || !fromInput.length || !toInput.length || !$.fn.daterangepicker || typeof window.moment === 'undefined') {
+            return;
+        }
+
+        var options = {
+            autoUpdateInput: false,
+            linkedCalendars: false,
+            opens: 'left',
+            locale: {
+                format: format,
+                separator: separator,
+                cancelLabel: 'Clear'
+            }
+        };
+
+        if (fromInput.val() && toInput.val()) {
+            options.startDate = window.moment(fromInput.val(), format);
+            options.endDate = window.moment(toInput.val(), format);
+            input.val(fromInput.val() + separator + toInput.val());
+        }
+
+        input.daterangepicker(options);
+
+        input.on('apply.daterangepicker', function(ev, picker) {
+            var start = picker.startDate.format(format);
+            var end = picker.endDate.format(format);
+            fromInput.val(start);
+            toInput.val(end);
+            input.val(start + separator + end);
+        });
+
+        input.on('cancel.daterangepicker', function() {
+            fromInput.val('');
+            toInput.val('');
+            input.val('');
+        });
+    };
+
+    ensureDateRangeAssets().then(function() {
+        initRangePicker('#submission_date_range', '#submission_date_from', '#submission_date_to');
+        initRangePicker('#grading_date_range', '#grading_date_from', '#grading_date_to');
+    }).catch(function() {
+        return;
+    });
+});
+{{/js}}
 {{#filters.has_active_filters}}
 <div class="alert alert-info mb-3">
     <strong>{{#str}}filter_active, report_autograder{{/str}}</strong>
