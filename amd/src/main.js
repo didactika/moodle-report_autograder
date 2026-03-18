@@ -11,7 +11,7 @@ import {
     setRecordsPerPage,
     setMaxGrade
 } from './state';
-import { getReportData } from './service/api';
+import { getReportData } from './service/repository';
 import { showLoading, renderTable, renderReportTable } from './ui/report';
 import { renderPagination } from './ui/pagination';
 import { attachFilterListeners, attachManualGradeButtonListeners } from './ui/form';
@@ -39,17 +39,6 @@ const fetchAndRenderReport = (page, filters = []) => {
         });
 };
 
-const hideMoodleCompletionBlocks = () => {
-    const intervalId = setInterval(() => {
-        const blocks = document.querySelectorAll('.activity-header');
-        if (blocks.length) {
-            blocks.forEach(block => {
-                block.style.display = 'none';
-            });
-            clearInterval(intervalId);
-        }
-    }, 200);
-};
 
 export const init = cmid => {
     initState(cmid);
@@ -58,8 +47,6 @@ export const init = cmid => {
     if (!container.length) {
         return;
     }
-
-    hideMoodleCompletionBlocks();
 
     renderReportTable(() => {
         attachFilterListeners(

@@ -68,8 +68,6 @@ $string['error:gradetoolarge'] = 'The grade cannot be higher than {$a->maxgrade}
 $string['error:negativegrade'] = 'The grade cannot be a negative value.';
 
 $string['filter_button'] = 'Filter';
-$string['filter_searchname'] = 'Search by name';
-$string['filter_search_placeholder'] = 'Enter name to search';
 $string['filter_datefrom'] = 'Delivery date from';
 $string['filter_dateto'] = 'Graded date from';
 $string['filter_grade'] = 'Grade from';

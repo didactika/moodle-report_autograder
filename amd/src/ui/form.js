@@ -97,8 +97,6 @@ export const attachManualGradeButtonListeners = (maxGrade, cmid) => {
         const baseUrl = `${M.cfg.wwwroot}/report/autograder/action/send_grade.php`;
         const queryParams = `cmid=${cmid}&userid=${userid}&grade=${gradeVal}&sesskey=${M.cfg.sesskey}`;
         const url = `${baseUrl}?${queryParams}`;
-        // eslint-disable-next-line no-console
-        console.log("Redirigiendo a:", url);
 
         window.location.href = url;
     });

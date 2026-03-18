@@ -1,12 +1,31 @@
+@keyframes autograder-skeleton-pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
 #page-report-autograder-index {
-    @keyframes autograder-skeleton-pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.8; }
-        100% { opacity: 1; }
+    .autograder-quick-search-wrapper {
+        position: relative;
+        flex: 1 1 270px;
+        max-width: 315px;
+    }
+
+    .autograder-quick-search-icon {
+        position: absolute;
+        top: 50%;
+        left: 12px;
+        transform: translateY(-50%);
+        color: #6c757d;
+        pointer-events: none;
+    }
+
+    .autograder-quick-search-input {
+        padding-left: 34px;
     }
 
     .autograder-skeleton {
-        animation: autograder-skeleton-pulse 3.5s ease-in-out infinite;
+        animation: autograder-skeleton-pulse 1.3s ease-in-out infinite;
         background-color: #e9ecef;
         border-radius: 4px;
         display: inline-block;

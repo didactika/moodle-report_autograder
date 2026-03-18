@@ -30,11 +30,11 @@
         $PAGE->set_heading(get_string('pluginname', 'report_autograder'));
         $PAGE->set_context($context);
 
-        $PAGE->requires->js_call_amd('report_autograder/main', 'init', [$cmid]);
+        //$PAGE->requires->js_call_amd('report_autograder/main', 'init', [$cmid]);
 
         echo $OUTPUT->header();
-        echo $OUTPUT->render_from_template('report_autograder/partials/_filters', []);
-        echo '<div id="autograder-report-container"></div>';
+        echo $OUTPUT->render_from_template('report_autograder/partials/filters', []);
+        echo $OUTPUT->render_from_template('report_autograder/report_table', ['skeletonRows' => array_fill(0, 4, [])]);
         echo $OUTPUT->footer();
 
     } catch (\Exception $e) {

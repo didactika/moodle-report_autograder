@@ -28,7 +28,13 @@
     * filter_action_url - URL to submit the filter form to (typically index.php)
 }}
 
-<div class="d-flex justify-content-end mb-3 mt-3">
+<div class="d-flex justify-content-between mb-3 mt-3">
+    <div class="me-2 autograder-quick-search-wrapper">
+        <i class="fa fa-search autograder-quick-search-icon" aria-hidden="true"></i>
+        <input type="text" class="form-control shadow-none autograder-quick-search-input" placeholder="{{#str}}filter_search, report_autograder{{/str}}..." aria-label="{{#str}}filter_search, report_autograder{{/str}}" id="autograder-quick-search-input">
+    </div>
+
+
     <div class="btn-group">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="autograder-filter-dropdown-btn">
             <i class="fa fa-filter"></i> {{#str}}filter_button, report_autograder{{/str}}
@@ -39,18 +45,21 @@
         <div class="dropdown-menu dropdown-menu-right autograder-filter-dropdown-menu" style="min-width: 350px;" onclick="event.stopPropagation();">
             <form method="get" action="{{filter_action_url}}" id="autograder-filter-form">
                 <div class="px-4 py-3">
-                    <div class="mb-3">
-                        <label for="searchname">{{#str}}filter_searchname, report_autograder{{/str}}</label>
-                        <input type="text" name="searchname" id="searchname" value="{{filters.searchname}}" class="form-control" placeholder="{{#str}}filter_search_placeholder, report_autograder{{/str}}">
-                    </div>
 
+                    <!-- Date Range Component -->
                     <div class="mb-3">
-                        <label for="datefrom">{{#str}}filter_datefrom, report_autograder{{/str}}</label>
-                        <input type="date" name="datefrom" id="datefrom" value="{{filters.datefrom}}" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="dateto">{{#str}}filter_dateto, report_autograder{{/str}}</label>
-                        <input type="date" name="dateto" id="dateto" value="{{filters.dateto}}" class="form-control">
+                        <label class="d-block mb-2">{{#str}}filter_submission_date, report_autograder{{/str}}</label>
+                        <div class="input-group input-group-sm">
+                            <input type="date" name="submission_date_from" id="submission_date_from" value="{{filters.submission_date_from}}" class="form-control" aria-label="From">
+                            <span class="input-group-text">—</span>
+                            <input type="date" name="submission_date_to" id="submission_date_to" value="{{filters.submission_date_to}}" class="form-control" aria-label="To">
+                        </div>
+                        <label class="d-block mt-3 mb-2">{{#str}}filter_grading_date, report_autograder{{/str}}</label>
+                        <div class="input-group input-group-sm">
+                            <input type="date" name="grading_date_from" id="grading_date_from" value="{{filters.grading_date_from}}" class="form-control" aria-label="From">
+                            <span class="input-group-text">—</span>
+                            <input type="date" name="grading_date_to" id="grading_date_to" value="{{filters.grading_date_to}}" class="form-control" aria-label="To">
+                        </div>
                     </div>
 
                     <div class="mb-3">
