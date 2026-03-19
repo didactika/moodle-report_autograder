@@ -47,10 +47,6 @@ class user_grades
             'limit' => $limit
         ];
 
-        if (!empty($api_filters['status'])) {
-            $params['status'] = $api_filters['status'];
-        }
-
         if (!empty($api_filters['dateGraded'])) {
             $params['scheduledDate'] = $api_filters['dateGraded'];
         }
@@ -60,10 +56,20 @@ class user_grades
         }
 
         $url = new moodle_url(rtrim($serviceUrl, '/') . '/moduleGrades/', $params);
+        $urlstring = $url->out(false);
+
+        if (!empty($api_filters['status'])) {
+            $statuses = is_array($api_filters['status']) ? $api_filters['status'] : [$api_filters['status']];
+            foreach ($statuses as $status) {
+                if (!empty($status)) {
+                    $urlstring .= '&status=' . rawurlencode($status);
+                }
+            }
+        }
 
         try {
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url->out(false));
+            curl_setopt($ch, CURLOPT_URL, $urlstring);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 

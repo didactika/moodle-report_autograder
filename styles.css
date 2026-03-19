@@ -5,10 +5,71 @@
 }
 
 #page-report-autograder-index {
+    #autograder-filter-form {
+        position: relative;
+        z-index: 80;
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
     .autograder-quick-search-wrapper {
         position: relative;
-        flex: 1 1 270px;
-        max-width: 315px;
+        flex: 0 0 220px;
+        max-width: 220px;
+        margin-right: 0 !important;
+    }
+
+    .autograder-top-filters {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 12px;
+        align-items: flex-end;
+        width: 100%;
+        max-width: 100%;
+        overflow: visible;
+        padding-bottom: 2px;
+        position: relative;
+        z-index: 80;
+    }
+
+    .autograder-right-filters {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: flex-end;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-left: auto;
+        white-space: nowrap;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .autograder-top-date-filter {
+        min-width: 230px;
+        max-width: 230px;
+        flex: 0 0 230px;
+    }
+
+    .autograder-top-status-filter {
+        min-width: 240px;
+        max-width: 240px;
+        flex: 0 0 240px;
+        position: relative;
+    }
+
+    .autograder-top-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 0 0 160px;
+        max-width: 160px;
+    }
+
+    .autograder-top-date-filter label,
+    .autograder-top-status-filter label {
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
     }
 
     .autograder-quick-search-icon {
@@ -22,6 +83,125 @@
 
     .autograder-quick-search-input {
         padding-left: 34px;
+    }
+
+    .autograder-unified-input {
+        height: 38px;
+        border: 1px solid #98a1ad;
+        border-radius: 8px;
+        font-size: 1rem;
+        line-height: 1.2;
+        box-shadow: none;
+        background-color: #fff;
+    }
+
+    .autograder-daterange-input::placeholder {
+        font-size: 0.88rem;
+        letter-spacing: 0.01em;
+    }
+
+    .autograder-unified-input:focus {
+        border-color: #5b7fa4;
+        box-shadow: 0 0 0 2px rgba(91, 127, 164, 0.15);
+    }
+
+    .autograder-status-multiselect {
+        position: relative;
+        z-index: 30;
+    }
+
+    .autograder-status-toggle {
+        text-align: left;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.45rem 0.75rem;
+    }
+
+    .autograder-status-toggle::after {
+        content: '\25BE';
+        font-size: 0.8rem;
+        color: #566271;
+        margin-left: 8px;
+    }
+
+    .autograder-status-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        width: 100%;
+        max-height: 230px;
+        overflow-y: auto;
+        background: #fff;
+        border: 1px solid #c9d1d9;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+        z-index: 120;
+        padding: 6px;
+    }
+
+    #autograder-report-container,
+    #autograder-report-container .table {
+        position: relative;
+        z-index: 1;
+    }
+
+    .autograder-status-multiselect.is-open .autograder-status-menu {
+        display: block;
+    }
+
+    .autograder-status-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        padding: 6px 8px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    .autograder-status-option:hover {
+        background: #f3f6f9;
+    }
+
+    .autograder-status-option input {
+        margin: 0;
+    }
+
+    .autograder-clear-filters-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        justify-content: center;
+        width: 100%;
+        height: 38px;
+        border-radius: 8px;
+        border: 1px solid #98a1ad;
+        background: #ffffff;
+        color: #2e4257;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .autograder-clear-filters-btn:hover,
+    .autograder-clear-filters-btn:focus {
+        border-color: #5b7fa4;
+        background: #f4f8fc;
+        color: #1f3a56;
+        box-shadow: none;
+        text-decoration: none;
+    }
+
+    .autograder-status-option input[type='checkbox'] {
+        accent-color: var(--primary, #0f6cbf);
+    }
+
+    .autograder-status-option input[type='checkbox']:focus,
+    .autograder-status-option input[type='checkbox']:focus-visible {
+        outline: none;
+        box-shadow: none;
     }
 
     .autograder-skeleton {
@@ -52,5 +232,17 @@
         width: 80px;
         height: 24px;
         border-radius: 12px;
+    }
+
+    .daterangepicker.autograder-single-calendar .drp-calendar.right {
+        display: none !important;
+    }
+
+    .daterangepicker.autograder-single-calendar .drp-calendar.left {
+        float: none;
+    }
+
+    .daterangepicker.autograder-single-calendar .calendar-table {
+        margin: 0 auto;
     }
 }

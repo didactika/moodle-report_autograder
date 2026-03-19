@@ -107,13 +107,27 @@ class filter_handler {
             }
 
             if (in_array($name, $filter_type_api)) {
-                $filter_api[$name] = $value;
+                if ($name === 'status') {
+                    if (!isset($filter_api['status']) || !is_array($filter_api['status'])) {
+                        $filter_api['status'] = [];
+                    }
+
+                    foreach (explode(',', $value) as $status) {
+                        $cleanstatus = trim($status);
+                        if ($cleanstatus !== '') {
+                            $filter_api['status'][] = $cleanstatus;
+                        }
+                    }
+                } else {
+                    $filter_api[$name] = $value;
+                }
             }
         }
 
         $processed_filters = [];
         if (!empty($filter_api['status'])) {
-            $processed_filters['status'] = strtoupper($filter_api['status']);
+            $statuses = array_unique(array_map('strtoupper', $filter_api['status']));
+            $processed_filters['status'] = (count($statuses) === 1) ? $statuses[0] : array_values($statuses);
         }
 
         if (!empty($filter_api['dateGraded'])) {
