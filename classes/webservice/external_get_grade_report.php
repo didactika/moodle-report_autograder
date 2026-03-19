@@ -52,8 +52,7 @@
                     new external_single_structure([
                         'id' => new external_value(PARAM_INT, 'The external completion ID'),
                         'user_name' => new external_value(PARAM_TEXT, 'Student full name'),
-                        'user_profile_url' => new external_value(PARAM_URL, 'URL to user profile'),
-                        'user_picture_url' => new external_value(PARAM_URL, 'URL to user picture'),
+                        'user_col' => new external_value(PARAM_RAW, 'User profile column'),
                         'grade' => new external_value(PARAM_FLOAT, 'The final grade', VALUE_OPTIONAL),
                         'submission_date' => new external_value(PARAM_TEXT, 'The submission date, formatted'),
                         'submission_date_sort' => new external_value(PARAM_INT, 'The submission date, as a timestamp for sorting'),

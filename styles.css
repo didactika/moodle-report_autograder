@@ -34,4 +34,8 @@
         height: 24px;
         border-radius: 12px;
     }
+
+    .activity-header {
+        display: none;
+    }
 }
