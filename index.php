@@ -30,7 +30,7 @@
         $PAGE->set_heading(get_string('pluginname', 'report_autograder'));
         $PAGE->set_context($context);
 
-        //$PAGE->requires->js_call_amd('report_autograder/main', 'init', [$cmid]);
+        $PAGE->requires->js_call_amd('report_autograder/main', 'init', [$cmid]);
 
         echo $OUTPUT->header();
         echo $OUTPUT->render_from_template('report_autograder/partials/filters', []);

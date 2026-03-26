@@ -12,7 +12,7 @@ export const renderTable = (records, onRenderComplete) => {
     container.empty();
 
     if (!records || records.length === 0) {
-        templates.render('report_autograder/_no_data_message', {}).then(html => {
+        templates.render('report_autograder/table/no_data_message', {}).then(html => {
             container.html(html);
         });
         return;
@@ -30,7 +30,7 @@ export const showLoading = () => {
     const container = $('#autograder-report-container tbody');
     container.empty();
     const context = { rows: [1, 2, 3] };
-    templates.render('report_autograder/_skeleton_rows', context).then(html => {
+    templates.render('report_autograder/table/skeleton_rows', context).then(html => {
         container.html(html);
     });
 };

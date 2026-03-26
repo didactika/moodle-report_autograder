@@ -3,11 +3,10 @@ import notification from 'core/notification';
 import {get_string as getString} from 'core/str';
 import templates from 'core/templates';
 
+//eslint-disable-next-line no-unused-vars
 export const attachFilterListeners = (onFilterChange, onFilterClear) => {
     $('#autograder-filter-form').on('submit', e => {
         e.preventDefault();
-        // eslint-disable-next-line no-console
-        console.log('Filter form submitted'); // NoEslint
 
         const filters = [];
         const searchName = $('#searchname').val();
@@ -40,27 +39,7 @@ export const attachFilterListeners = (onFilterChange, onFilterClear) => {
         }
 
         if (typeof onFilterChange === 'function') {
-            // eslint-disable-next-line no-console
-            console.log('Applying filters:', filters); // NoEslint
             onFilterChange(filters);
-        }
-    });
-
-    $('.autograder-filter-dropdown-menu .btn-secondary').on('click', e => {
-        e.preventDefault();
-        // eslint-disable-next-line no-console
-        console.log('Clear filters clicked'); // NoEslint
-        $('#searchname').val('');
-        $('#submission_date_range').val('');
-        $('#submission_date_from').val('');
-        $('#submission_date_to').val('');
-        $('#grading_date_range').val('');
-        $('#grading_date_from').val('');
-        $('#grading_date_to').val('');
-        $('#grade').val('');
-        $('#status').val('');
-        if (typeof onFilterClear === 'function') {
-            onFilterClear();
         }
     });
 };
@@ -72,9 +51,6 @@ export const attachManualGradeButtonListeners = (maxGrade, cmid) => {
 
     container.on('click', '.manual-grade-btn', async function(e) {
         e.preventDefault();
-
-        // eslint-disable-next-line no-console
-        console.log("¡Clic detectado! Preparando redirección...");
 
         const button = $(this);
         const userid = button.data('userid');

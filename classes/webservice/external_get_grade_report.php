@@ -39,7 +39,7 @@
 
         public static function get_report_data($cmid, $page, $filters = []) {
             $params = self::validate_parameters(self::get_report_data_parameters(), ['cmid' => $cmid, 'page' => $page, 'filters' => $filters]);
-
+            var_dump(report_builder::get_report_data($params['cmid'], $params['page'], $params['filters']));
             return report_builder::get_report_data($params['cmid'], $params['page'], $params['filters']);
         }
 

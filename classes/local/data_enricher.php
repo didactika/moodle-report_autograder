@@ -94,12 +94,8 @@ class data_enricher
                 $api_grade = round((float)$moodle_grades[$moodle_userid], 2);
             }
 
-            if (!in_array($raw_status, ['GRADED', 'MANUAL_GRADING'])) {
-                if ($api_grade === null) {
-                    $api_grade = 0;
-                } else {
-                    $raw_status = 'MANUAL_GRADING';
-                }
+            if ($api_grade === null) {
+                $api_grade = 0;
             }
 
             $final_status_string = self::parse_and_translate_status($raw_status);
@@ -138,13 +134,7 @@ class data_enricher
             return \get_string('status:manual_grading', 'report_autograder');
         }
 
-        $graded_statuses = [
-            'READY_TO_GRADE',
-            'GRADING',
-            'GRADED'
-        ];
-
-        if (in_array($status, $graded_statuses)) {
+        if ($status === 'GRADED') {
             return \get_string('status:graded', 'report_autograder');
         }
 

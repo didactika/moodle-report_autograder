@@ -57,6 +57,7 @@ class user_grades
 
         $url = new moodle_url(rtrim($serviceUrl, '/') . '/moduleGrades/', $params);
         $urlstring = $url->out(false);
+        var_dump($urlstring);
 
         if (!empty($api_filters['status'])) {
             $statuses = is_array($api_filters['status']) ? $api_filters['status'] : [$api_filters['status']];

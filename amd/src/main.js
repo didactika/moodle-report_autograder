@@ -12,9 +12,10 @@ import {
     setMaxGrade
 } from './state';
 import { getReportData } from './service/repository';
-import { showLoading, renderTable, renderReportTable } from './ui/report';
+import { showLoading, renderTable } from './ui/report';
 import { renderPagination } from './ui/pagination';
 import { attachFilterListeners, attachManualGradeButtonListeners } from './ui/form';
+import { init as initFiltersUi } from './ui/filters';
 
 const fetchAndRenderReport = (page, filters = []) => {
     setCurrentPage(page);
@@ -48,11 +49,10 @@ export const init = cmid => {
         return;
     }
 
-    renderReportTable(() => {
-        attachFilterListeners(
-            (filters) => fetchAndRenderReport(0, filters),
-            () => fetchAndRenderReport(0, [])
-        );
-        fetchAndRenderReport(0);
-    });
+    initFiltersUi();
+    attachFilterListeners(
+        (filters) => fetchAndRenderReport(0, filters),
+        () => fetchAndRenderReport(0, [])
+    );
+    fetchAndRenderReport(0);
 };

@@ -46,6 +46,7 @@ class report_builder
         try {
             $external_response = user_grades::get_user_grades($cm->id, $campusuuid, $api_page, $limit, $api_filters, $cmid_completions);
         } catch (\Exception $e) {
+            var_dump($e);
             throw $e;
         }
 

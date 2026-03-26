@@ -12,13 +12,7 @@
     * filters.grade - Grade filter value
     * filters.status - Selected status filter value
     * filters.status_pending - Boolean if pending status is selected
-    * filters.status_waiting_for_due_date - Boolean if waiting_for_due_date status is selected
-    * filters.status_waiting_for_grading - Boolean if waiting_for_grading status is selected
-    * filters.status_ready_to_grade - Boolean if ready_to_grade status is selected
-    * filters.status_grading - Boolean if grading status is selected
     * filters.status_graded - Boolean if graded status is selected
-    * filters.status_failed - Boolean if failed status is selected
-    * filters.status_skipped - Boolean if skipped status is selected
     * filters.status_manual_grading - Boolean if manual_grading status is selected
     * filters.has_active_filters - Boolean if any filter is active
     * filters.active_count - Number of active filters
@@ -30,321 +24,104 @@
     * filter_action_url - URL to submit the filter form to (typically index.php)
 }}
 
-<form method="get" action="{{filter_action_url}}" id="autograder-filter-form" class="mb-3 mt-3">
+<form method="get" action="{{filter_action_url}}" id="autograder-filter-form" class="mb-3 mt-3"
+    data-status-placeholder="{{#str}}filter_status_placeholder, report_autograder{{/str}}"
+    data-submission-label="{{#str}}filter_submission_date, report_autograder{{/str}}"
+    data-grading-label="{{#str}}filter_grading_date, report_autograder{{/str}}"
+    data-dp-apply="{{#str}}datepicker_apply, report_autograder{{/str}}"
+    data-dp-cancel="{{#str}}datepicker_cancel, report_autograder{{/str}}"
+    data-dp-from="{{#str}}datepicker_from, report_autograder{{/str}}"
+    data-dp-to="{{#str}}datepicker_to, report_autograder{{/str}}"
+    data-dp-custom="{{#str}}datepicker_custom, report_autograder{{/str}}"
+    data-dp-week="{{#str}}datepicker_week, report_autograder{{/str}}"
+    data-status-pending-label="{{#str}}filter_status_pending, report_autograder{{/str}}"
+    data-status-manual-label="{{#str}}filter_status_manual_grading, report_autograder{{/str}}"
+    data-status-graded-label="{{#str}}filter_status_graded, report_autograder{{/str}}">
     <div class="autograder-top-filters">
-        <div class="me-2 autograder-quick-search-wrapper">
+        <div class="autograder-quick-search-wrapper">
             <i class="fa fa-search autograder-quick-search-icon" aria-hidden="true"></i>
             <input type="text" class="form-control shadow-none autograder-quick-search-input autograder-unified-input" placeholder="{{#str}}filter_search, report_autograder{{/str}}..." aria-label="{{#str}}filter_search, report_autograder{{/str}}" id="autograder-quick-search-input" value="{{filters.searchname}}">
             <input type="hidden" name="searchname" id="searchname" value="{{filters.searchname}}">
         </div>
 
-        <div class="autograder-right-filters d-flex flex-nowrap align-items-end ml-auto">
-            <div class="autograder-top-date-filter">
-                <label for="submission_date_range" class="d-block mb-1">{{#str}}filter_submission_date, report_autograder{{/str}}</label>
-                <input type="text" id="submission_date_range" class="form-control autograder-daterange-input autograder-unified-input" autocomplete="off" placeholder="Desde - Hasta (YYYY-MM-DD)">
+        <div class="autograder-right-filters d-flex flex-nowrap">
+            <!-- Submission Date Filter Chip -->
+            <div class="autograder-date-field-wrapper">
+                <button type="button" id="submission-date-button" 
+                    class="btn filter-btn autograder-chip-button d-flex align-items-center" 
+                    aria-label="Submission date filter">
+                    <span id="submission-date-text" class="autograder-chip-text">{{#str}}filter_submission_date, report_autograder{{/str}}</span>
+                    <span id="submission-date-arrow" class="p-0 border-0" aria-hidden="true">
+                        <i class="fa fa-chevron-down"></i>
+                    </span>
+                    <span id="submission-date-clear" class="p-0 border-0 d-none" type="button" aria-label="Clear submission date">
+                        <i class="fa fa-times"></i>
+                    </span>
+                </button>
+                <input type="text" id="submission_date_range" class="form-control autograder-daterange-input d-none" autocomplete="off" placeholder="{{#str}}filter_submission_date, report_autograder{{/str}}" data-picker-title="{{#str}}filter_submission_date, report_autograder{{/str}}">
                 <input type="hidden" name="submission_date_from" id="submission_date_from" value="{{filters.submission_date_from}}">
                 <input type="hidden" name="submission_date_to" id="submission_date_to" value="{{filters.submission_date_to}}">
             </div>
 
-            <div class="autograder-top-date-filter">
-                <label for="grading_date_range" class="d-block mb-1">{{#str}}filter_grading_date, report_autograder{{/str}}</label>
-                <input type="text" id="grading_date_range" class="form-control autograder-daterange-input autograder-unified-input" autocomplete="off" placeholder="Desde - Hasta (YYYY-MM-DD)">
+            <!-- Grading Date Filter Chip -->
+            <div class="autograder-date-field-wrapper">
+                <button type="button" id="grading-date-button" 
+                    class="btn filter-btn autograder-chip-button d-flex align-items-center" 
+                    aria-label="Grading date filter">
+                    <span id="grading-date-text" class="autograder-chip-text">{{#str}}filter_grading_date, report_autograder{{/str}}</span>
+                    <span id="grading-date-arrow" class="p-0 border-0" aria-hidden="true">
+                        <i class="fa fa-chevron-down"></i>
+                    </span>
+                    <span id="grading-date-clear" class="p-0 border-0 d-none" type="button" aria-label="Clear grading date">
+                        <i class="fa fa-times"></i>
+                    </span>
+                </button>
+                <input type="text" id="grading_date_range" class="form-control autograder-daterange-input d-none" autocomplete="off" placeholder="{{#str}}filter_grading_date, report_autograder{{/str}}" data-picker-title="{{#str}}filter_grading_date, report_autograder{{/str}}">
                 <input type="hidden" name="grading_date_from" id="grading_date_from" value="{{filters.grading_date_from}}">
                 <input type="hidden" name="grading_date_to" id="grading_date_to" value="{{filters.grading_date_to}}">
             </div>
 
-            <div class="autograder-top-status-filter">
-                <label for="status-multiselect-toggle" class="d-block mb-1">{{#str}}filter_status, report_autograder{{/str}}</label>
-                <div class="autograder-status-multiselect" id="autograder-status-multiselect">
-                    <button type="button" id="status-multiselect-toggle" class="form-control shadow-none autograder-unified-input autograder-status-toggle" aria-haspopup="true" aria-expanded="false">
-                        Seleccionar estados...
+            <!-- Status Filter -->
+            <div class="autograder-status-filter-wrapper">
+                <div class="autograder-status-multiselect autograder-status-dropdown" id="autograder-status-multiselect">
+                    <button type="button" id="status-multiselect-toggle"
+                        class="btn filter-btn autograder-chip-button autograder-status-button d-flex align-items-center"
+                        aria-haspopup="true" aria-expanded="false">
+                        <span id="selected-status-text" class="autograder-chip-text">{{#str}}filter_status_placeholder, report_autograder{{/str}}</span>
+                        <span id="status-selection-count" class="ml-2 d-none"></span>
+                        <span id="clear-status" class="ml-2 border-0 d-none" aria-label="Clear selection">
+                            <i class="fa fa-times-circle"></i>
+                        </span>
+                        <span id="status-chevron" class="ml-2" aria-hidden="true">
+                            <i class="fa fa-chevron-down"></i>
+                        </span>
                     </button>
-                    <div class="autograder-status-menu" role="listbox" aria-multiselectable="true">
-                        <label class="autograder-status-option"><input type="checkbox" value="PENDING" {{#filters.status_pending}}checked{{/filters.status_pending}}> Pendiente</label>
-                        <label class="autograder-status-option"><input type="checkbox" value="WAITING_FOR_DUE_DATE" {{#filters.status_waiting_for_due_date}}checked{{/filters.status_waiting_for_due_date}}> Esperando fecha de entrega</label>
-                        <label class="autograder-status-option"><input type="checkbox" value="WAITING_FOR_GRADING" {{#filters.status_waiting_for_grading}}checked{{/filters.status_waiting_for_grading}}> Esperando calificacion</label>
-                        <label class="autograder-status-option"><input type="checkbox" value="READY_TO_GRADE" {{#filters.status_ready_to_grade}}checked{{/filters.status_ready_to_grade}}> Listo para calificar</label>
-                        <label class="autograder-status-option"><input type="checkbox" value="GRADING" {{#filters.status_grading}}checked{{/filters.status_grading}}> En calificacion</label>
-                        <label class="autograder-status-option"><input type="checkbox" value="GRADED" {{#filters.status_graded}}checked{{/filters.status_graded}}> Calificado</label>
-                        <label class="autograder-status-option"><input type="checkbox" value="FAILED" {{#filters.status_failed}}checked{{/filters.status_failed}}> Fallido</label>
-                        <label class="autograder-status-option"><input type="checkbox" value="SKIPPED" {{#filters.status_skipped}}checked{{/filters.status_skipped}}> Omitido</label>
-                        <label class="autograder-status-option"><input type="checkbox" value="MANUAL_GRADING" {{#filters.status_manual_grading}}checked{{/filters.status_manual_grading}}> Calificacion manual</label>
-                    </div>
+                    <ul class="autograder-status-menu dropdown-menu shadow" id="filter-status-popup" role="menu">
+                        <li class="list-item">
+                            <button class="dropdown-item d-flex align-items-center justify-content-start px-2 py-2" data-value="PENDING">
+                                <input type="checkbox" class="autograder-status-checkbox d-none" id="status-pending" value="PENDING" {{#filters.status_pending}}checked{{/filters.status_pending}}>
+                                <label class="m-0 autograder-status-label" for="status-pending">{{#str}}filter_status_pending, report_autograder{{/str}}</label>
+                            </button>
+                        </li>
+                        <li class="list-item">
+                            <button class="dropdown-item d-flex align-items-center justify-content-start px-2 py-2" data-value="MANUAL_GRADING">
+                                <input type="checkbox" class="autograder-status-checkbox d-none" id="status-manual-grading" value="MANUAL_GRADING" {{#filters.status_manual_grading}}checked{{/filters.status_manual_grading}}>
+                                <label class="m-0 autograder-status-label" for="status-manual-grading">{{#str}}filter_status_manual_grading, report_autograder{{/str}}</label>
+                            </button>
+                        </li>
+                        <li class="list-item">
+                            <button class="dropdown-item d-flex align-items-center justify-content-start px-2 py-2" data-value="GRADED">
+                                <input type="checkbox" class="autograder-status-checkbox d-none" id="status-graded" value="GRADED" {{#filters.status_graded}}checked{{/filters.status_graded}}>
+                                <label class="m-0 autograder-status-label" for="status-graded">{{#str}}filter_status_graded, report_autograder{{/str}}</label>
+                            </button>
+                        </li>
+                    </ul>
                 </div>
                 <input type="hidden" name="status" id="status" value="{{filters.status}}">
-            </div>
-
-            <div class="autograder-top-actions">
-                <a href="{{filter_action_url}}" class="btn btn-sm autograder-clear-filters-btn" id="autograder-clear-filters-btn">
-                    <i class="fa fa-times"></i> {{#str}}filter_clear, report_autograder{{/str}}
-                </a>
             </div>
         </div>
     </div>
 </form>
-{{#js}}
-require(['jquery'], function($) {
-    var format = 'YYYY-MM-DD';
-    var separator = ' - ';
-    var debounceTimer = null;
-
-    var triggerFilterSubmit = function() {
-        $('#autograder-filter-form').trigger('submit');
-    };
-
-    var debounceSubmit = function(delay) {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(function() {
-            triggerFilterSubmit();
-        }, delay || 300);
-    };
-
-    var syncSearchHidden = function() {
-        var quickSearch = $('#autograder-quick-search-input').val() || '';
-        $('#searchname').val(quickSearch.trim());
-    };
-
-    var syncStatusHidden = function() {
-        var selectedValues = [];
-        $('#autograder-status-multiselect input[type="checkbox"]:checked').each(function() {
-            selectedValues.push($(this).val());
-        });
-        $('#status').val(selectedValues.join(','));
-    };
-
-    var updateStatusToggleText = function() {
-        var labels = [];
-        $('#autograder-status-multiselect input[type="checkbox"]:checked').each(function() {
-            labels.push($(this).val());
-        });
-
-        if (!labels.length) {
-            $('#status-multiselect-toggle').text('Seleccionar estados...');
-            return;
-        }
-
-        $('#status-multiselect-toggle').text('+' + labels.length + ' seleccionados');
-    };
-
-    var initStatusMultiselect = function() {
-        var wrapper = $('#autograder-status-multiselect');
-        var toggle = $('#status-multiselect-toggle');
-        var hiddenStatus = $('#status').val();
-
-        if (hiddenStatus) {
-            var statuses = hiddenStatus.split(',');
-            wrapper.find('input[type="checkbox"]').each(function() {
-                if (statuses.indexOf($(this).val()) !== -1) {
-                    $(this).prop('checked', true);
-                }
-            });
-        }
-
-        toggle.on('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            wrapper.toggleClass('is-open');
-            toggle.attr('aria-expanded', wrapper.hasClass('is-open') ? 'true' : 'false');
-        });
-
-        wrapper.find('.autograder-status-menu').on('click', function(e) {
-            e.stopPropagation();
-        });
-
-        wrapper.find('input[type="checkbox"]').on('change', function() {
-            syncStatusHidden();
-            updateStatusToggleText();
-            debounceSubmit(150);
-        });
-
-        $(document).on('click', function() {
-            wrapper.removeClass('is-open');
-            toggle.attr('aria-expanded', 'false');
-        });
-
-        syncStatusHidden();
-        updateStatusToggleText();
-    };
-
-    var initTopFiltersAutoApply = function() {
-        $('#autograder-quick-search-input').on('input', function() {
-            syncSearchHidden();
-            debounceSubmit(350);
-        });
-
-        $('#autograder-clear-filters-btn').on('click', function(e) {
-            e.preventDefault();
-            $('#autograder-quick-search-input').val('');
-            $('#searchname').val('');
-            $('#submission_date_range').val('');
-            $('#submission_date_from').val('');
-            $('#submission_date_to').val('');
-            $('#grading_date_range').val('');
-            $('#grading_date_from').val('');
-            $('#grading_date_to').val('');
-            $('#status').val('');
-            $('#autograder-status-multiselect input[type="checkbox"]').prop('checked', false);
-            updateStatusToggleText();
-            triggerFilterSubmit();
-        });
-    };
-
-    var loadCss = function(href) {
-        return new Promise(function(resolve) {
-            if (document.querySelector('link[href="' + href + '"]')) {
-                resolve();
-                return;
-            }
-
-            var link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = href;
-            link.onload = resolve;
-            link.onerror = resolve;
-            document.head.appendChild(link);
-        });
-    };
-
-    var loadScript = function(src, forceGlobal) {
-        return new Promise(function(resolve, reject) {
-            if (document.querySelector('script[src="' + src + '"]')) {
-                resolve();
-                return;
-            }
-
-            var previousDefine = null;
-            if (forceGlobal && typeof window.define === 'function' && window.define.amd) {
-                previousDefine = window.define;
-                window.define = undefined;
-            }
-
-            var restoreDefine = function() {
-                if (previousDefine) {
-                    window.define = previousDefine;
-                }
-            };
-
-            var script = document.createElement('script');
-            script.src = src;
-            script.async = true;
-            script.onload = function() {
-                restoreDefine();
-                resolve();
-            };
-            script.onerror = function() {
-                restoreDefine();
-                reject();
-            };
-            document.head.appendChild(script);
-        });
-    };
-
-    var ensureDateRangeAssets = function() {
-        var cssUrl = 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css';
-        var momentUrl = 'https://cdn.jsdelivr.net/npm/moment@2.30.1/min/moment.min.js';
-        var pickerUrl = 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js';
-
-        // daterangepicker global build expects window.jQuery/window.$.
-        if (!window.jQuery) {
-            window.jQuery = $;
-        }
-        if (!window.$) {
-            window.$ = $;
-        }
-
-        return loadCss(cssUrl)
-            .then(function() {
-                if (typeof window.moment === 'undefined') {
-                    return loadScript(momentUrl, true);
-                }
-                return Promise.resolve();
-            })
-            .then(function() {
-                if (!$.fn.daterangepicker) {
-                    return loadScript(pickerUrl, true);
-                }
-                return Promise.resolve();
-            });
-    };
-
-    var initRangePicker = function(inputSelector, fromSelector, toSelector) {
-        var input = $(inputSelector);
-        var fromInput = $(fromSelector);
-        var toInput = $(toSelector);
-
-        if (!input.length || !fromInput.length || !toInput.length || !$.fn.daterangepicker || typeof window.moment === 'undefined') {
-            return;
-        }
-
-        var options = {
-            autoUpdateInput: false,
-            linkedCalendars: false,
-            opens: 'left',
-            locale: {
-                format: format,
-                separator: separator,
-                applyLabel: 'Aplicar',
-                cancelLabel: 'Limpiar',
-                fromLabel: 'Desde',
-                toLabel: 'Hasta',
-                customRangeLabel: 'Personalizado',
-                weekLabel: 'Sm',
-                daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-                firstDay: 1
-            }
-        };
-
-        if (fromInput.val() && toInput.val()) {
-            options.startDate = window.moment(fromInput.val(), format);
-            options.endDate = window.moment(toInput.val(), format);
-            input.val(fromInput.val() + separator + toInput.val());
-        }
-
-        input.daterangepicker(options);
-
-        var picker = input.data('daterangepicker');
-        if (picker && picker.container) {
-            picker.container.addClass('autograder-single-calendar');
-            picker.container.find('.drp-calendar.right').hide();
-        }
-
-        input.on('show.daterangepicker', function(ev, picker) {
-            if (picker && picker.container) {
-                picker.container.addClass('autograder-single-calendar');
-                picker.container.find('.drp-calendar.right').hide();
-            }
-        });
-
-        input.on('apply.daterangepicker', function(ev, picker) {
-            var start = picker.startDate.format(format);
-            var end = picker.endDate.format(format);
-            fromInput.val(start);
-            toInput.val(end);
-            input.val(start + separator + end);
-            triggerFilterSubmit();
-        });
-
-        input.on('cancel.daterangepicker', function() {
-            fromInput.val('');
-            toInput.val('');
-            input.val('');
-            triggerFilterSubmit();
-        });
-    };
-
-    initStatusMultiselect();
-    initTopFiltersAutoApply();
-    syncSearchHidden();
-
-    ensureDateRangeAssets().then(function() {
-        initRangePicker('#submission_date_range', '#submission_date_from', '#submission_date_to');
-        initRangePicker('#grading_date_range', '#grading_date_from', '#grading_date_to');
-    }).catch(function() {
-        return;
-    });
-});
-{{/js}}
 {{#filters.has_active_filters}}
 <div class="alert alert-info mb-3">
     <strong>{{#str}}filter_active, report_autograder{{/str}}</strong>
