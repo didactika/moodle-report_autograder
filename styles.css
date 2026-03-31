@@ -182,6 +182,10 @@
         color: #000;
     }
 
+    .dropdown-item:active, .dropdown-item:focus {
+        background-color: #e6edf5;
+    }
+
     .autograder-chip-text {
         flex: 1;
     }
@@ -213,8 +217,7 @@
     }
 
     #selected-status-text {
-        flex: 0 1 auto;
-        max-width: 145px;
+        flex: 1;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -247,6 +250,20 @@
     }
 
     .autograder-status-multiselect.is-open #status-chevron i {
+        transform: rotate(180deg);
+    }
+
+    .autograder-date-field-wrapper .autograder-chip-button {
+        min-width: 160px;
+    }
+
+    .autograder-date-field-wrapper .autograder-chip-button span[id$="-arrow"] i {
+        font-size: 0.7rem;
+        transition: transform 0.2s ease;
+        line-height: 1;
+    }
+
+    .autograder-date-field-wrapper.is-open span[id$="-arrow"] i {
         transform: rotate(180deg);
     }
 
@@ -408,5 +425,110 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    /* Pagination */
+    .autograder-pagination {
+        border-top: 1px solid #e5e9ef;
+        padding-top: 0.75rem;
+        color: #4a5568;
+        font-size: 0.9rem;
+    }
+
+    .autograder-per-page {
+        gap: 0.5rem;
+    }
+
+    .autograder-per-page-label {
+        color: #6c757d;
+        white-space: nowrap;
+    }
+
+    .autograder-per-page-dropdown {
+        position: relative;
+    }
+
+    .autograder-per-page-toggle {
+        min-width: 70px;
+        justify-content: space-between;
+    }
+
+    .autograder-per-page-chevron {
+        font-size: 0.7rem;
+        transition: transform 0.2s ease;
+    }
+
+    .autograder-per-page-dropdown.is-open .autograder-per-page-chevron {
+        transform: rotate(180deg);
+    }
+
+    .autograder-per-page-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        min-width: 100%;
+        background: #fff;
+        border: 1px solid #c9d1d9;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+        z-index: 120;
+        padding: 6px;
+        list-style: none;
+        margin: 0;
+    }
+
+    .autograder-per-page-dropdown.is-open .autograder-per-page-menu {
+        display: block;
+    }
+
+    .autograder-per-page-item {
+        width: 100%;
+        text-align: left;
+        font-size: 0.9rem;
+        border-radius: 6px;
+        color: #1f2a36;
+        padding: 0.4rem 0.75rem;
+    }
+
+    .autograder-per-page-item:hover {
+        background-color: #e6edf5;
+        color: unset;
+    }
+
+    .autograder-page-info {
+        gap: 0.25rem;
+    }
+
+    .autograder-page-range {
+        color: #6c757d;
+        white-space: nowrap;
+        margin-right: 0.5rem;
+    }
+
+    .autograder-page-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border: 1px solid #d0d7e0;
+        border-radius: 6px;
+        background-color: #f0f4f8;
+        color: #2e4257;
+        font-size: 0.8rem;
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .autograder-page-btn:hover:not(:disabled) {
+        background-color: #deeaf8;
+        border-color: #5b9bd5;
+        color: #1a4f8a;
+    }
+
+    .autograder-page-btn:disabled {
+        opacity: 0.4;
+        cursor: default;
     }
 }

@@ -51,11 +51,11 @@
                     class="btn filter-btn autograder-chip-button d-flex align-items-center" 
                     aria-label="Submission date filter">
                     <span id="submission-date-text" class="autograder-chip-text">{{#str}}filter_submission_date, report_autograder{{/str}}</span>
-                    <span id="submission-date-arrow" class="p-0 border-0" aria-hidden="true">
+                    <span id="submission-date-arrow" class="ml-2 border-0" aria-hidden="true">
                         <i class="fa fa-chevron-down"></i>
                     </span>
-                    <span id="submission-date-clear" class="p-0 border-0 d-none" type="button" aria-label="Clear submission date">
-                        <i class="fa fa-times"></i>
+                    <span id="submission-date-clear" class="ml-2 border-0 d-none" aria-label="Clear submission date">
+                        <i class="fa fa-times-circle"></i>
                     </span>
                 </button>
                 <input type="text" id="submission_date_range" class="form-control autograder-daterange-input d-none" autocomplete="off" placeholder="{{#str}}filter_submission_date, report_autograder{{/str}}" data-picker-title="{{#str}}filter_submission_date, report_autograder{{/str}}">
@@ -69,11 +69,11 @@
                     class="btn filter-btn autograder-chip-button d-flex align-items-center" 
                     aria-label="Grading date filter">
                     <span id="grading-date-text" class="autograder-chip-text">{{#str}}filter_grading_date, report_autograder{{/str}}</span>
-                    <span id="grading-date-arrow" class="p-0 border-0" aria-hidden="true">
+                    <span id="grading-date-arrow" class="ml-2 border-0" aria-hidden="true">
                         <i class="fa fa-chevron-down"></i>
                     </span>
-                    <span id="grading-date-clear" class="p-0 border-0 d-none" type="button" aria-label="Clear grading date">
-                        <i class="fa fa-times"></i>
+                    <span id="grading-date-clear" class="ml-2 border-0 d-none" aria-label="Clear grading date">
+                        <i class="fa fa-times-circle"></i>
                     </span>
                 </button>
                 <input type="text" id="grading_date_range" class="form-control autograder-daterange-input d-none" autocomplete="off" placeholder="{{#str}}filter_grading_date, report_autograder{{/str}}" data-picker-title="{{#str}}filter_grading_date, report_autograder{{/str}}">
@@ -89,11 +89,11 @@
                         aria-haspopup="true" aria-expanded="false">
                         <span id="selected-status-text" class="autograder-chip-text">{{#str}}filter_status_placeholder, report_autograder{{/str}}</span>
                         <span id="status-selection-count" class="ml-2 d-none"></span>
-                        <span id="clear-status" class="ml-2 border-0 d-none" aria-label="Clear selection">
-                            <i class="fa fa-times-circle"></i>
-                        </span>
                         <span id="status-chevron" class="ml-2" aria-hidden="true">
                             <i class="fa fa-chevron-down"></i>
+                        </span>
+                        <span id="clear-status" class="ml-2 border-0 d-none" aria-label="Clear selection">
+                            <i class="fa fa-times-circle"></i>
                         </span>
                     </button>
                     <ul class="autograder-status-menu dropdown-menu shadow" id="filter-status-popup" role="menu">

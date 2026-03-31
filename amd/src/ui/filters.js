@@ -61,10 +61,17 @@ const renderStatusSelection = (texts, statusLabels) => {
   const selectionCount = $('#status-selection-count');
   const clearStatus = $('#clear-status');
   const chevron = $('#status-chevron');
+  const toggle = $('#status-multiselect-toggle');
   const selectedValues = [];
 
   $('#autograder-status-multiselect input[type="checkbox"]:checked').each(function () {
     selectedValues.push($(this).val());
+  });
+
+  // Highlight dropdown items that are selected
+  $('#autograder-status-multiselect .dropdown-item').each(function () {
+    const cb = $(this).find('input[type="checkbox"]');
+    $(this).toggleClass('bg-primary-light', cb.prop('checked'));
   });
 
   if (!selectedValues.length) {
@@ -72,6 +79,7 @@ const renderStatusSelection = (texts, statusLabels) => {
     selectionCount.addClass('d-none').text('');
     clearStatus.addClass('d-none');
     chevron.removeClass('d-none');
+    toggle.removeClass('bg-primary-light');
     return;
   }
 
@@ -85,6 +93,7 @@ const renderStatusSelection = (texts, statusLabels) => {
 
   clearStatus.removeClass('d-none');
   chevron.addClass('d-none');
+  toggle.addClass('bg-primary-light');
 };
 
 const initStatusMultiselect = (texts, statusLabels) => {
@@ -148,6 +157,7 @@ const initStatusMultiselect = (texts, statusLabels) => {
 };
 
 const renderDateChip = (fromValue, toValue, buttonId, clearBtnId, textSpanId, texts) => {
+  const btn = $('#' + buttonId);
   const clearBtn = $('#' + clearBtnId);
   const textSpan = $('#' + textSpanId);
   const arrowBtn = $('#' + buttonId.replace('-button', '-arrow'));
@@ -156,12 +166,14 @@ const renderDateChip = (fromValue, toValue, buttonId, clearBtnId, textSpanId, te
     textSpan.text(fromValue + SEPARATOR + toValue);
     clearBtn.removeClass('d-none');
     arrowBtn.addClass('d-none');
+    btn.addClass('bg-primary-light');
     return;
   }
 
   textSpan.text(buttonId === 'submission-date-button' ? texts.submissionDate : texts.gradingDate);
   clearBtn.addClass('d-none');
   arrowBtn.removeClass('d-none');
+  btn.removeClass('bg-primary-light');
 };
 
 const updatePickerTitle = (picker, titleText) => {
@@ -204,6 +216,12 @@ const initDateChipInteraction = (buttonId, clearBtnId, inputId, fromId, toId, te
     toInput.val('');
     input.val('');
     input.addClass('d-none');
+    const picker = input.data('daterangepicker');
+    if (picker && typeof window.moment !== 'undefined') {
+      const today = window.moment();
+      picker.setStartDate(today);
+      picker.setEndDate(today);
+    }
     renderDateChip('', '', buttonId, clearBtnId, buttonId.replace('-button', '-text'), texts);
     triggerFilterSubmit();
   });
@@ -342,11 +360,16 @@ const initRangePicker = (inputSelector, fromSelector, toSelector, buttonId, clea
   }
 
   input.off('show.daterangepicker').on('show.daterangepicker', (ev, currentPicker) => {
+    $('#' + buttonId).closest('.autograder-date-field-wrapper').addClass('is-open');
     if (currentPicker && currentPicker.container) {
       currentPicker.container.addClass('autograder-single-calendar');
       currentPicker.container.find('.drp-calendar.right').hide();
       updatePickerTitle(currentPicker, pickerTitle);
     }
+  });
+
+  input.off('hide.daterangepicker').on('hide.daterangepicker', () => {
+    $('#' + buttonId).closest('.autograder-date-field-wrapper').removeClass('is-open');
   });
 
   input.off('apply.daterangepicker').on('apply.daterangepicker', (ev, currentPicker) => {
@@ -360,11 +383,16 @@ const initRangePicker = (inputSelector, fromSelector, toSelector, buttonId, clea
     triggerFilterSubmit();
   });
 
-  input.off('cancel.daterangepicker').on('cancel.daterangepicker', () => {
+  input.off('cancel.daterangepicker').on('cancel.daterangepicker', (ev, currentPicker) => {
     fromInput.val('');
     toInput.val('');
     input.val('');
     input.addClass('d-none');
+    if (currentPicker && typeof window.moment !== 'undefined') {
+      const today = window.moment();
+      currentPicker.setStartDate(today);
+      currentPicker.setEndDate(today);
+    }
     renderDateChip('', '', buttonId, clearBtnId, textSpanId, texts);
     triggerFilterSubmit();
   });
@@ -383,6 +411,14 @@ export const init = () => {
     MANUAL_GRADING: texts.statusManual,
     GRADED: texts.statusGraded
   };
+
+  // Clear all filter inputs on load — prevents browser form restoration from
+  // showing stale values that won't be applied to the current data fetch.
+  $('#submission_date_from, #submission_date_to, #submission_date_range').val('');
+  $('#grading_date_from, #grading_date_to, #grading_date_range').val('');
+  $('#status').val('');
+  $('#autograder-status-multiselect input[type="checkbox"]').prop('checked', false);
+  $('#autograder-quick-search-input, #searchname').val('');
 
   initStatusMultiselect(texts, statusLabels);
   initTopFiltersAutoApply();

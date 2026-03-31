@@ -8,8 +8,11 @@ import {
     getMaxGrade,
     setCurrentPage,
     setFilters,
+    getFilters,
     setRecordsPerPage,
-    setMaxGrade
+    setMaxGrade,
+    setRequestedLimit,
+    getRequestedLimit
 } from './state';
 import { getReportData } from './service/repository';
 import { showLoading, renderTable } from './ui/report';
@@ -17,20 +20,32 @@ import { renderPagination } from './ui/pagination';
 import { attachFilterListeners, attachManualGradeButtonListeners } from './ui/form';
 import { init as initFiltersUi } from './ui/filters';
 
-const fetchAndRenderReport = (page, filters = []) => {
+const fetchAndRenderReport = (page) => {
+    const filters = getFilters();
     setCurrentPage(page);
-    setFilters(filters);
     showLoading();
 
-    getReportData(getCmid(), page, filters)
+    getReportData(getCmid(), page, filters, getRequestedLimit())
         .then(response => {
             setRecordsPerPage(response.limit);
             setMaxGrade(response.maxgrade);
 
+            // Render table first, then pagination sequentially to avoid a race
+            // condition in Moodle's icon system (SystemClass is not a constructor).
             renderTable(response.data, () => {
                 attachManualGradeButtonListeners(getMaxGrade(), getCmid());
+                renderPagination(
+                    response.totalrecords,
+                    response.data,
+                    page,
+                    response.limit,
+                    fetchAndRenderReport,
+                    (newLimit) => {
+                        setRequestedLimit(newLimit);
+                        fetchAndRenderReport(0);
+                    }
+                );
             });
-            renderPagination(response.totalrecords, response.data, page, response.limit, fetchAndRenderReport);
         })
         .catch(async (error) => {
             const msg = await getString('error:apirequest', 'report_autograder', error.message);
@@ -51,8 +66,16 @@ export const init = cmid => {
 
     initFiltersUi();
     attachFilterListeners(
-        (filters) => fetchAndRenderReport(0, filters),
-        () => fetchAndRenderReport(0, [])
+        (filters) => {
+            setFilters(filters);
+            fetchAndRenderReport(0);
+        },
+        () => {
+            setFilters([]);
+            fetchAndRenderReport(0);
+        }
     );
-    fetchAndRenderReport(0);
+    // Defer first fetch by one animation frame so Moodle's own AMD modules
+    // (drawers, nav, etc.) finish initialising the icon system first.
+    requestAnimationFrame(() => fetchAndRenderReport(0));
 };

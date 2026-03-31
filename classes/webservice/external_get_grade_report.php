@@ -26,6 +26,7 @@
             return new external_function_parameters([
                 'cmid' => new external_value(PARAM_INT, 'The course module ID', VALUE_REQUIRED),
                 'page' => new external_value(PARAM_INT, 'The page number to fetch', VALUE_DEFAULT, 0),
+                'limit' => new external_value(PARAM_INT, 'Records per page (0 = use server config)', VALUE_DEFAULT, 0),
                 'filters' => new external_multiple_structure(
                     new external_single_structure([
                         'name' => new external_value(PARAM_TEXT, 'The name of the filter'),
@@ -37,10 +38,9 @@
             ]);
         }
 
-        public static function get_report_data($cmid, $page, $filters = []) {
-            $params = self::validate_parameters(self::get_report_data_parameters(), ['cmid' => $cmid, 'page' => $page, 'filters' => $filters]);
-            var_dump(report_builder::get_report_data($params['cmid'], $params['page'], $params['filters']));
-            return report_builder::get_report_data($params['cmid'], $params['page'], $params['filters']);
+        public static function get_report_data($cmid, $page, $limit = 0, $filters = []) {
+            $params = self::validate_parameters(self::get_report_data_parameters(), ['cmid' => $cmid, 'page' => $page, 'limit' => $limit, 'filters' => $filters]);
+            return report_builder::get_report_data($params['cmid'], $params['page'], $params['filters'], $params['limit']);
         }
 
         public static function get_report_data_returns() {

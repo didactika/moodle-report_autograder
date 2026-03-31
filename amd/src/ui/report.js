@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import templates from 'core/templates';
+import { get_string as getString } from 'core/str';
 
 /**
  * Renders the data rows in the table.
@@ -12,8 +13,13 @@ export const renderTable = (records, onRenderComplete) => {
     container.empty();
 
     if (!records || records.length === 0) {
-        templates.render('report_autograder/table/no_data_message', {}).then(html => {
-            container.html(html);
+        getString('feedback:nothing_to_show', 'report_autograder').then(msg => {
+            container.html(
+                `<tr><td colspan="6" class="align-content-center text-center"><p class="m-0 p-0">${msg}</p></td></tr>`
+            );
+            if (typeof onRenderComplete === 'function') {
+                onRenderComplete();
+            }
         });
         return;
     }
@@ -28,11 +34,18 @@ export const renderTable = (records, onRenderComplete) => {
 
 export const showLoading = () => {
     const container = $('#autograder-report-container tbody');
-    container.empty();
-    const context = { rows: [1, 2, 3] };
-    templates.render('report_autograder/table/skeleton_rows', context).then(html => {
-        container.html(html);
-    });
+    // Inline static HTML skeleton — synchronous, no async template round-trip,
+    // so it always appears immediately before the API responds.
+    const cell = (w) => `<td class="border-0"><div class="autograder-skeleton" style="width:${w}px;"></div></td>`;
+    const row = `<tr>
+        <td class="d-flex align-items-center border-0">
+            <div class="autograder-skeleton avatar mr-2"></div>
+            <div class="autograder-skeleton" style="width:150px;"></div>
+        </td>
+        ${cell(100)}${cell(80)}${cell(100)}${cell(80)}
+        <td class="border-0"><div class="autograder-skeleton button"></div></td>
+    </tr>`;
+    container.html(row + row + row + row);
 };
 
 export const renderReportTable = (onRenderComplete) => {
