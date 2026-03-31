@@ -143,6 +143,19 @@ class filter_handler {
         $processed_filters = [];
         if (!empty($filter_api['status'])) {
             $statuses = array_unique(array_map('strtoupper', $filter_api['status']));
+
+            // "PENDING" in the UI represents PENDING, READY_TO_GRADE, FAILED and SKIPPED
+            // at the API level. Expand when present.
+            $pending_api_values = ['PENDING', 'READY_TO_GRADE', 'FAILED', 'SKIPPED'];
+            if (in_array('PENDING', $statuses, true)) {
+                $statuses = array_values(array_unique(
+                    array_merge(
+                        array_diff($statuses, ['PENDING']),
+                        $pending_api_values
+                    )
+                ));
+            }
+
             $processed_filters['status'] = array_values($statuses);
         }
 

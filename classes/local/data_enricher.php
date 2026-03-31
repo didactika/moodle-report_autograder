@@ -138,6 +138,7 @@ class data_enricher
             return \get_string('status:graded', 'report_autograder');
         }
 
+        // PENDING, READY_TO_GRADE, FAILED, SKIPPED all map to the UI "Pending" status.
         return \get_string('status:pending', 'report_autograder');
     }
 
