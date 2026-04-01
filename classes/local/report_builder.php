@@ -89,7 +89,7 @@ class report_builder
             'itemmodule' => $cm->modname,
             'iteminstance' => $cm->instance,
             'courseid' => $course->id,
-            'itemnumber' => 0
+            'itemnumber' => 1
         ]);
         $maxgrade = $grade_item ? $grade_item->grademax : null;
         $totalrecords = isset($external_response['pagination']['total']) ? (int)$external_response['pagination']['total'] : 0;

@@ -45,24 +45,6 @@
         </div>
 
         <div class="autograder-right-filters d-flex flex-nowrap">
-            <!-- Submission Date Filter Chip -->
-            <div class="autograder-date-field-wrapper">
-                <button type="button" id="submission-date-button" 
-                    class="btn filter-btn autograder-chip-button d-flex align-items-center" 
-                    aria-label="Submission date filter">
-                    <span id="submission-date-text" class="autograder-chip-text">{{#str}}filter_submission_date, report_autograder{{/str}}</span>
-                    <span id="submission-date-arrow" class="ml-2 border-0" aria-hidden="true">
-                        <i class="fa fa-chevron-down"></i>
-                    </span>
-                    <span id="submission-date-clear" class="ml-2 border-0 d-none" aria-label="Clear submission date">
-                        <i class="fa fa-times-circle"></i>
-                    </span>
-                </button>
-                <input type="text" id="submission_date_range" class="form-control autograder-daterange-input d-none" autocomplete="off" placeholder="{{#str}}filter_submission_date, report_autograder{{/str}}" data-picker-title="{{#str}}filter_submission_date, report_autograder{{/str}}">
-                <input type="hidden" name="submission_date_from" id="submission_date_from" value="{{filters.submission_date_from}}">
-                <input type="hidden" name="submission_date_to" id="submission_date_to" value="{{filters.submission_date_to}}">
-            </div>
-
             <!-- Grading Date Filter Chip -->
             <div class="autograder-date-field-wrapper">
                 <button type="button" id="grading-date-button" 

@@ -3,8 +3,6 @@
         {{{user_col}}}
     </td>
 
-    <td data-sort-value="{{submission_date_sort}}">{{submission_date}}</td>
-
     <td>
         <span class="badge badge-secondary">{{status}}</span>
     </td>
@@ -12,7 +10,7 @@
     <td data-sort-value="{{completed_at_sort}}">{{completed_at}}</td>
 
     <td>
-        <input type="number" class="form-control manual-grade-input" value="{{#grade}}{{grade}}{{/grade}}" step="any"
+        <input type="number" class="form-control manual-grade-input" value="{{grade}}" step="any" min="0"
             style="max-width: 100px;" />
     </td>
 
