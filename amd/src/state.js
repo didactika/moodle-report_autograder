@@ -1,6 +1,7 @@
 let currentCmid = null;
 let currentPage = 0;
-let recordsPerPage = 20;
+let recordsPerPage = 12;
+let requestedLimit = 12;
 let maxGrade = null;
 let currentFilters = [];
 
@@ -26,6 +27,12 @@ export const setRecordsPerPage = (rpp) => {
 };
 
 export const getRecordsPerPage = () => recordsPerPage;
+
+export const setRequestedLimit = (limit) => {
+    requestedLimit = limit;
+};
+
+export const getRequestedLimit = () => requestedLimit;
 
 export const setMaxGrade = (grade) => {
     maxGrade = grade;

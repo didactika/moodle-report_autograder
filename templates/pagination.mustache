@@ -1,33 +1,31 @@
-<nav aria-label="Page navigation">
-    <ul class="pagination justify-content-center">
-        {{#hasprev}}
-            <li class="page-item">
-                <a class="page-link" href="#" data-page="{{prevpage}}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo; {{#str}} previous, core {{/str}}</span>
-                </a>
-            </li>
-        {{/hasprev}}
-        {{^hasprev}}
-            <li class="page-item disabled">
-                <span class="page-link" aria-hidden="true">&laquo; {{#str}} previous, core {{/str}}</span>
-            </li>
-        {{/hasprev}}
-
-        <li class="page-item disabled">
-            <span class="page-link">{{#str}} page, core {{/str}} {{currentpage}} / {{totalpages}}</span>
-        </li>
-
-        {{#hasnext}}
-            <li class="page-item">
-                <a class="page-link" href="#" data-page="{{nextpage}}" aria-label="Next">
-                    <span aria-hidden="true">{{#str}} next, core {{/str}} &raquo;</span>
-                </a>
-            </li>
-        {{/hasnext}}
-        {{^hasnext}}
-            <li class="page-item disabled">
-                <span class="page-link" aria-hidden="true">{{#str}} next, core {{/str}} &raquo;</span>
-            </li>
-        {{/hasnext}}
-    </ul>
-</nav>
+<div class="autograder-pagination d-flex justify-content-between align-items-center py-2">
+    <div class="autograder-per-page d-flex align-items-center">
+        <span class="autograder-per-page-label">{{#str}}pagination:results_per_page, report_autograder{{/str}}</span>
+        <div class="autograder-per-page-dropdown" id="autograder-per-page-dropdown">
+            <button type="button" class="btn autograder-chip-button autograder-per-page-toggle d-flex align-items-center"
+                aria-haspopup="true" aria-expanded="false">
+                <span class="autograder-chip-text autograder-per-page-value">{{currentlimit}}</span>
+                <span class="ml-2" aria-hidden="true">
+                    <i class="fa fa-chevron-down autograder-per-page-chevron"></i>
+                </span>
+            </button>
+            <ul class="autograder-per-page-menu dropdown-menu shadow">
+                {{#peroptions}}
+                <li class="list-item">
+                    <button class="dropdown-item autograder-per-page-item{{#selected}} bg-primary-light{{/selected}}"
+                        data-limit="{{value}}">{{label}}</button>
+                </li>
+                {{/peroptions}}
+            </ul>
+        </div>
+    </div>
+    <div class="autograder-page-info d-flex align-items-center">
+        <span class="autograder-page-range">{{from}} - {{to}} {{#str}}pagination:of, report_autograder{{/str}} {{total}}</span>
+        <button class="btn autograder-page-btn" data-page="{{prevpage}}" aria-label="Previous"{{^hasprev}} disabled{{/hasprev}}>
+            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        </button>
+        <button class="btn autograder-page-btn" data-page="{{nextpage}}" aria-label="Next"{{^hasnext}} disabled{{/hasnext}}>
+            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+        </button>
+    </div>
+</div>

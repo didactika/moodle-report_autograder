@@ -40,11 +40,3 @@ $settings->add(new admin_setting_configtext(
     'http://autograder-service-app-1:8085',
     PARAM_URL
 ));
-
-$settings->add(new admin_setting_configtext(
-    'report_autograder/paginationlimit',
-    get_string('setting:pagination_limit_name', 'report_autograder'),
-    get_string('setting:pagination_limit_desc', 'report_autograder'),
-    20,
-    PARAM_INT
-));

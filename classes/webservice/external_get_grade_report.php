@@ -26,6 +26,7 @@
             return new external_function_parameters([
                 'cmid' => new external_value(PARAM_INT, 'The course module ID', VALUE_REQUIRED),
                 'page' => new external_value(PARAM_INT, 'The page number to fetch', VALUE_DEFAULT, 0),
+                'limit' => new external_value(PARAM_INT, 'Records per page (0 = use server config)', VALUE_DEFAULT, 0),
                 'filters' => new external_multiple_structure(
                     new external_single_structure([
                         'name' => new external_value(PARAM_TEXT, 'The name of the filter'),
@@ -37,10 +38,9 @@
             ]);
         }
 
-        public static function get_report_data($cmid, $page, $filters = []) {
-            $params = self::validate_parameters(self::get_report_data_parameters(), ['cmid' => $cmid, 'page' => $page, 'filters' => $filters]);
-
-            return report_builder::get_report_data($params['cmid'], $params['page'], $params['filters']);
+        public static function get_report_data($cmid, $page, $limit = 0, $filters = []) {
+            $params = self::validate_parameters(self::get_report_data_parameters(), ['cmid' => $cmid, 'page' => $page, 'limit' => $limit, 'filters' => $filters]);
+            return report_builder::get_report_data($params['cmid'], $params['page'], $params['filters'], $params['limit']);
         }
 
         public static function get_report_data_returns() {
@@ -52,7 +52,9 @@
                     new external_single_structure([
                         'id' => new external_value(PARAM_INT, 'The external completion ID'),
                         'user_name' => new external_value(PARAM_TEXT, 'Student full name'),
-                        'user_col' => new external_value(PARAM_RAW, 'User profile column'),
+                        'user_col' => new external_value(PARAM_RAW, 'HTML for user column with profile picture and name'),
+                        'user_profile_url' => new external_value(PARAM_URL, 'URL to user profile'),
+                        'user_picture_url' => new external_value(PARAM_URL, 'URL to user picture'),
                         'grade' => new external_value(PARAM_FLOAT, 'The final grade', VALUE_OPTIONAL),
                         'submission_date' => new external_value(PARAM_TEXT, 'The submission date, formatted'),
                         'submission_date_sort' => new external_value(PARAM_INT, 'The submission date, as a timestamp for sorting'),

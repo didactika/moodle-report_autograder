@@ -19,7 +19,7 @@ use report_autograder\external_service\user_grades;
 
 class report_builder
 {
-    public static function get_report_data(int $cmid, int $page, array $filters): array
+    public static function get_report_data(int $cmid, int $page, array $filters, int $limit_override = 0): array
     {
         list($course, $cm) = get_course_and_cm_from_cmid($cmid);
         if (!$course || !$cm) {
@@ -30,11 +30,29 @@ class report_builder
         \external_api::validate_context($context);
         require_capability('report/autograder:view', $context);
 
+        error_log('[autograder] get_report_data called: cmid=' . $cmid . ' page=' . $page . ' limit_override=' . $limit_override);
         $cmid_completions = filter_handler::get_filtered_completion_ids($cmid, $filters);
         $api_filters = filter_handler::get_api_filters($filters);
 
-        $limit = get_config('report_autograder', 'paginationlimit');
-        $limit = (empty($limit) || $limit <= 0) ? 20 : (int)$limit;
+        // If Moodle-side filters were active but matched no users, return empty
+        // results immediately — no point calling the external API.
+        if ($cmid_completions === null) {
+            $grade_item = \grade_item::fetch([
+                'itemtype' => 'mod',
+                'itemmodule' => $cm->modname,
+                'iteminstance' => $cm->instance,
+                'courseid' => $course->id,
+                'itemnumber' => 0
+            ]);
+            return [
+                'totalrecords' => 0,
+                'limit' => ($limit_override > 0) ? $limit_override : 12,
+                'maxgrade' => $grade_item ? $grade_item->grademax : null,
+                'data' => []
+            ];
+        }
+
+        $limit = ($limit_override > 0) ? $limit_override : 12;
 
         $api_page = $page + 1;
 
@@ -44,9 +62,21 @@ class report_builder
         }
 
         try {
-            $external_response = user_grades::get_user_grades($cm->id, $campusuuid, $api_page, $limit, $api_filters, $cmid_completions);
+            $external_response = user_grades::get_user_grades($cm->id, $campusuuid, $api_page, $limit, $api_filters, []);
         } catch (\Exception $e) {
             throw $e;
+        }
+
+        // Filter API results on the Moodle side:
+        // - If a name filter is active, keep only matching UUIDs.
+        // - data_enricher will further restrict to enrolled users only.
+        if (!empty($cmid_completions) && !empty($external_response['data'])) {
+            $uuid_set = array_flip($cmid_completions);
+            $external_response['data'] = array_values(
+                array_filter($external_response['data'], function ($item) use ($uuid_set) {
+                    return isset($uuid_set[$item['userUuid'] ?? '']);
+                })
+            );
         }
 
         $final_results = [];

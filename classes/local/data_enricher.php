@@ -78,6 +78,9 @@ class data_enricher
                 null,
                 ['courseid' => $courseid, 'includefullname' => true]
             ));
+            $user_picture = new \user_picture($moodle_user);
+            $user_picture->size = 100;
+            $user_picture_url = $user_picture->get_url($PAGE)->out(false);
 
             list($submission_display, $submission_timestamp) = self::format_api_date($api_item['completedAt'] ?? null, $date_format);
 
@@ -91,20 +94,18 @@ class data_enricher
                 $api_grade = round((float)$moodle_grades[$moodle_userid], 2);
             }
 
-            if (!in_array($raw_status, ['GRADED', 'MANUAL_GRADING'])) {
-                if ($api_grade === null) {
-                    $api_grade = 0;
-                } else {
-                    $raw_status = 'MANUAL_GRADING';
-                }
+            if ($api_grade === null) {
+                $api_grade = 0;
             }
 
             $final_status_string = self::parse_and_translate_status($raw_status);
 
             $final_results[] = [
                 'id' => (int)($api_item['id'] ?? 0),
-                'user_name' => $user_name,
                 'user_col' => $user_col,
+                'user_name' => $user_name,
+                'user_profile_url' => $user_profile_url,
+                'user_picture_url' => $user_picture_url,
                 'grade' => $api_grade,
                 'submission_date' => $submission_display,
                 'submission_date_sort' => $submission_timestamp,
@@ -133,16 +134,11 @@ class data_enricher
             return \get_string('status:manual_grading', 'report_autograder');
         }
 
-        $graded_statuses = [
-            'READY_TO_GRADE',
-            'GRADING',
-            'GRADED'
-        ];
-
-        if (in_array($status, $graded_statuses)) {
+        if ($status === 'GRADED') {
             return \get_string('status:graded', 'report_autograder');
         }
 
+        // PENDING, READY_TO_GRADE, FAILED, SKIPPED all map to the UI "Pending" status.
         return \get_string('status:pending', 'report_autograder');
     }
 
