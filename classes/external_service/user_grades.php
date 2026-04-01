@@ -14,7 +14,6 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_http\client as http_client;
 use moodle_exception;
-use moodle_url;
 
 /**
  * Service class to fetch and update user grades from the external autograder service.
@@ -40,30 +39,44 @@ class user_grades
             throw new moodle_exception('error:serviceurlconfig', 'report_autograder');
         }
 
-        $params = [
-            'campus[uuid]' => $campusUuid,
-            'courseModuleExternalId' => $cmid,
-            'page' => $page,
-            'limit' => $limit
-        ];
+        // Build query string manually to preserve bracket notation (campus[uuid],
+        // status[N], etc.) and commas in userUuid without moodle_url percent-encoding them.
+        $queryParts = [];
+        $queryParts[] = 'campus[uuid]=' . rawurlencode($campusUuid);
+        $queryParts[] = 'courseModuleExternalId=' . rawurlencode((string)$cmid);
+        $queryParts[] = 'page=' . (int)$page;
+        $queryParts[] = 'limit=' . (int)$limit;
 
         if (!empty($api_filters['status'])) {
-            $params['status'] = $api_filters['status'];
+            $statuses = is_array($api_filters['status']) ? $api_filters['status'] : [$api_filters['status']];
+            foreach ($statuses as $i => $status) {
+                if (!empty($status)) {
+                    $queryParts[] = 'status[' . (int)$i . ']=' . rawurlencode($status);
+                }
+            }
         }
 
-        if (!empty($api_filters['dateGraded'])) {
-            $params['scheduledDate'] = $api_filters['dateGraded'];
+        if (!empty($api_filters['completedAtFrom'])) {
+            $queryParts[] = 'completedAt[GREATER_EQUAL]=' . rawurlencode($api_filters['completedAtFrom']);
         }
 
-        if (!empty($cmid_completions)) {
-            $params['userUuid'] = implode(',', $cmid_completions);
+        if (!empty($api_filters['completedAtTo'])) {
+            $queryParts[] = 'completedAt[LESS_EQUAL]=' . rawurlencode($api_filters['completedAtTo']);
         }
 
-        $url = new moodle_url(rtrim($serviceUrl, '/') . '/moduleGrades/', $params);
+        if (!empty($api_filters['scheduledOrGradingTimeFrom'])) {
+            $queryParts[] = 'scheduledOrGradingTime[GREATER_EQUAL]=' . rawurlencode($api_filters['scheduledOrGradingTimeFrom']);
+        }
+
+        if (!empty($api_filters['scheduledOrGradingTimeTo'])) {
+            $queryParts[] = 'scheduledOrGradingTime[LESS_EQUAL]=' . rawurlencode($api_filters['scheduledOrGradingTimeTo']);
+        }
+
+        $urlstring = rtrim($serviceUrl, '/') . '/moduleGrades/?' . implode('&', $queryParts);
 
         try {
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url->out(false));
+            curl_setopt($ch, CURLOPT_URL, $urlstring);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 
@@ -105,7 +118,7 @@ class user_grades
 
             return $data;
         } catch (\Exception $e) {
-            throw new moodle_exception('error:apirequest', 'report_autograder', null, json_encode($url));
+            throw new moodle_exception('error:apirequest', 'report_autograder', null, $e->getMessage());
         }
     }
 

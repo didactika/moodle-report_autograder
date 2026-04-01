@@ -1,19 +1,373 @@
+@keyframes autograder-skeleton-pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
 #page-report-autograder-index {
-    @keyframes autograder-skeleton-pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.8; }
-        100% { opacity: 1; }
+    #autograder-filter-form {
+        position: relative;
+        z-index: 80;
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .autograder-quick-search-wrapper {
+        position: relative;
+        flex: 0 0 220px;
+        max-width: 220px;
+        margin-right: 0 !important;
+    }
+
+    .autograder-top-filters {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 1rem;
+        align-items: center;
+        width: 100%;
+        max-width: 100%;
+        overflow: visible;
+        padding-bottom: 2px;
+        position: relative;
+        z-index: 80;
+    }
+
+    .autograder-right-filters {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 1rem;
+        margin-left: 0;
+        white-space: nowrap;
+        flex: 0 0 auto;
+    }
+
+    .autograder-status-filter-wrapper {
+        display: flex;
+        align-items: center;
+        margin: 0;
+    }
+
+    .autograder-top-date-filter {
+        min-width: 230px;
+        max-width: 230px;
+        flex: 0 0 230px;
+    }
+
+    .autograder-top-status-filter {
+        min-width: 240px;
+        max-width: 240px;
+        flex: 0 0 240px;
+        position: relative;
+    }
+
+    .autograder-quick-search-icon {
+        position: absolute;
+        top: 50%;
+        left: 12px;
+        transform: translateY(-50%);
+        color: #6c757d;
+        pointer-events: none;
+    }
+
+    .autograder-quick-search-input {
+        padding-left: 34px;
+    }
+
+    .autograder-unified-input {
+        height: 38px;
+        border: 1px solid #98a1ad;
+        border-radius: 8px;
+        font-size: 1rem;
+        line-height: 1.2;
+        box-shadow: none;
+        background-color: #fff;
+    }
+
+    .autograder-daterange-input::placeholder {
+        font-size: 0.88rem;
+        letter-spacing: 0.01em;
+    }
+
+    .autograder-unified-input:focus {
+        border-color: #5b7fa4;
+        box-shadow: 0 0 0 2px rgba(91, 127, 164, 0.15);
+    }
+
+    .autograder-date-filter-wrapper label,
+    .autograder-status-filter-wrapper label {
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+        font-weight: 500;
+        color: #2e4257;
+        display: block;
+    }
+
+    /* Chip Button Styles */
+    .autograder-date-field-wrapper {
+        flex: 0 0 auto;
+        position: relative;
+    }
+
+    .autograder-chip-button {
+        background-color: #f0f4f8 !important;
+        border: 1px solid #d0d7e0 !important;
+        border-radius: 20px !important;
+        height: 38px;
+        padding: 0.45rem 0.75rem !important;
+        font-size: 0.9rem;
+        color: #2e4257 !important;
+        transition: filter 0.15s ease;
+        white-space: nowrap;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .autograder-chip-button:hover {
+        filter: brightness(98%);
+    }
+
+    .autograder-chip-button:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        filter: brightness(98%);
+    }
+
+    .autograder-chip-button:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+        filter: brightness(98%);
+    }
+
+    .autograder-chip-button .autograder-chip-text {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+    }
+
+    .autograder-chip-button .d-none {
+        display: none !important;
+    }
+
+    .autograder-chip-button span[id$="-arrow"],
+    .autograder-chip-button span[id$="-clear"] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        padding: 0;
+        flex-shrink: 0;
+        cursor: pointer;
+        color: #2e4257;
+    }
+
+    .autograder-chip-button span[id$="-clear"]:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        color: #000;
+    }
+
+    .dropdown-item:active, .dropdown-item:focus {
+        background-color: #e6edf5;
+    }
+
+    .autograder-chip-text {
+        flex: 1;
+    }
+
+    /* Hidden input for daterangepicker */
+    .autograder-daterange-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        width: 100%;
+        height: 38px;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .autograder-daterange-input:not(.d-none) {
+        pointer-events: auto;
+    }
+
+    .autograder-status-dropdown {
+        min-width: 190px;
+    }
+
+    .autograder-status-button {
+        justify-content: flex-start;
+        min-width: 190px;
+        max-width: 240px;
+    }
+
+    #selected-status-text {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #status-selection-count {
+        font-size: 0.9rem;
+        color: #2e4257;
+        white-space: nowrap;
+    }
+
+    #clear-status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        color: #2e4257;
+    }
+
+    #clear-status:hover {
+        filter: brightness(98%);
+    }
+
+    #status-chevron i {
+        font-size: 0.7rem;
+        transition: transform 0.2s ease;
+        line-height: 1;
+    }
+
+    .autograder-status-multiselect.is-open #status-chevron i {
+        transform: rotate(180deg);
+    }
+
+    .autograder-date-field-wrapper .autograder-chip-button {
+        min-width: 160px;
+    }
+
+    .autograder-date-field-wrapper .autograder-chip-button span[id$="-arrow"] i {
+        font-size: 0.7rem;
+        transition: transform 0.2s ease;
+        line-height: 1;
+    }
+
+    .autograder-date-field-wrapper.is-open span[id$="-arrow"] i {
+        transform: rotate(180deg);
+    }
+
+    .autograder-status-multiselect {
+        position: relative;
+        z-index: 30;
+    }
+
+    .autograder-status-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        width: 100%;
+        max-height: 230px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        white-space: normal;
+        background: #fff;
+        border: 1px solid #c9d1d9;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+        z-index: 120;
+        padding: 6px;
+    }
+
+    .autograder-status-menu .list-item {
+        list-style: none;
+    }
+
+    .autograder-status-multiselect.is-open .autograder-status-menu {
+        display: block;
+    }
+
+    .autograder-status-menu .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        width: 100%;
+        overflow-x: hidden;
+        white-space: normal;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        color: #1f2a36;
+    }
+
+    .autograder-status-menu .dropdown-item:hover {
+        background-color: #e6edf5;
+        color: unset;
+    }
+
+    .autograder-status-checkbox+.autograder-status-label {
+        display: inline-block;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+        padding-left: 1.3rem;
+        line-height: 1.5;
+        width: 100%;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .autograder-status-checkbox+.autograder-status-label::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 3px;
+        width: 14px;
+        height: 14px;
+        border: 1px solid var(--primary, #0f6cbf);
+        background-color: #fff;
+        border-radius: 2px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .autograder-status-checkbox:checked+.autograder-status-label::after {
+        content: "✔";
+        position: absolute;
+        left: 0.1rem;
+        top: 0.05rem;
+        font-size: 0.8rem;
+        color: var(--primary, #0f6cbf);
+        line-height: 1.5;
+    }
+
+    #autograder-report-container,
+    #autograder-report-container .table {
+        position: relative;
+        z-index: 1;
     }
 
     .autograder-skeleton {
-        animation: autograder-skeleton-pulse 3.5s ease-in-out infinite;
+        animation: autograder-skeleton-pulse 1.3s ease-in-out infinite;
         background-color: #e9ecef;
         border-radius: 4px;
         display: inline-block;
         height: 20px;
         width: 100%;
     }
-    .activity-information{
+
+    .activity-information {
         display: none;
     }
 
@@ -33,5 +387,148 @@
         width: 80px;
         height: 24px;
         border-radius: 12px;
+    }
+
+    .daterangepicker.autograder-single-calendar .drp-calendar.right {
+        display: none !important;
+    }
+
+    .daterangepicker.autograder-single-calendar .drp-calendar.left {
+        float: none;
+        margin: 0 auto;
+        max-width: 280px;
+    }
+
+    .daterangepicker.autograder-single-calendar .calendar-table {
+        margin: 0 auto;
+    }
+
+    .daterangepicker.autograder-single-calendar .drp-calendar.left .month {
+        text-align: center;
+    }
+
+    .daterangepicker.autograder-single-calendar .drp-buttons {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .daterangepicker.autograder-single-calendar .autograder-picker-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #2e4257;
+        margin: 4px 8px 8px 8px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #e5e9ef;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Pagination */
+    .autograder-pagination {
+        border-top: 1px solid #e5e9ef;
+        padding-top: 0.75rem;
+        color: #4a5568;
+        font-size: 0.9rem;
+    }
+
+    .autograder-per-page {
+        gap: 0.5rem;
+    }
+
+    .autograder-per-page-label {
+        color: #6c757d;
+        white-space: nowrap;
+    }
+
+    .autograder-per-page-dropdown {
+        position: relative;
+    }
+
+    .autograder-per-page-toggle {
+        min-width: 70px;
+        justify-content: space-between;
+    }
+
+    .autograder-per-page-chevron {
+        font-size: 0.7rem;
+        transition: transform 0.2s ease;
+    }
+
+    .autograder-per-page-dropdown.is-open .autograder-per-page-chevron {
+        transform: rotate(180deg);
+    }
+
+    .autograder-per-page-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        min-width: 100%;
+        background: #fff;
+        border: 1px solid #c9d1d9;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+        z-index: 120;
+        padding: 6px;
+        list-style: none;
+        margin: 0;
+    }
+
+    .autograder-per-page-dropdown.is-open .autograder-per-page-menu {
+        display: block;
+    }
+
+    .autograder-per-page-item {
+        width: 100%;
+        text-align: left;
+        font-size: 0.9rem;
+        border-radius: 6px;
+        color: #1f2a36;
+        padding: 0.4rem 0.75rem;
+    }
+
+    .autograder-per-page-item:hover {
+        background-color: #e6edf5;
+        color: unset;
+    }
+
+    .autograder-page-info {
+        gap: 0.25rem;
+    }
+
+    .autograder-page-range {
+        color: #6c757d;
+        white-space: nowrap;
+        margin-right: 0.5rem;
+    }
+
+    .autograder-page-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border: 1px solid #d0d7e0;
+        border-radius: 6px;
+        background-color: #f0f4f8;
+        color: #2e4257;
+        font-size: 0.8rem;
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .autograder-page-btn:hover:not(:disabled) {
+        background-color: #deeaf8;
+        border-color: #5b9bd5;
+        color: #1a4f8a;
+    }
+
+    .autograder-page-btn:disabled {
+        opacity: 0.4;
+        cursor: default;
     }
 }

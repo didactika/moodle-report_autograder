@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'report_autograder';
 $plugin->release = '2.0.1';
-$plugin->version = 2026031003;
+$plugin->version = 2026031006;
 $plugin->requires = 2020061500;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->supported = [401, 405];
