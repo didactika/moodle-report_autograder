@@ -15,7 +15,7 @@ export const renderTable = (records, onRenderComplete) => {
     if (!records || records.length === 0) {
         getString('feedback:nothing_to_show', 'report_autograder').then(msg => {
             container.html(
-                `<tr><td colspan="6" class="align-content-center text-center"><p class="m-0 p-0">${msg}</p></td></tr>`
+                `<tr><td colspan="5" class="align-content-center text-center"><p class="m-0 p-0">${msg}</p></td></tr>`
             );
             if (typeof onRenderComplete === 'function') {
                 onRenderComplete();
@@ -42,7 +42,7 @@ export const showLoading = () => {
             <div class="autograder-skeleton avatar mr-2"></div>
             <div class="autograder-skeleton" style="width:150px;"></div>
         </td>
-        ${cell(100)}${cell(80)}${cell(100)}${cell(80)}
+        ${cell(80)}${cell(100)}${cell(80)}
         <td class="border-0"><div class="autograder-skeleton button"></div></td>
     </tr>`;
     container.html(row + row + row + row);

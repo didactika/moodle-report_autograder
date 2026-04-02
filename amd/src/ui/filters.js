@@ -414,7 +414,6 @@ export const init = () => {
 
   // Clear all filter inputs on load — prevents browser form restoration from
   // showing stale values that won't be applied to the current data fetch.
-  $('#submission_date_from, #submission_date_to, #submission_date_range').val('');
   $('#grading_date_from, #grading_date_to, #grading_date_range').val('');
   $('#status').val('');
   $('#autograder-status-multiselect input[type="checkbox"]').prop('checked', false);
@@ -422,13 +421,6 @@ export const init = () => {
 
   initStatusMultiselect(texts, statusLabels);
   initTopFiltersAutoApply();
-  initDateChipInteraction(
-    'submission-date-button',
-    'submission-date-clear',
-    'submission_date_range',
-    'submission_date_from',
-    'submission_date_to',
-    texts);
   initDateChipInteraction('grading-date-button',
     'grading-date-clear',
     'grading_date_range',
@@ -438,16 +430,6 @@ export const init = () => {
   syncSearchHidden();
 
   ensureDateRangeAssets().then(() => {
-    initRangePicker(
-      '#submission_date_range',
-      '#submission_date_from',
-      '#submission_date_to',
-      'submission-date-button',
-      'submission-date-clear',
-      'submission-date-text',
-      texts,
-      activeLang
-    );
     initRangePicker(
       '#grading_date_range',
       '#grading_date_from',
@@ -459,14 +441,6 @@ export const init = () => {
       activeLang
     );
 
-    renderDateChip(
-      $('#submission_date_from').val(),
-      $('#submission_date_to').val(),
-      'submission-date-button',
-      'submission-date-clear',
-      'submission-date-text',
-      texts
-    );
     renderDateChip(
       $('#grading_date_from').val(),
       $('#grading_date_to').val(),

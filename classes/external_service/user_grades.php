@@ -42,8 +42,8 @@ class user_grades
         // Build query string manually to preserve bracket notation (campus[uuid],
         // status[N], etc.) and commas in userUuid without moodle_url percent-encoding them.
         $queryParts = [];
-        $queryParts[] = 'campus[uuid]=' . rawurlencode($campusUuid);
-        $queryParts[] = 'courseModuleExternalId=' . rawurlencode((string)$cmid);
+        $queryParts[] = 'campusModule[campus][uuid]=' . rawurlencode($campusUuid);
+        $queryParts[] = 'campusModule[courseModuleExternalId]=' . rawurlencode((string)$cmid);
         $queryParts[] = 'page=' . (int)$page;
         $queryParts[] = 'limit=' . (int)$limit;
 
@@ -54,14 +54,6 @@ class user_grades
                     $queryParts[] = 'status[' . (int)$i . ']=' . rawurlencode($status);
                 }
             }
-        }
-
-        if (!empty($api_filters['completedAtFrom'])) {
-            $queryParts[] = 'completedAt[GREATER_EQUAL]=' . rawurlencode($api_filters['completedAtFrom']);
-        }
-
-        if (!empty($api_filters['completedAtTo'])) {
-            $queryParts[] = 'completedAt[LESS_EQUAL]=' . rawurlencode($api_filters['completedAtTo']);
         }
 
         if (!empty($api_filters['scheduledOrGradingTimeFrom'])) {
