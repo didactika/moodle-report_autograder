@@ -7,8 +7,9 @@ import { get_string as getString } from 'core/str';
  *
  * @param {Array} records The array of records to render.
  * @param {Function} onRenderComplete Callback function to be called when rendering is complete.
+ * @param {number|null} maxgrade Maximum grade for the activity.
  */
-export const renderTable = (records, onRenderComplete) => {
+export const renderTable = (records, onRenderComplete, maxgrade) => {
     const container = $('#autograder-report-container tbody');
     container.empty();
 
@@ -24,7 +25,7 @@ export const renderTable = (records, onRenderComplete) => {
         return;
     }
 
-    templates.render('report_autograder/table_rows', { records }).then(html => {
+    templates.render('report_autograder/table_rows', { records: records.map(r => ({...r, maxgrade})) }).then(html => {
         container.html(html);
         if (typeof onRenderComplete === 'function') {
             onRenderComplete();
