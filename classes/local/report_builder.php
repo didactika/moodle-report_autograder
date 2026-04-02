@@ -30,7 +30,6 @@ class report_builder
         \external_api::validate_context($context);
         require_capability('report/autograder:view', $context);
 
-        error_log('[autograder] get_report_data called: cmid=' . $cmid . ' page=' . $page . ' limit_override=' . $limit_override);
         $cmid_completions = filter_handler::get_filtered_completion_ids($cmid, $filters);
         $api_filters = filter_handler::get_api_filters($filters);
 
@@ -42,7 +41,7 @@ class report_builder
                 'itemmodule' => $cm->modname,
                 'iteminstance' => $cm->instance,
                 'courseid' => $course->id,
-                'itemnumber' => 0
+                'itemnumber' => 1
             ]);
             return [
                 'totalrecords' => 0,

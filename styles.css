@@ -13,6 +13,9 @@
 }
 
 #page-report-autograder-index {
+    .activity-description {
+        display: none;
+    }
     #autograder-filter-form {
         position: relative;
         z-index: 80;

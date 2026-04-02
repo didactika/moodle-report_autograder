@@ -45,7 +45,7 @@ const fetchAndRenderReport = (page) => {
                         fetchAndRenderReport(0);
                     }
                 );
-            });
+            }, response.maxgrade);
         })
         .catch(async (error) => {
             const msg = await getString('error:apirequest', 'report_autograder', error.message);
