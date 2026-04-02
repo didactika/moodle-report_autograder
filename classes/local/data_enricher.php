@@ -81,8 +81,7 @@ class data_enricher
             $user_picture = new \user_picture($moodle_user);
             $user_picture->size = 100;
             $user_picture_url = $user_picture->get_url($PAGE)->out(false);
-
-            list($submission_display, $submission_timestamp) = self::format_api_date($api_item['completedAt'] ?? null, $date_format);
+            $user_profile_url = (new \moodle_url('/user/view.php', ['id' => $moodle_userid, 'course' => $courseid]))->out(false);
 
             $grading_date_raw = $api_item['gradingTime'] ?? $api_item['scheduledGradingTime'] ?? null;
             list($completed_at_display, $completed_at_timestamp) = self::format_api_date($grading_date_raw, $date_format);
@@ -94,10 +93,6 @@ class data_enricher
                 $api_grade = round((float)$moodle_grades[$moodle_userid], 2);
             }
 
-            if ($api_grade === null) {
-                $api_grade = 0;
-            }
-
             $final_status_string = self::parse_and_translate_status($raw_status);
 
             $final_results[] = [
@@ -107,8 +102,6 @@ class data_enricher
                 'user_profile_url' => $user_profile_url,
                 'user_picture_url' => $user_picture_url,
                 'grade' => $api_grade,
-                'submission_date' => $submission_display,
-                'submission_date_sort' => $submission_timestamp,
                 'status' => $final_status_string,
                 'completed_at' => $completed_at_display,
                 'completed_at_sort' => $completed_at_timestamp,

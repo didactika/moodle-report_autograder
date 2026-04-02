@@ -108,7 +108,7 @@ class filter_handler {
 
     public static function get_api_filters(array $filters): array {
         $filter_api = [];
-        $filter_type_api = ['status', 'completedAtFrom', 'completedAtTo', 'scheduledOrGradingTimeFrom', 'scheduledOrGradingTimeTo'];
+        $filter_type_api = ['status', 'scheduledOrGradingTimeFrom', 'scheduledOrGradingTimeTo'];
 
         if (empty($filters)) {
             return [];
@@ -157,14 +157,6 @@ class filter_handler {
             }
 
             $processed_filters['status'] = array_values($statuses);
-        }
-
-        if (!empty($filter_api['completedAtFrom'])) {
-            $processed_filters['completedAtFrom'] = $filter_api['completedAtFrom'];
-        }
-
-        if (!empty($filter_api['completedAtTo'])) {
-            $processed_filters['completedAtTo'] = $filter_api['completedAtTo'];
         }
 
         if (!empty($filter_api['scheduledOrGradingTimeFrom'])) {

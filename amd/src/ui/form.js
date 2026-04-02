@@ -29,14 +29,6 @@ export const attachFilterListeners = (onFilterChange, onFilterClear) => {
         if (searchName) {
             filters.push({name: 'nameUser', value: searchName});
         }
-        const completedAtFrom = $('#submission_date_from').val();
-        if (completedAtFrom) {
-            filters.push({name: 'completedAtFrom', value: toLocalISO(completedAtFrom, false)});
-        }
-        const completedAtTo = $('#submission_date_to').val();
-        if (completedAtTo) {
-            filters.push({name: 'completedAtTo', value: toLocalISO(completedAtTo, true)});
-        }
         const gradingDateFrom = $('#grading_date_from').val();
         if (gradingDateFrom) {
             filters.push({name: 'scheduledOrGradingTimeFrom', value: toLocalISO(gradingDateFrom, false)});
