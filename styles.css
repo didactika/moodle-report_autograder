@@ -430,20 +430,17 @@
         text-overflow: ellipsis;
     }
 
-    /* Pagination */
+    /* Pagination (course-finder style: pill per-page, range + plain chevrons) */
     .autograder-pagination {
         border-top: 1px solid #e5e9ef;
         padding-top: 0.75rem;
-        color: #4a5568;
-        font-size: 0.9rem;
-    }
-
-    .autograder-per-page {
-        gap: 0.5rem;
+        padding-bottom: 0.25rem;
+        color: #2d3748;
+        font-size: 0.95rem;
     }
 
     .autograder-per-page-label {
-        color: #6c757d;
+        color: #4a5568;
         white-space: nowrap;
     }
 
@@ -452,12 +449,25 @@
     }
 
     .autograder-per-page-toggle {
-        min-width: 70px;
-        justify-content: space-between;
+        min-width: 4.25rem;
+        justify-content: center;
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #2d3748;
+        line-height: 1.2;
+        cursor: pointer;
+        box-shadow: none;
+    }
+
+    .autograder-per-page-toggle:hover,
+    .autograder-per-page-toggle:focus {
+        background-color: #edf2f7 !important;
+        color: #2d3748;
     }
 
     .autograder-per-page-chevron {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
+        opacity: 0.85;
         transition: transform 0.2s ease;
     }
 
@@ -472,9 +482,9 @@
         left: 0;
         min-width: 100%;
         background: #fff;
-        border: 1px solid #c9d1d9;
+        border: 1px solid #e2e8f0;
         border-radius: 8px;
-        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
         z-index: 120;
         padding: 6px;
         list-style: none;
@@ -499,39 +509,32 @@
         color: unset;
     }
 
-    .autograder-page-info {
-        gap: 0.25rem;
-    }
-
-    .autograder-page-range {
-        color: #6c757d;
+    .autograder-pagination-result {
+        color: #4a5568;
         white-space: nowrap;
-        margin-right: 0.5rem;
     }
 
-    .autograder-page-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 30px;
-        height: 30px;
-        padding: 0;
-        border: 1px solid #d0d7e0;
-        border-radius: 6px;
-        background-color: #f0f4f8;
-        color: #2e4257;
-        font-size: 0.8rem;
-        transition: background-color 0.15s ease, border-color 0.15s ease;
+    .autograder-page-arrows .autograder-page-chevron {
+        font-size: 0.95rem;
+        line-height: 1;
+        color: #4a5568;
+        text-decoration: none;
+        min-width: 1.25rem;
     }
 
-    .autograder-page-btn:hover:not(:disabled) {
-        background-color: #deeaf8;
-        border-color: #5b9bd5;
-        color: #1a4f8a;
+    .autograder-page-arrows .autograder-page-chevron:hover:not(:disabled),
+    .autograder-page-arrows .autograder-page-chevron:focus:not(:disabled) {
+        color: #2d3748;
+        text-decoration: none;
     }
 
-    .autograder-page-btn:disabled {
-        opacity: 0.4;
+    .autograder-page-arrows .autograder-page-chevron:disabled {
+        color: #cbd5e0;
         cursor: default;
+        opacity: 1;
+    }
+
+    .autograder-page-arrows .autograder-page-chevron:disabled .fa {
+        color: #cbd5e0;
     }
 }

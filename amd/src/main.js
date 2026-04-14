@@ -30,6 +30,11 @@ const fetchAndRenderReport = (page) => {
             setRecordsPerPage(response.limit);
             setMaxGrade(response.maxgrade);
 
+            // Keep requested page size in sync when totals shrink (e.g. filters) so we do not keep asking for 96 when only 2 exist.
+            if (response.totalrecords > 0 && getRequestedLimit() > response.totalrecords) {
+                setRequestedLimit(response.totalrecords);
+            }
+
             // Render table first, then pagination sequentially to avoid a race
             // condition in Moodle's icon system (SystemClass is not a constructor).
             renderTable(response.data, () => {

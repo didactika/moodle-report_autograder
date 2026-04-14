@@ -1,31 +1,64 @@
-<div class="autograder-pagination d-flex justify-content-between align-items-center py-2">
-    <div class="autograder-per-page d-flex align-items-center">
-        <span class="autograder-per-page-label">{{#str}}pagination:results_per_page, report_autograder{{/str}}</span>
-        <div class="autograder-per-page-dropdown" id="autograder-per-page-dropdown">
-            <button type="button" class="btn autograder-chip-button autograder-per-page-toggle d-flex align-items-center"
+<div class="autograder-pagination autograder-pagination-container d-flex flex-wrap justify-content-between align-items-center">
+    <div class="autograder-pagination-page-selector d-flex align-items-center mb-2 mb-md-0">
+        <span class="mr-2 autograder-per-page-label">{{#str}}pagination:results_per_page, report_autograder{{/str}}</span>
+        <div class="dropdown autograder-per-page-dropdown" id="autograder-per-page-dropdown">
+            <button type="button"
+                class="dropdown-button badge rounded-pill bg-light border-0 d-flex align-items-center p-2 autograder-per-page-toggle"
                 aria-haspopup="true" aria-expanded="false">
-                <span class="autograder-chip-text autograder-per-page-value">{{currentlimit}}</span>
+                <span class="autograder-per-page-value">
+                    {{#current_is_all}}
+                        {{#all_results_label}}{{{.}}}{{/all_results_label}}
+                        {{^all_results_label}}{{#str}}pagination:all_results, report_autograder{{/str}}{{/all_results_label}}
+                    {{/current_is_all}}
+                    {{^current_is_all}}{{current_numeric}}{{/current_is_all}}
+                </span>
                 <span class="ml-2" aria-hidden="true">
                     <i class="fa fa-chevron-down autograder-per-page-chevron"></i>
                 </span>
             </button>
-            <ul class="autograder-per-page-menu dropdown-menu shadow">
+            <ul class="autograder-per-page-menu dropdown-menu shadow" aria-labelledby="autograder-per-page-dropdown">
                 {{#peroptions}}
                 <li class="list-item">
-                    <button class="dropdown-item autograder-per-page-item{{#selected}} bg-primary-light{{/selected}}"
-                        data-limit="{{value}}">{{label}}</button>
+                    <button type="button" class="dropdown-item autograder-per-page-item{{#selected}} bg-primary-light{{/selected}}"
+                        data-limit="{{value}}">
+                        {{#is_all}}
+                            {{#all_results_label}}{{{.}}}{{/all_results_label}}
+                            {{^all_results_label}}{{#str}}pagination:all_results, report_autograder{{/str}}{{/all_results_label}}
+                        {{/is_all}}
+                        {{^is_all}}{{value}}{{/is_all}}
+                    </button>
                 </li>
                 {{/peroptions}}
             </ul>
         </div>
     </div>
-    <div class="autograder-page-info d-flex align-items-center">
-        <span class="autograder-page-range">{{from}} - {{to}} {{#str}}pagination:of, report_autograder{{/str}} {{total}}</span>
-        <button class="btn autograder-page-btn" data-page="{{prevpage}}" aria-label="Previous"{{^hasprev}} disabled{{/hasprev}}>
-            <i class="fa fa-chevron-left" aria-hidden="true"></i>
-        </button>
-        <button class="btn autograder-page-btn" data-page="{{nextpage}}" aria-label="Next"{{^hasnext}} disabled{{/hasnext}}>
-            <i class="fa fa-chevron-right" aria-hidden="true"></i>
-        </button>
+
+    <div class="autograder-change-page-buttons d-flex flex-wrap align-items-center justify-content-md-end">
+        <div class="autograder-pagination-result d-flex flex-wrap align-items-center mb-2 mb-md-0 mr-md-3">
+            <div class="d-flex align-items-center mr-2">
+                <span class="autograder-page-min mr-1">{{from}}</span>
+                <span class="mr-1">-</span>
+                <span class="autograder-page-max mr-1">{{to}}</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <span class="mr-1">{{#str}}pagination:of, report_autograder{{/str}}</span>
+                <span class="autograder-page-total mr-1">{{total}}</span>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center autograder-page-arrows">
+            <div class="mr-3">
+                <button type="button" class="autograder-page-nav btn btn-link p-0 border-0 shadow-none autograder-page-chevron"
+                    data-page="{{prevpage}}" aria-label="{{#str}}pagination:previous, report_autograder{{/str}}"{{^hasprev}} disabled{{/hasprev}}>
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div>
+                <button type="button" class="autograder-page-nav btn btn-link p-0 border-0 shadow-none autograder-page-chevron"
+                    data-page="{{nextpage}}" aria-label="{{#str}}pagination:next, report_autograder{{/str}}"{{^hasnext}} disabled{{/hasnext}}>
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
