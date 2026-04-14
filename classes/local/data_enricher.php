@@ -83,7 +83,7 @@ class data_enricher
             $user_picture_url = $user_picture->get_url($PAGE)->out(false);
             $user_profile_url = (new \moodle_url('/user/view.php', ['id' => $moodle_userid, 'course' => $courseid]))->out(false);
 
-            $grading_date_raw = $api_item['gradingTime'] ?? $api_item['scheduledGradingTime'] ?? null;
+            $grading_date_raw = $api_item['gradedAt'] ?? $api_item['scheduledGradingTime'] ?? null;
             list($completed_at_display, $completed_at_timestamp) = self::format_api_date($grading_date_raw, $date_format);
 
             $raw_status = strtoupper(trim($api_item['status'] ?? ''));

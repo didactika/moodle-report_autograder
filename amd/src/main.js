@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { get_string as getString } from 'core/str';
 import notification from 'core/notification';
+import IconSystem from 'core/icon_system';
 
 import {
     init as initState,
@@ -140,5 +141,8 @@ export const init = (cmid) => {
             fetchAndRenderReport(0);
         },
     );
-    requestAnimationFrame(() => fetchAndRenderReport(0));
+
+    IconSystem.instance().then(() => {
+        fetchAndRenderReport(0);
+    });
 };
