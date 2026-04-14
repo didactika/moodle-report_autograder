@@ -64,7 +64,7 @@ class data_enricher
 
         foreach ($external_data as $api_item) {
             $uuid = $api_item['userUuid'] ?? null;
-            $moodle_user = $users_by_uuid[$uuid] ?? null;
+            $moodle_user = (is_string($uuid) && $uuid !== '') ? ($users_by_uuid[$uuid] ?? null) : null;
 
             if (!$moodle_user) {
                 continue;
