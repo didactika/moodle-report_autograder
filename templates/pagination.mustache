@@ -19,7 +19,7 @@
             <ul class="autograder-per-page-menu dropdown-menu shadow" aria-labelledby="autograder-per-page-dropdown">
                 {{#peroptions}}
                 <li class="list-item">
-                    <button type="button" class="dropdown-item autograder-per-page-item{{#selected}} bg-primary-light{{/selected}}"
+                    <button type="button" class="dropdown-item autograder-per-page-item{{#selected}} autograder-filter-active{{/selected}}"
                         data-limit="{{value}}">
                         {{#is_all}}
                             {{#all_results_label}}{{{.}}}{{/all_results_label}}

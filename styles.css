@@ -122,6 +122,22 @@
         position: relative;
     }
 
+    /* Selected chips, status toggle, and menu rows use theme --primary-light */
+    .autograder-filter-active {
+        background-color: var(--primary-light) !important;
+    }
+
+    .autograder-chip-button.autograder-filter-active:hover {
+        filter: none;
+    }
+
+    .autograder-status-menu .dropdown-item.autograder-filter-active:hover,
+    .autograder-status-menu .dropdown-item.autograder-filter-active:focus,
+    .autograder-status-menu .dropdown-item.autograder-filter-active:active {
+        background-color: var(--primary-light) !important;
+        color: unset;
+    }
+
     .autograder-chip-button {
         background-color: #f0f4f8 !important;
         border: 1px solid #d0d7e0 !important;
@@ -136,6 +152,11 @@
         display: flex;
         align-items: center;
         gap: 8px;
+    }
+
+    /* Must follow .autograder-chip-button: same specificity + order would lose to chip gray */
+    .autograder-chip-button.autograder-filter-active {
+        background-color: var(--primary-light) !important;
     }
 
     .autograder-chip-button:hover {
@@ -506,6 +527,13 @@
 
     .autograder-per-page-item:hover {
         background-color: #e6edf5;
+        color: unset;
+    }
+
+    .autograder-per-page-item.autograder-filter-active:hover,
+    .autograder-per-page-item.autograder-filter-active:focus,
+    .autograder-per-page-item.autograder-filter-active:active {
+        background-color: var(--primary-light) !important;
         color: unset;
     }
 
