@@ -14,7 +14,7 @@ import {
     setMaxGrade,
     setRequestedLimit,
     getRequestedLimit,
-    getFiltersFingerprint,
+    getReportCacheFingerprint,
     clearClientReportCache,
     setClientReportCache,
     getClientReportCache,
@@ -22,13 +22,14 @@ import {
     getSortColumn,
     getSortDirection,
     setSort,
+    resetSort,
 } from './state';
 import { getReportData } from './service/repository';
 import { showLoading, renderTable } from './ui/report';
 import { renderPagination } from './ui/pagination';
 import { attachFilterListeners, attachManualGradeButtonListeners } from './ui/form';
 import { init as initFiltersUi } from './ui/filters';
-import { sortReportRows, updateSortHeaderUI } from './ui/table_sort';
+import { updateSortHeaderUI } from './ui/table_sort';
 
 /**
  * @param {'user_name'|'completed_at_sort'} key
@@ -42,20 +43,19 @@ const toggleColumnSort = (key) => {
 };
 
 /**
- * @param {Array} fullRows Raw rows (cache order); sorted for display only.
+ * @param {Array} fullRows Rows from webservice (already sorted server-side when applicable).
  * @param {number} page 0-based
  * @param {number} limit per-page
  * @param {number|null} maxgrade
  */
 const renderPageSlice = (fullRows, page, limit, maxgrade) => {
-    const sorted = sortReportRows(fullRows, getSortColumn(), getSortDirection());
-    const total = sorted.length;
+    const total = fullRows.length;
     let effectiveLimit = limit;
     if (total > 0 && effectiveLimit > total) {
         effectiveLimit = total;
     }
     setRecordsPerPage(effectiveLimit);
-    const slice = sorted.slice(
+    const slice = fullRows.slice(
         page * effectiveLimit,
         page * effectiveLimit + effectiveLimit,
     );
@@ -79,7 +79,7 @@ const renderPageSlice = (fullRows, page, limit, maxgrade) => {
 
 const fetchAndRenderReport = (page) => {
     const filters = getFilters();
-    const fingerprint = getFiltersFingerprint(filters);
+    const fingerprint = getReportCacheFingerprint(filters);
     const cached = getClientReportCache(fingerprint);
 
     setCurrentPage(page);
@@ -96,7 +96,17 @@ const fetchAndRenderReport = (page) => {
 
     showLoading();
 
-    getReportData(getCmid(), 0, filters, getRequestedLimit())
+    const sortCol = getSortColumn();
+    const sortDir = getSortDirection();
+
+    getReportData(
+        getCmid(),
+        0,
+        filters,
+        getRequestedLimit(),
+        sortCol || '',
+        sortCol ? sortDir : 'asc',
+    )
         .then((response) => {
             setMaxGrade(response.maxgrade);
 
@@ -155,11 +165,13 @@ export const init = (cmid) => {
     attachFilterListeners(
         (filters) => {
             setFilters(filters);
+            resetSort();
             clearClientReportCache();
             fetchAndRenderReport(0);
         },
         () => {
             setFilters([]);
+            resetSort();
             clearClientReportCache();
             fetchAndRenderReport(0);
         },

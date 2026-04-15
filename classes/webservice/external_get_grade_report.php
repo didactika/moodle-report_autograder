@@ -34,13 +34,34 @@
                     ]),
                     'Optional filters for the report',
                     VALUE_OPTIONAL
-                )
+                ),
+                'sortcolumn' => new external_value(
+                    PARAM_TEXT,
+                    'Sort: user_name or completed_at_sort (empty = service default)',
+                    VALUE_DEFAULT,
+                    ''
+                ),
+                'sortdir' => new external_value(PARAM_ALPHA, 'asc or desc', VALUE_DEFAULT, 'asc'),
             ]);
         }
 
-        public static function get_report_data($cmid, $page, $limit = 0, $filters = []) {
-            $params = self::validate_parameters(self::get_report_data_parameters(), ['cmid' => $cmid, 'page' => $page, 'limit' => $limit, 'filters' => $filters]);
-            return report_builder::get_report_data($params['cmid'], $params['page'], $params['filters'], $params['limit']);
+        public static function get_report_data($cmid, $page = 0, $limit = 0, $filters = [], $sortcolumn = '', $sortdir = 'asc') {
+            $params = self::validate_parameters(self::get_report_data_parameters(), [
+                'cmid' => $cmid,
+                'page' => $page,
+                'limit' => $limit,
+                'filters' => $filters,
+                'sortcolumn' => $sortcolumn,
+                'sortdir' => $sortdir,
+            ]);
+            return report_builder::get_report_data(
+                $params['cmid'],
+                $params['page'],
+                $params['filters'],
+                $params['limit'],
+                (string) $params['sortcolumn'],
+                (string) $params['sortdir']
+            );
         }
 
         public static function get_report_data_returns() {

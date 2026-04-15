@@ -97,17 +97,29 @@ export const getFiltersFingerprint = (filters) => {
 };
 
 /**
+ * Cache key for the report payload: filters + server-side sort (must match webservice args).
+ *
+ * @param {Array} filters
+ * @returns {string}
+ */
+export const getReportCacheFingerprint = (filters) => {
+    const base = getFiltersFingerprint(filters);
+    const sc = sortColumn ?? "";
+    const sd = sortDirection ?? "asc";
+    return `${base}::sort:${sc}:${sd}`;
+};
+
+/**
  * Drops the in-memory report rows (e.g. after filter change; full reload clears JS anyway).
  */
 export const clearClientReportCache = () => {
     clientCachedFullRows = null;
     clientCacheFiltersFingerprint = null;
-    resetSort();
 };
 
 /**
  * @param {Array} rows Full enriched rows from the last webservice response.
- * @param {string} fingerprint From {@link getFiltersFingerprint}.
+ * @param {string} fingerprint From {@link getReportCacheFingerprint}.
  */
 export const setClientReportCache = (rows, fingerprint) => {
     clientCachedFullRows = Array.isArray(rows) ? rows : [];

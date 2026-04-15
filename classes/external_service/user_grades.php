@@ -166,6 +166,14 @@ class user_grades
                 rawurlencode($api_filters['scheduledOrGradingTimeTo']);
         }
 
+        // Grading-time sort (moduleGrades supports order=asc|desc; default on API is asc).
+        if (!empty($api_filters['order'])) {
+            $order = strtolower((string) $api_filters['order']);
+            if ($order === 'desc' || $order === 'asc') {
+                $queryParts[] = 'order=' . rawurlencode($order);
+            }
+        }
+
         $urlprefix = rtrim($serviceUrl, '/') . '/moduleGrades/?';
         $staticquery = implode('&', $queryParts);
 

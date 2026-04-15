@@ -34,9 +34,18 @@ class report_builder
      * @param int $page Unused; kept for the webservice contract.
      * @param array $filters Raw filter list from the client.
      * @param int $limit_override Client page size (0 = default).
+     * @param string $sortcolumn Empty, user_name, or completed_at_sort.
+     * @param string $sortdir asc or desc.
      * @return array{totalrecords: int, limit: int, maxgrade: ?float, data: array}
      */
-    public static function get_report_data(int $cmid, int $page, array $filters, int $limit_override = 0): array {
+    public static function get_report_data(
+        int $cmid,
+        int $page,
+        array $filters,
+        int $limit_override = 0,
+        string $sortcolumn = '',
+        string $sortdir = 'asc'
+    ): array {
         [$course, $cm] = self::require_course_module($cmid);
         self::require_report_capability($cm);
 
@@ -44,8 +53,16 @@ class report_builder
         $moodleids = filter_handler::get_filtered_completion_ids($cmid, $filters);
         $apifilters = filter_handler::get_api_filters($filters);
 
+        $sortcolumn = self::normalize_sort_column($sortcolumn);
+        $sortdir = self::normalize_sort_direction($sortdir);
+
         if ($moodleids === null) {
             return self::build_response(0, $limit, $course, $cm, []);
+        }
+
+        // Grading date order is applied by the external API (order=asc|desc).
+        if ($sortcolumn === 'completed_at_sort') {
+            $apifilters['order'] = $sortdir;
         }
 
         $campusuuid = self::require_campus_uuid();
@@ -53,7 +70,52 @@ class report_builder
         $total = count($merged);
         $enriched = data_enricher::enrich_data($merged, (int) $course->id, (int) $cm->id);
 
+        if ($sortcolumn === 'user_name') {
+            self::sort_enriched_by_user_name($enriched, $sortdir);
+        }
+
         return self::build_response($total, $limit, $course, $cm, $enriched);
+    }
+
+    /**
+     * @param string $column
+     * @return null|'user_name'|'completed_at_sort'
+     */
+    private static function normalize_sort_column(string $column): ?string {
+        $column = trim($column);
+        if ($column === 'user_name' || $column === 'completed_at_sort') {
+            return $column;
+        }
+        return null;
+    }
+
+    /**
+     * @param string $dir
+     * @return 'asc'|'desc'
+     */
+    private static function normalize_sort_direction(string $dir): string {
+        return strtolower(trim($dir)) === 'desc' ? 'desc' : 'asc';
+    }
+
+    /**
+     * Stable sort of enriched rows by display name (Moodle-side).
+     *
+     * @param array<int, array<string, mixed>> $rows
+     * @param 'asc'|'desc' $dir
+     */
+    private static function sort_enriched_by_user_name(array &$rows, string $dir): void {
+        usort(
+            $rows,
+            static function (array $a, array $b) use ($dir): int {
+                $na = (string) ($a['user_name'] ?? '');
+                $nb = (string) ($b['user_name'] ?? '');
+                $cmp = strcasecmp(
+                    \core_text::strtolower($na),
+                    \core_text::strtolower($nb)
+                );
+                return $dir === 'desc' ? -$cmp : $cmp;
+            }
+        );
     }
 
     /**
