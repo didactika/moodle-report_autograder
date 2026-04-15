@@ -100,3 +100,5 @@ $string['filter_active_dateto'] = 'Desde: {$a}';
 $string['filter_active_grade'] = 'Calificación: {$a}';
 $string['filter_active_status'] = 'Estado: {$a}';
 $string['gradeuser'] = 'Calificar usuario';
+$string['sortby_name'] = 'Ordenar por nombre del estudiante';
+$string['sortby_date'] = 'Ordenar por fecha de calificación';

@@ -98,3 +98,5 @@ $string['filter_active_dateto'] = 'De: {$a}';
 $string['filter_active_grade'] = 'Nota: {$a}';
 $string['filter_active_status'] = 'Status: {$a}';
 $string['gradeuser'] = 'Avaliar utilizador';
+$string['sortby_name'] = 'Ordenar por nome do estudante';
+$string['sortby_date'] = 'Ordenar por data de avaliação';

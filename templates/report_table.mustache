@@ -17,12 +17,30 @@
 <table class="table table-striped table-hover">
     <thead class="table-light">
         <tr>
-            <th scope="col">
-                {{#str}} header:student, report_autograder {{/str}}
+            <th scope="col" class="autograder-sort-th" aria-sort="none">
+                <button type="button"
+                    class="autograder-sort-btn"
+                    data-autograder-sort="user_name"
+                    aria-pressed="false"
+                    aria-label="{{#str}} sortby_name, report_autograder {{/str}}">
+                    <span class="autograder-sort-label">{{#str}} header:student, report_autograder {{/str}}</span>
+                    <span class="autograder-sort-icon-wrap d-none" aria-hidden="true">
+                        <i class="fa autograder-sort-glyph" aria-hidden="true"></i>
+                    </span>
+                </button>
             </th>
             <th scope="col">{{#str}} header:external_status, report_autograder {{/str}}</th>
-            <th scope="col">    
-                {{#str}} header:completed_at, report_autograder {{/str}}
+            <th scope="col" class="autograder-sort-th" aria-sort="none">
+                <button type="button"
+                    class="autograder-sort-btn"
+                    data-autograder-sort="completed_at_sort"
+                    aria-pressed="false"
+                    aria-label="{{#str}} sortby_date, report_autograder {{/str}}">
+                    <span class="autograder-sort-label">{{#str}} header:completed_at, report_autograder {{/str}}</span>
+                    <span class="autograder-sort-icon-wrap d-none" aria-hidden="true">
+                        <i class="fa autograder-sort-glyph" aria-hidden="true"></i>
+                    </span>
+                </button>
             </th>
             <th scope="col">{{#str}} header:grade, report_autograder {{/str}}</th>
             <th scope="col"></th>

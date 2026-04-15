@@ -98,3 +98,5 @@ $string['filter_active_dateto'] = 'Depuis : {$a}';
 $string['filter_active_grade'] = 'Note : {$a}';
 $string['filter_active_status'] = 'Statut : {$a}';
 $string['gradeuser'] = 'Noter l\'utilisateur';
+$string['sortby_name'] = 'Trier par nom de l\'étudiant';
+$string['sortby_date'] = 'Trier par date de notation';

@@ -18,32 +18,51 @@ import {
     clearClientReportCache,
     setClientReportCache,
     getClientReportCache,
+    getCurrentPage,
+    getSortColumn,
+    getSortDirection,
+    setSort,
 } from './state';
 import { getReportData } from './service/repository';
 import { showLoading, renderTable } from './ui/report';
 import { renderPagination } from './ui/pagination';
 import { attachFilterListeners, attachManualGradeButtonListeners } from './ui/form';
 import { init as initFiltersUi } from './ui/filters';
+import { sortReportRows, updateSortHeaderUI } from './ui/table_sort';
 
 /**
- * @param {Array} fullRows
+ * @param {'user_name'|'completed_at_sort'} key
+ */
+const toggleColumnSort = (key) => {
+    if (getSortColumn() === key) {
+        setSort(key, getSortDirection() === 'asc' ? 'desc' : 'asc');
+    } else {
+        setSort(key, key === 'completed_at_sort' ? 'desc' : 'asc');
+    }
+};
+
+/**
+ * @param {Array} fullRows Raw rows (cache order); sorted for display only.
  * @param {number} page 0-based
  * @param {number} limit per-page
  * @param {number|null} maxgrade
  */
 const renderPageSlice = (fullRows, page, limit, maxgrade) => {
-    const total = fullRows.length;
+    const sorted = sortReportRows(fullRows, getSortColumn(), getSortDirection());
+    const total = sorted.length;
     let effectiveLimit = limit;
     if (total > 0 && effectiveLimit > total) {
         effectiveLimit = total;
     }
     setRecordsPerPage(effectiveLimit);
-    const slice = fullRows.slice(
+    const slice = sorted.slice(
         page * effectiveLimit,
         page * effectiveLimit + effectiveLimit,
     );
+    const $reportRoot = $('#autograder-report-container');
     renderTable(slice, () => {
         attachManualGradeButtonListeners(getMaxGrade(), getCmid());
+        updateSortHeaderUI($reportRoot);
         renderPagination(
             total,
             slice,
@@ -145,6 +164,16 @@ export const init = (cmid) => {
             fetchAndRenderReport(0);
         },
     );
+
+    container.on('click', '[data-autograder-sort]', function (e) {
+        e.preventDefault();
+        const key = this.getAttribute('data-autograder-sort');
+        if (key !== 'user_name' && key !== 'completed_at_sort') {
+            return;
+        }
+        toggleColumnSort(key);
+        fetchAndRenderReport(getCurrentPage());
+    });
 
     IconSystem.instance().then(() => {
         fetchAndRenderReport(0);

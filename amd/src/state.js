@@ -12,9 +12,33 @@ let clientCachedFullRows = null;
 /** @type {string|null} Fingerprint of {@link currentFilters} when the cache was filled. */
 let clientCacheFiltersFingerprint = null;
 
+/** @type {'user_name'|'completed_at_sort'|null} Active sort column; null = API order. */
+let sortColumn = null;
+/** @type {'asc'|'desc'} */
+let sortDirection = 'asc';
+
+export const getSortColumn = () => sortColumn;
+
+export const getSortDirection = () => sortDirection;
+
+/**
+ * @param {'user_name'|'completed_at_sort'} col
+ * @param {'asc'|'desc'} dir
+ */
+export const setSort = (col, dir) => {
+    sortColumn = col;
+    sortDirection = dir;
+};
+
+export const resetSort = () => {
+    sortColumn = null;
+    sortDirection = 'asc';
+};
+
 export const init = (cmid) => {
     currentCmid = cmid;
     currentPage = 0;
+    resetSort();
 };
 
 export const setCmid = (cmid) => {
@@ -78,6 +102,7 @@ export const getFiltersFingerprint = (filters) => {
 export const clearClientReportCache = () => {
     clientCachedFullRows = null;
     clientCacheFiltersFingerprint = null;
+    resetSort();
 };
 
 /**

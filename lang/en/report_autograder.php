@@ -99,3 +99,5 @@ $string['filter_active_dateto'] = 'From: {$a}';
 $string['filter_active_grade'] = 'Grade: {$a}';
 $string['filter_active_status'] = 'Status: {$a}';
 $string['gradeuser'] = 'Grade user';
+$string['sortby_name'] = 'Sort by student name';
+$string['sortby_date'] = 'Sort by grading date';

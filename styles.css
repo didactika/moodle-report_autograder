@@ -595,4 +595,51 @@
     .autograder-page-arrows .autograder-page-chevron:disabled .fa {
         color: #cbd5e0;
     }
+
+    /* Sortable column headers (name + grading date) */
+    #autograder-report-container .autograder-sort-th {
+        vertical-align: middle;
+        min-width: 9rem;
+    }
+
+    #autograder-report-container .autograder-sort-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        background: transparent;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #1a6b7a;
+        cursor: pointer;
+        text-align: left;
+        line-height: 1.3;
+        max-width: 100%;
+    }
+
+    #autograder-report-container .autograder-sort-btn:hover,
+    #autograder-report-container .autograder-sort-btn:focus {
+        color: #145a66;
+        text-decoration: none;
+        outline: none;
+    }
+
+    #autograder-report-container .autograder-sort-btn:focus-visible {
+        box-shadow: 0 0 0 2px rgba(26, 107, 122, 0.35);
+        border-radius: 4px;
+    }
+
+    #autograder-report-container .autograder-sort-icon-wrap {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.8rem;
+        line-height: 1;
+        color: #1a6b7a;
+    }
+
+    #autograder-report-container .autograder-sort-btn[aria-pressed="true"] .autograder-sort-glyph {
+        color: #1a6b7a;
+    }
 }
