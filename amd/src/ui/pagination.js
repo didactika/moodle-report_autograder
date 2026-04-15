@@ -1,7 +1,8 @@
 import $ from "jquery";
 import templates from "core/templates";
 
-const BASE_ITEMS_PER_PAGE = 12;
+/** Default page size (must match initial {@link ../state} requestedLimit). */
+export const BASE_ITEMS_PER_PAGE = 12;
 const STEP_ITEMS_PER_PAGE = [24, 48, 96];
 
 /**
@@ -33,6 +34,10 @@ const buildPerPageValues = (totalRecords) => {
  * @returns {number}
  */
 const resolveSelectedLimit = (optionValues, recordsPerPage, totalRecords) => {
+    const target = Math.min(recordsPerPage, totalRecords);
+    if (optionValues.includes(target)) {
+        return target;
+    }
     if (optionValues.includes(recordsPerPage)) {
         return recordsPerPage;
     }
@@ -89,7 +94,15 @@ export const renderPagination = (
     const hasnext =
         currentRecords.length >= recordsPerPage && currentPage + 1 < totalPages;
 
-    const optionValues = buildPerPageValues(totalRecords);
+    let optionValues = buildPerPageValues(totalRecords);
+    // Include the active slice size so the dropdown can match (e.g. 12) when BASE/STEPS omit it.
+    if (
+        recordsPerPage > 0 &&
+        recordsPerPage < totalRecords &&
+        !optionValues.includes(recordsPerPage)
+    ) {
+        optionValues = [...optionValues, recordsPerPage].sort((a, b) => a - b);
+    }
     const selectedLimit = resolveSelectedLimit(
         optionValues,
         recordsPerPage,

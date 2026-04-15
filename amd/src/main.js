@@ -25,9 +25,6 @@ import { renderPagination } from './ui/pagination';
 import { attachFilterListeners, attachManualGradeButtonListeners } from './ui/form';
 import { init as initFiltersUi } from './ui/filters';
 
-/** Matches {@link pagination} default first step when the list is large enough. */
-const DEFAULT_PAGE_SIZE = 12;
-
 /**
  * @param {Array} fullRows
  * @param {number} page 0-based
@@ -87,12 +84,6 @@ const fetchAndRenderReport = (page) => {
             const total = response.totalrecords;
             let limit = getRequestedLimit();
 
-            const maxSensible =
-                total > 0 ? Math.min(DEFAULT_PAGE_SIZE, total) : DEFAULT_PAGE_SIZE;
-            if (limit < maxSensible) {
-                setRequestedLimit(maxSensible);
-                limit = maxSensible;
-            }
             if (total > 0 && getRequestedLimit() > total) {
                 setRequestedLimit(total);
             }
@@ -126,6 +117,19 @@ export const init = (cmid) => {
 
     if (!container.length) {
         return;
+    }
+
+    // The forum grader reads data-initialuserid from the root [data-gradable-itemtype]
+    // container, not from the clicked button.  Copy it in the capturing phase so the
+    // grader's bubbling-phase listener sees the right user.
+    const rawContainer = container.get(0);
+    if (rawContainer && rawContainer.dataset.gradableItemtype) {
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-grade-action="launch"][data-initialuserid]');
+            if (btn && rawContainer.contains(btn)) {
+                rawContainer.dataset.initialuserid = btn.dataset.initialuserid;
+            }
+        }, true);
     }
 
     initFiltersUi();

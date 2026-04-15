@@ -99,3 +99,4 @@ $string['filter_active_datefrom'] = 'Desde: {$a}';
 $string['filter_active_dateto'] = 'Desde: {$a}';
 $string['filter_active_grade'] = 'Calificación: {$a}';
 $string['filter_active_status'] = 'Estado: {$a}';
+$string['gradeuser'] = 'Calificar usuario';

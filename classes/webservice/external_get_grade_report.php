@@ -63,6 +63,8 @@
                         'courseid' => new external_value(PARAM_INT, 'Moodle course ID', VALUE_OPTIONAL),
                         'instanceid' => new external_value(PARAM_INT, 'Module instance ID', VALUE_OPTIONAL),
                         'modname' => new external_value(PARAM_TEXT, 'Module name (e.g., assign, quiz)', VALUE_OPTIONAL),
+                        'grade_user_url' => new external_value(PARAM_URL, 'Assign grader URL for this user', VALUE_OPTIONAL),
+                        'show_forum_grader' => new external_value(PARAM_BOOL, 'Show forum grader launch button', VALUE_OPTIONAL),
                     ])
                 )
             ]);

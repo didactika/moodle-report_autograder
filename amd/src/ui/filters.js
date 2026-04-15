@@ -166,14 +166,14 @@ const renderDateChip = (fromValue, toValue, buttonId, clearBtnId, textSpanId, te
     textSpan.text(fromValue + SEPARATOR + toValue);
     clearBtn.removeClass('d-none');
     arrowBtn.addClass('d-none');
-    btn.addClass('autograder-filter-active');
+    btn.addClass('autograder-filter-active autograder-chip-has-clear');
     return;
   }
 
   textSpan.text(buttonId === 'submission-date-button' ? texts.submissionDate : texts.gradingDate);
   clearBtn.addClass('d-none');
   arrowBtn.removeClass('d-none');
-  btn.removeClass('autograder-filter-active');
+  btn.removeClass('autograder-filter-active autograder-chip-has-clear');
 };
 
 const updatePickerTitle = (picker, titleText) => {

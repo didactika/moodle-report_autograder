@@ -98,3 +98,4 @@ $string['filter_active_datefrom'] = 'From: {$a}';
 $string['filter_active_dateto'] = 'From: {$a}';
 $string['filter_active_grade'] = 'Grade: {$a}';
 $string['filter_active_status'] = 'Status: {$a}';
+$string['gradeuser'] = 'Grade user';

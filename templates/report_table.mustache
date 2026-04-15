@@ -1,4 +1,19 @@
-<div id="autograder-report-container">
+<div id="autograder-report-container"
+    {{#forum_grade}}
+    data-contextid="{{contextid}}"
+    data-cmid="{{cmid}}"
+    data-name="{{name}}"
+    data-course-id="{{courseid}}"
+    data-course-name="{{coursename}}"
+    data-experimental-display-mode="{{experimentaldisplaymode}}"
+    data-group="{{groupid}}"
+    data-grading-component="{{gradingcomponent}}"
+    data-grading-component-subtype="{{gradingcomponentsubtype}}"
+    data-gradable-itemtype="forum"
+    data-grade-only-active-users="{{gradeonlyactiveusers}}"
+    {{#sendstudentnotifications}}data-send-student-notifications="1"{{/sendstudentnotifications}}
+    {{/forum_grade}}
+>
 <table class="table table-striped table-hover">
     <thead class="table-light">
         <tr>

@@ -97,3 +97,4 @@ $string['filter_active_datefrom'] = 'Depuis : {$a}';
 $string['filter_active_dateto'] = 'Depuis : {$a}';
 $string['filter_active_grade'] = 'Note : {$a}';
 $string['filter_active_status'] = 'Statut : {$a}';
+$string['gradeuser'] = 'Noter l\'utilisateur';

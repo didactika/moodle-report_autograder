@@ -152,6 +152,9 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
     }
 
     /* Must follow .autograder-chip-button: same specificity + order would lose to chip gray */
@@ -181,14 +184,14 @@
         overflow: hidden;
         text-overflow: ellipsis;
         text-align: left;
+        cursor: pointer;
     }
 
     .autograder-chip-button .d-none {
         display: none !important;
     }
 
-    .autograder-chip-button span[id$="-arrow"],
-    .autograder-chip-button span[id$="-clear"] {
+    .autograder-chip-button span[id$="-arrow"] {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -200,10 +203,41 @@
         color: #2e4257;
     }
 
-    .autograder-chip-button span[id$="-clear"]:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-        border-radius: 50%;
-        color: #000;
+    /* Sibling of main chip button — must sit above .autograder-daterange-input (z-index 10) */
+    .autograder-date-chip-host {
+        display: inline-block;
+        max-width: 100%;
+    }
+
+    /* Same icon hit + hover as #clear-status (status chip); only positioning differs (sibling of main chip). */
+    #grading-date-clear.autograder-chip-clear-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 25;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        padding: 0;
+        margin: 0;
+        border: none;
+        background: transparent;
+        color: #2e4257;
+        cursor: pointer;
+        line-height: 1;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    #grading-date-clear.autograder-chip-clear-btn:hover {
+        filter: brightness(98%);
+    }
+
+    #grading-date-button.autograder-chip-has-clear {
+        padding-right: 2rem !important;
     }
 
     .dropdown-item:active, .dropdown-item:focus {
@@ -214,7 +248,7 @@
         flex: 1;
     }
 
-    /* Hidden input for daterangepicker */
+    /* Hidden input for daterangepicker — never capture clicks (picker opens via JS .click() on main button). */
     .autograder-daterange-input {
         position: absolute;
         top: 0;
@@ -222,12 +256,8 @@
         opacity: 0;
         width: 100%;
         height: 38px;
-        pointer-events: none;
+        pointer-events: none !important;
         z-index: 10;
-    }
-
-    .autograder-daterange-input:not(.d-none) {
-        pointer-events: auto;
     }
 
     .autograder-status-dropdown {

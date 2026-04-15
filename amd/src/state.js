@@ -1,7 +1,9 @@
+import { BASE_ITEMS_PER_PAGE } from "./ui/pagination";
+
 let currentCmid = null;
 let currentPage = 0;
-let recordsPerPage = 12;
-let requestedLimit = 12;
+let recordsPerPage = BASE_ITEMS_PER_PAGE;
+let requestedLimit = BASE_ITEMS_PER_PAGE;
 let maxGrade = null;
 let currentFilters = [];
 

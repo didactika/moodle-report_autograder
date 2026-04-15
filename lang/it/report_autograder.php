@@ -98,3 +98,4 @@ $string['filter_active_datefrom'] = 'Da: {$a}';
 $string['filter_active_dateto'] = 'Da: {$a}';
 $string['filter_active_grade'] = 'Voto: {$a}';
 $string['filter_active_status'] = 'Stato: {$a}';
+$string['gradeuser'] = 'Valuta utente';

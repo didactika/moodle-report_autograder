@@ -17,12 +17,14 @@ class data_enricher
 
     public static function enrich_data(array $external_data, int $courseid, int $cmid): array
     {
-        global $PAGE, $DB, $CFG;
+        global $PAGE, $DB, $CFG, $USER;
         require_once($CFG->libdir . '/gradelib.php');
 
         if (empty($external_data)) {
             return [];
         }
+
+        list($course, $cm) = get_course_and_cm_from_cmid($cmid);
 
         $context = \context_course::instance($courseid);
         $enrolled_users = get_enrolled_users($context, '', 0, 'u.id, u.idnumber, u.firstname, u.lastname, u.picture, u.imagealt, u.email');
@@ -35,7 +37,9 @@ class data_enricher
         }
 
         $moodle_grades = [];
-        $cm = get_coursemodule_from_id('', $cmid, 0, false, MUST_EXIST);
+
+        $assigngrader = grader_ui::can_use_assign_grader($cm);
+        $showforumgrader = grader_ui::get_forum_grade_context($course, $cm, $USER) !== null;
 
         $sql = "SELECT g.userid, g.finalgrade
                       FROM {grade_items} gi
@@ -95,7 +99,7 @@ class data_enricher
 
             $final_status_string = self::parse_and_translate_status($raw_status);
 
-            $final_results[] = [
+            $row = [
                 'id' => (int)($api_item['id'] ?? 0),
                 'user_col' => $user_col,
                 'user_name' => $user_name,
@@ -110,6 +114,19 @@ class data_enricher
                 'instanceid' => $instanceid,
                 'modname' => $modname,
             ];
+
+            if ($assigngrader) {
+                $row['grade_user_url'] = (new \moodle_url('/mod/assign/view.php', [
+                    'id' => $cm->id,
+                    'action' => 'grader',
+                    'userid' => $moodle_userid,
+                ]))->out(false);
+            }
+            if ($showforumgrader) {
+                $row['show_forum_grader'] = true;
+            }
+
+            $final_results[] = $row;
         }
 
         return $final_results;
