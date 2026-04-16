@@ -27,7 +27,7 @@ import {
 import { getReportData } from './service/repository';
 import { showLoading, renderTable } from './ui/report';
 import { renderPagination } from './ui/pagination';
-import { attachFilterListeners, attachManualGradeButtonListeners } from './ui/form';
+import { attachFilterListeners } from './ui/form';
 import { init as initFiltersUi } from './ui/filters';
 import { updateSortHeaderUI } from './ui/table_sort';
 
@@ -61,7 +61,6 @@ const renderPageSlice = (fullRows, page, limit, maxgrade) => {
     );
     const $reportRoot = $('#autograder-report-container');
     renderTable(slice, () => {
-        attachManualGradeButtonListeners(getMaxGrade(), getCmid());
         updateSortHeaderUI($reportRoot);
         renderPagination(
             total,

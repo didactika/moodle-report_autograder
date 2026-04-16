@@ -1,7 +1,4 @@
 import $ from 'jquery';
-import notification from 'core/notification';
-import {get_string as getString} from 'core/str';
-import templates from 'core/templates';
 
 /**
  * Converts a YYYY-MM-DD date string to a local ISO 8601 datetime with timezone offset.
@@ -49,51 +46,5 @@ export const attachFilterListeners = (onFilterChange, onFilterClear) => {
         if (typeof onFilterChange === 'function') {
             onFilterChange(filters);
         }
-    });
-};
-
-export const attachManualGradeButtonListeners = (maxGrade, cmid) => {
-    const container = $('#autograder-report-container');
-
-    container.off('click', '.manual-grade-btn');
-
-    container.on('click', '.manual-grade-btn', async function(e) {
-        e.preventDefault();
-
-        const button = $(this);
-        const userid = button.data('userid');
-
-        const row = button.closest('tr');
-        const gradeInput = row.find('.manual-grade-input');
-        const grade = gradeInput.val();
-
-        if (grade === '' || isNaN(parseFloat(grade))) {
-            const msg = await getString('error:invalidgrade', 'report_autograder');
-            notification.addNotification({message: msg, type: 'error'});
-            return;
-        }
-
-        const gradeVal = parseFloat(grade);
-
-        if (maxGrade !== null && gradeVal > maxGrade) {
-            const msg = await getString('error:gradetoolarge', 'report_autograder', {maxgrade: maxGrade});
-            notification.addNotification({message: msg, type: 'error'});
-            return;
-        }
-
-        if (gradeVal < 0) {
-            const msg = await getString('error:negativegrade', 'report_autograder');
-            notification.addNotification({message: msg, type: 'error'});
-            return;
-        }
-
-        const spinner = await templates.render('core/loading', {});
-        button.html(spinner).prop('disabled', true);
-
-        const baseUrl = `${M.cfg.wwwroot}/report/autograder/action/send_grade.php`;
-        const queryParams = `cmid=${cmid}&userid=${userid}&grade=${gradeVal}&sesskey=${M.cfg.sesskey}`;
-        const url = `${baseUrl}?${queryParams}`;
-
-        window.location.href = url;
     });
 };
