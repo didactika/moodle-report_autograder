@@ -86,9 +86,8 @@ const fetchAndRenderReport = (page) => {
 
     if (cached !== null) {
         let limit = getRequestedLimit();
-        if (cached.length > 0 && limit > cached.length) {
-            setRequestedLimit(cached.length);
-            limit = cached.length;
+        if (cached.length > 0) {
+            limit = Math.min(limit, cached.length);
         }
         renderPageSlice(cached, page, limit, getMaxGrade());
         return;
@@ -110,20 +109,12 @@ const fetchAndRenderReport = (page) => {
         .then((response) => {
             setMaxGrade(response.maxgrade);
 
-            const total = response.totalrecords;
-            let limit = getRequestedLimit();
-
-            if (total > 0 && getRequestedLimit() > total) {
-                setRequestedLimit(total);
-            }
-
             const fullRows = response.data || [];
             setClientReportCache(fullRows, fingerprint);
 
-            limit = getRequestedLimit();
-            if (fullRows.length > 0 && limit > fullRows.length) {
-                setRequestedLimit(fullRows.length);
-                limit = fullRows.length;
+            let limit = getRequestedLimit();
+            if (fullRows.length > 0) {
+                limit = Math.min(limit, fullRows.length);
             }
 
             renderPageSlice(fullRows, page, limit, response.maxgrade);
