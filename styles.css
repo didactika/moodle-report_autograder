@@ -122,6 +122,22 @@
         position: relative;
     }
 
+    /* Selected chips, status toggle, and menu rows use theme --primary-light */
+    .autograder-filter-active {
+        background-color: var(--primary-light) !important;
+    }
+
+    .autograder-chip-button.autograder-filter-active:hover {
+        filter: none;
+    }
+
+    .autograder-status-menu .dropdown-item.autograder-filter-active:hover,
+    .autograder-status-menu .dropdown-item.autograder-filter-active:focus,
+    .autograder-status-menu .dropdown-item.autograder-filter-active:active {
+        background-color: var(--primary-light) !important;
+        color: unset;
+    }
+
     .autograder-chip-button {
         background-color: #f0f4f8 !important;
         border: 1px solid #d0d7e0 !important;
@@ -136,6 +152,14 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    /* Must follow .autograder-chip-button: same specificity + order would lose to chip gray */
+    .autograder-chip-button.autograder-filter-active {
+        background-color: var(--primary-light) !important;
     }
 
     .autograder-chip-button:hover {
@@ -160,14 +184,14 @@
         overflow: hidden;
         text-overflow: ellipsis;
         text-align: left;
+        cursor: pointer;
     }
 
     .autograder-chip-button .d-none {
         display: none !important;
     }
 
-    .autograder-chip-button span[id$="-arrow"],
-    .autograder-chip-button span[id$="-clear"] {
+    .autograder-chip-button span[id$="-arrow"] {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -179,10 +203,41 @@
         color: #2e4257;
     }
 
-    .autograder-chip-button span[id$="-clear"]:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-        border-radius: 50%;
-        color: #000;
+    /* Sibling of main chip button — must sit above .autograder-daterange-input (z-index 10) */
+    .autograder-date-chip-host {
+        display: inline-block;
+        max-width: 100%;
+    }
+
+    /* Same icon hit + hover as #clear-status (status chip); only positioning differs (sibling of main chip). */
+    #grading-date-clear.autograder-chip-clear-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 25;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        padding: 0;
+        margin: 0;
+        border: none;
+        background: transparent;
+        color: #2e4257;
+        cursor: pointer;
+        line-height: 1;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    #grading-date-clear.autograder-chip-clear-btn:hover {
+        filter: brightness(98%);
+    }
+
+    #grading-date-button.autograder-chip-has-clear {
+        padding-right: 2rem !important;
     }
 
     .dropdown-item:active, .dropdown-item:focus {
@@ -193,7 +248,7 @@
         flex: 1;
     }
 
-    /* Hidden input for daterangepicker */
+    /* Hidden input for daterangepicker — never capture clicks (picker opens via JS .click() on main button). */
     .autograder-daterange-input {
         position: absolute;
         top: 0;
@@ -201,12 +256,8 @@
         opacity: 0;
         width: 100%;
         height: 38px;
-        pointer-events: none;
+        pointer-events: none !important;
         z-index: 10;
-    }
-
-    .autograder-daterange-input:not(.d-none) {
-        pointer-events: auto;
     }
 
     .autograder-status-dropdown {
@@ -430,20 +481,17 @@
         text-overflow: ellipsis;
     }
 
-    /* Pagination */
+    /* Pagination (course-finder style: pill per-page, range + plain chevrons) */
     .autograder-pagination {
         border-top: 1px solid #e5e9ef;
         padding-top: 0.75rem;
-        color: #4a5568;
-        font-size: 0.9rem;
-    }
-
-    .autograder-per-page {
-        gap: 0.5rem;
+        padding-bottom: 0.25rem;
+        color: #2d3748;
+        font-size: 0.95rem;
     }
 
     .autograder-per-page-label {
-        color: #6c757d;
+        color: #4a5568;
         white-space: nowrap;
     }
 
@@ -452,12 +500,25 @@
     }
 
     .autograder-per-page-toggle {
-        min-width: 70px;
-        justify-content: space-between;
+        min-width: 4.25rem;
+        justify-content: center;
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #2d3748;
+        line-height: 1.2;
+        cursor: pointer;
+        box-shadow: none;
+    }
+
+    .autograder-per-page-toggle:hover,
+    .autograder-per-page-toggle:focus {
+        background-color: #edf2f7 !important;
+        color: #2d3748;
     }
 
     .autograder-per-page-chevron {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
+        opacity: 0.85;
         transition: transform 0.2s ease;
     }
 
@@ -472,9 +533,9 @@
         left: 0;
         min-width: 100%;
         background: #fff;
-        border: 1px solid #c9d1d9;
+        border: 1px solid #e2e8f0;
         border-radius: 8px;
-        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
         z-index: 120;
         padding: 6px;
         list-style: none;
@@ -499,39 +560,86 @@
         color: unset;
     }
 
-    .autograder-page-info {
-        gap: 0.25rem;
+    .autograder-per-page-item.autograder-filter-active:hover,
+    .autograder-per-page-item.autograder-filter-active:focus,
+    .autograder-per-page-item.autograder-filter-active:active {
+        background-color: var(--primary-light) !important;
+        color: unset;
     }
 
-    .autograder-page-range {
-        color: #6c757d;
+    .autograder-pagination-result {
+        color: #4a5568;
         white-space: nowrap;
-        margin-right: 0.5rem;
     }
 
-    .autograder-page-btn {
+    .autograder-page-arrows .autograder-page-chevron {
+        font-size: 0.95rem;
+        line-height: 1;
+        color: #4a5568;
+        text-decoration: none;
+        min-width: 1.25rem;
+    }
+
+    .autograder-page-arrows .autograder-page-chevron:hover:not(:disabled),
+    .autograder-page-arrows .autograder-page-chevron:focus:not(:disabled) {
+        color: #2d3748;
+        text-decoration: none;
+    }
+
+    .autograder-page-arrows .autograder-page-chevron:disabled {
+        color: #cbd5e0;
+        cursor: default;
+        opacity: 1;
+    }
+
+    .autograder-page-arrows .autograder-page-chevron:disabled .fa {
+        color: #cbd5e0;
+    }
+
+    /* Sortable column headers (name + grading date) */
+    #autograder-report-container .autograder-sort-th {
+        vertical-align: middle;
+        min-width: 9rem;
+    }
+
+    #autograder-report-container .autograder-sort-btn {
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-        width: 30px;
-        height: 30px;
+        gap: 0.35rem;
         padding: 0;
-        border: 1px solid #d0d7e0;
-        border-radius: 6px;
-        background-color: #f0f4f8;
-        color: #2e4257;
+        margin: 0;
+        border: 0;
+        background: transparent;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #1a6b7a;
+        cursor: pointer;
+        text-align: left;
+        line-height: 1.3;
+        max-width: 100%;
+    }
+
+    #autograder-report-container .autograder-sort-btn:hover,
+    #autograder-report-container .autograder-sort-btn:focus {
+        color: #145a66;
+        text-decoration: none;
+        outline: none;
+    }
+
+    #autograder-report-container .autograder-sort-btn:focus-visible {
+        box-shadow: 0 0 0 2px rgba(26, 107, 122, 0.35);
+        border-radius: 4px;
+    }
+
+    #autograder-report-container .autograder-sort-icon-wrap {
+        display: inline-flex;
+        align-items: center;
         font-size: 0.8rem;
-        transition: background-color 0.15s ease, border-color 0.15s ease;
+        line-height: 1;
+        color: #1a6b7a;
     }
 
-    .autograder-page-btn:hover:not(:disabled) {
-        background-color: #deeaf8;
-        border-color: #5b9bd5;
-        color: #1a4f8a;
-    }
-
-    .autograder-page-btn:disabled {
-        opacity: 0.4;
-        cursor: default;
+    #autograder-report-container .autograder-sort-btn[aria-pressed="true"] .autograder-sort-glyph {
+        color: #1a6b7a;
     }
 }

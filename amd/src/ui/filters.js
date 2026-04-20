@@ -71,7 +71,7 @@ const renderStatusSelection = (texts, statusLabels) => {
   // Highlight dropdown items that are selected
   $('#autograder-status-multiselect .dropdown-item').each(function () {
     const cb = $(this).find('input[type="checkbox"]');
-    $(this).toggleClass('bg-primary-light', cb.prop('checked'));
+    $(this).toggleClass('autograder-filter-active', cb.prop('checked'));
   });
 
   if (!selectedValues.length) {
@@ -79,7 +79,7 @@ const renderStatusSelection = (texts, statusLabels) => {
     selectionCount.addClass('d-none').text('');
     clearStatus.addClass('d-none');
     chevron.removeClass('d-none');
-    toggle.removeClass('bg-primary-light');
+    toggle.removeClass('autograder-filter-active');
     return;
   }
 
@@ -93,7 +93,7 @@ const renderStatusSelection = (texts, statusLabels) => {
 
   clearStatus.removeClass('d-none');
   chevron.addClass('d-none');
-  toggle.addClass('bg-primary-light');
+  toggle.addClass('autograder-filter-active');
 };
 
 const initStatusMultiselect = (texts, statusLabels) => {
@@ -166,14 +166,14 @@ const renderDateChip = (fromValue, toValue, buttonId, clearBtnId, textSpanId, te
     textSpan.text(fromValue + SEPARATOR + toValue);
     clearBtn.removeClass('d-none');
     arrowBtn.addClass('d-none');
-    btn.addClass('bg-primary-light');
+    btn.addClass('autograder-filter-active autograder-chip-has-clear');
     return;
   }
 
   textSpan.text(buttonId === 'submission-date-button' ? texts.submissionDate : texts.gradingDate);
   clearBtn.addClass('d-none');
   arrowBtn.removeClass('d-none');
-  btn.removeClass('bg-primary-light');
+  btn.removeClass('autograder-filter-active autograder-chip-has-clear');
 };
 
 const updatePickerTitle = (picker, titleText) => {
