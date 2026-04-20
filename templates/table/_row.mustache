@@ -9,16 +9,22 @@
 
     <td data-sort-value="{{completed_at_sort}}">{{completed_at}}</td>
 
-    <td>
-        <input type="number" class="form-control manual-grade-input" value="{{grade}}" step="any" min="0"
-            {{#maxgrade}}max="{{maxgrade}}"{{/maxgrade}} style="max-width: 100px;" />
-    </td>
+    <td class="text-center">{{grade}}</td>
 
     <td>
-        <button class="btn btn-outline-primary manual-grade-btn" data-userid="{{moodle_userid}}"
-            data-courseid="{{courseid}}" data-instanceid="{{instanceid}}" data-modname="{{modname}}"
-            title="{{#str}} manual_grading_send, report_autograder {{/str}}">
-            <i class="fa fa-floppy-disk"></i>
-        </button>
+        {{#grade_user_url}}
+        <a class="btn btn-secondary" href="{{grade_user_url}}">{{#str}}gradeuser, report_autograder{{/str}}</a>
+        {{/grade_user_url}}
+
+        {{^grade_user_url}}
+            {{#show_forum_grader}}
+                <button class="btn btn-secondary autograder-row-grade-btn"
+                    type="button"
+                    data-grade-action="launch"
+                    data-initialuserid="{{moodle_userid}}">
+                    {{#str}}gradeuser, report_autograder{{/str}}
+                </button>
+            {{/show_forum_grader}}
+        {{/grade_user_url}}
     </td>
 </tr>
