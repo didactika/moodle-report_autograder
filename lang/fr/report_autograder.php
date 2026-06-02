@@ -100,3 +100,5 @@ $string['filter_active_status'] = 'Statut : {$a}';
 $string['gradeuser'] = 'Noter l\'utilisateur';
 $string['sortby_name'] = 'Trier par nom de l\'étudiant';
 $string['sortby_date'] = 'Trier par date de notation';
+$string['grade_provisional_help'] = 'La note indiquée est provisoire et ne sera pas enregistrée avant la date indiquée dans la colonne \'Date de notation\'.';
+$string['helper'] = 'Note provisoire';

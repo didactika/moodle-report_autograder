@@ -100,3 +100,6 @@ $string['filter_active_status'] = 'Status: {$a}';
 $string['gradeuser'] = 'Avaliar utilizador';
 $string['sortby_name'] = 'Ordenar por nome do estudante';
 $string['sortby_date'] = 'Ordenar por data de avaliação';
+$string['grade_provisional_help'] = 'A nota indicada é provisória e não será salva até a data indicada na coluna \'Data de avaliação\'.';
+$string['helper'] = 'Nota provisória';
+$string['grade_provisional_help'] = 'Esta nota é provisória e pode estar sujeita a alterações após a revisão final da avaliação.';
