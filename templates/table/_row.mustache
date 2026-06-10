@@ -9,7 +9,27 @@
 
     <td data-sort-value="{{completed_at_sort}}">{{completed_at}}</td>
 
-    <td class="text-center">{{grade}}</td>
+    <td class="text-center">
+        {{#grade}}
+            {{.}}
+        {{/grade}}
+        {{^grade}}
+            {{maxgrade}} <a class="btn btn-link p-0 me-2 icon-no-margin"
+                            role="button"
+                            data-container="body"
+                            data-toggle="popover"
+                            data-placement="right"
+                            data-content="{{#str}}grade_provisional_help, report_autograder{{/str}}"
+                            data-html="true"
+                            tabindex="0"
+                            data-trigger="focus"
+                            aria-label="{{#str}}helper, report_autograder{{/str}}">
+
+            <i class="icon fa fa-circle-info text-info fa-fw " title="{{#str}}helper, report_autograder{{/str}}" aria-hidden="true"></i>
+        </a>
+
+        {{/grade}}
+    </td>
 
     <td>
         {{#grade_user_url}}

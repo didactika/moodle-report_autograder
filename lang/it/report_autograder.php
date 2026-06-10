@@ -101,3 +101,5 @@ $string['filter_active_status'] = 'Stato: {$a}';
 $string['gradeuser'] = 'Valuta utente';
 $string['sortby_name'] = 'Ordina per nome studente';
 $string['sortby_date'] = 'Ordina per data di valutazione';
+$string['grade_provisional_help'] = 'Il voto indicato è provvisorio e non verrà salvato fino alla data indicata nella colonna \'Data di valutazione\'.';
+$string['helper'] = 'Voto provvisorio';

@@ -102,3 +102,5 @@ $string['filter_active_status'] = 'Estado: {$a}';
 $string['gradeuser'] = 'Calificar usuario';
 $string['sortby_name'] = 'Ordenar por nombre del estudiante';
 $string['sortby_date'] = 'Ordenar por fecha de calificación';
+$string['grade_provisional_help'] = 'La calificación indicada es provisional y no se guardará hasta la fecha indicada en la columna \'Fecha de calificación\'.';
+$string['helper'] = 'Nota provisional';
