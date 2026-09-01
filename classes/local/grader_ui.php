@@ -4,7 +4,9 @@
  * Shared forum grader context and assign grader capability (used by index and data enricher).
  *
  * @package     report_autograder
- * @copyright   2026 ADSDR <eduardo.cubias@ct.uneatlantico.es>
+ * @copyright   2026 Acción Docente SDR <ct.accion.docente@funiber.org>
+ * @author      Eduardo Cubias <eduardo.cubias@ct.uneatlantico.es>
+ * @author      Hector Arrechea <hector.arrechea@uneatlantico.es>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

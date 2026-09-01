@@ -3,7 +3,9 @@
      * Action script to manually update a user's grade natively and redirect back to the report.
      *
      * @package     report_autograder
-     * @copyright   2026 ADSDR <eduardo.cubias@ct.uneatlantico.es>
+     * @copyright   2026 Acción Docente SDR <ct.accion.docente@funiber.org>
+     * @author      Eduardo Cubias <eduardo.cubias@ct.uneatlantico.es>
+     * @author      Hector Arrechea <hector.arrechea@uneatlantico.es>
      * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
      */
 

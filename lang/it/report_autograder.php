@@ -19,7 +19,8 @@
  *
  * @package    report
  * @subpackage autograder
- * @copyright  2025
+ * @copyright  2026 Acción Docente SDR <ct.accion.docente@funiber.org>
+ * @author     Hector Arrechea <hector.arrechea@uneatlantico.es>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
