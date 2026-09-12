@@ -34,7 +34,8 @@ use report_autograder\local\scope;
  * impossible for a site.
  *
  * @package     report_autograder
- * @copyright   2026 Acción Docente SDR <ct.accion.docente@funiber.org>
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class get_report extends external_api {

@@ -29,7 +29,8 @@ use report_autograder\local\scope;
  * build each page's templates and look at what comes out.
  *
  * @package     report_autograder
- * @copyright   2026 Acción Docente SDR <ct.accion.docente@funiber.org>
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers      \report_autograder\local\page_context
  */
