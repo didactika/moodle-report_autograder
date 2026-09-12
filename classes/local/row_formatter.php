@@ -181,7 +181,7 @@ final class row_formatter {
             }
         }
 
-        $graderid = (int) ($row->graderid ?? 0);
+        $graderid = self::grader_of($row);
 
         if ($graderid > 0 && isset($graders[$graderid])) {
             $formatted['graded_by'] = $graders[$graderid];
@@ -260,6 +260,28 @@ final class row_formatter {
     }
 
     /**
+     * Whose name the grade stands in.
+     *
+     * The gradebook is asked first and the decision second. A row graded by a
+     * teacher has no grader on its decision — autograder never posted it — but
+     * the gradebook knows perfectly well who did, and that is exactly the name
+     * the column is there to show. Autograder's own rows agree either way,
+     * since it posts as the teacher it chose.
+     *
+     * @param \stdClass $row
+     * @return int Zero when nobody has graded it.
+     */
+    private static function grader_of(\stdClass $row): int {
+        $fromgradebook = (int) ($row->gradedbyid ?? 0);
+
+        if ($fromgradebook > 0) {
+            return $fromgradebook;
+        }
+
+        return (int) ($row->graderid ?? 0);
+    }
+
+    /**
      * The teachers named as graders in this page of rows, looked up once
      * rather than per row.
      *
@@ -272,7 +294,7 @@ final class row_formatter {
         $ids = [];
 
         foreach ($rows as $row) {
-            $graderid = (int) ($row->graderid ?? 0);
+            $graderid = self::grader_of($row);
 
             if ($graderid > 0) {
                 $ids[$graderid] = true;

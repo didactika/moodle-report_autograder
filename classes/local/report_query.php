@@ -149,7 +149,7 @@ final class report_query {
                 d.baselineduedate, d.duedatereason, d.graderid, d.gradedvalue, d.failurereason,
                 d.timemodified AS decisiontimemodified,
                 " . self::effective_date_sql() . " AS effectivedate,
-                g.finalgrade";
+                g.finalgrade, g.usermodified AS gradedbyid";
     }
 
     /**

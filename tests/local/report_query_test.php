@@ -472,6 +472,53 @@ final class report_query_test extends \advanced_testcase {
     }
 
     /**
+     * A row a teacher graded names that teacher.
+     *
+     * Its decision has no grader on it — autograder never posted anything —
+     * so the name has to come from the gradebook, which knows who did.
+     */
+    public function test_a_row_graded_by_a_teacher_names_the_teacher(): void {
+        $this->setUser($this->teacher);
+
+        $item = \grade_item::fetch([
+            'itemtype' => 'mod',
+            'itemmodule' => 'assign',
+            'iteminstance' => $this->cm->instance,
+            'courseid' => $this->course->id,
+            'itemnumber' => 0,
+        ]);
+        $item->update_final_grade(
+            (int) $this->students['ana']->id,
+            44.0,
+            'test',
+            null,
+            FORMAT_MOODLE,
+            (int) $this->teacher->id
+        );
+
+        $this->setAdminUser();
+
+        $rows = report_query::rows(
+            scope::from_params((int) $this->cm->id, 0),
+            $this->filter('searchname', 'Ana'),
+            '',
+            'asc',
+            0,
+            0
+        );
+        $row = reset($rows);
+
+        $this->assertEquals(
+            (int) $this->teacher->id,
+            (int) $row->gradedbyid,
+            'The gradebook is what knows who graded a row autograder did not.'
+        );
+
+        $formatted = row_formatter::format_all([$row], scope::from_params((int) $this->cm->id, 0));
+        $this->assertSame(fullname($this->teacher), $formatted[0]['graded_by']);
+    }
+
+    /**
      * The gradebook grade travels with the row.
      */
     public function test_the_gradebook_grade_comes_along(): void {
