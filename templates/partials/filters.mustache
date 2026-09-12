@@ -38,26 +38,32 @@
 
         <div class="autograder-right-filters d-flex flex-nowrap">
             {{#shows_course_filter}}
-            <div class="autograder-select-filter-wrapper">
+            <div class="autograder-select-chip-wrapper">
                 <label class="sr-only" for="autograder-filter-course">{{#str}}filter_course, report_autograder{{/str}}</label>
-                <select class="custom-select" id="autograder-filter-course" name="courseid">
+                <select class="autograder-select-chip" id="autograder-filter-course" name="courseid">
                     <option value="">{{#str}}filter_course_placeholder, report_autograder{{/str}}</option>
                     {{#courses}}
                     <option value="{{id}}">{{name}}</option>
                     {{/courses}}
                 </select>
+                <span class="autograder-select-chip-arrow" aria-hidden="true">
+                    <i class="fa fa-chevron-down"></i>
+                </span>
             </div>
             {{/shows_course_filter}}
 
             {{#shows_activity_filter}}
-            <div class="autograder-select-filter-wrapper">
+            <div class="autograder-select-chip-wrapper">
                 <label class="sr-only" for="autograder-filter-activity">{{#str}}filter_activity, report_autograder{{/str}}</label>
-                <select class="custom-select" id="autograder-filter-activity" name="cmid">
+                <select class="autograder-select-chip" id="autograder-filter-activity" name="cmid">
                     <option value="">{{#str}}filter_activity_placeholder, report_autograder{{/str}}</option>
                     {{#activities}}
                     <option value="{{id}}">{{name}}</option>
                     {{/activities}}
                 </select>
+                <span class="autograder-select-chip-arrow" aria-hidden="true">
+                    <i class="fa fa-chevron-down"></i>
+                </span>
             </div>
             {{/shows_activity_filter}}
 

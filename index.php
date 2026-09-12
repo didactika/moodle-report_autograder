@@ -59,6 +59,12 @@ switch ($scope->level()) {
 
 $PAGE->set_context($scope->context());
 $PAGE->set_url($scope->url());
+
+// This report's stylesheet hangs off this class rather than off the page id:
+// the site-level report goes through admin_externalpage_setup(), which
+// prefixes the page type with "admin-", so the id differs between the three
+// levels and scoping by it would leave one of them unstyled.
+$PAGE->add_body_class('report-autograder-page');
 $PAGE->set_title(get_string('pluginname', 'report_autograder'));
 $PAGE->set_heading($scope->heading());
 

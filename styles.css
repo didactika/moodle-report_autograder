@@ -12,7 +12,11 @@
     }
 }
 
-#page-report-autograder-index {
+/* Scoped to a class this page adds to the body rather than to its page id.
+   The site-level report goes through admin_externalpage_setup(), which
+   prefixes the page type with "admin-" — so the id is not the same on all
+   three levels, and scoping by it left the whole site report unstyled. */
+.report-autograder-page {
     .activity-description {
         display: none;
     }
@@ -116,15 +120,63 @@
         display: block;
     }
 
+    /* The course and activity pickers are ordinary selects, dressed as the
+       same chip as the date and status filters so the bar reads as one row of
+       controls rather than two kinds. The native arrow is taken off and one
+       of ours put in its place, which is what makes them match. */
+    .autograder-select-chip-wrapper {
+        position: relative;
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .autograder-select-chip {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-color: #f0f4f8;
+        border: 1px solid #d0d7e0;
+        border-radius: 20px;
+        height: 38px;
+        padding: 0.45rem 2rem 0.45rem 0.75rem;
+        font-size: 0.9rem;
+        color: #2e4257;
+        max-width: 200px;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        transition: filter 0.15s ease;
+    }
+
+    .autograder-select-chip:hover,
+    .autograder-select-chip:focus {
+        filter: brightness(98%);
+        outline: none;
+        box-shadow: none;
+    }
+
+    .autograder-select-chip-arrow {
+        position: absolute;
+        right: 12px;
+        pointer-events: none;
+        color: #2e4257;
+        font-size: 0.8rem;
+        line-height: 1;
+    }
+
     /* Chip Button Styles */
     .autograder-date-field-wrapper {
         flex: 0 0 auto;
         position: relative;
     }
 
-    /* Selected chips, status toggle, and menu rows use theme --primary-light */
+    /* A filter that is on is painted in the theme's light primary: the chip,
+       the status toggle and the selected rows of its menu. --primary-light is
+       the site theme's own variable (theme_vle defines it); the fallback is
+       that theme's own default, so a site on plain Boost - which does not
+       expose it - still gets the light blue rather than losing the rule. */
     .autograder-filter-active {
-        background-color: var(--primary-light) !important;
+        background-color: var(--primary-light, #e6f0f9) !important;
     }
 
     .autograder-chip-button.autograder-filter-active:hover {
@@ -134,7 +186,7 @@
     .autograder-status-menu .dropdown-item.autograder-filter-active:hover,
     .autograder-status-menu .dropdown-item.autograder-filter-active:focus,
     .autograder-status-menu .dropdown-item.autograder-filter-active:active {
-        background-color: var(--primary-light) !important;
+        background-color: var(--primary-light, #e6f0f9) !important;
         color: unset;
     }
 
@@ -159,7 +211,7 @@
 
     /* Must follow .autograder-chip-button: same specificity + order would lose to chip gray */
     .autograder-chip-button.autograder-filter-active {
-        background-color: var(--primary-light) !important;
+        background-color: var(--primary-light, #e6f0f9) !important;
     }
 
     .autograder-chip-button:hover {
@@ -383,22 +435,16 @@
         word-break: break-word;
     }
 
-    /* The box and its tick are drawn on the same 16px square and centred in
-       it, rather than each nudged into place on its own. A label that wraps to
-       two lines — which several of these states do — moved the two apart when
-       they were positioned independently, and the tick ended up clipped
-       against the edge of the box. */
-    .autograder-status-checkbox+.autograder-status-label::before,
-    .autograder-status-checkbox:checked+.autograder-status-label::after {
+    /* The box, anchored to the first line of the label rather than to the
+       middle of it, so a label that wraps to two lines keeps its box beside
+       the first word. */
+    .autograder-status-checkbox+.autograder-status-label::before {
+        content: "";
         position: absolute;
         left: 0;
         top: 0.15em;
         width: 16px;
         height: 16px;
-    }
-
-    .autograder-status-checkbox+.autograder-status-label::before {
-        content: "";
         border: 1px solid var(--primary, #0f6cbf);
         background-color: #fff;
         border-radius: 3px;
@@ -409,14 +455,21 @@
         background-color: var(--primary, #0f6cbf);
     }
 
+    /* The tick is two borders of an empty box, rotated — not a "✔" character.
+       A glyph is at the mercy of whichever font the theme happens to load: it
+       lands at a different size and baseline in each, which is what left it
+       clipped against the corner of the box. Two borders are always the same
+       shape, always white, and always where they were put. */
     .autograder-status-checkbox:checked+.autograder-status-label::after {
-        content: "✔";
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.7rem;
-        line-height: 1;
-        color: #fff;
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: calc(0.15em + 2px);
+        width: 5px;
+        height: 9px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
     }
 
     #autograder-report-container,
@@ -576,7 +629,7 @@
     .autograder-per-page-item.autograder-filter-active:hover,
     .autograder-per-page-item.autograder-filter-active:focus,
     .autograder-per-page-item.autograder-filter-active:active {
-        background-color: var(--primary-light) !important;
+        background-color: var(--primary-light, #e6f0f9) !important;
         color: unset;
     }
 
@@ -913,12 +966,18 @@
         }
     }
 }
-/* One pill for every state, in the site's own primary at low opacity.
-   Deliberately not Bootstrap's badge colours: Bootstrap 4 and Bootstrap 5 do
-   not name them the same way (`badge-success` against `text-bg-success`) and
-   this report is drawn on Moodle branches that ship both, so a colour class
-   picked from either would simply do nothing on the other. The word in the
-   pill carries the meaning; the colour only says "this is a state". */
+/* One pill, six meanings, each in its own soft tone: waiting is amber, done is
+   green, a person stepping in is blue, a failure is red, and the two states
+   where nothing is going to happen are grey. Soft rather than solid because a
+   whole column of saturated pills is hard to read down.
+
+   The tones are written out here rather than taken from Bootstrap's badge
+   classes on purpose. Bootstrap 4 and Bootstrap 5 do not name their badge
+   colours the same way (`badge-success` against `text-bg-success`) and this
+   report is drawn on Moodle branches that ship both, so a colour class picked
+   from either would simply do nothing on the other. The light primary belongs
+   to the filter bar — it says "this filter is on" — and reusing it here would
+   make a status look like a selection. */
 .autograder-badge {
     display: inline-block;
     padding: 2px 10px;
@@ -927,19 +986,40 @@
     font-weight: 600;
     line-height: 1.6;
     white-space: nowrap;
-    color: var(--primary, #0f6cbf);
-
-    /* The theme's own light primary — the same variable the filter chips and
-       the selected menu rows of this report already paint themselves with, so
-       a site with its own brand colour gets one palette and not two. */
-    background-color: var(--primary-light, rgba(15, 108, 191, 0.1));
+    color: #5b6671;
+    background-color: #eef1f4;
 }
 
-/* A failure is the one state somebody has to act on, so it is the one that
-   does not blend in. Its own muted red, not Bootstrap's. */
+/* Waiting for its moment. */
+.autograder-badge-pending {
+    color: #8a5600;
+    background-color: #fdf2e0;
+}
+
+/* Autograder did it. */
+.autograder-badge-graded {
+    color: #1e6b45;
+    background-color: #e6f4ec;
+}
+
+/* A teacher got there first. */
+.autograder-badge-manual {
+    color: #1a5f7a;
+    background-color: #e4f1f6;
+}
+
+/* The one state somebody has to act on, so the one that does not blend in. */
 .autograder-badge-failed {
     color: #a4243b;
-    background-color: rgba(164, 36, 59, 0.1);
+    background-color: #fbe9ec;
+}
+
+/* Nothing is going to happen here, and the student has not started: both grey,
+   but the second is an outline, because an empty state should look empty. */
+.autograder-badge-notengaged {
+    color: #5b6671;
+    background-color: transparent;
+    box-shadow: inset 0 0 0 1px #ccd3da;
 }
 
 /* The summary strip above the course and site reports. */

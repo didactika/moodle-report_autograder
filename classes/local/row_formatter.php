@@ -283,7 +283,10 @@ final class row_formatter {
         }
 
         [$insql, $params] = $DB->get_in_or_equal(array_keys($ids), SQL_PARAMS_NAMED);
-        $fields = \core_user\fields::for_name()->get_sql('', false, '', '', false)->selects;
+        // With the leading comma: without it the field list reads
+        // "id firstname, lastname", which is not a missing comma to SQL — it
+        // is `id AS firstname`, and the row comes back with no id at all.
+        $fields = \core_user\fields::for_name()->get_sql('', false, '', '', true)->selects;
         $users = $DB->get_records_select('user', "id {$insql}", $params, '', "id {$fields}");
         $names = [];
 

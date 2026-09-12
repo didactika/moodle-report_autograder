@@ -199,16 +199,30 @@ final class report_query {
         // path is digits and slashes, never a wildcard.
         $ancestry = 'ctx.path = rctx.path OR ctx.path LIKE ' . $DB->sql_concat('rctx.path', "'/%'");
 
+        // One row per student and course, whatever else is true of them.
+        //
+        // A student can be enrolled in the same course twice — manually and by
+        // self enrolment, say — and can hold a gradeable role in more than one
+        // context above that course. Joined directly, either of those
+        // multiplies the student's row for every activity, and the report
+        // would list them twice and count them twice. So the enrolment is
+        // reduced to distinct (course, user) pairs before it is joined, and
+        // the role is asked as a question rather than joined at all.
+        $enrolled = "SELECT DISTINCT e.courseid, ue.userid
+                       FROM {enrol} e
+                       JOIN {user_enrolments} ue ON ue.enrolid = e.id
+                      WHERE e.status = :enrolenabled
+                        AND ue.status = :ueactive
+                        AND (ue.timestart = 0 OR ue.timestart <= :uenow1)
+                        AND (ue.timeend = 0 OR ue.timeend > :uenow2)";
+
         $from = "FROM {local_autograder_config} cfg
                  JOIN {course_modules} cm ON cm.id = cfg.cmid
                  JOIN {modules} m ON m.id = cm.module
                  JOIN {course} co ON co.id = cfg.courseid
                  JOIN {context} ctx ON ctx.instanceid = co.id AND ctx.contextlevel = :ctxcourse
-                 JOIN {enrol} e ON e.courseid = co.id AND e.status = :enrolenabled
-                 JOIN {user_enrolments} ue ON ue.enrolid = e.id AND ue.status = :ueactive
-                 JOIN {user} u ON u.id = ue.userid
-                 JOIN {role_assignments} ra ON ra.userid = u.id AND ra.roleid {$rolesql}
-                 JOIN {context} rctx ON rctx.id = ra.contextid AND ({$ancestry})
+                 JOIN ({$enrolled}) en ON en.courseid = co.id
+                 JOIN {user} u ON u.id = en.userid
             LEFT JOIN {local_autograder_decision} d ON d.cmid = cfg.cmid AND d.userid = u.id
             LEFT JOIN {grade_items} gi ON gi.itemtype = 'mod'
                                      AND gi.itemmodule = m.name
@@ -221,12 +235,23 @@ final class report_query {
         $params['enrolenabled'] = ENROL_INSTANCE_ENABLED;
         $params['ueactive'] = ENROL_USER_ACTIVE;
 
-        // An enrolment that has not started, or has ended, is not one.
+        // An enrolment that has not started, or has ended, is not one. The
+        // window is applied inside the enrolment subquery above; these are its
+        // parameters.
         $now = time();
-        $conditions[] = '(ue.timestart = 0 OR ue.timestart <= :uenow1)';
-        $conditions[] = '(ue.timeend = 0 OR ue.timeend > :uenow2)';
         $params['uenow1'] = $now;
         $params['uenow2'] = $now;
+
+        // Holding a gradeable role in the course, or anywhere above it — the
+        // gradebook's own rule for who is in the class. Asked as a question
+        // rather than joined, so that a student holding the role in two
+        // contexts is still one student.
+        $conditions[] = "EXISTS (SELECT 1
+                                   FROM {role_assignments} ra
+                                   JOIN {context} rctx ON rctx.id = ra.contextid
+                                  WHERE ra.userid = u.id
+                                    AND ra.roleid {$rolesql}
+                                    AND ({$ancestry}))";
 
         self::apply_scope($scope, $conditions, $params);
         self::apply_filters($filters, $conditions, $params);

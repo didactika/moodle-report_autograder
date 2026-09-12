@@ -197,6 +197,86 @@ final class report_query_test extends \advanced_testcase {
     }
 
     /**
+     * A student enrolled twice in the same course is still one student.
+     *
+     * Manual plus self enrolment is an ordinary thing for a course to have,
+     * and joined directly it would list and count that student once per
+     * enrolment, on every activity.
+     */
+    public function test_a_student_enrolled_twice_appears_once(): void {
+        global $DB;
+
+        $scope = scope::from_params((int) $this->cm->id, 0);
+        $before = report_query::count($scope, $this->no_filters());
+
+        $self = $this->getDataGenerator()->create_and_enrol($this->course, 'student');
+        $instance = $DB->get_record(
+            'enrol',
+            ['courseid' => $this->course->id, 'enrol' => 'self'],
+            '*',
+            IGNORE_MISSING
+        );
+
+        if (!$instance) {
+            $plugin = enrol_get_plugin('self');
+            $instanceid = $plugin->add_instance($this->course, $plugin->get_instance_defaults());
+            $instance = $DB->get_record('enrol', ['id' => $instanceid], '*', MUST_EXIST);
+        }
+
+        // Self enrolment is created disabled, and a disabled instance is not
+        // an enrolment as far as this report is concerned — so leaving it that
+        // way would make this test pass without ever putting the student in
+        // twice, which is the whole thing it is here to check.
+        $DB->set_field('enrol', 'status', ENROL_INSTANCE_ENABLED, ['id' => $instance->id]);
+        $instance->status = ENROL_INSTANCE_ENABLED;
+
+        enrol_get_plugin('self')->enrol_user($instance, (int) $self->id, 5);
+
+        $this->assertSame(
+            2,
+            $DB->count_records('user_enrolments', ['userid' => $self->id]),
+            'The test needs the student genuinely enrolled twice.'
+        );
+        $this->assertSame(
+            2,
+            $DB->count_records_sql(
+                "SELECT COUNT(1)
+                   FROM {user_enrolments} ue
+                   JOIN {enrol} e ON e.id = ue.enrolid
+                  WHERE ue.userid = :userid AND e.status = :status",
+                ['userid' => $self->id, 'status' => ENROL_INSTANCE_ENABLED]
+            ),
+            'And both of those enrolments have to count, or nothing is being tested.'
+        );
+        $this->assertSame($before + 1, report_query::count($scope, $this->no_filters()));
+    }
+
+    /**
+     * A student holding a gradeable role both in the course and above it is
+     * still one student.
+     */
+    public function test_a_student_with_the_role_twice_appears_once(): void {
+        $scope = scope::from_params((int) $this->cm->id, 0);
+        $before = report_query::count($scope, $this->no_filters());
+
+        // The same role again, at the category the course sits in.
+        role_assign(
+            5,
+            (int) $this->students['ana']->id,
+            \context_coursecat::instance((int) $this->course->category)->id
+        );
+
+        $this->assertSame($before, report_query::count($scope, $this->no_filters()));
+
+        $rows = report_query::rows($scope, $this->no_filters(), '', 'asc', 0, 0);
+        $userids = array_map(function ($row) {
+            return (int) $row->userid;
+        }, array_values($rows));
+
+        $this->assertSame(count($userids), count(array_unique($userids)));
+    }
+
+    /**
      * Each student's decision comes with them, and the ones with none say so.
      */
     public function test_decisions_land_on_the_right_rows(): void {

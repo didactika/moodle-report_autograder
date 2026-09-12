@@ -28,11 +28,23 @@ const collectFilters = () => {
 };
 
 /**
+ * Marks the course and activity pickers as "on" when something is chosen, the
+ * same way the date and status chips mark themselves.
+ */
+const markChosenPickers = () => {
+    $('.autograder-select-chip').each(function () {
+        $(this).toggleClass('autograder-filter-active', Boolean($(this).val()));
+    });
+};
+
+/**
  * @param {Function} onFilterChange Called with the new filter list.
  * @param {Function} onFilterClear Called when everything is cleared.
  */
 export const attachFilterListeners = (onFilterChange, onFilterClear) => {
     const form = $('#autograder-filter-form');
+
+    markChosenPickers();
 
     form.on('submit', e => {
         e.preventDefault();
@@ -46,6 +58,8 @@ export const attachFilterListeners = (onFilterChange, onFilterClear) => {
     // the whole interaction, so it applies itself rather than waiting for a
     // button the rest of the bar does not have either.
     form.on('change', '#autograder-filter-course, #autograder-filter-activity', () => {
+        markChosenPickers();
+
         if (typeof onFilterChange === 'function') {
             onFilterChange(collectFilters());
         }
