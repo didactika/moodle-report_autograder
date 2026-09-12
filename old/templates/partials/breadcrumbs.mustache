@@ -1,0 +1,19 @@
+<nav role="navigation">
+        <ol class="breadcrumb">
+            {{#items}}
+                {{#action}}
+                    {{#iscourse}}
+                        <li class="breadcrumb-item"><a style="font-weight: bold;" href="{{{action}}}"
+                                                       {{#title}}title="{{title}}"{{/title}}>{{{text}}}</a></li>
+                    {{/iscourse}}
+                    {{^iscourse}}
+                        <li class="breadcrumb-item"><a href="{{{action}}}"
+                                                       {{#title}}title="{{title}}"{{/title}}>{{{text}}}</a></li>
+                    {{/iscourse}}
+                {{/action}}
+                {{^action}}
+                    <li class="breadcrumb-item">{{{text}}}</li>
+                {{/action}}
+            {{/items}}
+        </ol>
+    </nav>

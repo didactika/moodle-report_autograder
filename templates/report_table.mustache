@@ -1,3 +1,20 @@
+{{!
+    @template report_autograder/report_table
+
+    The table's shell. The rows arrive later, from the web service.
+
+    Context variables required for this template:
+    * shows_course_column - Whether rows name their course
+    * shows_activity_column - Whether rows name their activity
+    * skeletonRows - Placeholder rows shown until the first page arrives
+
+    Example context (json):
+    {
+        "shows_course_column": false,
+        "shows_activity_column": true,
+        "skeletonRows": [[], []]
+    }
+}}
 <div id="autograder-report-container"
     {{#forum_grade}}
     data-contextid="{{contextid}}"
@@ -14,6 +31,7 @@
     {{#sendstudentnotifications}}data-send-student-notifications="1"{{/sendstudentnotifications}}
     {{/forum_grade}}
 >
+<div class="table-responsive">
 <table class="table table-striped table-hover">
     <thead class="table-light">
         <tr>
@@ -29,6 +47,12 @@
                     </span>
                 </button>
             </th>
+            {{#shows_course_column}}
+            <th scope="col">{{#str}} header:course, report_autograder {{/str}}</th>
+            {{/shows_course_column}}
+            {{#shows_activity_column}}
+            <th scope="col">{{#str}} header:activity, report_autograder {{/str}}</th>
+            {{/shows_activity_column}}
             <th scope="col">{{#str}} header:external_status, report_autograder {{/str}}</th>
             <th scope="col" class="autograder-sort-th" aria-sort="none">
                 <button type="button"
@@ -43,6 +67,7 @@
                 </button>
             </th>
             <th scope="col" class="text-center">{{#str}} header:grade, report_autograder {{/str}}</th>
+            <th scope="col">{{#str}} header:gradedby, report_autograder {{/str}}</th>
             <th scope="col"></th>
         </tr>
     </thead>
@@ -50,5 +75,6 @@
         {{> report_autograder/table/skeleton_rows}}
     </tbody>
 </table>
+</div>
 <div id="autograder-pagination-container" class="mt-4"></div>
 </div>

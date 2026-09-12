@@ -15,92 +15,76 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Lang strings
+ * English language strings.
  *
- * @package    report
- * @subpackage autograder
- * @copyright  2026 Acción Docente SDR <ct.accion.docente@funiber.org>
- * @author     Hector Arrechea <hector.arrechea@uneatlantico.es>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     report_autograder
+ * @copyright   2026 Acción Docente SDR <ct.accion.docente@funiber.org>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Autograder Report';
-$string['header:student'] = 'Name';
-$string['header:delivery_date'] = 'Delivered Date';
-$string['header:modification_date'] = 'Last modification (grading)';
-$string['header:grade_date'] = 'Date to be graded';
-$string['header:grade'] = 'Grade';
-$string['header:status'] = 'Status';
-$string['header:external_status'] = 'Status';
-$string['header:completed_at'] = 'Grading date';
-$string['grade_provisional_help'] = 'The indicated grade is provisional and will not be saved until the date shown in the \'Grading date\' column.';
-$string['status:pending'] = 'Pending';
-$string['status:awaiting_confirmation_of_rating'] = 'Waiting for your grade to be processed';
-$string['status:ready_to_grade'] = 'Ready to grade';
-$string['status:retry'] = 'Retrying';
-$string['status:graded'] = 'Graded';
-$string['status:failed'] = 'Failed';
-$string['status:failed_notified'] = 'Failure notified to admin';
-$string['status:skipped'] = 'Skipped';
-$string['status:manual_grading'] = 'Manual grading';
-$string['feedback:nothing_to_show'] = 'No records found';
-$string['placeholder:automatic_grade'] = 'Automatic grade';
-$string['navigation:go_back'] = 'Go back';
-$string['navigation:location'] = 'Automatic Grades Report';
-$string['error:grade_required'] = 'Grade is required';
-$string['action:grade'] = 'Grade';
-$string['setting:site_external_id'] = 'Site External ID';
-$string['setting:site_externalid_desc'] = 'The external identifier for this Moodle site used by the autograder service';
-$string['setting:url_field_name'] = 'External service URL';
-$string['setting:url_field_desc'] = 'URL of the external service from which grade data will be requested';
-$string['error:apirequest'] = 'Error communicating with the external service: {$a}';
-$string['error:missing_config'] = 'The configuration for {$a} is missing. Please contact the administrator.';
-$string['error:building_report_data'] = 'Error building report data. Please contact the administrator.';
-$string['feedback:no_status'] = 'No Status';
-$string['setting:pagination_limit_name'] = 'Pagination Limit';
-$string['setting:pagination_limit_desc'] = 'The number of items to display per page in the Autograder report.';
-$string['autograder:view'] = 'View autograder report';
-$string['filter_all'] = 'All';
-$string['manual_grading'] = 'Manual Grading';
-$string['manual_grading_send'] = 'Send Grade';
-$string['success:gradeupdated'] = 'Grade updated successfully!';
-$string['error:updatefailed'] = 'Failed to update grade:';
-$string['error:invalidgrade'] = 'Please enter a valid numeric grade.';
-$string['error:gradetoolarge'] = 'The grade cannot be higher than {$a->maxgrade}.';
-$string['error:negativegrade'] = 'The grade cannot be a negative value.';
+defined('MOODLE_INTERNAL') || die();
 
-$string['filter_button'] = 'Filter';
-$string['filter_submission_date'] = 'Submission date';
-$string['filter_grading_date'] = 'Grading date';
-$string['filter_datefrom'] = 'Delivery date from';
-$string['filter_dateto'] = 'Graded date from';
-$string['filter_grade'] = 'Grade from';
-$string['filter_grade_placeholder'] = 'Enter grade';
-$string['filter_status'] = 'Status';
-$string['filter_status_placeholder'] = 'Status...';
-$string['filter_status_pending'] = 'Pending';
-$string['filter_status_manual_grading'] = 'Manual grading';
-$string['filter_status_graded'] = 'Graded';
-$string['pagination:results_per_page'] = 'Results per page';
-$string['pagination:all_results'] = 'All';
-$string['pagination:of'] = 'of';
-$string['pagination:previous'] = 'Previous page';
-$string['pagination:next'] = 'Next page';
-$string['filter_clear'] = 'Clear filters';
-$string['filter_search'] = 'Search';
+$string['autograder:view'] = 'View the autograder report for an activity';
+$string['autograder:viewcourse'] = 'View the autograder report for a whole course';
+$string['autograder:viewfailed'] = 'See which autograder gradings failed, and why';
+$string['autograder:viewsite'] = 'View the autograder report for the whole site';
 $string['datepicker_apply'] = 'Apply';
 $string['datepicker_cancel'] = 'Clear';
+$string['datepicker_custom'] = 'Custom';
 $string['datepicker_from'] = 'From';
 $string['datepicker_to'] = 'To';
-$string['datepicker_custom'] = 'Custom';
 $string['datepicker_week'] = 'Wk';
-$string['filter_active'] = 'Active filters:';
-$string['filter_active_searchname'] = 'Name: {$a}';
-$string['filter_active_datefrom'] = 'From: {$a}';
-$string['filter_active_dateto'] = 'From: {$a}';
-$string['filter_active_grade'] = 'Grade: {$a}';
-$string['filter_active_status'] = 'Status: {$a}';
+$string['error:apirequest'] = 'The report could not be loaded: {$a}';
+$string['failure:grade_write_failed'] = 'Moodle refused the grade autograder tried to post.';
+$string['failure:no_grader'] = 'No teacher of this course was eligible to be graded on behalf of.';
+$string['feedback:nothing_to_show'] = 'No records found';
+$string['filter_activity'] = 'Activity';
+$string['filter_activity_placeholder'] = 'All activities';
+$string['filter_course'] = 'Course';
+$string['filter_course_placeholder'] = 'All courses';
+$string['filter_grading_date'] = 'Grading date';
+$string['filter_search'] = 'Search';
+$string['filter_status_graded'] = 'Autograded';
+$string['filter_status_manual_grading'] = 'By a teacher';
+$string['filter_status_pending'] = 'Pending';
+$string['filter_status_placeholder'] = 'Status...';
+$string['grade_provisional_help'] = 'The indicated grade is provisional and will not be saved until the date shown in the \'Grading date\' column.';
 $string['gradeuser'] = 'Grade user';
-$string['sortby_name'] = 'Sort by student name';
-$string['sortby_date'] = 'Sort by grading date';
+$string['header:activity'] = 'Activity';
+$string['header:completed_at'] = 'Grading date';
+$string['header:course'] = 'Course';
+$string['header:external_status'] = 'Status';
+$string['header:grade'] = 'Grade';
+$string['header:gradedby'] = 'Graded as';
+$string['header:student'] = 'Name';
+$string['heading:activity'] = 'Autograder: {$a}';
+$string['heading:course'] = 'Autograder: {$a}';
+$string['heading:site'] = 'Autograder across the site';
 $string['helper'] = 'Provisional grade';
+$string['pagination:all_results'] = 'All';
+$string['pagination:next'] = 'Next page';
+$string['pagination:of'] = 'of';
+$string['pagination:previous'] = 'Previous page';
+$string['pagination:results_per_page'] = 'Results per page';
+$string['pluginname'] = 'Autograder report';
+$string['privacy:metadata'] = 'The autograder report shows what local_autograder recorded and what is already in the gradebook. It stores nothing of its own.';
+$string['provisional:advancedstale'] = 'The rubric or marking guide changed after autograder was told what to mark, so there is no grade to promise. Open the activity\'s autograder settings and choose the levels again.';
+$string['provisional:noscale'] = 'This activity no longer uses a scale.';
+$string['provisional:scalemismatch'] = 'The item autograder would award does not belong to the scale this activity uses now.';
+$string['provisional:unknown'] = 'Autograder cannot grade this activity as it is set up.';
+$string['provisional:unset'] = 'No grade has been set for autograder to award.';
+$string['reason:completion'] = 'Counted from when the student completed the activity.';
+$string['reason:duedate'] = 'Counted from the activity\'s close date.';
+$string['reason:groupoverride'] = 'Counted from the close date a group exception grants this student.';
+$string['reason:submission'] = 'Counted from when the student submitted.';
+$string['reason:useroverride'] = 'Counted from the close date an exception grants this student.';
+$string['sortby_date'] = 'Sort by grading date';
+$string['sortby_name'] = 'Sort by student name';
+$string['status:failed'] = 'Failed';
+$string['status:graded'] = 'Autograded';
+$string['status:manual'] = 'By a teacher';
+$string['status:notautograded'] = 'Not autograded';
+$string['status:notengaged'] = 'Not submitted';
+$string['status:pending'] = 'Pending';
+$string['summary:heading'] = 'At a glance';
+$string['summary:total'] = '{$a} student(s) across the autograded activities in view.';

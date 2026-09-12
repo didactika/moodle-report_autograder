@@ -1,42 +1,34 @@
 {{!
-    @template report_autograder/partials/_filters
+    @template report_autograder/partials/filters
 
-    Filter form for autograder report.
+    The filter bar above the table.
 
-    Context variables:
-    * filters.searchname - Search name filter value
-    * filters.submission_date_from - Submission date start value
-    * filters.submission_date_to - Submission date end value
-    * filters.grading_date_from - Grading date start value
-    * filters.grading_date_to - Grading date end value
-    * filters.grade - Grade filter value
-    * filters.status - Selected status filter value
-    * filters.status_pending - Boolean if pending status is selected
-    * filters.status_graded - Boolean if graded status is selected
-    * filters.status_manual_grading - Boolean if manual_grading status is selected
-    * filters.has_active_filters - Boolean if any filter is active
-    * filters.active_count - Number of active filters
-    * filters.active_searchname - Label for active search name filter
-    * filters.active_datefrom - Label for active date from filter
-    * filters.active_dateto - Label for active date to filter
-    * filters.active_grade - Label for active grade filter
-    * filters.active_status_label - Label for active status filter
-    * filter_action_url - URL to submit the filter form to (typically index.php)
+    Context variables required for this template:
+    * filter_action_url - Where the form points
+    * statuses - The states this viewer may filter by
+    * shows_course_filter / courses - The course picker, at site level
+    * shows_activity_filter / activities - The activity picker, above it
+
+    Example context (json):
+    {
+        "filter_action_url": "/report/autograder/index.php",
+        "statuses": [{"key": "pending", "label": "Pending"}],
+        "shows_course_filter": false,
+        "courses": [],
+        "shows_activity_filter": true,
+        "activities": [{"id": 12, "name": "Essay"}]
+    }
 }}
 
 <form method="get" action="{{filter_action_url}}" id="autograder-filter-form" class="mb-3 mt-3"
     data-status-placeholder="{{#str}}filter_status_placeholder, report_autograder{{/str}}"
-    data-submission-label="{{#str}}filter_submission_date, report_autograder{{/str}}"
     data-grading-label="{{#str}}filter_grading_date, report_autograder{{/str}}"
     data-dp-apply="{{#str}}datepicker_apply, report_autograder{{/str}}"
     data-dp-cancel="{{#str}}datepicker_cancel, report_autograder{{/str}}"
     data-dp-from="{{#str}}datepicker_from, report_autograder{{/str}}"
     data-dp-to="{{#str}}datepicker_to, report_autograder{{/str}}"
     data-dp-custom="{{#str}}datepicker_custom, report_autograder{{/str}}"
-    data-dp-week="{{#str}}datepicker_week, report_autograder{{/str}}"
-    data-status-pending-label="{{#str}}filter_status_pending, report_autograder{{/str}}"
-    data-status-manual-label="{{#str}}filter_status_manual_grading, report_autograder{{/str}}"
-    data-status-graded-label="{{#str}}filter_status_graded, report_autograder{{/str}}">
+    data-dp-week="{{#str}}datepicker_week, report_autograder{{/str}}">
     <div class="autograder-top-filters">
         <div class="autograder-quick-search-wrapper">
             <i class="fa fa-search autograder-quick-search-icon" aria-hidden="true"></i>
@@ -45,6 +37,30 @@
         </div>
 
         <div class="autograder-right-filters d-flex flex-nowrap">
+            {{#shows_course_filter}}
+            <div class="autograder-select-filter-wrapper">
+                <label class="sr-only" for="autograder-filter-course">{{#str}}filter_course, report_autograder{{/str}}</label>
+                <select class="custom-select" id="autograder-filter-course" name="courseid">
+                    <option value="">{{#str}}filter_course_placeholder, report_autograder{{/str}}</option>
+                    {{#courses}}
+                    <option value="{{id}}">{{name}}</option>
+                    {{/courses}}
+                </select>
+            </div>
+            {{/shows_course_filter}}
+
+            {{#shows_activity_filter}}
+            <div class="autograder-select-filter-wrapper">
+                <label class="sr-only" for="autograder-filter-activity">{{#str}}filter_activity, report_autograder{{/str}}</label>
+                <select class="custom-select" id="autograder-filter-activity" name="cmid">
+                    <option value="">{{#str}}filter_activity_placeholder, report_autograder{{/str}}</option>
+                    {{#activities}}
+                    <option value="{{id}}">{{name}}</option>
+                    {{/activities}}
+                </select>
+            </div>
+            {{/shows_activity_filter}}
+
             <!-- Grading Date Filter Chip (clear is outside main button so clicks work; overlay input stays pointer-events: none) -->
             <div class="autograder-date-field-wrapper">
                 <div class="autograder-date-chip-host position-relative">
@@ -84,24 +100,14 @@
                         </span>
                     </button>
                     <ul class="autograder-status-menu dropdown-menu shadow" id="filter-status-popup" role="menu">
+                        {{#statuses}}
                         <li class="list-item">
-                            <button class="dropdown-item d-flex align-items-center justify-content-start px-2 py-2" data-value="PENDING">
-                                <input type="checkbox" class="autograder-status-checkbox d-none" id="status-pending" value="PENDING" {{#filters.status_pending}}checked{{/filters.status_pending}}>
-                                <label class="m-0 autograder-status-label" for="status-pending">{{#str}}filter_status_pending, report_autograder{{/str}}</label>
+                            <button class="dropdown-item d-flex align-items-center justify-content-start px-2 py-2" data-value="{{key}}">
+                                <input type="checkbox" class="autograder-status-checkbox d-none" id="status-{{key}}" value="{{key}}">
+                                <label class="m-0 autograder-status-label" for="status-{{key}}">{{label}}</label>
                             </button>
                         </li>
-                        <li class="list-item">
-                            <button class="dropdown-item d-flex align-items-center justify-content-start px-2 py-2" data-value="MANUAL_GRADING">
-                                <input type="checkbox" class="autograder-status-checkbox d-none" id="status-manual-grading" value="MANUAL_GRADING" {{#filters.status_manual_grading}}checked{{/filters.status_manual_grading}}>
-                                <label class="m-0 autograder-status-label" for="status-manual-grading">{{#str}}filter_status_manual_grading, report_autograder{{/str}}</label>
-                            </button>
-                        </li>
-                        <li class="list-item">
-                            <button class="dropdown-item d-flex align-items-center justify-content-start px-2 py-2" data-value="GRADED">
-                                <input type="checkbox" class="autograder-status-checkbox d-none" id="status-graded" value="GRADED" {{#filters.status_graded}}checked{{/filters.status_graded}}>
-                                <label class="m-0 autograder-status-label" for="status-graded">{{#str}}filter_status_graded, report_autograder{{/str}}</label>
-                            </button>
-                        </li>
+                        {{/statuses}}
                     </ul>
                 </div>
                 <input type="hidden" name="status" id="status" value="{{filters.status}}">
@@ -109,23 +115,3 @@
         </div>
     </div>
 </form>
-{{#filters.has_active_filters}}
-<div class="alert alert-info mb-3">
-    <strong>{{#str}}filter_active, report_autograder{{/str}}</strong>
-    {{#filters.active_searchname}}
-    <span class="badge badge-secondary ml-1">{{#str}}filter_active_searchname, report_autograder{{/str}} {{filters.active_searchname}}</span>
-    {{/filters.active_searchname}}
-    {{#filters.active_datefrom}}
-    <span class="badge badge-secondary ml-1">{{#str}}filter_active_datefrom, report_autograder{{/str}} {{filters.active_datefrom}}</span>
-    {{/filters.active_datefrom}}
-    {{#filters.active_dateto}}
-    <span class="badge badge-secondary ml-1">{{#str}}filter_active_dateto, report_autograder{{/str}} {{filters.active_dateto}}</span>
-    {{/filters.active_dateto}}
-    {{#filters.active_grade}}
-    <span class="badge badge-secondary ml-1">{{#str}}filter_active_grade, report_autograder{{/str}} {{filters.active_grade}}</span>
-    {{/filters.active_grade}}
-    {{#filters.active_status_label}}
-    <span class="badge badge-primary ml-1">{{#str}}filter_active_status, report_autograder{{/str}} {{filters.active_status_label}}</span>
-    {{/filters.active_status_label}}
-</div>
-{{/filters.has_active_filters}}

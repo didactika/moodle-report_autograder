@@ -1,50 +1,63 @@
 import $ from 'jquery';
 
 /**
- * Converts a YYYY-MM-DD date string to a local ISO 8601 datetime with timezone offset.
- * @param {string} dateStr - Date in YYYY-MM-DD format.
- * @param {boolean} endOfDay - If true, sets time to 23:59:59; otherwise 00:00:00.
- * @returns {string} ISO 8601 string with local timezone offset.
+ * Collects what the filter bar is currently asking for.
+ *
+ * The names are the ones the server understands directly: there is no longer
+ * a translation step between "filters Moodle can answer" and "filters the
+ * external service can answer", because there is no external service.
+ *
+ * @returns {Array<{name: string, value: string}>}
  */
-const toLocalISO = (dateStr, endOfDay) => {
-    const offset = new Date().getTimezoneOffset(); // minutes, negative for UTC+
-    const sign = offset <= 0 ? '+' : '-';
-    const absOffset = Math.abs(offset);
-    const h = String(Math.floor(absOffset / 60)).padStart(2, '0');
-    const m = String(absOffset % 60).padStart(2, '0');
-    const time = endOfDay ? 'T23:59:59' : 'T00:00:00';
-    return dateStr + time + sign + h + ':' + m;
+const collectFilters = () => {
+    const filters = [];
+    const add = (name, value) => {
+        if (value) {
+            filters.push({ name, value: String(value) });
+        }
+    };
+
+    add('searchname', $('#searchname').val());
+    add('grading_date_from', $('#grading_date_from').val());
+    add('grading_date_to', $('#grading_date_to').val());
+    add('status', $('#status').val());
+    add('courseid', $('#autograder-filter-course').val());
+    add('cmid', $('#autograder-filter-activity').val());
+
+    return filters;
 };
 
-//eslint-disable-next-line no-unused-vars
+/**
+ * @param {Function} onFilterChange Called with the new filter list.
+ * @param {Function} onFilterClear Called when everything is cleared.
+ */
 export const attachFilterListeners = (onFilterChange, onFilterClear) => {
-    $('#autograder-filter-form').on('submit', e => {
+    const form = $('#autograder-filter-form');
+
+    form.on('submit', e => {
         e.preventDefault();
 
-        const filters = [];
-        const searchName = $('#searchname').val();
-        if (searchName) {
-            filters.push({name: 'nameUser', value: searchName});
-        }
-        const gradingDateFrom = $('#grading_date_from').val();
-        if (gradingDateFrom) {
-            filters.push({name: 'scheduledOrGradingTimeFrom', value: toLocalISO(gradingDateFrom, false)});
-        }
-        const gradingDateTo = $('#grading_date_to').val();
-        if (gradingDateTo) {
-            filters.push({name: 'scheduledOrGradingTimeTo', value: toLocalISO(gradingDateTo, true)});
-        }
-        const grade = $('#grade').val();
-        if (grade) {
-            filters.push({name: 'grade', value: grade});
-        }
-        const status = $('#status').val();
-        if (status) {
-            filters.push({name: 'status', value: status});
-        }
-
         if (typeof onFilterChange === 'function') {
-            onFilterChange(filters);
+            onFilterChange(collectFilters());
+        }
+    });
+
+    // The course and activity pickers are ordinary selects: changing one is
+    // the whole interaction, so it applies itself rather than waiting for a
+    // button the rest of the bar does not have either.
+    form.on('change', '#autograder-filter-course, #autograder-filter-activity', () => {
+        if (typeof onFilterChange === 'function') {
+            onFilterChange(collectFilters());
+        }
+    });
+
+    form.on('click', '#autograder-filter-clear', e => {
+        e.preventDefault();
+        form[0].reset();
+        $('#searchname, #grading_date_from, #grading_date_to, #status').val('');
+
+        if (typeof onFilterClear === 'function') {
+            onFilterClear();
         }
     });
 };

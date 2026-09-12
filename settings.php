@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,33 +12,30 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * The site-wide report, in the administration reports menu.
+ *
+ * There are no settings: with autograder running inside Moodle there is no
+ * service to point this report at any more, and everything it needs is
+ * already configured on the activities themselves.
  *
  * @package     report_autograder
  * @copyright   2026 Acción Docente SDR <ct.accion.docente@funiber.org>
- * @author      Eduardo Cubias <eduardo.cubias@ct.uneatlantico.es>
- * @author      Hector Arrechea <hector.arrechea@uneatlantico.es>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-
-$settings->add(new admin_setting_configtext(
-    'report_autograder/siteexternalid',
-    get_string('setting:site_external_id', 'report_autograder'),
-    get_string('setting:site_externalid_desc', 'report_autograder'),
-    '',
-    PARAM_TEXT
+$ADMIN->add('reports', new admin_externalpage(
+    'reportautograder',
+    get_string('pluginname', 'report_autograder'),
+    new moodle_url('/report/autograder/index.php'),
+    'report/autograder:viewsite'
 ));
 
-$settings->add(new admin_setting_configtext(
-    'report_autograder/serviceurl',
-    get_string('setting:url_field_name', 'report_autograder'),
-    get_string('setting:url_field_desc', 'report_autograder'),
-    'http://autograder-service-app-1:8085',
-    PARAM_URL
-));
+// Core hands every report plugin a settings page of its own before it includes
+// this file, under the same name. Dropping it is what makes the link above the
+// thing the menu points at, rather than an empty settings screen beside it.
+$settings = null;

@@ -1,44 +1,54 @@
-# Autograder Report #
+# report_autograder
 
-TODO Describe the plugin shortly here.
+The autograder report, at three levels: one activity, one course, and the
+whole site.
 
-TODO Provide more detailed description here.
+It shows, for every student of every activity autograder is switched on for:
+what state they are in, when they will be graded (or when they were), the
+grade they are going to get (or the one they have), and which teacher the
+grade was posted as.
 
-## Installing via uploaded ZIP file ##
+## What it depends on
 
-1. Log in to your Moodle site as an admin and go to _Site administration >
-   Plugins > Install plugins_.
-2. Upload the ZIP file with the plugin code. You should only be prompted to add
-   extra details if your plugin type is not automatically detected.
-3. Check the plugin validation report and finish the installation.
+`local_autograder`, and nothing else. Version 3 reads that plugin's own tables
+directly; there is no external service, no web service credentials, and no
+settings to point it anywhere. The previous version fetched its rows over HTTP
+from `autograder-service` and matched them to Moodle users by `idnumber` — all
+of that is gone, along with the plugin settings that configured it.
 
-## Installing manually ##
+## The three levels
 
-The plugin can be also installed by putting the contents of this directory to
+| Level | Reached from | Capability |
+|---|---|---|
+| One activity | The activity's own menu | `report/autograder:view` |
+| One course | The course's Reports menu | `report/autograder:viewcourse` |
+| The whole site | Administration → Reports | `report/autograder:viewsite` |
 
-    {your/moodle/dirroot}/report/autograder
+The course and site reports open with a strip of counts — how many are
+pending, graded, taken over by a teacher, and so on — because somebody looking
+at a whole site is usually asking "is anything stuck?" rather than looking for
+a particular student. Each count is a way into the table already filtered.
 
-Afterwards, log in to your Moodle site as an admin and go to _Site administration >
-Notifications_ to complete the installation.
+## Who is in the table
 
-Alternatively, you can run
+Every student the gradebook would list: actively enrolled, holding one of the
+roles in `$CFG->gradebookroles`. That includes the ones who have not submitted
+anything yet, shown as such — a report that only listed students autograder
+already has an opinion about would answer half the question a teacher is
+asking.
 
-    $ php admin/cli/upgrade.php
+A student whose enrolment has not started, or has ended, is not there, because
+autograder would not grade them either.
 
-to complete the installation from the command line.
+## Failures
 
-## License ##
+`report/autograder:viewfailed` — manager only by default — decides whether a
+grading that failed is named as such, with the reason. Without it the row is
+still there, because hiding a student would read as "this person is not here";
+it just says the activity was not autograded, with no technical detail. A
+failure is a fact about the installation, and acting on one is an
+administrator's job.
 
-2025 Eduardo Cubias <eduardo.cubias@ct.uneatlantico.es>
+## Licence
 
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation, either version 3 of the License, or (at your option) any later
-version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with
-this program.  If not, see <https://www.gnu.org/licenses/>.
+GNU GPL v3 or later. See [LICENSE.md](LICENSE.md).

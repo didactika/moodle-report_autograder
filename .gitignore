@@ -2,3 +2,7 @@
 node_modules/
 package-lock.json
 package.json
+
+# The v2 plugin, congelado como referencia de negocio y de interfaz — no se
+# copia sin revisar. Ver docs-refactor/autograder-local/report-plan.md.
+old/

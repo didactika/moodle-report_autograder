@@ -15,92 +15,76 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Lang strings
+ * Portuguese language strings.
  *
- * @package    report
- * @subpackage autograder
- * @copyright  2026 Acción Docente SDR <ct.accion.docente@funiber.org>
- * @author     Hector Arrechea <hector.arrechea@uneatlantico.es>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     report_autograder
+ * @copyright   2026 Acción Docente SDR <ct.accion.docente@funiber.org>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Relatório do Avaliador Automático';
-$string['header:student'] = 'Nome';
-$string['header:delivery_date'] = 'Data de entrega';
-$string['header:modification_date'] = 'Última modificação (avaliação)';
-$string['header:grade_date'] = 'Data a ser avaliada';
-$string['header:grade'] = 'Nota';
-$string['header:status'] = 'Status';
-$string['header:external_status'] = 'Status';
-$string['header:completed_at'] = 'Data de avaliação';
-$string['status:pending'] = 'Pendente';
-$string['status:awaiting_confirmation_of_rating'] = 'Aguardando que sua nota seja processada';
-$string['status:ready_to_grade'] = 'Pronto para avaliar';
-$string['status:retry'] = 'Tentando novamente';
-$string['status:graded'] = 'Avaliado';
-$string['status:failed'] = 'Falhou';
-$string['status:failed_notified'] = 'Falha notificada ao administrador';
-$string['status:skipped'] = 'Ignorado';
-$string['status:manual_grading'] = 'Avaliação manual';
-$string['feedback:nothing_to_show'] = 'Nenhum registro encontrado';
-$string['placeholder:automatic_grade'] = 'Nota automática';
-$string['navigation:go_back'] = 'Voltar';
-$string['navigation:location'] = 'Relatório de Notas Automáticas';
-$string['error:grade_required'] = 'A nota é obrigatória';
-$string['action:grade'] = 'Avaliar';
-$string['setting:site_external_id'] = 'ID externo do site';
-$string['setting:site_externalid_desc'] = 'O identificador externo para este site Moodle usado pelo serviço de avaliação automática';
-$string['setting:url_field_name'] = 'URL do serviço externo';
-$string['setting:url_field_desc'] = 'URL do serviço externo do qual os dados de notas serão solicitados';
-$string['error:apirequest'] = 'Erro ao comunicar-se com o serviço externo: {$a}';
-$string['error:missing_config'] = 'A configuração de {$a} está ausente. Entre em contato com o administrador.';
-$string['error:building_report_data'] = 'Erro ao gerar dados do relatório. Entre em contato com o administrador.';
-$string['feedback:no_status'] = 'Sem status';
-$string['setting:pagination_limit_name'] = 'Limite de paginação';
-$string['setting:pagination_limit_desc'] = 'Número de itens a exibir por página no relatório do Avaliador Automático.';
-$string['autograder:view'] = 'Ver relatório do Avaliador Automático';
-$string['filter_all'] = 'Todos';
-$string['manual_grading'] = 'Avaliação manual';
-$string['manual_grading_send'] = 'Enviar nota';
-$string['success:gradeupdated'] = 'Nota atualizada com sucesso!';
-$string['error:updatefailed'] = 'Falha ao atualizar a nota:';
-$string['error:invalidgrade'] = 'Por favor, insira uma nota numérica válida.';
-$string['error:gradetoolarge'] = 'A nota não pode ser maior que {$a->maxgrade}.';
-$string['error:negativegrade'] = 'A nota não pode ser negativa.';
-$string['filter_button'] = 'Filtrar';
-$string['filter_submission_date'] = 'Data de entrega';
-$string['filter_grading_date'] = 'Data de avaliação';
-$string['filter_datefrom'] = 'Data de entrega a partir de';
-$string['filter_dateto'] = 'Data avaliada a partir de';
-$string['filter_grade'] = 'Nota a partir de';
-$string['filter_grade_placeholder'] = 'Digite a nota';
-$string['filter_status'] = 'Status';
-$string['filter_status_placeholder'] = 'Estado...';
-$string['filter_status_pending'] = 'Pendente';
-$string['filter_status_manual_grading'] = 'Avaliacao manual';
-$string['filter_status_graded'] = 'Avaliado';
-$string['pagination:results_per_page'] = 'Resultados por página';
-$string['pagination:all_results'] = 'Todos';
-$string['pagination:of'] = 'de';
-$string['pagination:previous'] = 'Página anterior';
-$string['pagination:next'] = 'Página seguinte';
-$string['filter_clear'] = 'Limpar filtros';
-$string['filter_search'] = 'Pesquisar';
+defined('MOODLE_INTERNAL') || die();
+
+$string['autograder:view'] = 'Ver o relatório do autograder de uma atividade';
+$string['autograder:viewcourse'] = 'Ver o relatório do autograder de um curso inteiro';
+$string['autograder:viewfailed'] = 'Ver que avaliações automáticas falharam, e porquê';
+$string['autograder:viewsite'] = 'Ver o relatório do autograder de todo o site';
 $string['datepicker_apply'] = 'Aplicar';
 $string['datepicker_cancel'] = 'Limpar';
-$string['datepicker_from'] = 'De';
-$string['datepicker_to'] = 'Ate';
 $string['datepicker_custom'] = 'Personalizado';
+$string['datepicker_from'] = 'De';
+$string['datepicker_to'] = 'Até';
 $string['datepicker_week'] = 'Sem';
-$string['filter_active'] = 'Filtros ativos:';
-$string['filter_active_searchname'] = 'Nome: {$a}';
-$string['filter_active_datefrom'] = 'De: {$a}';
-$string['filter_active_dateto'] = 'De: {$a}';
-$string['filter_active_grade'] = 'Nota: {$a}';
-$string['filter_active_status'] = 'Status: {$a}';
-$string['gradeuser'] = 'Avaliar utilizador';
-$string['sortby_name'] = 'Ordenar por nome do estudante';
-$string['sortby_date'] = 'Ordenar por data de avaliação';
-$string['grade_provisional_help'] = 'A nota indicada é provisória e não será salva até a data indicada na coluna \'Data de avaliação\'.';
+$string['error:apirequest'] = 'Não foi possível carregar o relatório: {$a}';
+$string['failure:grade_write_failed'] = 'O Moodle recusou a nota que o autograder tentou lançar.';
+$string['failure:no_grader'] = 'Nenhum professor do curso podia ser escolhido para avaliar em seu nome.';
+$string['feedback:nothing_to_show'] = 'Não foram encontrados registos';
+$string['filter_activity'] = 'Atividade';
+$string['filter_activity_placeholder'] = 'Todas as atividades';
+$string['filter_course'] = 'Curso';
+$string['filter_course_placeholder'] = 'Todos os cursos';
+$string['filter_grading_date'] = 'Data de avaliação';
+$string['filter_search'] = 'Pesquisar';
+$string['filter_status_graded'] = 'Autoavaliado';
+$string['filter_status_manual_grading'] = 'Por um professor';
+$string['filter_status_pending'] = 'Pendente';
+$string['filter_status_placeholder'] = 'Estado...';
+$string['grade_provisional_help'] = 'A nota indicada é provisória e só será guardada na data que a coluna \'Data de avaliação\' mostra.';
+$string['gradeuser'] = 'Avaliar o estudante';
+$string['header:activity'] = 'Atividade';
+$string['header:completed_at'] = 'Data de avaliação';
+$string['header:course'] = 'Curso';
+$string['header:external_status'] = 'Estado';
+$string['header:grade'] = 'Nota';
+$string['header:gradedby'] = 'Avaliado como';
+$string['header:student'] = 'Nome';
+$string['heading:activity'] = 'Autograder: {$a}';
+$string['heading:course'] = 'Autograder: {$a}';
+$string['heading:site'] = 'Autograder em todo o site';
 $string['helper'] = 'Nota provisória';
-$string['grade_provisional_help'] = 'Esta nota é provisória e pode estar sujeita a alterações após a revisão final da avaliação.';
+$string['pagination:all_results'] = 'Todos';
+$string['pagination:next'] = 'Página seguinte';
+$string['pagination:of'] = 'de';
+$string['pagination:previous'] = 'Página anterior';
+$string['pagination:results_per_page'] = 'Resultados por página';
+$string['pluginname'] = 'Relatório do autograder';
+$string['privacy:metadata'] = 'O relatório do autograder mostra o que o local_autograder registou e o que já está na pauta. Não guarda nada de seu.';
+$string['provisional:advancedstale'] = 'A rubrica ou o guião de avaliação mudou depois de se indicar ao autograder o que assinalar, por isso não há nota a prometer. Abra as definições de autograder da atividade e volte a escolher os níveis.';
+$string['provisional:noscale'] = 'Esta atividade já não usa uma escala.';
+$string['provisional:scalemismatch'] = 'O item que o autograder atribuiria não pertence à escala que a atividade usa agora.';
+$string['provisional:unknown'] = 'O autograder não pode avaliar esta atividade tal como está configurada.';
+$string['provisional:unset'] = 'Não foi definida nenhuma nota para o autograder atribuir.';
+$string['reason:completion'] = 'Contado desde que o estudante concluiu a atividade.';
+$string['reason:duedate'] = 'Contado a partir da data de fecho da atividade.';
+$string['reason:groupoverride'] = 'Contado a partir da data de fecho que uma exceção de grupo concede a este estudante.';
+$string['reason:submission'] = 'Contado desde que o estudante entregou.';
+$string['reason:useroverride'] = 'Contado a partir da data de fecho que uma exceção concede a este estudante.';
+$string['sortby_date'] = 'Ordenar por data de avaliação';
+$string['sortby_name'] = 'Ordenar por nome do estudante';
+$string['status:failed'] = 'Falhou';
+$string['status:graded'] = 'Autoavaliado';
+$string['status:manual'] = 'Por um professor';
+$string['status:notautograded'] = 'Sem autoavaliação';
+$string['status:notengaged'] = 'Sem entrega';
+$string['status:pending'] = 'Pendente';
+$string['summary:heading'] = 'Num relance';
+$string['summary:total'] = '{$a} estudante(s) nas atividades com avaliação automática mostradas.';

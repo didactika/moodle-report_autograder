@@ -18,18 +18,36 @@ const getTexts = () => {
 
   return {
     statusPlaceholder: form.data('status-placeholder') || 'Status...',
-    submissionDate: form.data('submission-label') || 'Submission date',
     gradingDate: form.data('grading-label') || 'Grading date',
     dpApply: form.data('dp-apply') || 'Apply',
     dpCancel: form.data('dp-cancel') || 'Clear',
     dpFrom: form.data('dp-from') || 'From',
     dpTo: form.data('dp-to') || 'To',
     dpCustom: form.data('dp-custom') || 'Custom',
-    dpWeek: form.data('dp-week') || 'Wk',
-    statusPending: form.data('status-pending-label') || 'Pending',
-    statusManual: form.data('status-manual-label') || 'Manual grading',
-    statusGraded: form.data('status-graded-label') || 'Graded'
+    dpWeek: form.data('dp-week') || 'Wk'
   };
+};
+
+/**
+ * The label of each status, read off the menu the server drew.
+ *
+ * Which statuses there are depends on the viewer — only somebody who may see
+ * failures is offered "Failed" — so the list cannot be fixed here.
+ *
+ * @returns {Object<string, string>}
+ */
+const getStatusLabels = () => {
+  const labels = {};
+
+  $('#autograder-status-multiselect .autograder-status-label').each(function () {
+    const input = $(this).closest('.dropdown-item').find('input[type="checkbox"]');
+
+    if (input.length) {
+      labels[input.val()] = $(this).text().trim();
+    }
+  });
+
+  return labels;
 };
 
 const triggerFilterSubmit = () => {
@@ -170,7 +188,7 @@ const renderDateChip = (fromValue, toValue, buttonId, clearBtnId, textSpanId, te
     return;
   }
 
-  textSpan.text(buttonId === 'submission-date-button' ? texts.submissionDate : texts.gradingDate);
+  textSpan.text(texts.gradingDate);
   clearBtn.addClass('d-none');
   arrowBtn.removeClass('d-none');
   btn.removeClass('autograder-filter-active autograder-chip-has-clear');
@@ -398,7 +416,12 @@ const initRangePicker = (inputSelector, fromSelector, toSelector, buttonId, clea
   });
 };
 
-export const init = () => {
+/**
+ * @param {string} [presetStatus] A status the page was opened on, from a
+ *        summary tile. It has to be applied after the inputs are cleared,
+ *        or the clearing would throw it away.
+ */
+export const init = (presetStatus) => {
   const form = $('#autograder-filter-form');
   if (!form.length) {
     return;
@@ -406,11 +429,7 @@ export const init = () => {
 
   const texts = getTexts();
   const activeLang = parseLang();
-  const statusLabels = {
-    PENDING: texts.statusPending,
-    MANUAL_GRADING: texts.statusManual,
-    GRADED: texts.statusGraded
-  };
+  const statusLabels = getStatusLabels();
 
   // Clear all filter inputs on load — prevents browser form restoration from
   // showing stale values that won't be applied to the current data fetch.
@@ -418,6 +437,12 @@ export const init = () => {
   $('#status').val('');
   $('#autograder-status-multiselect input[type="checkbox"]').prop('checked', false);
   $('#autograder-quick-search-input, #searchname').val('');
+
+  if (presetStatus) {
+    $(`#autograder-status-multiselect input[type="checkbox"][value="${presetStatus}"]`)
+      .prop('checked', true);
+    $('#status').val(presetStatus);
+  }
 
   initStatusMultiselect(texts, statusLabels);
   initTopFiltersAutoApply();

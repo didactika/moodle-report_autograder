@@ -1,0 +1,105 @@
+<?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * Lang strings
+ *
+ * @package    report
+ * @subpackage autograder
+ * @copyright  2026 Acción Docente SDR <ct.accion.docente@funiber.org>
+ * @author     Hector Arrechea <hector.arrechea@uneatlantico.es>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+$string['pluginname'] = "Rapport de l'Auto Évaluateur";
+$string['header:student'] = 'Nom';
+$string['header:delivery_date'] = 'Date de remise';
+$string['header:modification_date'] = 'Dernière modification (notation)';
+$string['header:grade_date'] = 'Date à noter';
+$string['header:grade'] = 'Note';
+$string['header:status'] = 'Statut';
+$string['header:external_status'] = 'Statut';
+$string['header:completed_at'] = 'Date de notation';
+$string['status:pending'] = 'En attente';
+$string['status:awaiting_confirmation_of_rating'] = 'En attente du traitement de votre note';
+$string['status:ready_to_grade'] = 'Prêt à noter';
+$string['status:retry'] = 'Nouvelle tentative';
+$string['status:graded'] = 'Noté';
+$string['status:failed'] = 'Échoué';
+$string['status:failed_notified'] = 'Échec notifié à l\'administrateur';
+$string['status:skipped'] = 'Omis';
+$string['status:manual_grading'] = 'Notation manuelle';
+$string['feedback:nothing_to_show'] = 'Aucun enregistrement trouvé';
+$string['placeholder:automatic_grade'] = 'Note automatique';
+$string['navigation:go_back'] = 'Retour';
+$string['navigation:location'] = 'Rapport de notes automatiques';
+$string['error:grade_required'] = 'La note est obligatoire';
+$string['action:grade'] = 'Noter';
+$string['setting:site_external_id'] = 'ID externe du site';
+$string['setting:site_externalid_desc'] = "L'identifiant externe de ce site Moodle utilisé par le service de notation automatique";
+$string['setting:url_field_name'] = 'URL du service externe';
+$string['setting:url_field_desc'] = "URL du service externe à partir duquel les données de notes seront demandées";
+$string['error:missing_config'] = 'La configuration pour {$a} est manquante. Veuillez contacter l’administrateur.';
+$string['error:building_report_data'] = 'Erreur lors de la génération du rapport. Veuillez contacter l’administrateur.';
+$string['feedback:no_status'] = 'Aucun statut';
+$string['setting:pagination_limit_name'] = 'Limite de pagination';
+$string['setting:pagination_limit_desc'] = 'Nombre d’éléments à afficher par page dans le rapport de l’Auto Évaluateur.';
+$string['autograder:view'] = "Voir le rapport de l'Auto Évaluateur";
+$string['error:apirequest'] = 'Erreur lors de la communication avec le service externe : {$a}';
+$string['filter_all'] = 'Tous';
+$string['manual_grading'] = 'Notation manuelle';
+$string['manual_grading_send'] = 'Envoyer la note';
+$string['success:gradeupdated'] = 'Note mise à jour avec succès !';
+$string['error:updatefailed'] = 'Échec de la mise à jour de la note :';
+$string['error:invalidgrade'] = 'Veuillez saisir une note numérique valide.';
+$string['error:gradetoolarge'] = 'La note ne peut pas être supérieure à {$a->maxgrade}.';
+$string['error:negativegrade'] = 'La note ne peut pas être négative.';
+$string['filter_button'] = 'Filtrer';
+$string['filter_submission_date'] = 'Date de remise';
+$string['filter_grading_date'] = 'Date de notation';
+$string['filter_datefrom'] = 'Date de remise à partir de';
+$string['filter_dateto'] = 'Date notée à partir de';
+$string['filter_grade'] = 'Note à partir de';
+$string['filter_grade_placeholder'] = 'Entrez la note';
+$string['filter_status'] = 'Statut';
+$string['filter_status_placeholder'] = 'Statut...';
+$string['filter_status_pending'] = 'En attente';
+$string['filter_status_manual_grading'] = 'Notation manuelle';
+$string['filter_status_graded'] = 'Note';
+$string['pagination:results_per_page'] = 'Résultats par page';
+$string['pagination:all_results'] = 'Tous';
+$string['pagination:of'] = 'de';
+$string['pagination:previous'] = 'Page précédente';
+$string['pagination:next'] = 'Page suivante';
+$string['filter_clear'] = 'Effacer les filtres';
+$string['filter_search'] = 'Chercher';
+$string['datepicker_apply'] = 'Appliquer';
+$string['datepicker_cancel'] = 'Effacer';
+$string['datepicker_from'] = 'De';
+$string['datepicker_to'] = 'A';
+$string['datepicker_custom'] = 'Personnalise';
+$string['datepicker_week'] = 'Sem';
+$string['filter_active'] = 'Filtres actifs :';
+$string['filter_active_searchname'] = 'Nom : {$a}';
+$string['filter_active_datefrom'] = 'Depuis : {$a}';
+$string['filter_active_dateto'] = 'Depuis : {$a}';
+$string['filter_active_grade'] = 'Note : {$a}';
+$string['filter_active_status'] = 'Statut : {$a}';
+$string['gradeuser'] = 'Noter l\'utilisateur';
+$string['sortby_name'] = 'Trier par nom de l\'étudiant';
+$string['sortby_date'] = 'Trier par date de notation';
+$string['grade_provisional_help'] = 'La note indiquée est provisoire et ne sera pas enregistrée avant la date indiquée dans la colonne \'Date de notation\'.';
+$string['helper'] = 'Note provisoire';

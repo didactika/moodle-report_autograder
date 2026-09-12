@@ -1,20 +1,87 @@
-<tr data-record-id="{{id}}">
+{{!
+    @template report_autograder/table/_row
+
+    One student's row.
+
+    Context variables required for this template:
+    * rowkey - Unique per activity and student
+    * user_col - The student column, picture and name
+    * status - What the badge says
+    * status_class - How the badge looks
+    * completed_at - The date, formatted
+    * completed_at_sort - The date, for sorting
+
+    Example context (json):
+    {
+        "rowkey": "12-3",
+        "user_col": "Ana Lopez",
+        "status": "Pending",
+        "status_class": "autograder-badge autograder-badge-pending",
+        "completed_at": "5 Mar 2030, 10:00",
+        "completed_at_sort": 1898236800,
+        "provisional_grade": "70"
+    }
+}}
+<tr data-record-id="{{rowkey}}">
     <td class="d-flex align-items-center">
         {{{user_col}}}
     </td>
 
+    {{#course_name}}
     <td>
-        <span class="badge badge-secondary">{{status}}</span>
+        <a href="{{course_url}}">{{course_name}}</a>
+    </td>
+    {{/course_name}}
+
+    {{#activity_name}}
+    <td>
+        <a href="{{activity_url}}">{{activity_name}}</a>
+    </td>
+    {{/activity_name}}
+
+    <td>
+        <span class="{{status_class}}">{{status}}</span>
+        {{#failure_reason}}
+        <a class="btn btn-link p-0 ml-1 icon-no-margin"
+           role="button"
+           data-container="body"
+           data-toggle="popover"
+           data-placement="right"
+           data-content="{{failure_reason}}"
+           data-html="true"
+           tabindex="0"
+           data-trigger="focus"
+           aria-label="{{status}}">
+            <i class="icon fa fa-circle-exclamation text-danger fa-fw" title="{{status}}" aria-hidden="true"></i>
+        </a>
+        {{/failure_reason}}
     </td>
 
-    <td data-sort-value="{{completed_at_sort}}">{{completed_at}}</td>
+    <td data-sort-value="{{completed_at_sort}}">
+        {{completed_at}}
+        {{#date_reason}}
+        <a class="btn btn-link p-0 ml-1 icon-no-margin"
+           role="button"
+           data-container="body"
+           data-toggle="popover"
+           data-placement="right"
+           data-content="{{date_reason}}"
+           data-html="true"
+           tabindex="0"
+           data-trigger="focus"
+           aria-label="{{#str}}helper, report_autograder{{/str}}">
+            <i class="icon fa fa-circle-info text-muted fa-fw" aria-hidden="true"></i>
+        </a>
+        {{/date_reason}}
+    </td>
 
     <td class="text-center">
         {{#grade}}
             {{.}}
         {{/grade}}
         {{^grade}}
-            {{maxgrade}} <a class="btn btn-link p-0 me-2 icon-no-margin"
+            {{#provisional_grade}}
+            {{.}} <a class="btn btn-link p-0 me-2 icon-no-margin"
                             role="button"
                             data-container="body"
                             data-toggle="popover"
@@ -27,9 +94,25 @@
 
             <i class="icon fa fa-circle-info text-info fa-fw " title="{{#str}}helper, report_autograder{{/str}}" aria-hidden="true"></i>
         </a>
-
+            {{/provisional_grade}}
+            {{#grade_problem}}
+            <a class="btn btn-link p-0 icon-no-margin"
+               role="button"
+               data-container="body"
+               data-toggle="popover"
+               data-placement="right"
+               data-content="{{grade_problem}}"
+               data-html="true"
+               tabindex="0"
+               data-trigger="focus"
+               aria-label="{{grade_problem}}">
+                <i class="icon fa fa-triangle-exclamation text-warning fa-fw" aria-hidden="true"></i>
+            </a>
+            {{/grade_problem}}
         {{/grade}}
     </td>
+
+    <td>{{graded_by}}</td>
 
     <td>
         {{#grade_user_url}}
