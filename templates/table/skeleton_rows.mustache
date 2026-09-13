@@ -1,12 +1,22 @@
 {{#skeletonRows}}
-<tr>
-    <td class="d-flex align-items-center border-0">
+<tr aria-hidden="true">
+    <td class="autograder-student-cell border-0">
         <div class="autograder-skeleton avatar mr-2"></div>
         <div class="autograder-skeleton" style="width: 150px;"></div>
     </td>
+    {{#shows_course_column}}
+    <td class="border-0"><div class="autograder-skeleton"></div></td>
+    {{/shows_course_column}}
+    {{#shows_activity_column}}
+    <td class="border-0"><div class="autograder-skeleton"></div></td>
+    {{/shows_activity_column}}
+    {{#shows_group_column}}
+    <td class="border-0"><div class="autograder-skeleton"></div></td>
+    {{/shows_group_column}}
     <td class="border-0"><div class="autograder-skeleton badge"></div></td>
     <td class="border-0"><div class="autograder-skeleton" style="width: 100px;"></div></td>
     <td class="border-0"><div class="autograder-skeleton" style="width: 80px;"></div></td>
+    <td class="border-0"><div class="autograder-skeleton"></div></td>
     <td class="border-0"><div class="autograder-skeleton button"></div></td>
 </tr>
 {{/skeletonRows}}

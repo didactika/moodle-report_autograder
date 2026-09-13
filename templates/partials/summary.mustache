@@ -24,10 +24,10 @@
     }
 }}
 <div class="autograder-summary mb-3" aria-label="{{#str}}summary:heading, report_autograder{{/str}}">
-    <div class="d-flex flex-wrap align-items-stretch">
+    <div class="autograder-summary-grid">
         {{#tiles}}
         <a href="{{url}}"
-           class="autograder-summary-tile card mr-2 mb-2 text-decoration-none {{#attention}}autograder-summary-tile-attention{{/attention}} {{#empty}}autograder-summary-tile-empty{{/empty}}">
+           class="autograder-summary-tile card text-decoration-none {{#attention}}autograder-summary-tile-attention{{/attention}} {{#empty}}autograder-summary-tile-empty{{/empty}}">
             <div class="card-body py-2 px-3">
                 <div class="autograder-summary-count h4 m-0">{{count}}</div>
                 <div class="autograder-summary-label small">

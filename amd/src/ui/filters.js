@@ -145,14 +145,15 @@ const initStatusMultiselect = (texts, statusLabels) => {
     wrapper.find('input[type="checkbox"]').prop('checked', false);
     syncStatusHidden();
     renderStatusSelection(texts, statusLabels);
+    toggle.trigger('focus');
     debounceSubmit(150);
   });
 
-  wrapper.find('.dropdown-item').off('click.autograder').on('click.autograder', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const checkbox = $(this).find('input[type="checkbox"]');
-    checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
+  wrapper.off('keydown.autograder').on('keydown.autograder', function (e) {
+    if (e.key === 'Escape') {
+      wrapper.removeClass('is-open');
+      toggle.attr('aria-expanded', 'false').trigger('focus');
+    }
   });
 
   wrapper.find('.autograder-status-menu').off('click.autograder').on('click.autograder', function (e) {
@@ -241,6 +242,7 @@ const initDateChipInteraction = (buttonId, clearBtnId, inputId, fromId, toId, te
       picker.setEndDate(today);
     }
     renderDateChip('', '', buttonId, clearBtnId, buttonId.replace('-button', '-text'), texts);
+    button.trigger('focus');
     triggerFilterSubmit();
   });
 };

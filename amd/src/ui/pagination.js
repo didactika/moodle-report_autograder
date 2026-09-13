@@ -64,7 +64,8 @@ const resolveSelectedLimit = (optionValues, recordsPerPage, totalRecords) => {
  * @param {number} recordsPerPage The number of records per page.
  * @param {Function} onPageClick Callback for page navigation.
  * @param {Function} onPerPageChange Callback when per-page count changes.
- * @param {string|null} [allResultsLabelOverride] Optional plain text (or HTML) to replace the "All" lang string from Mustache.
+ * @param {string|null} [allResultsLabelOverride] Optional plain text to replace the "All" lang string from Mustache.
+ * @param {Function} isCurrent Whether this request is still the latest one.
  */
 export const renderPagination = (
     totalRecords,
@@ -74,9 +75,9 @@ export const renderPagination = (
     onPageClick,
     onPerPageChange,
     allResultsLabelOverride = null,
+    isCurrent = () => true,
 ) => {
     const container = $("#autograder-pagination-container");
-    container.empty();
 
     if (totalRecords === 0) {
         return;
@@ -127,17 +128,10 @@ export const renderPagination = (
         };
     });
 
-    const selectedOpt = peroptions.find((o) => o.selected);
-    const currentIsAll = selectedOpt ? selectedOpt.is_all : true;
-    const currentNumeric =
-        selectedOpt && !selectedOpt.is_all ? String(selectedOpt.value) : "";
-
     const context = {
         from,
         to,
         total: totalRecords,
-        current_is_all: currentIsAll,
-        current_numeric: currentNumeric,
         all_results_label: override,
         hasprev,
         hasnext,
@@ -149,40 +143,16 @@ export const renderPagination = (
     templates
         .render("report_autograder/pagination", context)
         .then((html) => {
+            if (!isCurrent()) {
+                return;
+            }
             container.html(html);
 
-            // Per-page custom dropdown toggle
-            const dropdown = container.find("#autograder-per-page-dropdown");
-            const toggle = dropdown.find(".autograder-per-page-toggle");
-
-            toggle.off("click.pgn").on("click.pgn", function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                dropdown.toggleClass("is-open");
-                toggle.attr(
-                    "aria-expanded",
-                    dropdown.hasClass("is-open") ? "true" : "false",
-                );
+            container.find('#autograder-per-page').on('change.pgn', function () {
+                if (typeof onPerPageChange === 'function') {
+                    onPerPageChange(parseInt($(this).val(), 10));
+                }
             });
-
-            dropdown
-                .find(".autograder-per-page-item")
-                .off("click.pgn")
-                .on("click.pgn", function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const newLimit = parseInt($(this).data("limit"), 10);
-                    dropdown.removeClass("is-open");
-                    if (typeof onPerPageChange === "function") {
-                        onPerPageChange(newLimit);
-                    }
-                });
-
-            $(document)
-                .off("click.pgn.outside")
-                .on("click.pgn.outside", () => {
-                    dropdown.removeClass("is-open");
-                });
 
             // Page nav (chevron buttons)
             container

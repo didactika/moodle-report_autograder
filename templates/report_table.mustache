@@ -17,7 +17,7 @@
         "skeletonRows": [[], []]
     }
 }}
-<div id="autograder-report-container"
+<div id="autograder-report-container" aria-busy="true"
     {{#forum_grade}}
     data-contextid="{{contextid}}"
     data-cmid="{{cmid}}"
@@ -33,8 +33,10 @@
     {{#sendstudentnotifications}}data-send-student-notifications="1"{{/sendstudentnotifications}}
     {{/forum_grade}}
 >
-<div class="table-responsive">
+<div class="table-responsive autograder-table-scroll" tabindex="0" role="region"
+    aria-label="{{#str}}pluginname, report_autograder{{/str}}">
 <table class="table table-striped table-hover">
+    <caption class="sr-only">{{#str}}pluginname, report_autograder{{/str}}</caption>
     <thead class="table-light">
         <tr>
             <th scope="col" class="autograder-sort-th" aria-sort="none">

@@ -25,6 +25,8 @@ import { attachFilterListeners, collectFilters } from './ui/form';
 import { init as initFiltersUi } from './ui/filters';
 import { updateSortHeaderUI } from './ui/table_sort';
 
+let requestId = 0;
+
 /**
  * @param {'user_name'|'completed_at_sort'} key
  */
@@ -42,8 +44,11 @@ const toggleColumnSort = (key) => {
  * @param {number} page Zero-based.
  */
 const fetchAndRenderReport = (page) => {
+    const currentRequest = ++requestId;
+    const isCurrent = () => currentRequest === requestId;
     setCurrentPage(page);
     showLoading();
+    $('#autograder-pagination-container').empty();
 
     const sortCol = getSortColumn();
 
@@ -56,6 +61,9 @@ const fetchAndRenderReport = (page) => {
         sortCol ? getSortDirection() : 'asc',
     )
         .then((response) => {
+            if (!isCurrent()) {
+                return response;
+            }
             const rows = response.data || [];
             const limit = response.limit || getRequestedLimit();
 
@@ -75,20 +83,28 @@ const fetchAndRenderReport = (page) => {
                         setRequestedLimit(newLimit);
                         fetchAndRenderReport(0);
                     },
+                    null,
+                    isCurrent,
                 );
-            });
+            }, isCurrent);
 
             return response;
         })
         .catch(async (error) => {
+            if (!isCurrent()) {
+                return;
+            }
             const msg = await getString(
                 'error:apirequest',
                 'report_autograder',
                 error.message,
             );
+            if (!isCurrent()) {
+                return;
+            }
             notification.addNotification({ message: msg, type: 'error' });
 
-            renderTable([]);
+            renderTable([], null, isCurrent);
         });
 };
 
