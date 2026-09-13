@@ -16,8 +16,13 @@
 
 namespace report_autograder\local;
 
-use local_autograder\local\config_repository;
-use local_autograder\local\decision_repository;
+use local_autograder\local\config\config_repository;
+use local_autograder\local\decision\decision_repository;
+use report_autograder\local\format\status;
+use report_autograder\local\page\summary;
+use report_autograder\local\query\filters;
+use report_autograder\local\query\report_query;
+use report_autograder\local\query\scope;
 
 /**
  * The strip of counts above the course and site reports.
@@ -26,7 +31,7 @@ use local_autograder\local\decision_repository;
  * @copyright  2026 Didactika.org
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers      \report_autograder\local\summary
+ * @covers      \report_autograder\local\page\summary
  */
 final class summary_test extends \advanced_testcase {
     /** @var \stdClass The course. */

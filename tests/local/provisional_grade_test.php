@@ -16,9 +16,11 @@
 
 namespace report_autograder\local;
 
-use local_autograder\local\advanced_grading;
-use local_autograder\local\config_repository;
+use local_autograder\local\grading\advanced_grading;
+use local_autograder\local\config\config_repository;
 use local_autograder\local\module\module_adapter;
+use report_autograder\local\format\provisional_grade;
+use report_autograder\local\query\report_query;
 
 /**
  * The grade a student is going to get, before they have it.
@@ -32,7 +34,7 @@ use local_autograder\local\module\module_adapter;
  * @copyright  2026 Didactika.org
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers      \report_autograder\local\provisional_grade
+ * @covers      \report_autograder\local\format\provisional_grade
  */
 final class provisional_grade_test extends \advanced_testcase {
     /** @var \stdClass The course. */

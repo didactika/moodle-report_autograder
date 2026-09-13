@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace report_autograder\local;
+namespace report_autograder\local\format;
 
-use local_autograder\local\advanced_grading;
-use local_autograder\local\eligibility;
+use local_autograder\local\grading\advanced_grading;
+use local_autograder\local\config\eligibility;
+use report_autograder\local\query\report_query;
 
 /**
  * The grade a student is going to get, before they have it.

@@ -14,7 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace report_autograder\local;
+namespace report_autograder\local\groups;
+
+use report_autograder\local\query\scope;
 
 /**
  * Which groups the viewer may see, and which students that leaves.

@@ -32,11 +32,11 @@ require_once(__DIR__ . '/../../config.php');
 // under /report/ does not get that file loaded for it.
 require_once($CFG->libdir . '/adminlib.php');
 
-use report_autograder\local\grader_ui;
-use report_autograder\local\page_context;
-use report_autograder\local\scope;
-use report_autograder\local\status;
-use report_autograder\local\summary;
+use report_autograder\local\page\grader_ui;
+use report_autograder\local\page\page_context;
+use report_autograder\local\query\scope;
+use report_autograder\local\format\status;
+use report_autograder\local\page\summary;
 
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);

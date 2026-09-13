@@ -14,9 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace report_autograder\local;
+namespace report_autograder\local\page;
 
-use local_autograder\local\decision_repository;
+use local_autograder\local\decision\decision_repository;
+use report_autograder\local\format\status;
+use report_autograder\local\query\filters;
+use report_autograder\local\query\report_query;
+use report_autograder\local\query\scope;
 
 /**
  * What a course or the whole site looks like at a glance.

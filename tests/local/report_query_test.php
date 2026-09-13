@@ -16,8 +16,13 @@
 
 namespace report_autograder\local;
 
-use local_autograder\local\config_repository;
-use local_autograder\local\decision_repository;
+use local_autograder\local\config\config_repository;
+use local_autograder\local\decision\decision_repository;
+use report_autograder\local\format\row_formatter;
+use report_autograder\local\format\status;
+use report_autograder\local\query\filters;
+use report_autograder\local\query\report_query;
+use report_autograder\local\query\scope;
 
 /**
  * The one query behind the three reports.
@@ -26,7 +31,7 @@ use local_autograder\local\decision_repository;
  * @copyright  2026 Didactika.org
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers      \report_autograder\local\report_query
+ * @covers      \report_autograder\local\query\report_query
  */
 final class report_query_test extends \advanced_testcase {
     /** @var \stdClass First course. */

@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace report_autograder\local;
+namespace report_autograder\local\format;
 
-use local_autograder\local\decision_repository;
+use local_autograder\local\decision\decision_repository;
 
 /**
  * What a row's state is called, in the teacher's words rather than the

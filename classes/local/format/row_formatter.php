@@ -14,9 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace report_autograder\local;
+namespace report_autograder\local\format;
 
-use local_autograder\local\grader_picker;
+use local_autograder\local\grading\grader_picker;
+use report_autograder\local\groups\group_access;
+use report_autograder\local\groups\group_names;
+use report_autograder\local\page\grader_ui;
+use report_autograder\local\query\report_query;
+use report_autograder\local\query\scope;
 
 /**
  * A database row, turned into the row the table draws.

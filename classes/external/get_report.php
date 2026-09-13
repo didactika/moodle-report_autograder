@@ -21,10 +21,10 @@ use core_external\external_function_parameters;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
-use report_autograder\local\filters;
-use report_autograder\local\report_query;
-use report_autograder\local\row_formatter;
-use report_autograder\local\scope;
+use report_autograder\local\query\filters;
+use report_autograder\local\query\report_query;
+use report_autograder\local\format\row_formatter;
+use report_autograder\local\query\scope;
 
 /**
  * One page of the report, for whichever of the three levels was asked for.

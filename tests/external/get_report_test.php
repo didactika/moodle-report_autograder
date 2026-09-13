@@ -17,8 +17,8 @@
 namespace report_autograder\external;
 
 use core_external\external_api;
-use local_autograder\local\config_repository;
-use report_autograder\local\scope;
+use local_autograder\local\config\config_repository;
+use report_autograder\local\query\scope;
 
 /**
  * The service the table is actually filled from.

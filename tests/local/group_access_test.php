@@ -16,7 +16,13 @@
 
 namespace report_autograder\local;
 
-use local_autograder\local\config_repository;
+use local_autograder\local\config\config_repository;
+use report_autograder\local\format\row_formatter;
+use report_autograder\local\groups\group_access;
+use report_autograder\local\groups\group_names;
+use report_autograder\local\query\filters;
+use report_autograder\local\query\report_query;
+use report_autograder\local\query\scope;
 
 /**
  * What the report shows of an activity that separates its students by group.
@@ -31,8 +37,8 @@ use local_autograder\local\config_repository;
  * @copyright  2026 Didactika.org
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers      \report_autograder\local\group_access
- * @covers      \report_autograder\local\group_names
+ * @covers      \report_autograder\local\groups\group_access
+ * @covers      \report_autograder\local\groups\group_names
  */
 final class group_access_test extends \advanced_testcase {
     /** @var \stdClass The course. */

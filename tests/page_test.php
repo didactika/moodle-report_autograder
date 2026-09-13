@@ -16,9 +16,10 @@
 
 namespace report_autograder;
 
-use local_autograder\local\config_repository;
-use report_autograder\local\page_context;
-use report_autograder\local\scope;
+use local_autograder\local\config\config_repository;
+use report_autograder\local\format\status;
+use report_autograder\local\page\page_context;
+use report_autograder\local\query\scope;
 
 /**
  * The three pages, drawn for real.
@@ -32,7 +33,7 @@ use report_autograder\local\scope;
  * @copyright  2026 Didactika.org
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers      \report_autograder\local\page_context
+ * @covers      \report_autograder\local\page\page_context
  */
 final class page_test extends \advanced_testcase {
     /** @var \stdClass The course. */
@@ -279,7 +280,7 @@ final class page_test extends \advanced_testcase {
      */
     private function offers_failed(array $context): bool {
         foreach ($context['statuses'] as $status) {
-            if ($status['key'] === local\status::FAILED) {
+            if ($status['key'] === status::FAILED) {
                 return true;
             }
         }

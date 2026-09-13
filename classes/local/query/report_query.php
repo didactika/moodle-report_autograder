@@ -14,10 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace report_autograder\local;
+namespace report_autograder\local\query;
 
 use core_user\fields;
-use local_autograder\local\eligibility;
+use local_autograder\local\config\eligibility;
+use report_autograder\local\format\status;
+use report_autograder\local\groups\group_access;
 
 /**
  * The one query behind all three reports.

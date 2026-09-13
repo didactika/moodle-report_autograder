@@ -16,8 +16,13 @@
 
 namespace report_autograder\local;
 
-use local_autograder\local\config_repository;
-use local_autograder\local\decision_repository;
+use local_autograder\local\config\config_repository;
+use local_autograder\local\decision\decision_repository;
+use report_autograder\local\format\row_formatter;
+use report_autograder\local\format\status;
+use report_autograder\local\query\filters;
+use report_autograder\local\query\report_query;
+use report_autograder\local\query\scope;
 
 /**
  * Who a waiting row is going to be graded as.
@@ -31,7 +36,7 @@ use local_autograder\local\decision_repository;
  * @copyright  2026 Didactika.org
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers      \report_autograder\local\row_formatter
+ * @covers      \report_autograder\local\format\row_formatter
  */
 final class prospective_grader_test extends \advanced_testcase {
     /** @var \stdClass The course. */
