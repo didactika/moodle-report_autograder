@@ -14,19 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * Shared forum grader context and assign grader capability (used by index and data enricher).
- *
- * @package     report_autograder
- * @copyright  2026 Didactika.org
- * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
- * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace report_autograder\local;
-
-defined('MOODLE_INTERNAL') || die();
 
 use cm_info;
 use mod_forum\grades\forum_gradeitem;
@@ -34,35 +22,52 @@ use mod_forum\local\container as forum_container;
 use stdClass;
 
 /**
- * Shared UI context for forum JS grader and assign redirect URLs (keep in sync with index.php usage).
+ * How a row hands the viewer over to the activity's own grading screen.
+ *
+ * This report never grades anything itself. Where a teacher wants to grade a
+ * student they are looking at, they are sent to the screen the activity already
+ * has for it — the assignment grader by URL, the forum grader by the same
+ * JavaScript the forum itself launches — so that everything the activity does
+ * around a grade still happens.
+ *
+ * @package     report_autograder
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grader_ui
-{
+class grader_ui {
     /**
-     * Context for mod_forum/grades templates and #autograder-report-container data-* attrs, or null if N/A.
+     * What `mod_forum`'s grader needs to be launched from this page.
+     *
+     * The values land on the table's root element as `data-*` attributes, which
+     * is where `mod_forum/grades/grader` reads them from; the shape is the
+     * forum's, not this plugin's.
      *
      * @param stdClass $course
      * @param cm_info $cm
-     * @param stdClass $user
-     * @return array<string, mixed>|null
+     * @param stdClass $user The viewer, whose right to grade is checked.
+     * @return array<string, mixed>|null Null where this activity has no forum
+     *         grader to launch, or this viewer may not use it.
      */
     public static function get_forum_grade_context(stdClass $course, cm_info $cm, stdClass $user): ?array {
         if ($cm->modname !== 'forum') {
             return null;
         }
-        $vaultfactory = forum_container::get_vault_factory();
-        $forumvault = $vaultfactory->get_forum_vault();
+
+        $forumvault = forum_container::get_vault_factory()->get_forum_vault();
         $forum = $forumvault->get_from_course_module_id((int) $cm->id);
+
         if ($forum === null) {
             return null;
         }
+
         $forumgradeitem = forum_gradeitem::load_from_forum_entity($forum);
-        $managerfactory = forum_container::get_manager_factory();
-        $capabilitymanager = $managerfactory->get_capability_manager($forum);
+        $capabilitymanager = forum_container::get_manager_factory()->get_capability_manager($forum);
+
         if (!$forumgradeitem->is_grading_enabled() || !$capabilitymanager->can_grade($user)) {
             return null;
         }
-        $groupid = groups_get_activity_group($cm, true) ?: null;
+
         return [
             'contextid' => $forum->get_context()->id,
             'cmid' => $cm->id,
@@ -70,7 +75,9 @@ class grader_ui
             'courseid' => $course->id,
             'coursename' => format_string($course->shortname),
             'experimentaldisplaymode' => 0,
-            'groupid' => $groupid,
+            // The group the viewer is looking at, so the grader opens on the
+            // same students the report is showing.
+            'groupid' => groups_get_activity_group($cm, true) ?: null,
             'gradingcomponent' => $forumgradeitem->get_grading_component_name(),
             'gradingcomponentsubtype' => $forumgradeitem->get_grading_component_subtype(),
             'gradeonlyactiveusers' => $forumgradeitem->should_grade_only_active_users() ? 1 : 0,
@@ -79,13 +86,16 @@ class grader_ui
     }
 
     /**
-     * Whether the current user can open the assign activity grader for a student (redirect URL).
+     * Whether a row may offer a link into the assignment grader.
+     *
+     * @param cm_info $cm
+     * @return bool
      */
     public static function can_use_assign_grader(cm_info $cm): bool {
         if ($cm->modname !== 'assign') {
             return false;
         }
-        $ctx = \context_module::instance($cm->id);
-        return has_capability('mod/assign:grade', $ctx);
+
+        return has_capability('mod/assign:grade', \context_module::instance($cm->id));
     }
 }

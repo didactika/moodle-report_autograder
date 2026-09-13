@@ -172,6 +172,67 @@ final class page_test extends \advanced_testcase {
     }
 
     /**
+     * Switching separate groups on an activity puts a group picker in its bar,
+     * drawn and not merely decided: the whole point of the filter is being
+     * there to click.
+     */
+    public function test_separate_groups_draws_the_group_picker(): void {
+        global $OUTPUT, $PAGE;
+
+        $scope = $this->scope_for(scope::LEVEL_ACTIVITY);
+        $PAGE->set_url('/report/autograder/index.php');
+        $PAGE->set_context($scope->context());
+
+        $before = $OUTPUT->render_from_template(
+            'report_autograder/partials/filters',
+            page_context::filters($scope)
+        );
+        $this->assertStringNotContainsString('autograder-filter-group', $before);
+
+        $this->getDataGenerator()->create_group(['courseid' => $this->course->id, 'name' => 'Group A']);
+        set_coursemodule_groupmode((int) $this->cm->id, SEPARATEGROUPS);
+        rebuild_course_cache((int) $this->course->id, true);
+        \cache_helper::purge_all();
+
+        $after = $OUTPUT->render_from_template(
+            'report_autograder/partials/filters',
+            page_context::filters(scope::from_params((int) $this->cm->id, 0))
+        );
+
+        $this->assertStringContainsString('autograder-filter-group', $after);
+        $this->assertStringContainsString('Group A', $after);
+        $this->assert_no_complaints($after);
+    }
+
+    /**
+     * And the table gets the column to go with it.
+     */
+    public function test_separate_groups_draws_the_group_column(): void {
+        global $OUTPUT, $PAGE;
+
+        $scope = $this->scope_for(scope::LEVEL_ACTIVITY);
+        $PAGE->set_url('/report/autograder/index.php');
+        $PAGE->set_context($scope->context());
+
+        $this->assertFalse(page_context::table($scope, null)['shows_group_column']);
+
+        $this->getDataGenerator()->create_group(['courseid' => $this->course->id, 'name' => 'Group A']);
+        set_coursemodule_groupmode((int) $this->cm->id, SEPARATEGROUPS);
+        rebuild_course_cache((int) $this->course->id, true);
+        \cache_helper::purge_all();
+
+        $context = page_context::table(scope::from_params((int) $this->cm->id, 0), null);
+        $this->assertTrue($context['shows_group_column']);
+
+        $table = $OUTPUT->render_from_template('report_autograder/report_table', $context);
+        $this->assertStringContainsString(
+            get_string('header:groups', 'report_autograder'),
+            $table
+        );
+        $this->assert_no_complaints($table);
+    }
+
+    /**
      * Whether the filter bar offers the "failed" status.
      *
      * @param array $context From page_context::filters().

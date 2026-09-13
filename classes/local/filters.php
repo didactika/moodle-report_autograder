@@ -47,6 +47,9 @@ final class filters {
     /** @var int One activity, at course or site level. */
     private int $cmid = 0;
 
+    /** @var int One group of students. */
+    private int $groupid = 0;
+
     /**
      * Reads the filter list the client sends, ignoring anything unknown.
      *
@@ -95,6 +98,10 @@ final class filters {
 
                 case 'cmid':
                     $filters->cmid = (int) $value;
+                    break;
+
+                case 'groupid':
+                    $filters->groupid = (int) $value;
                     break;
             }
         }
@@ -182,6 +189,19 @@ final class filters {
     }
 
     /**
+     * The one group to show.
+     *
+     * Whether it is a group this viewer was offered is not decided here — that
+     * depends on the activity and on their capabilities, which
+     * {@see group_access} answers.
+     *
+     * @return int Zero when not filtering by group.
+     */
+    public function groupid(): int {
+        return $this->groupid;
+    }
+
+    /**
      * Whether anything at all was asked for.
      *
      * @return bool
@@ -192,6 +212,7 @@ final class filters {
             && $this->dateto === null
             && $this->statuses === []
             && $this->courseid === 0
-            && $this->cmid === 0;
+            && $this->cmid === 0
+            && $this->groupid === 0;
     }
 }

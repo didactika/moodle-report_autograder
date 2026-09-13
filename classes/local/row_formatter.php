@@ -16,6 +16,8 @@
 
 namespace report_autograder\local;
 
+use local_autograder\local\grader_picker;
+
 /**
  * A database row, turned into the row the table draws.
  *
@@ -33,12 +35,19 @@ final class row_formatter {
      * @return array<int, array<string, mixed>>
      */
     public static function format_all(array $rows, scope $scope): array {
-        $canseefailures = $scope->can_see_failures();
-        $graders = self::grader_names($rows);
+        $access = group_access::for_scope($scope);
+        $prospective = self::prospective_graders($rows, $scope);
+        $page = [
+            'canseefailures' => $scope->can_see_failures(),
+            'prospective' => $prospective,
+            'graders' => self::grader_names($rows, $prospective),
+            'showsgroups' => $access->shows_column(),
+            'groups' => group_names::for_rows($rows, $access),
+        ];
         $out = [];
 
         foreach ($rows as $row) {
-            $out[] = self::format($row, $scope, $canseefailures, $graders);
+            $out[] = self::format($row, $scope, $page);
         }
 
         return $out;
@@ -49,21 +58,17 @@ final class row_formatter {
      *
      * @param \stdClass $row
      * @param scope $scope
-     * @param bool $canseefailures
-     * @param array<int, string> $graders Teacher names, by user id.
+     * @param array $page What was looked up once for the whole page: the
+     *        viewer's right to see failures, the prospective grader of each
+     *        waiting row, every grader's name, and each row's groups.
      * @return array<string, mixed>
      */
-    private static function format(
-        \stdClass $row,
-        scope $scope,
-        bool $canseefailures,
-        array $graders
-    ): array {
+    private static function format(\stdClass $row, scope $scope, array $page): array {
         global $OUTPUT, $PAGE;
 
         $userid = (int) $row->userid;
         $courseid = (int) $row->courseid;
-        $status = status::from_decision($row->decisionstatus, $canseefailures);
+        $status = status::from_decision($row->decisionstatus, $page['canseefailures']);
         $user = self::user_stub($row);
 
         $formatted = [
@@ -93,9 +98,18 @@ final class row_formatter {
         $picture->size = 100;
         $formatted['user_picture_url'] = $picture->get_url($PAGE)->out(false);
 
+        // The cell is drawn whenever the table has the column, empty or not: a
+        // student in no group of the activity still needs their row to line up
+        // with everybody else's.
+        $formatted['shows_groups'] = $page['showsgroups'];
+
+        if (isset($page['groups'][$row->rowkey])) {
+            $formatted['groups'] = implode(', ', $page['groups'][$row->rowkey]);
+        }
+
         self::add_grade($formatted, $row, $status);
         self::add_context_columns($formatted, $row, $scope);
-        self::add_explanations($formatted, $row, $status, $canseefailures, $graders);
+        self::add_explanations($formatted, $row, $status, $page);
         self::add_grading_action($formatted, $row, $scope);
 
         return $formatted;
@@ -157,21 +171,19 @@ final class row_formatter {
     }
 
     /**
-     * The tooltips: why that date, and — for somebody who may be told — why a
-     * grading failed.
+     * The tooltips and the names: why that date, who graded it or who is going
+     * to, and — for somebody who may be told — why a grading failed.
      *
      * @param array $formatted Added to.
      * @param \stdClass $row
      * @param string $status
-     * @param bool $canseefailures
-     * @param array<int, string> $graders
+     * @param array $page The once-per-page lookups; see {@see self::format()}.
      */
     private static function add_explanations(
         array &$formatted,
         \stdClass $row,
         string $status,
-        bool $canseefailures,
-        array $graders
+        array $page
     ): void {
         if (!empty($row->duedatereason)) {
             $key = 'reason:' . $row->duedatereason;
@@ -183,16 +195,43 @@ final class row_formatter {
 
         $graderid = self::grader_of($row);
 
-        if ($graderid > 0 && isset($graders[$graderid])) {
-            $formatted['graded_by'] = $graders[$graderid];
+        if ($graderid > 0 && isset($page['graders'][$graderid])) {
+            $formatted['graded_by'] = $page['graders'][$graderid];
+        } else if (status::is_awaiting($status)) {
+            self::add_prospective_grader($formatted, $row, $page);
         }
 
-        if ($status === status::FAILED && $canseefailures && !empty($row->failurereason)) {
+        if ($status === status::FAILED && $page['canseefailures'] && !empty($row->failurereason)) {
             $key = 'failure:' . $row->failurereason;
             $formatted['failure_reason'] = get_string_manager()->string_exists($key, 'report_autograder')
                 ? get_string($key, 'report_autograder')
                 : s($row->failurereason);
         }
+    }
+
+    /**
+     * Who a waiting row is going to be graded as.
+     *
+     * The same column as the grader of a row already graded, because it is the
+     * same fact at a different moment — and it is the one thing a teacher
+     * cannot find out anywhere else before it happens. Where nobody qualifies,
+     * saying so is the more useful answer: that row is heading for a failure,
+     * and it can be fixed before the date arrives.
+     *
+     * @param array $formatted Added to.
+     * @param \stdClass $row
+     * @param array $page The once-per-page lookups; see {@see self::format()}.
+     */
+    private static function add_prospective_grader(array &$formatted, \stdClass $row, array $page): void {
+        $graderid = $page['prospective'][$row->rowkey] ?? 0;
+
+        if ($graderid > 0 && isset($page['graders'][$graderid])) {
+            $formatted['will_grade'] = $page['graders'][$graderid];
+
+            return;
+        }
+
+        $formatted['will_grade_problem'] = get_string('willgrade:nobody', 'report_autograder');
     }
 
     /**
@@ -282,13 +321,47 @@ final class row_formatter {
     }
 
     /**
-     * The teachers named as graders in this page of rows, looked up once
-     * rather than per row.
+     * Who autograder would grade each waiting row as, asked of the plugin that
+     * will actually do it.
+     *
+     * Worked out now rather than stored, for the same reason local_autograder
+     * only decides at the moment of grading: a teacher can join or leave the
+     * course, a group or the capability while a decision waits. Which makes
+     * this an answer about today, and the column says as much.
      *
      * @param \stdClass[] $rows
+     * @param scope $scope
+     * @return array<string, int> The chosen teacher, by the row's own key.
+     */
+    private static function prospective_graders(array $rows, scope $scope): array {
+        $canseefailures = $scope->can_see_failures();
+        $graders = [];
+
+        foreach ($rows as $row) {
+            $status = status::from_decision($row->decisionstatus, $canseefailures);
+
+            if (!status::is_awaiting($status) || self::grader_of($row) > 0) {
+                continue;
+            }
+
+            $graders[$row->rowkey] = (int) grader_picker::pick_for(
+                (int) $row->cmid,
+                (int) $row->userid
+            );
+        }
+
+        return $graders;
+    }
+
+    /**
+     * The teachers named in this page of rows, looked up once rather than per
+     * row.
+     *
+     * @param \stdClass[] $rows
+     * @param array<string, int> $prospective From {@see self::prospective_graders()}.
      * @return array<int, string>
      */
-    private static function grader_names(array $rows): array {
+    private static function grader_names(array $rows, array $prospective): array {
         global $DB;
 
         $ids = [];
@@ -296,6 +369,12 @@ final class row_formatter {
         foreach ($rows as $row) {
             $graderid = self::grader_of($row);
 
+            if ($graderid > 0) {
+                $ids[$graderid] = true;
+            }
+        }
+
+        foreach ($prospective as $graderid) {
             if ($graderid > 0) {
                 $ids[$graderid] = true;
             }

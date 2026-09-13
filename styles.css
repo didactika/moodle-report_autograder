@@ -1044,3 +1044,11 @@
 .autograder-summary-count {
     font-variant-numeric: tabular-nums;
 }
+
+/* The teacher a waiting row is going to be graded as. Set apart from a name in
+   the same column that has already graded, because it is a plan and not a
+   record — nobody has acted on this row yet. */
+.autograder-prospective {
+    font-style: italic;
+    color: #5b6671;
+}

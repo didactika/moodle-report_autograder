@@ -14,26 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+namespace report_autograder\privacy;
+
+use core_privacy\local\metadata\null_provider;
+
 /**
- * Plugin version and other meta-data are defined here.
+ * This report stores nothing about anybody.
+ *
+ * Every personal detail it shows belongs to somewhere else and is exported and
+ * deleted from there: the decisions are local_autograder's and declared by its
+ * own provider, the grades are the gradebook's, the names and pictures the
+ * user's. A report that reads those and stores nothing of its own has nothing
+ * of its own to hand over.
  *
  * @package     report_autograder
  * @copyright  2026 Didactika.org
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'report_autograder';
-$plugin->release = '3.0.0';
-$plugin->version = 2026091300;
-$plugin->requires = 2023042400; // Moodle 4.2, floor for the oldest branch in $supported.
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->supported = [405, 502];
-
-// Everything this report shows comes out of local_autograder's own tables, so
-// it cannot work without it. The floor is the v3 release that created them.
-$plugin->dependencies = [
-    'local_autograder' => 2026091105,
-];
+class provider implements null_provider {
+    /**
+     * Why there is nothing to describe.
+     *
+     * @return string The identifier of a string explaining it.
+     */
+    public static function get_reason(): string {
+        return 'privacy:metadata';
+    }
+}

@@ -158,13 +158,13 @@ final class status {
     /**
      * The badge's class.
      *
-     * One pill in the site's own light primary, for every state, painted from
-     * this plugin's CSS rather than from Bootstrap's colour names. Two reasons,
-     * and the second is not cosmetic: Bootstrap 4 and Bootstrap 5 do not name
-     * their badge colours the same way (`badge-success` against
-     * `text-bg-success`), and this report is drawn on Moodle branches that ship
-     * both — a colour class picked from either would simply do nothing on the
-     * other. The state modifier is a hook for CSS, not a colour.
+     * One class per state, painted from this plugin's own CSS rather than from
+     * Bootstrap's colour names. That is not only so each state can carry its
+     * own tone: Bootstrap 4 and Bootstrap 5 do not name their badge colours the
+     * same way (`badge-success` against `text-bg-success`), and this report is
+     * drawn on Moodle branches that ship both, so a colour class picked from
+     * either would simply do nothing on the other. The state modifier is a
+     * hook for this plugin's stylesheet, not a colour.
      *
      * @param string $status One of this class's constants.
      * @return string

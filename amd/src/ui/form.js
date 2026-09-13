@@ -9,7 +9,7 @@ import $ from 'jquery';
  *
  * @returns {Array<{name: string, value: string}>}
  */
-const collectFilters = () => {
+export const collectFilters = () => {
     const filters = [];
     const add = (name, value) => {
         if (value) {
@@ -23,6 +23,7 @@ const collectFilters = () => {
     add('status', $('#status').val());
     add('courseid', $('#autograder-filter-course').val());
     add('cmid', $('#autograder-filter-activity').val());
+    add('groupid', $('#autograder-filter-group').val());
 
     return filters;
 };
@@ -57,7 +58,7 @@ export const attachFilterListeners = (onFilterChange, onFilterClear) => {
     // The course and activity pickers are ordinary selects: changing one is
     // the whole interaction, so it applies itself rather than waiting for a
     // button the rest of the bar does not have either.
-    form.on('change', '#autograder-filter-course, #autograder-filter-activity', () => {
+    form.on('change', '#autograder-filter-course, #autograder-filter-activity, #autograder-filter-group', () => {
         markChosenPickers();
 
         if (typeof onFilterChange === 'function') {

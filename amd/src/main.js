@@ -21,7 +21,7 @@ import {
 import { getReportData } from './service/repository';
 import { showLoading, renderTable } from './ui/report';
 import { renderPagination } from './ui/pagination';
-import { attachFilterListeners } from './ui/form';
+import { attachFilterListeners, collectFilters } from './ui/form';
 import { init as initFiltersUi } from './ui/filters';
 import { updateSortHeaderUI } from './ui/table_sort';
 
@@ -128,6 +128,13 @@ export const init = (scope, presetStatus) => {
     }
 
     initFiltersUi(presetStatus);
+
+    // The bar can arrive with something already chosen — a status from a
+    // summary tile, or the group the viewer was last looking at, which in an
+    // activity that separates groups is not optional. So the first page is
+    // asked for with whatever the bar says, not with nothing.
+    setFilters(collectFilters());
+
     attachFilterListeners(
         (filters) => {
             setFilters(filters);

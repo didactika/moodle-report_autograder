@@ -6,12 +6,14 @@
     Context variables required for this template:
     * shows_course_column - Whether rows name their course
     * shows_activity_column - Whether rows name their activity
+    * shows_group_column - Whether rows name the student's groups
     * skeletonRows - Placeholder rows shown until the first page arrives
 
     Example context (json):
     {
         "shows_course_column": false,
         "shows_activity_column": true,
+        "shows_group_column": true,
         "skeletonRows": [[], []]
     }
 }}
@@ -53,6 +55,9 @@
             {{#shows_activity_column}}
             <th scope="col">{{#str}} header:activity, report_autograder {{/str}}</th>
             {{/shows_activity_column}}
+            {{#shows_group_column}}
+            <th scope="col">{{#str}} header:groups, report_autograder {{/str}}</th>
+            {{/shows_group_column}}
             <th scope="col">{{#str}} header:external_status, report_autograder {{/str}}</th>
             <th scope="col" class="autograder-sort-th" aria-sort="none">
                 <button type="button"

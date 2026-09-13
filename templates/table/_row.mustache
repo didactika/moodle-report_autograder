@@ -10,6 +10,8 @@
     * status_class - How the badge looks
     * completed_at - The date, formatted
     * completed_at_sort - The date, for sorting
+    * shows_groups / groups - The student's groups, where the table names them
+    * graded_by / will_grade - Who graded it, or who is going to
 
     Example context (json):
     {
@@ -19,7 +21,10 @@
         "status_class": "autograder-badge autograder-badge-pending",
         "completed_at": "5 Mar 2030, 10:00",
         "completed_at_sort": 1898236800,
-        "provisional_grade": "70"
+        "provisional_grade": "70",
+        "shows_groups": true,
+        "groups": "Group A",
+        "will_grade": "Elena Ruiz"
     }
 }}
 <tr data-record-id="{{rowkey}}">
@@ -38,6 +43,10 @@
         <a href="{{activity_url}}">{{activity_name}}</a>
     </td>
     {{/activity_name}}
+
+    {{#shows_groups}}
+    <td>{{groups}}</td>
+    {{/shows_groups}}
 
     <td>
         <span class="{{status_class}}">{{status}}</span>
@@ -112,7 +121,42 @@
         {{/grade}}
     </td>
 
-    <td>{{graded_by}}</td>
+    <td>
+        {{#graded_by}}
+            {{.}}
+        {{/graded_by}}
+        {{^graded_by}}
+            {{#will_grade}}
+            <span class="autograder-prospective">{{.}}</span>
+            <a class="btn btn-link p-0 ml-1 icon-no-margin"
+               role="button"
+               data-container="body"
+               data-toggle="popover"
+               data-placement="left"
+               data-content="{{#str}}gradedby_prospective_help, report_autograder{{/str}}"
+               data-html="true"
+               tabindex="0"
+               data-trigger="focus"
+               aria-label="{{#str}}gradedby_prospective, report_autograder{{/str}}">
+                <i class="icon fa fa-circle-info text-info fa-fw" aria-hidden="true"></i>
+            </a>
+            {{/will_grade}}
+            {{#will_grade_problem}}
+            <a class="btn btn-link p-0 icon-no-margin"
+               role="button"
+               data-container="body"
+               data-toggle="popover"
+               data-placement="left"
+               data-content="{{will_grade_problem}}"
+               data-html="true"
+               tabindex="0"
+               data-trigger="focus"
+               aria-label="{{will_grade_problem}}">
+                <i class="icon fa fa-triangle-exclamation text-warning fa-fw" aria-hidden="true"></i>
+            </a>
+            {{/will_grade_problem}}
+        {{/graded_by}}
+    </td>
 
     <td>
         {{#grade_user_url}}

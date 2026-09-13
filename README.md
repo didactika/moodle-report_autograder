@@ -40,6 +40,29 @@ asking.
 A student whose enrolment has not started, or has ended, is not there, because
 autograder would not grade them either.
 
+## Groups
+
+An activity set to separate groups shows a teacher only their own groups, and
+this report shows no more than the activity itself would. Each activity is
+judged by its own group mode, so one course report can hide a student in one
+activity and list them in the next.
+
+Where groups are in play the table gains a group column and the filter bar a
+group picker. It opens on the same group Moodle would have opened on: all of
+them for somebody with `moodle/site:accessallgroups`, otherwise the teacher's
+own — and for them there is no "all groups" to choose. The site report has no
+picker, since a group belongs to one course and a list of them across every
+course would be a list of names with nothing in common; it still hides what it
+must.
+
+## Who a waiting row will be graded as
+
+Autograder posts every grade in a real teacher's name, chosen at the moment of
+grading. A waiting row names who that would be today — the one thing about a
+row that cannot be found anywhere else before it happens — and says so plainly
+where nobody qualifies, because that row is heading for a failure that can
+still be fixed.
+
 ## Failures
 
 `report/autograder:viewfailed` — manager only by default — decides whether a

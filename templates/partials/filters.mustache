@@ -8,6 +8,8 @@
     * statuses - The states this viewer may filter by
     * shows_course_filter / courses - The course picker, at site level
     * shows_activity_filter / activities - The activity picker, above it
+    * shows_group_filter / groups - The group picker, where groups are in play
+    * offers_all_groups - Whether the group picker may be left on all of them
 
     Example context (json):
     {
@@ -16,7 +18,10 @@
         "shows_course_filter": false,
         "courses": [],
         "shows_activity_filter": true,
-        "activities": [{"id": 12, "name": "Essay"}]
+        "activities": [{"id": 12, "name": "Essay"}],
+        "shows_group_filter": true,
+        "offers_all_groups": true,
+        "groups": [{"id": 4, "name": "Group A", "selected": false}]
     }
 }}
 
@@ -66,6 +71,23 @@
                 </span>
             </div>
             {{/shows_activity_filter}}
+
+            {{#shows_group_filter}}
+            <div class="autograder-select-chip-wrapper">
+                <label class="sr-only" for="autograder-filter-group">{{#str}}filter_group, report_autograder{{/str}}</label>
+                <select class="autograder-select-chip" id="autograder-filter-group" name="groupid">
+                    {{#offers_all_groups}}
+                    <option value="">{{#str}}filter_group_placeholder, report_autograder{{/str}}</option>
+                    {{/offers_all_groups}}
+                    {{#groups}}
+                    <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                    {{/groups}}
+                </select>
+                <span class="autograder-select-chip-arrow" aria-hidden="true">
+                    <i class="fa fa-chevron-down"></i>
+                </span>
+            </div>
+            {{/shows_group_filter}}
 
             <!-- Grading Date Filter Chip (clear is outside main button so clicks work; overlay input stays pointer-events: none) -->
             <div class="autograder-date-field-wrapper">

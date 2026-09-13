@@ -37,6 +37,7 @@ final class page_context {
      * @return array
      */
     public static function filters(scope $scope): array {
+        $groups = group_access::for_scope($scope);
         $statuses = [];
 
         foreach (status::filterable($scope->can_see_failures()) as $key) {
@@ -53,6 +54,10 @@ final class page_context {
             'activities' => self::activity_options($scope),
             'shows_course_filter' => $scope->level() === scope::LEVEL_SITE,
             'courses' => self::course_options($scope),
+            'shows_group_filter' => $groups->shows_picker(),
+            'groups' => $groups->picker_options(),
+            'offers_all_groups' => $groups->offers_all_groups(),
+            'opening_group' => $groups->opening_choice(),
         ];
     }
 
@@ -68,6 +73,7 @@ final class page_context {
         $context = [
             'shows_activity_column' => $scope->shows_activity_column(),
             'shows_course_column' => $scope->shows_course_column(),
+            'shows_group_column' => group_access::for_scope($scope)->shows_column(),
             'skeletonRows' => array_fill(0, 4, []),
         ];
 

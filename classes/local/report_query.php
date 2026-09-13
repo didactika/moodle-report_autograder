@@ -255,6 +255,7 @@ final class report_query {
                                     AND ({$ancestry}))";
 
         self::apply_scope($scope, $conditions, $params);
+        self::apply_group_access($scope, $filters, $conditions, $params);
         self::apply_filters($filters, $conditions, $params);
 
         return [$from, implode(' AND ', $conditions), $params];
@@ -306,6 +307,69 @@ final class report_query {
                 $conditions[] = 'cfg.courseid = :scopecourseid';
                 $params['scopecourseid'] = (int) $scope->course()->id;
                 break;
+        }
+    }
+
+    /**
+     * Keeps each row inside the groups its own activity lets the viewer see,
+     * and narrows to one group where they asked for one.
+     *
+     * The restriction is per activity because the group mode is: one condition
+     * per set of visible groups, which collapses to a single condition on the
+     * usual site where every activity shares a grouping. An activity the
+     * viewer may see nothing of is excluded outright rather than joined
+     * against an empty list.
+     *
+     * @param scope $scope
+     * @param filters $filters
+     * @param array $conditions Added to.
+     * @param array $params Added to.
+     */
+    private static function apply_group_access(
+        scope $scope,
+        filters $filters,
+        array &$conditions,
+        array &$params
+    ): void {
+        global $DB;
+
+        $access = group_access::for_scope($scope);
+
+        if ($access->offers_group($filters->groupid())) {
+            $conditions[] = 'u.id IN (SELECT gmf.userid FROM {groups_members} gmf WHERE gmf.groupid = :filtergroupid)';
+            $params['filtergroupid'] = $filters->groupid();
+        }
+
+        $buckets = [];
+
+        foreach ($access->restrictions() as $cmid => $groupids) {
+            sort($groupids);
+            $buckets[implode(',', $groupids)][] = (int) $cmid;
+        }
+
+        $index = 0;
+
+        foreach ($buckets as $signature => $cmids) {
+            [$notcm, $cmparams] = $DB->get_in_or_equal($cmids, SQL_PARAMS_NAMED, "gacm{$index}", false);
+            $params += $cmparams;
+            $groupids = $signature === '' ? [] : array_map('intval', explode(',', $signature));
+
+            if ($groupids === []) {
+                // Separate groups, and the viewer is in none of them: the
+                // activity itself would show them nobody.
+                $conditions[] = "cfg.cmid {$notcm}";
+                $index++;
+
+                continue;
+            }
+
+            [$ingroups, $groupparams] = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, "gagr{$index}");
+            $params += $groupparams;
+            $conditions[] = "(cfg.cmid {$notcm}
+                              OR u.id IN (SELECT gma{$index}.userid
+                                            FROM {groups_members} gma{$index}
+                                           WHERE gma{$index}.groupid {$ingroups}))";
+            $index++;
         }
     }
 
