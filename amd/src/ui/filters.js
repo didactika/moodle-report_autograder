@@ -252,22 +252,6 @@ const initTopFiltersAutoApply = () => {
   });
 };
 
-const loadCss = (href) => {
-  return new Promise((resolve) => {
-    if (document.querySelector('link[href="' + href + '"]')) {
-      resolve();
-      return;
-    }
-
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = href;
-    link.onload = resolve;
-    link.onerror = resolve;
-    document.head.appendChild(link);
-  });
-};
-
 const loadScript = (src, forceGlobal) => {
   return new Promise((resolve, reject) => {
     if (document.querySelector('script[src="' + src + '"]')) {
@@ -302,10 +286,25 @@ const loadScript = (src, forceGlobal) => {
   });
 };
 
+/**
+ * Loads the calendar and the date library it needs, from the copies that ship
+ * with this plugin. Their addresses come from the form, which the server built:
+ * nothing here reaches out to the internet.
+ *
+ * Both are loaded as plain scripts with AMD hidden, because each would
+ * otherwise register itself as an anonymous module and Moodle's loader only
+ * accepts named ones. Their stylesheet is asked for by the page itself.
+ *
+ * @returns {Promise}
+ */
 const ensureDateRangeAssets = () => {
-  const cssUrl = 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css';
-  const momentUrl = 'https://cdn.jsdelivr.net/npm/moment@2.30.1/min/moment-with-locales.min.js';
-  const pickerUrl = 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js';
+  const form = $('#autograder-filter-form');
+  const momentUrl = form.data('moment-url');
+  const pickerUrl = form.data('picker-url');
+
+  if (!momentUrl || !pickerUrl) {
+    return Promise.reject(new Error('The date filter has no libraries to load.'));
+  }
 
   if (!window.jQuery) {
     window.jQuery = $;
@@ -315,7 +314,7 @@ const ensureDateRangeAssets = () => {
     window.$ = $;
   }
 
-  return loadCss(cssUrl)
+  return Promise.resolve()
     .then(() => {
       if (typeof window.moment === 'undefined') {
         return loadScript(momentUrl, true);

@@ -10,6 +10,7 @@
     * shows_activity_filter / activities - The activity picker, above it
     * shows_group_filter / groups - The group picker, where groups are in play
     * offers_all_groups - Whether the group picker may be left on all of them
+    * moment_url / picker_url - The bundled libraries the date filter loads
 
     Example context (json):
     {
@@ -21,7 +22,9 @@
         "activities": [{"id": 12, "name": "Essay"}],
         "shows_group_filter": true,
         "offers_all_groups": true,
-        "groups": [{"id": 4, "name": "Group A", "selected": false}]
+        "groups": [{"id": 4, "name": "Group A", "selected": false}],
+        "moment_url": "/report/autograder/lib/moment/moment-with-locales.min.js",
+        "picker_url": "/report/autograder/lib/daterangepicker/daterangepicker.js"
     }
 }}
 
@@ -33,7 +36,9 @@
     data-dp-from="{{#str}}datepicker_from, report_autograder{{/str}}"
     data-dp-to="{{#str}}datepicker_to, report_autograder{{/str}}"
     data-dp-custom="{{#str}}datepicker_custom, report_autograder{{/str}}"
-    data-dp-week="{{#str}}datepicker_week, report_autograder{{/str}}">
+    data-dp-week="{{#str}}datepicker_week, report_autograder{{/str}}"
+    data-moment-url="{{moment_url}}"
+    data-picker-url="{{picker_url}}">
     <div class="autograder-top-filters">
         <div class="autograder-quick-search-wrapper">
             <i class="fa fa-search autograder-quick-search-icon" aria-hidden="true"></i>

@@ -75,6 +75,11 @@ if ($scope->level() !== scope::LEVEL_SITE) {
 
 $scope->require_capability();
 
+// The date filter's calendar, from the copy that ships with this plugin. Asked
+// for here rather than injected by the module that uses it, because a
+// stylesheet has to be in the page before the header goes out.
+$PAGE->requires->css(new moodle_url('/report/autograder/lib/daterangepicker/daterangepicker.css'));
+
 // The forum grader is launched from the activity's own report, where the page
 // has been set up to carry its data attributes.
 $forumgrade = null;
