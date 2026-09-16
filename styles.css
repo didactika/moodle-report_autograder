@@ -153,12 +153,23 @@
         z-index: 2;
     }
 
-    /* Left as Moodle draws it, only kept from adding a line of its own margin:
-       what broke the bar was the wrapper squeezing it, not the widget. */
+    /* form-autocomplete shows what is chosen as a removable tag beneath the
+       field. In a bar of chips that reads as a stray label hanging under the
+       row, so it is hidden and the chosen text is put inside the field
+       instead — see showSelectionInChip() in ui/filters.js. The picker then
+       looks like the plain select it replaced. */
     .autograder-search-chip-wrapper .form-autocomplete-selection {
-        margin: 0.25rem 0 0;
-        min-height: 0;
-        font-size: 0.85rem;
+        display: none !important;
+    }
+
+    .autograder-search-chip-wrapper input.form-autocomplete-input.autograder-filter-active {
+        border-color: var(--primary, #0f6cbf);
+        background-color: #e7f0f9;
+    }
+
+    .autograder-search-chip-wrapper input.form-autocomplete-input.autograder-filter-active::placeholder {
+        color: #2e4257;
+        opacity: 1;
     }
 
     .autograder-search-chip-wrapper input.form-autocomplete-input {

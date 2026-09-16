@@ -89,6 +89,4 @@ $string['status:manual'] = 'Noté par un enseignant';
 $string['status:notautograded'] = 'Non auto-noté';
 $string['status:notengaged'] = 'Non remis';
 $string['status:pending'] = 'En attente';
-$string['summary:heading'] = 'En un coup d\'œil';
-$string['summary:total'] = '{$a} étudiant(s) dans les activités notées automatiquement affichées.';
 $string['willgrade:nobody'] = 'Aucun enseignant de cette activité ne peut être noté en son nom, cette note ne pourra donc pas être attribuée. Vérifiez qui possède la capacité d\'être noté en son nom et s\'il partage un groupe avec l\'étudiant.';

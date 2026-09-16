@@ -36,7 +36,6 @@ use report_autograder\local\page\grader_ui;
 use report_autograder\local\page\page_context;
 use report_autograder\local\query\scope;
 use report_autograder\local\format\status;
-use report_autograder\local\page\summary;
 
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -90,12 +89,11 @@ if ($scope->level() === scope::LEVEL_ACTIVITY) {
 
 echo $OUTPUT->header();
 
-$summary = summary::for_scope($scope);
-
-if ($summary['show']) {
-    echo $OUTPUT->render_from_template('report_autograder/partials/summary', $summary);
-}
-
+// No summary tiles. Counting every row of every state meant a grouped pass
+// over the whole report — every enrolment, every decision, every grade item —
+// before the page could send a single byte, and on a site-wide report that is
+// the most expensive question this plugin can ask. The table below answers
+// the same thing a page at a time, as it is scrolled.
 echo $OUTPUT->render_from_template(
     'report_autograder/partials/filters',
     page_context::filters($scope)
@@ -105,8 +103,8 @@ echo $OUTPUT->render_from_template(
     page_context::table($scope, $forumgrade)
 );
 
-// A summary tile links straight into the table filtered by its own state, so
-// the page has to arrive already showing that rather than everything.
+// A link can still arrive with a state in it (a bookmark, or a link from
+// elsewhere), so the table opens on that rather than on everything.
 $presetstatus = optional_param('status', '', PARAM_ALPHANUMEXT);
 
 if (!in_array($presetstatus, status::filterable($scope->can_see_failures()), true)) {

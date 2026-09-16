@@ -89,6 +89,4 @@ $string['status:manual'] = 'Graded by a teacher';
 $string['status:notautograded'] = 'Not autograded';
 $string['status:notengaged'] = 'Not submitted';
 $string['status:pending'] = 'Pending';
-$string['summary:heading'] = 'At a glance';
-$string['summary:total'] = '{$a} student(s) across the autograded activities in view.';
 $string['willgrade:nobody'] = 'No teacher of this activity may be graded on behalf of, so this grade cannot be posted. Check who holds the capability to be graded on behalf of, and whether they share a group with the student.';

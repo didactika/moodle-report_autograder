@@ -89,6 +89,4 @@ $string['status:manual'] = 'Avaliado por um professor';
 $string['status:notautograded'] = 'Sem autoavaliação';
 $string['status:notengaged'] = 'Sem entrega';
 $string['status:pending'] = 'Pendente';
-$string['summary:heading'] = 'Num relance';
-$string['summary:total'] = '{$a} estudante(s) nas atividades com avaliação automática mostradas.';
 $string['willgrade:nobody'] = 'Nenhum professor desta atividade pode ser o avaliador, pelo que esta nota não poderá ser lançada. Verifica quem tem a capacidade de ser avaliado em seu nome e se partilha grupo com o estudante.';

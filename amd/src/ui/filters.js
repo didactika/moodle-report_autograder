@@ -262,31 +262,67 @@ const initDateChipInteraction = (buttonId, clearBtnId, inputId, fromId, toId, te
  * @returns {Promise}
  */
 const initSearchablePickers = () => {
-  const pickers = [
-    ['#autograder-filter-course', 'filter_course_placeholder'],
-    ['#autograder-filter-activity', 'filter_activity_placeholder'],
-  ];
+  const selectors = ['#autograder-filter-course', '#autograder-filter-activity'];
 
-  return Promise.all(pickers.map(([selector, placeholderKey]) => {
+  return Promise.all(selectors.map((selector) => {
     const element = $(selector);
 
     if (!element.length) {
       return Promise.resolve();
     }
 
-    return Autocomplete.enhance(
-      selector,
-      false,
-      'report_autograder/service/filter_datasource',
-      element.data(placeholderKey.replace(/_/g, '-')) || element.data('placeholder') || '',
-      false,
-      true
-    ).catch(() => {
-      // An enhancement that fails leaves the plain select behind, which still
-      // submits — worse to search with, but never a dead filter bar.
-      return;
-    });
+    const placeholder = element.data('placeholder') || '';
+
+    // Wrapped, not just chained: enhance() can throw before it ever returns a
+    // promise, and this runs before the table is asked for. A filter bar that
+    // cannot be enhanced is a worse filter bar; it must never be a report that
+    // does not load.
+    try {
+      return Autocomplete.enhance(
+        selector,
+        false,
+        'report_autograder/service/filter_datasource',
+        placeholder,
+        false,
+        true
+      ).then(() => {
+        showSelectionInChip(selector, placeholder);
+        element.on('change', () => showSelectionInChip(selector, placeholder));
+        return;
+      }).catch(() => {
+        return;
+      });
+    } catch (e) {
+      return Promise.resolve();
+    }
   }));
+};
+
+/**
+ * Shows what is chosen inside the chip itself, the way the plain selects used
+ * to, rather than as a removable tag underneath it.
+ *
+ * form-autocomplete keeps its own selection list, which reads as a stray
+ * labelled tag below the bar. That list is hidden (see styles.css) and the
+ * chosen label is put in the field instead, so a picker with something chosen
+ * looks like every other chip in the row.
+ *
+ * @param {String} selector The original select.
+ * @param {String} placeholder What to show when nothing is chosen.
+ */
+const showSelectionInChip = (selector, placeholder) => {
+  const element = $(selector);
+  const chosen = element.find('option:selected').first();
+  const label = chosen.length ? (chosen.text() || '').trim() : '';
+  const hasChoice = Boolean(element.val()) && label !== '';
+  const field = element.closest('.autograder-search-chip-wrapper').find('input.form-autocomplete-input');
+
+  if (!field.length) {
+    return;
+  }
+
+  field.attr('placeholder', hasChoice ? label : placeholder);
+  field.toggleClass('autograder-filter-active', hasChoice);
 };
 
 const initTopFiltersAutoApply = () => {
@@ -488,7 +524,15 @@ export const init = (presetStatus) => {
   }
 
   initStatusMultiselect(texts, statusLabels);
-  initSearchablePickers();
+
+  // Never allowed to interrupt init(): the table is asked for after this
+  // returns, so anything thrown here would leave the report empty.
+  try {
+    initSearchablePickers();
+  } catch (e) {
+    // The plain selects are still there and still submit.
+  }
+
   initTopFiltersAutoApply();
   initDateChipInteraction('grading-date-button',
     'grading-date-clear',

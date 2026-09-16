@@ -89,6 +89,4 @@ $string['status:manual'] = 'Calificado por un profesor';
 $string['status:notautograded'] = 'Sin autocalificar';
 $string['status:notengaged'] = 'Sin entregar';
 $string['status:pending'] = 'Pendiente';
-$string['summary:heading'] = 'De un vistazo';
-$string['summary:total'] = '{$a} estudiante(s) en las actividades autocalificadas que se muestran.';
 $string['willgrade:nobody'] = 'Ningún profesor de esta actividad puede ser el calificador, así que esta nota no se podrá poner. Revisa quién tiene el permiso para que se califique en su nombre y si comparte grupo con el estudiante.';

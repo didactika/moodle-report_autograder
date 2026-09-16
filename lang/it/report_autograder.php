@@ -89,6 +89,4 @@ $string['status:manual'] = 'Valutato da un docente';
 $string['status:notautograded'] = 'Non auto-valutato';
 $string['status:notengaged'] = 'Non consegnato';
 $string['status:pending'] = 'In attesa';
-$string['summary:heading'] = 'A colpo d\'occhio';
-$string['summary:total'] = '{$a} studente/i nelle attività a valutazione automatica mostrate.';
 $string['willgrade:nobody'] = 'Nessun docente di questa attività può essere il valutatore, quindi questo voto non potrà essere assegnato. Controlla chi ha la capacità di essere valutato a suo nome e se condivide un gruppo con lo studente.';

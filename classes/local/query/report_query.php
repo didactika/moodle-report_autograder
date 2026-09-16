@@ -66,36 +66,6 @@ final class report_query {
     }
 
     /**
-     * How many rows there are in each state.
-     *
-     * One grouped pass rather than one count per state: the summary strip asks
-     * about five or six of them at once, and a site can have a lot of rows.
-     *
-     * @param scope $scope
-     * @param filters $filters
-     * @return array<string, int> Keyed by `local_autograder_decision.status`,
-     *         plus an empty key for the students with no decision at all.
-     */
-    public static function count_by_decision_status(scope $scope, filters $filters): array {
-        global $DB;
-
-        [$from, $where, $params] = self::build($scope, $filters);
-        $bucket = "CASE WHEN d.id IS NULL THEN '' ELSE d.status END";
-
-        $rows = $DB->get_records_sql(
-            "SELECT {$bucket} AS bucket, COUNT(1) AS total {$from} WHERE {$where} GROUP BY {$bucket}",
-            $params
-        );
-        $counts = [];
-
-        foreach ($rows as $row) {
-            $counts[(string) $row->bucket] = (int) $row->total;
-        }
-
-        return $counts;
-    }
-
-    /**
      * One page of rows.
      *
      * @param scope $scope
