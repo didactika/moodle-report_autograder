@@ -57,25 +57,42 @@ final class grader_list {
         $nobody = [];
 
         foreach ($students as $studentid => $student) {
-            $graderid = grader_picker::pick_for_course($courseid, (int) $studentid);
+            $candidates = grader_picker::candidates_for_course($courseid, (int) $studentid);
+            $chosen = grader_picker::pick_for_course($courseid, (int) $studentid);
             $viafallback = false;
 
-            if ($graderid === null) {
-                $graderid = grader_picker::fallback_for(0);
-                $viafallback = $graderid !== null;
+            if ($candidates === []) {
+                $fallback = grader_picker::fallback_for(0);
+
+                if ($fallback === null) {
+                    $nobody[] = fullname($student);
+
+                    continue;
+                }
+
+                $candidates = [$fallback];
+                $chosen = $fallback;
+                $viafallback = true;
             }
 
-            if ($graderid === null) {
-                $nobody[] = fullname($student);
+            // Every candidate is listed, not only the one who would be picked
+            // today: a teacher can join or leave the course before the grade
+            // is due, and the reader is asking who might end up grading.
+            foreach ($candidates as $graderid) {
+                if (!isset($bygrader[$graderid])) {
+                    $bygrader[$graderid] = [
+                        'students' => [],
+                        'viafallback' => $viafallback,
+                        'chosen' => 0,
+                    ];
+                }
 
-                continue;
+                $bygrader[$graderid]['students'][] = fullname($student);
+
+                if ($graderid === $chosen) {
+                    $bygrader[$graderid]['chosen']++;
+                }
             }
-
-            if (!isset($bygrader[$graderid])) {
-                $bygrader[$graderid] = ['students' => [], 'viafallback' => $viafallback];
-            }
-
-            $bygrader[$graderid]['students'][] = fullname($student);
         }
 
         return [
@@ -172,12 +189,19 @@ final class grader_list {
                 'id' => (int) $graderid,
                 'name' => isset($users[$graderid]) ? fullname($users[$graderid]) : (string) $graderid,
                 'count' => count($entry['students']),
+                'chosen' => (int) $entry['chosen'],
+                'ischosen' => (int) $entry['chosen'] > 0,
                 'students' => $entry['students'],
                 'viafallback' => $entry['viafallback'],
             ];
         }
 
-        usort($graders, static fn(array $a, array $b): int => $b['count'] <=> $a['count']);
+        // Whoever would actually be picked for the most students first, then
+        // by how many they could grade at all.
+        usort(
+            $graders,
+            static fn(array $a, array $b): int => [$b['chosen'], $b['count']] <=> [$a['chosen'], $a['count']]
+        );
 
         return $graders;
     }

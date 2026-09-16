@@ -162,16 +162,11 @@ final class report_query {
         );
         $params += $roleparams;
 
-        // The role may be assigned on the course itself or on anything above
-        // it, which is what `ra.contextid IN (parent context ids)` means in
-        // the gradebook's own query. Expressed as a path comparison because
-        // this one query spans courses, each with its own ancestry.
-        //
-        // The LIKE is written out rather than built with sql_like(), which
-        // only accepts a bound parameter on the right and so cannot compare
-        // one column against another. Nothing needs escaping here: a context
-        // path is digits and slashes, never a wildcard.
-        $ancestry = 'ctx.path = rctx.path OR ctx.path LIKE ' . $DB->sql_concat('rctx.path', "'/%'");
+        // Which one course this whole report is about, when it is about one.
+        // Nearly always: the site-wide report will not run until it has been
+        // narrowed to a course or an activity (see get_report), and the other
+        // two are one course by definition.
+        $onecourseid = self::one_course_id($scope, $filters);
 
         // One row per student and course, whatever else is true of them.
         //
@@ -182,13 +177,24 @@ final class report_query {
         // would list them twice and count them twice. So the enrolment is
         // reduced to distinct (course, user) pairs before it is joined, and
         // the role is asked as a question rather than joined at all.
+        $enrolledwhere = '';
+
+        if ($onecourseid > 0) {
+            // Cuts the DISTINCT down to one course's enrolments instead of
+            // every enrolment on the site, which on a large campus is the
+            // difference between a few rows and a few million.
+            $enrolledwhere = ' AND e.courseid = :enrolcourseid';
+            $params['enrolcourseid'] = $onecourseid;
+        }
+
         $enrolled = "SELECT DISTINCT e.courseid, ue.userid
                        FROM {enrol} e
                        JOIN {user_enrolments} ue ON ue.enrolid = e.id
                       WHERE e.status = :enrolenabled
                         AND ue.status = :ueactive
                         AND (ue.timestart = 0 OR ue.timestart <= :uenow1)
-                        AND (ue.timeend = 0 OR ue.timeend > :uenow2)";
+                        AND (ue.timeend = 0 OR ue.timeend > :uenow2)
+                        {$enrolledwhere}";
 
         $from = "FROM {local_autograder_config} cfg
                  JOIN {course_modules} cm ON cm.id = cfg.cmid
@@ -220,12 +226,7 @@ final class report_query {
         // gradebook's own rule for who is in the class. Asked as a question
         // rather than joined, so that a student holding the role in two
         // contexts is still one student.
-        $conditions[] = "EXISTS (SELECT 1
-                                   FROM {role_assignments} ra
-                                   JOIN {context} rctx ON rctx.id = ra.contextid
-                                  WHERE ra.userid = u.id
-                                    AND ra.roleid {$rolesql}
-                                    AND ({$ancestry}))";
+        $conditions[] = self::gradable_role_sql($onecourseid, $rolesql, $params);
 
         self::apply_scope($scope, $conditions, $params);
         self::apply_group_access($scope, $filters, $conditions, $params);
@@ -262,6 +263,76 @@ final class report_query {
             $conditions[] = "(cfg.cmid <> :{$key} OR u.id IN ({$sql}))";
             $index++;
         }
+    }
+
+    /**
+     * The one course this report is about, or zero when it spans more.
+     *
+     * @param scope $scope
+     * @param filters $filters
+     * @return int
+     */
+    private static function one_course_id(scope $scope, filters $filters): int {
+        if ($scope->level() === scope::LEVEL_ACTIVITY) {
+            return (int) $scope->cm()->course;
+        }
+
+        if ($scope->level() === scope::LEVEL_COURSE) {
+            return (int) $scope->course()->id;
+        }
+
+        return $filters->courseid();
+    }
+
+    /**
+     * "Holds a gradeable role here", written the cheapest way the shape of
+     * the report allows.
+     *
+     * With one course in view the contexts that can grant it are known — the
+     * course and everything above it — so the question is an `IN` over a
+     * handful of ids, which is an index lookup. Spanning courses there is no
+     * such list, and the ancestry has to be compared as text: a `LIKE` whose
+     * left side is a column, which no index can serve. On a campus of a
+     * hundred thousand courses that difference is the whole report.
+     *
+     * @param int $onecourseid Zero when the report spans more than one course.
+     * @param string $rolesql The gradebook roles, as an IN fragment.
+     * @param array $params Added to.
+     * @return string
+     */
+    private static function gradable_role_sql(int $onecourseid, string $rolesql, array &$params): string {
+        global $DB;
+
+        if ($onecourseid > 0) {
+            $context = \context_course::instance($onecourseid, IGNORE_MISSING);
+            $contextids = $context ? $context->get_parent_context_ids(true) : [];
+
+            if ($contextids === []) {
+                return '1 = 0';
+            }
+
+            [$ctxsql, $ctxparams] = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'rctx');
+            $params += $ctxparams;
+
+            return "EXISTS (SELECT 1
+                              FROM {role_assignments} ra
+                             WHERE ra.userid = u.id
+                               AND ra.roleid {$rolesql}
+                               AND ra.contextid {$ctxsql})";
+        }
+
+        // The LIKE is written out rather than built with sql_like(), which
+        // only accepts a bound parameter on the right and so cannot compare
+        // one column against another. Nothing needs escaping here: a context
+        // path is digits and slashes, never a wildcard.
+        $ancestry = 'ctx.path = rctx.path OR ctx.path LIKE ' . $DB->sql_concat('rctx.path', "'/%'");
+
+        return "EXISTS (SELECT 1
+                          FROM {role_assignments} ra
+                          JOIN {context} rctx ON rctx.id = ra.contextid
+                         WHERE ra.userid = u.id
+                           AND ra.roleid {$rolesql}
+                           AND ({$ancestry}))";
     }
 
     /**

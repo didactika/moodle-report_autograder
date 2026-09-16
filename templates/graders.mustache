@@ -100,6 +100,9 @@
                 </td>
                 <td>
                     <strong>{{count}}</strong>
+                    {{#ischosen}}
+                    <span class="badge badge-success ml-1">{{#str}}graders:wouldpick, report_autograder, {{chosen}}{{/str}}</span>
+                    {{/ischosen}}
                     <div class="text-muted small">
                         {{#students}}{{.}}; {{/students}}
                     </div>

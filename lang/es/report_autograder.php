@@ -63,6 +63,7 @@ $string['graders:show'] = 'Mostrar';
 $string['graders:students'] = 'Estudiantes';
 $string['graders:studentswalked'] = '{$a} estudiante(s) calificables.';
 $string['graders:truncated'] = 'Solo se han comprobado los primeros {$a} estudiantes. El resto no se muestra.';
+$string['graders:wouldpick'] = 'elegido para {$a}';
 $string['graders:viafallback'] = 'Respaldo';
 $string['gradeuser'] = 'Calificar al estudiante';
 $string['header:activity'] = 'Actividad';
