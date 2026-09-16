@@ -75,3 +75,24 @@ administrator's job.
 ## Licence
 
 GNU GPL v3 or later. See [LICENSE.md](LICENSE.md).
+
+## Selection and performance
+
+Pending rows use the same activity-aware resolver as the worker, including the
+validated fallback. The course graders page shows association, not a promise
+that a teacher may grade every activity: activity overrides and groups are
+checked in the activity report. Course candidates use only the configured
+local_resume role family; unrelated gradebook users are not added.
+
+Student group membership is fetched in batches for the current page. Module,
+teacher eligibility and association data are reused within each request.
+Filtered site queries restrict enrolment, group and availability discovery to
+the selected course/activity. Counts omit gradebook joins, and page turns reuse
+the initial count. Empty results do not run the row query. Both student lists
+respect enrolment start/end dates and clamp pages when a total is available.
+
+Filters, association tables and pagination share responsive control dimensions
+and theme colours. CSS is flat for Moodle's CSS pipeline. Search pickers support
+keyboard navigation, Escape, labels and visible focus; AMD builds accompany the
+source changes. Database performance at production scale still requires an
+EXPLAIN/ANALYZE run on representative data.

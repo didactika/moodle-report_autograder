@@ -37,6 +37,8 @@
     data-dp-to="{{#str}}datepicker_to, report_autograder{{/str}}"
     data-dp-custom="{{#str}}datepicker_custom, report_autograder{{/str}}"
     data-dp-week="{{#str}}datepicker_week, report_autograder{{/str}}"
+    data-search-empty="{{#str}}search:nomatches, report_autograder{{/str}}"
+    data-search-loading="{{#str}}search:loading, report_autograder{{/str}}"
     data-moment-url="{{moment_url}}"
     data-picker-url="{{picker_url}}">
     <div class="autograder-top-filters">
@@ -48,32 +50,44 @@
 
         <div class="autograder-right-filters">
             {{#shows_course_filter}}
-            <div class="autograder-select-chip-wrapper">
+            {{! Its own wrapper, not the select chip's: form-autocomplete puts
+                its field and its selection inside whatever holds the select,
+                and the chip wrapper is a narrow inline-flex that squeezes them
+                into a column one letter wide. It also draws its own arrow. }}
+            <div class="autograder-search-chip-wrapper">
                 <label class="sr-only" for="autograder-filter-course">{{#str}}filter_course, report_autograder{{/str}}</label>
-                <select class="autograder-select-chip" id="autograder-filter-course" name="courseid">
+                {{! Searched from the server as the reader types - see
+                    report_autograder/service/filter_datasource. The list is
+                    deliberately not rendered here: a site-wide report can span
+                    every course on the campus. }}
+                <select class="autograder-select-chip" id="autograder-filter-course" name="courseid"
+                        data-optiontype="course"
+                        data-scopecmid="{{scope_cmid}}"
+                        data-scopecourseid="{{scope_courseid}}"
+                        data-placeholder="{{#str}}filter_course_placeholder, report_autograder{{/str}}">
                     <option value="">{{#str}}filter_course_placeholder, report_autograder{{/str}}</option>
-                    {{#courses}}
-                    <option value="{{id}}">{{name}}</option>
-                    {{/courses}}
+                    {{#selected_course}}
+                    <option value="{{id}}" selected>{{name}}</option>
+                    {{/selected_course}}
                 </select>
-                <span class="autograder-select-chip-arrow" aria-hidden="true">
-                    <i class="fa fa-chevron-down"></i>
-                </span>
             </div>
             {{/shows_course_filter}}
 
             {{#shows_activity_filter}}
-            <div class="autograder-select-chip-wrapper">
+            <div class="autograder-search-chip-wrapper">
                 <label class="sr-only" for="autograder-filter-activity">{{#str}}filter_activity, report_autograder{{/str}}</label>
-                <select class="autograder-select-chip" id="autograder-filter-activity" name="cmid">
+                {{! Searched from the server, and narrowed to whichever course
+                    the picker beside it is on. }}
+                <select class="autograder-select-chip" id="autograder-filter-activity" name="cmid"
+                        data-optiontype="activity"
+                        data-scopecmid="{{scope_cmid}}"
+                        data-scopecourseid="{{scope_courseid}}"
+                        data-placeholder="{{#str}}filter_activity_placeholder, report_autograder{{/str}}">
                     <option value="">{{#str}}filter_activity_placeholder, report_autograder{{/str}}</option>
-                    {{#activities}}
-                    <option value="{{id}}">{{name}}</option>
-                    {{/activities}}
+                    {{#selected_activity}}
+                    <option value="{{id}}" selected>{{name}}</option>
+                    {{/selected_activity}}
                 </select>
-                <span class="autograder-select-chip-arrow" aria-hidden="true">
-                    <i class="fa fa-chevron-down"></i>
-                </span>
             </div>
             {{/shows_activity_filter}}
 

@@ -82,9 +82,9 @@ final class group_names {
      *
      * @param \stdClass $row
      * @param group_access $access
-     * @param array<int, array{name: string, courseid: int, members: array<int, bool>}> $membership
-     * @param array<int, int[]> $groupings Grouping ids, by group id.
-     * @return array<int, string> Group names, by group id.
+     * @param array $membership Each group's name, course and members, by group id.
+     * @param array $groupings Grouping ids, by group id.
+     * @return array Group names, by group id.
      */
     private static function groups_of_row(
         \stdClass $row,

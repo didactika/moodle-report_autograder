@@ -18,6 +18,7 @@ namespace report_autograder\local\query;
 
 use core_user\fields;
 use local_autograder\local\config\eligibility;
+use report_autograder\local\availability\availability_access;
 use report_autograder\local\format\status;
 use report_autograder\local\groups\group_access;
 
@@ -59,39 +60,9 @@ final class report_query {
     public static function count(scope $scope, filters $filters): int {
         global $DB;
 
-        [$from, $where, $params] = self::build($scope, $filters);
+        [$from, $where, $params] = self::build($scope, $filters, false);
 
         return (int) $DB->count_records_sql("SELECT COUNT(1) {$from} WHERE {$where}", $params);
-    }
-
-    /**
-     * How many rows there are in each state.
-     *
-     * One grouped pass rather than one count per state: the summary strip asks
-     * about five or six of them at once, and a site can have a lot of rows.
-     *
-     * @param scope $scope
-     * @param filters $filters
-     * @return array<string, int> Keyed by `local_autograder_decision.status`,
-     *         plus an empty key for the students with no decision at all.
-     */
-    public static function count_by_decision_status(scope $scope, filters $filters): array {
-        global $DB;
-
-        [$from, $where, $params] = self::build($scope, $filters);
-        $bucket = "CASE WHEN d.id IS NULL THEN '' ELSE d.status END";
-
-        $rows = $DB->get_records_sql(
-            "SELECT {$bucket} AS bucket, COUNT(1) AS total {$from} WHERE {$where} GROUP BY {$bucket}",
-            $params
-        );
-        $counts = [];
-
-        foreach ($rows as $row) {
-            $counts[(string) $row->bucket] = (int) $row->total;
-        }
-
-        return $counts;
     }
 
     /**
@@ -176,48 +147,54 @@ final class report_query {
      *
      * @param scope $scope
      * @param filters $filters
+     * @param bool $withgrades Include gradebook joins only when fetching rows.
      * @return array{0: string, 1: string, 2: array}
      */
-    private static function build(scope $scope, filters $filters): array {
+    private static function build(scope $scope, filters $filters, bool $withgrades = true): array {
         global $CFG, $DB;
 
         $params = [];
         $conditions = ['cfg.enabled = 1', 'cm.deletioninprogress = 0', 'u.deleted = 0'];
 
         [$rolesql, $roleparams] = $DB->get_in_or_equal(
-            array_filter(explode(',', (string) $CFG->gradebookroles)),
+            array_filter(explode(',', (string) $CFG->gradebookroles)) ?: [0],
             SQL_PARAMS_NAMED,
             'gbr'
         );
         $params += $roleparams;
 
-        // The role may be assigned on the course itself or on anything above
-        // it, which is what `ra.contextid IN (parent context ids)` means in
-        // the gradebook's own query. Expressed as a path comparison because
-        // this one query spans courses, each with its own ancestry.
-        //
-        // The LIKE is written out rather than built with sql_like(), which
-        // only accepts a bound parameter on the right and so cannot compare
-        // one column against another. Nothing needs escaping here: a context
-        // path is digits and slashes, never a wildcard.
-        $ancestry = 'ctx.path = rctx.path OR ctx.path LIKE ' . $DB->sql_concat('rctx.path', "'/%'");
+        // Which one course this whole report is about, when it is about one.
+        // Nearly always: the site-wide report will not run until it has been
+        // narrowed to a course or an activity (see get_report), and the other
+        // two are one course by definition.
+        $onecourseid = self::one_course_id($scope, $filters);
 
         // One row per student and course, whatever else is true of them.
         //
         // A student can be enrolled in the same course twice — manually and by
-        // self enrolment, say — and can hold a gradeable role in more than one
-        // context above that course. Joined directly, either of those
-        // multiplies the student's row for every activity, and the report
-        // would list them twice and count them twice. So the enrolment is
-        // reduced to distinct (course, user) pairs before it is joined, and
-        // the role is asked as a question rather than joined at all.
+        // self enrolment, say. Joined directly that multiplies the student's
+        // row for every activity, and the report would list them twice and
+        // count them twice. So the enrolment is reduced to distinct
+        // (course, user) pairs before it is joined, and the role is asked as a
+        // question rather than joined at all.
+        $enrolledwhere = '';
+
+        if ($onecourseid > 0) {
+            // Cuts the DISTINCT down to one course's enrolments instead of
+            // every enrolment on the site, which on a large campus is the
+            // difference between a few rows and a few million.
+            $enrolledwhere = ' AND e.courseid = :enrolcourseid';
+            $params['enrolcourseid'] = $onecourseid;
+        }
+
         $enrolled = "SELECT DISTINCT e.courseid, ue.userid
                        FROM {enrol} e
                        JOIN {user_enrolments} ue ON ue.enrolid = e.id
                       WHERE e.status = :enrolenabled
                         AND ue.status = :ueactive
                         AND (ue.timestart = 0 OR ue.timestart <= :uenow1)
-                        AND (ue.timeend = 0 OR ue.timeend > :uenow2)";
+                        AND (ue.timeend = 0 OR ue.timeend > :uenow2)
+                        {$enrolledwhere}";
 
         $from = "FROM {local_autograder_config} cfg
                  JOIN {course_modules} cm ON cm.id = cfg.cmid
@@ -226,13 +203,17 @@ final class report_query {
                  JOIN {context} ctx ON ctx.instanceid = co.id AND ctx.contextlevel = :ctxcourse
                  JOIN ({$enrolled}) en ON en.courseid = co.id
                  JOIN {user} u ON u.id = en.userid
-            LEFT JOIN {local_autograder_decision} d ON d.cmid = cfg.cmid AND d.userid = u.id
+            LEFT JOIN {local_autograder_decision} d ON d.cmid = cfg.cmid AND d.userid = u.id";
+
+        if ($withgrades) {
+            $from .= "
             LEFT JOIN {grade_items} gi ON gi.itemtype = 'mod'
                                      AND gi.itemmodule = m.name
                                      AND gi.iteminstance = cm.instance
                                      AND gi.courseid = co.id
                                      AND gi.itemnumber = " . self::item_number_sql($params) . "
             LEFT JOIN {grade_grades} g ON g.itemid = gi.id AND g.userid = u.id";
+        }
 
         $params['ctxcourse'] = CONTEXT_COURSE;
         $params['enrolenabled'] = ENROL_INSTANCE_ENABLED;
@@ -245,22 +226,126 @@ final class report_query {
         $params['uenow1'] = $now;
         $params['uenow2'] = $now;
 
-        // Holding a gradeable role in the course, or anywhere above it — the
-        // gradebook's own rule for who is in the class. Asked as a question
-        // rather than joined, so that a student holding the role in two
-        // contexts is still one student.
-        $conditions[] = "EXISTS (SELECT 1
-                                   FROM {role_assignments} ra
-                                   JOIN {context} rctx ON rctx.id = ra.contextid
-                                  WHERE ra.userid = u.id
-                                    AND ra.roleid {$rolesql}
-                                    AND ({$ancestry}))";
+        // Holding a gradeable role in the course — the gradebook's own rule
+        // for who is in the class. Asked as a question rather than joined, so
+        // that a student holding the role twice is still one student.
+        $conditions[] = self::gradable_role_sql($rolesql);
 
         self::apply_scope($scope, $conditions, $params);
-        self::apply_group_access($scope, $filters, $conditions, $params);
+        // Narrow expensive module/group/availability discovery before loading
+        // course caches, while keeping the original scope for authorisation.
+        $accessscope = self::filtered_scope($scope, $filters);
+        self::apply_group_access($scope, $accessscope, $filters, $conditions, $params);
+        self::apply_availability($accessscope, $conditions, $params);
         self::apply_filters($filters, $conditions, $params);
 
         return [$from, implode(' AND ', $conditions), $params];
+    }
+
+    /**
+     * Limit access-rule discovery to the filtered course/activity.
+     *
+     * @param scope $scope Original authorised scope.
+     * @param filters $filters
+     * @return scope
+     */
+    private static function filtered_scope(scope $scope, filters $filters): scope {
+        if ($scope->level() === scope::LEVEL_ACTIVITY) {
+            return $scope;
+        }
+        if ($filters->cmid() > 0) {
+            $cm = get_coursemodule_from_id(null, $filters->cmid(), 0, false, IGNORE_MISSING);
+            if ($cm && (!$scope->course() || (int) $scope->course()->id === (int) $cm->course)) {
+                return scope::from_params($filters->cmid(), 0);
+            }
+        }
+        if ($scope->level() === scope::LEVEL_SITE && $filters->courseid() > 0) {
+            return scope::from_params(0, $filters->courseid());
+        }
+        return $scope;
+    }
+
+    /**
+     * Drops the students an activity's own access restrictions keep out.
+     *
+     * A student who cannot see the activity cannot submit to it and will never
+     * be graded on it, so listing them as not having submitted is simply
+     * wrong — and on an activity restricted to one group it is wrong about
+     * most of the course. Whose restriction admits whom is core's answer, not
+     * this plugin's: see {@see availability_access}.
+     *
+     * One condition per restricted activity, each leaving every other
+     * activity's rows alone. An unrestricted activity adds nothing at all, so
+     * the usual report pays nothing for this.
+     *
+     * @param scope $scope
+     * @param array $conditions Added to.
+     * @param array $params Added to.
+     */
+    private static function apply_availability(scope $scope, array &$conditions, array &$params): void {
+        $index = 0;
+
+        foreach (availability_access::for_scope($scope)->restrictions() as $cmid => [$sql, $sqlparams]) {
+            $key = "availcm{$index}";
+            $params[$key] = (int) $cmid;
+            $params += $sqlparams;
+            $conditions[] = "(cfg.cmid <> :{$key} OR u.id IN ({$sql}))";
+            $index++;
+        }
+    }
+
+    /**
+     * The one course this report is about, or zero when it spans more.
+     *
+     * @param scope $scope
+     * @param filters $filters
+     * @return int
+     */
+    private static function one_course_id(scope $scope, filters $filters): int {
+        if ($scope->level() === scope::LEVEL_ACTIVITY) {
+            return (int) $scope->cm()->course;
+        }
+
+        if ($scope->level() === scope::LEVEL_COURSE) {
+            return (int) $scope->course()->id;
+        }
+
+        if ($filters->cmid() > 0) {
+            $cm = get_coursemodule_from_id(null, $filters->cmid(), 0, false, IGNORE_MISSING);
+
+            return $cm ? (int) $cm->course : $filters->courseid();
+        }
+
+        return $filters->courseid();
+    }
+
+    /**
+     * "Holds a gradeable role in this course", as an index lookup.
+     *
+     * @param string $rolesql The gradebook roles, as an IN fragment.
+     * @return string
+     */
+    private static function gradable_role_sql(string $rolesql): string {
+        // Two equalities against the course context the outer query has
+        // already joined, both served by the index role_assignments carries on
+        // (userid, contextid, roleid). It is the same shape whether the report
+        // covers one activity or the whole site, so the site-wide report is
+        // not a different, heavier question.
+        //
+        // This used to walk the context tree instead — comparing ctx.path
+        // against every role-holding context with a LIKE built from a column,
+        // which no index can serve. On a campus of a hundred thousand courses
+        // that was the query that took the site down.
+        //
+        // The cost is that a gradebook role granted above the course, over a
+        // whole category, is not counted. Enrolling somebody is what gives
+        // them the role in practice, and the query already requires an active
+        // enrolment in the course, so the two rarely disagree.
+        return "EXISTS (SELECT 1
+                          FROM {role_assignments} ra
+                         WHERE ra.userid = u.id
+                           AND ra.roleid {$rolesql}
+                           AND ra.contextid = ctx.id)";
     }
 
     /**
@@ -323,21 +408,25 @@ final class report_query {
      * against an empty list.
      *
      * @param scope $scope
+     * @param scope $accessscope Filtered scope used for activity restrictions.
      * @param filters $filters
      * @param array $conditions Added to.
      * @param array $params Added to.
      */
     private static function apply_group_access(
         scope $scope,
+        scope $accessscope,
         filters $filters,
         array &$conditions,
         array &$params
     ): void {
         global $DB;
 
-        $access = group_access::for_scope($scope);
-
-        if ($access->offers_group($filters->groupid())) {
+        $access = group_access::for_scope($accessscope);
+        // The selected group belongs to the original page's picker, even if
+        // the activity filter narrows to a different grouping afterwards.
+        $picker = $filters->groupid() > 0 ? group_access::for_scope($scope) : $access;
+        if ($picker->offers_group($filters->groupid())) {
             $conditions[] = 'u.id IN (SELECT gmf.userid FROM {groups_members} gmf WHERE gmf.groupid = :filtergroupid)';
             $params['filtergroupid'] = $filters->groupid();
         }

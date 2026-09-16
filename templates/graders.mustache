@@ -1,0 +1,168 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_autograder/graders
+
+    Who autograder would grade as, in one course.
+
+    Context variables required for this template:
+    * formurl - Where the course picker submits
+    * haschosen / courseid / course - The course it is about, once one is picked
+    * graders / hasgraders / gradercount - Everybody who could grade here
+    * studentcount - How many gradable students the course has
+    * reporturl - That course's own autograder report
+    * showstudents / studentsurl - The per-student list, fetched on request
+    * studentlist - One page of it, plus what partials/pagination_links needs
+
+    Example context (json):
+    {
+        "formurl": "/report/autograder/graders.php",
+        "haschosen": true,
+        "courseid": 2,
+        "course": "MATH101 — Calculus",
+        "graders": [{"id": 4, "name": "Ada Lovelace", "isfallback": false}],
+        "hasgraders": true,
+        "gradercount": 1,
+        "studentcount": 40,
+        "reporturl": "/report/autograder/index.php?courseid=2",
+        "showstudents": true,
+        "studentsurl": "/report/autograder/graders.php?courseid=2&students=1",
+        "studentlist": {
+            "students": [{"name": "A B", "grader": "Ada Lovelace", "hasgrader": true, "viafallback": false}],
+            "formurl": "/report/autograder/graders.php",
+            "hiddenfields": [{"name": "courseid", "value": "2"}],
+            "peroptions": [{"value": 24, "selected": true}],
+            "from": 1, "to": 24, "total": 40,
+            "hasprev": false, "hasnext": true,
+            "prevurl": "#", "nexturl": "#"
+        }
+    }
+}}
+<div class="report-autograder-graders">
+    <form method="get" action="{{formurl}}" class="mb-3" id="graders-form">
+        <label for="graders-courseid">{{#str}}graders:pickcourse, report_autograder{{/str}}</label>
+        {{!
+            Searched from the server as the reader types, never rendered in
+            full: a campus can hold a hundred thousand courses. The option
+            below is only the one already chosen, so the picker can show it.
+        }}
+        <div class="autograder-search-chip-wrapper">
+        <select class="autograder-select-chip" id="graders-courseid" name="courseid"
+                data-optiontype="anycourse"
+                data-scopecmid="0"
+                data-scopecourseid="0"
+                data-placeholder="{{#str}}graders:courseidplaceholder, report_autograder{{/str}}">
+            <option value="">{{#str}}graders:courseidplaceholder, report_autograder{{/str}}</option>
+            {{#haschosen}}
+            <option value="{{courseid}}" selected>{{course}}</option>
+            {{/haschosen}}
+        </select>
+        </div>
+        <button type="submit" class="btn btn-primary">{{#str}}graders:show, report_autograder{{/str}}</button>
+    </form>
+
+    {{#haschosen}}
+    <div class="autograder-graders-summary d-flex flex-wrap align-items-center justify-content-between mb-3">
+        <div>
+            <h3 class="h5 mb-1">{{course}}</h3>
+            <div class="autograder-graders-counts d-flex flex-wrap align-items-center">
+                <span class="autograder-graders-count mr-3">
+                    <strong class="autograder-graders-figure">{{gradercount}}</strong>
+                    {{#str}}graders:gradercount, report_autograder{{/str}}
+                </span>
+                <span class="autograder-graders-count">
+                    <strong class="autograder-graders-figure">{{studentcount}}</strong>
+                    {{#str}}graders:studentcount, report_autograder{{/str}}
+                </span>
+            </div>
+        </div>
+        <a href="{{reporturl}}" class="btn btn-outline-secondary">{{#str}}graders:openreport, report_autograder{{/str}}</a>
+    </div>
+
+    {{^hasgraders}}
+    <div class="alert alert-danger">{{#str}}graders:nograders, report_autograder{{/str}}</div>
+    {{/hasgraders}}
+
+    {{#hasgraders}}
+    <section class="autograder-graders-panel mb-3">
+        <h4 class="h6 autograder-graders-panel-title">{{#str}}graders:possible, report_autograder{{/str}}</h4>
+        {{! A wrapped row of names rather than a column of them: a course with
+            twenty teachers is a paragraph, not twenty lines of one word. }}
+        <ul class="autograder-graders-names list-unstyled d-flex flex-wrap mb-0">
+            {{#graders}}
+            <li class="autograder-graders-name">
+                {{name}}
+                {{#isfallback}}
+                <span class="autograder-badge autograder-badge-manual ml-1">{{#str}}graders:viafallback, report_autograder{{/str}}</span>
+                {{/isfallback}}
+            </li>
+            {{/graders}}
+        </ul>
+        <p class="autograder-graders-note text-muted mb-0">{{#str}}graders:associationnote, report_autograder{{/str}}</p>
+    </section>
+    {{/hasgraders}}
+
+    {{! Who would grade whom is decided per student, so the list of students is
+        only fetched when it is asked for, and then a page at a time. }}
+    {{^showstudents}}
+    <p><a href="{{studentsurl}}" class="btn btn-secondary">{{#str}}graders:seestudents, report_autograder{{/str}}</a></p>
+    {{/showstudents}}
+
+    {{#showstudents}}
+    {{#studentlist}}
+    <h4 class="h6 autograder-graders-panel-title">{{#str}}graders:students, report_autograder{{/str}}</h4>
+    <div class="table-responsive autograder-table-scroll" tabindex="0" role="region" aria-label="{{#str}}graders:students, report_autograder{{/str}}">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">{{#str}}graders:student, report_autograder{{/str}}</th>
+                    <th scope="col">{{#str}}graders:grader, report_autograder{{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#students}}
+                <tr>
+                    <td>{{name}}</td>
+                    <td>
+                        {{#hasgrader}}
+                        {{grader}}
+                        {{#viafallback}}
+                        <span class="autograder-badge autograder-badge-manual ml-1">{{#str}}graders:viafallback, report_autograder{{/str}}</span>
+                        {{/viafallback}}
+                        {{/hasgrader}}
+                        {{^hasgrader}}
+                        <span class="autograder-badge autograder-badge-failed">{{#str}}graders:nobodyfor, report_autograder{{/str}}</span>
+                        {{/hasgrader}}
+                    </td>
+                </tr>
+                {{/students}}
+                {{^students}}
+                <tr><td colspan="2" class="text-muted">{{#str}}graders:none, report_autograder{{/str}}</td></tr>
+                {{/students}}
+            </tbody>
+        </table>
+    </div>
+
+    {{> report_autograder/partials/pagination_links }}
+    {{/studentlist}}
+    {{/showstudents}}
+    {{/haschosen}}
+
+    {{^haschosen}}
+    <p class="text-muted">{{#str}}graders:intro, report_autograder{{/str}}</p>
+    {{/haschosen}}
+</div>

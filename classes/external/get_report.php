@@ -67,6 +67,12 @@ class get_report extends external_api {
             ),
             'sortcolumn' => new external_value(PARAM_ALPHANUMEXT, 'user_name, completed_at_sort, or empty', VALUE_DEFAULT, ''),
             'sortdir' => new external_value(PARAM_ALPHA, 'asc or desc', VALUE_DEFAULT, 'asc'),
+            'withtotal' => new external_value(
+                PARAM_BOOL,
+                'Whether to count the rows. False on a page turn, where the count cannot have changed.',
+                VALUE_DEFAULT,
+                true
+            ),
         ]);
     }
 
@@ -80,6 +86,7 @@ class get_report extends external_api {
      * @param array $filters
      * @param string $sortcolumn
      * @param string $sortdir
+     * @param bool $withtotal Whether to count the rows.
      * @return array
      */
     public static function execute(
@@ -89,7 +96,8 @@ class get_report extends external_api {
         int $limit = 0,
         array $filters = [],
         string $sortcolumn = '',
-        string $sortdir = 'asc'
+        string $sortdir = 'asc',
+        bool $withtotal = true
     ): array {
         $params = self::validate_parameters(self::execute_parameters(), [
             'cmid' => $cmid,
@@ -99,6 +107,7 @@ class get_report extends external_api {
             'filters' => $filters,
             'sortcolumn' => $sortcolumn,
             'sortdir' => $sortdir,
+            'withtotal' => $withtotal,
         ]);
 
         $scope = scope::from_params($params['cmid'], $params['courseid']);
@@ -109,22 +118,67 @@ class get_report extends external_api {
         $filters = filters::from_request($params['filters'], $scope->can_see_failures());
         $sortcolumn = self::normalise_sort_column($params['sortcolumn']);
 
-        $total = report_query::count($scope, $filters);
-        $rows = report_query::rows(
+        // The site-wide report, unfiltered, is every gradable enrolment on the
+        // campus joined to every decision and every grade — the one question
+        // here big enough to hold the database down on its own. So it is not
+        // asked until the reader has narrowed it to a course or an activity,
+        // the same way core's own heavy reports wait for a filter. Course and
+        // activity reports are already narrow by definition and load at once.
+        if (self::needs_a_filter($scope, $filters)) {
+            return [
+                'totalrecords' => 0,
+                'limit' => $limit,
+                'page' => 0,
+                'needsfilter' => true,
+                'data' => [],
+            ];
+        }
+
+        // Counting is the expensive half of this service: it runs the whole
+        // query again, joins and all, just to size the pager. Turning a page
+        // cannot change that number, so the client asks for it once per set of
+        // filters and reuses it; -1 means "unchanged, keep what you have".
+        $total = $params['withtotal'] ? report_query::count($scope, $filters) : -1;
+        $page = max(0, $params['page']);
+        if ($total >= 0) {
+            $page = min($page, max(0, (int) ceil($total / $limit) - 1));
+        }
+        $rows = $total === 0 ? [] : report_query::rows(
             $scope,
             $filters,
             $sortcolumn,
             $params['sortdir'],
-            max(0, $params['page']),
+            $page,
             $limit
         );
 
         return [
             'totalrecords' => $total,
             'limit' => $limit,
-            'page' => max(0, $params['page']),
+            'page' => $page,
             'data' => row_formatter::format_all($rows, $scope),
+            'needsfilter' => false,
         ];
+    }
+
+    /**
+     * Whether this report refuses to run until it is narrowed.
+     *
+     * Only the site-wide one ever does, and only while nothing narrows it.
+     * Any filter is enough — a course, an activity, a status, a name — since
+     * each of them cuts the query down to something a database can answer
+     * without being held down by it.
+     *
+     * @param scope $scope
+     * @param filters $filters
+     * @return bool
+     */
+    private static function needs_a_filter(scope $scope, filters $filters): bool {
+        if ($scope->level() !== scope::LEVEL_SITE) {
+            return false;
+        }
+
+        return !$filters->narrows_anything();
     }
 
     /**
@@ -163,6 +217,11 @@ class get_report extends external_api {
             'totalrecords' => new external_value(PARAM_INT, 'Rows the report has, before paging'),
             'limit' => new external_value(PARAM_INT, 'Rows on this page'),
             'page' => new external_value(PARAM_INT, 'Which page this is'),
+            'needsfilter' => new external_value(
+                PARAM_BOOL,
+                'The report is waiting for a filter before it will run',
+                VALUE_OPTIONAL
+            ),
             'data' => new external_multiple_structure(
                 new external_single_structure([
                     'rowkey' => new external_value(PARAM_RAW, 'Unique per activity and student'),

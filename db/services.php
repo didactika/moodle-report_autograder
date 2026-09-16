@@ -33,4 +33,11 @@ $functions = [
         'ajax' => true,
         'loginrequired' => true,
     ],
+    'report_autograder_search_filter_options' => [
+        'classname' => 'report_autograder\external\search_filter_options',
+        'description' => 'Searches the course and activity pickers of the report\'s filter bar.',
+        'type' => 'read',
+        'ajax' => true,
+        'loginrequired' => true,
+    ],
 ];

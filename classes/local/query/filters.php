@@ -218,4 +218,22 @@ final class filters {
             && $this->cmid === 0
             && $this->groupid === 0;
     }
+
+    /**
+     * Whether anything here actually cuts the query down.
+     *
+     * Not the same question as {@see self::is_empty()}: a group on its own
+     * narrows nothing at site level, where groups belong to courses nobody has
+     * named yet. This is what the site-wide report asks before deciding
+     * whether it is safe to run at all.
+     *
+     * @return bool
+     */
+    public function narrows_anything(): bool {
+        // Only a course or an activity counts. A status or a date narrows what
+        // comes back but not what has to be looked at: the query still has to
+        // consider every gradable enrolment on the campus to decide which of
+        // them match, which is exactly the work this is meant to prevent.
+        return $this->courseid > 0 || $this->cmid > 0;
+    }
 }

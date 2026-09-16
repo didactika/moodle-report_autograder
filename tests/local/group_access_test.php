@@ -319,6 +319,46 @@ final class group_access_test extends \advanced_testcase {
     }
 
     /**
+     * A system grant does not override a prohibition on one activity.
+     */
+    public function test_site_report_honours_module_group_prohibition(): void {
+        global $DB;
+        $roleid = (int) $DB->get_field('role', 'id', ['shortname' => 'editingteacher'], MUST_EXIST);
+        role_assign($roleid, $this->teacher->id, \context_system::instance()->id);
+        assign_capability(
+            'moodle/site:accessallgroups',
+            CAP_PROHIBIT,
+            $roleid,
+            \context_module::instance($this->cm->id)->id
+        );
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->setUser($this->teacher);
+        $this->assertTrue(has_capability('moodle/site:accessallgroups', \context_system::instance()));
+        $access = group_access::for_scope(scope::from_params(0, 0));
+        $this->assertNotEmpty($access->restrictions());
+    }
+
+    /**
+     * An activity filter must not silently discard the course's group filter.
+     */
+    public function test_course_group_filter_survives_activity_narrowing(): void {
+        $grouping = $this->getDataGenerator()->create_grouping(['courseid' => $this->course->id]);
+        groups_assign_grouping($grouping->id, $this->groupa->id);
+        $this->limit_to_grouping($this->cm, $grouping);
+        $filters = filters::from_request([
+            ['name' => 'cmid', 'value' => (string) $this->cm->id],
+            ['name' => 'groupid', 'value' => (string) $this->groupb->id],
+        ], true);
+        $scope = scope::from_params(0, (int) $this->course->id);
+        $rows = report_query::rows($scope, $filters, '', 'asc', 0, 25);
+        $this->assertSame(1, report_query::count($scope, $filters));
+        $this->assertSame([(int) $this->students['bruno']->id], array_map(
+            'intval',
+            array_column($rows, 'userid')
+        ));
+    }
+
+    /**
      * Becomes a teacher who may only see their own groups — the configuration
      * a course that means to separate its groups actually has.
      */

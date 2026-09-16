@@ -66,8 +66,8 @@ final class group_access {
     /**
      * Built by {@see self::for_scope()}, which is what knows how to ask.
      *
-     * @param array<int, int[]> $restrictions
-     * @param array<int, string> $options
+     * @param array $restrictions Group ids, by cmid.
+     * @param array $options Group names, by group id.
      * @param bool $offersall
      * @param int $default
      * @param bool $hasgroups
@@ -159,7 +159,7 @@ final class group_access {
     /**
      * The activities this report covers, as the course cache knows them.
      *
-     * A viewer who may see every group everywhere is spared the walk: at site
+     * A site administrator is spared the walk (other users can have module overrides): at site
      * level that would mean reading the module cache of every course with an
      * autograded activity to reach a conclusion already known.
      *
@@ -175,7 +175,7 @@ final class group_access {
 
         if (
             $scope->level() === scope::LEVEL_SITE
-            && has_capability('moodle/site:accessallgroups', \context_system::instance())
+            && is_siteadmin()
         ) {
             return [];
         }
@@ -188,17 +188,26 @@ final class group_access {
             $params['courseid'] = (int) $scope->course()->id;
         }
 
+        // Joined to the course rather than trusting `cfg.courseid`: a
+        // configuration can outlive the course it was made in, and asking the
+        // module cache about a course that is gone raises "invalid record"
+        // rather than returning nothing.
         $rows = $DB->get_records_sql(
             "SELECT cfg.cmid, cfg.courseid
                FROM {local_autograder_config} cfg
                JOIN {course_modules} cm ON cm.id = cfg.cmid
+               JOIN {course} co ON co.id = cfg.courseid
               WHERE {$where}",
             $params
         );
         $activities = [];
 
         foreach ($rows as $row) {
-            $modinfo = get_fast_modinfo((int) $row->courseid);
+            try {
+                $modinfo = get_fast_modinfo((int) $row->courseid);
+            } catch (\moodle_exception $e) {
+                continue;
+            }
 
             if (!isset($modinfo->cms[(int) $row->cmid])) {
                 continue;
@@ -222,7 +231,7 @@ final class group_access {
      * restriction still applies there; only the choice is missing.
      *
      * @param scope $scope
-     * @param array<int, int[]> $restrictions
+     * @param array $restrictions Group ids, by cmid.
      * @param bool $hasgroups
      * @return array{0: array<int, string>, 1: bool, 2: int}
      */
@@ -244,7 +253,7 @@ final class group_access {
      *
      * @param \cm_info $cm
      * @param \stdClass $course
-     * @param array<int, int[]> $restrictions
+     * @param array $restrictions Group ids, by cmid.
      * @return array{0: array<int, string>, 1: bool, 2: int}
      */
     private static function activity_picker(\cm_info $cm, \stdClass $course, array $restrictions): array {
@@ -276,7 +285,7 @@ final class group_access {
      * activities.
      *
      * @param \stdClass $course
-     * @param array<int, int[]> $restrictions
+     * @param array $restrictions Group ids, by cmid.
      * @param bool $hasgroups
      * @return array{0: array<int, string>, 1: bool, 2: int}
      */
@@ -322,7 +331,7 @@ final class group_access {
      * for a teacher who may only see their own.
      *
      * @param int $remembered
-     * @param array<int, string> $options
+     * @param array $options Group names, by group id.
      * @param bool $offersall
      * @return int Zero for all groups.
      */

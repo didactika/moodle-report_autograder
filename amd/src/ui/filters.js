@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { init as initSearchableSelects } from './searchable_select';
 
 const FORMAT = 'YYYY-MM-DD';
 const SEPARATOR = ' - ';
@@ -24,7 +25,9 @@ const getTexts = () => {
     dpFrom: form.data('dp-from') || 'From',
     dpTo: form.data('dp-to') || 'To',
     dpCustom: form.data('dp-custom') || 'Custom',
-    dpWeek: form.data('dp-week') || 'Wk'
+    dpWeek: form.data('dp-week') || 'Wk',
+    searchEmpty: form.data('search-empty') || 'No matches',
+    searchLoading: form.data('search-loading') || 'Searching…'
   };
 };
 
@@ -247,6 +250,25 @@ const initDateChipInteraction = (buttonId, clearBtnId, inputId, fromId, toId, te
   });
 };
 
+/**
+ * Turns the course and activity pickers into searchable chips.
+ *
+ * Their options are fetched from the server as the reader types rather than
+ * rendered into the page: a site-wide report on a campus of a hundred thousand
+ * courses cannot put its course list in a `<select>`, and its activity list is
+ * worse. See ui/searchable_select for the chip itself.
+ *
+ * @param {Object} texts The bar's own labels, read off the form.
+ */
+const initSearchablePickers = (texts) => {
+  initSearchableSelects(
+    ['#autograder-filter-course', '#autograder-filter-activity'],
+    texts.searchEmpty,
+    texts.searchLoading,
+    texts.dpCancel
+  );
+};
+
 const initTopFiltersAutoApply = () => {
   $('#autograder-quick-search-input').off('input.autograder').on('input.autograder', function () {
     syncSearchHidden();
@@ -446,6 +468,15 @@ export const init = (presetStatus) => {
   }
 
   initStatusMultiselect(texts, statusLabels);
+
+  // Never allowed to interrupt init(): the table is asked for after this
+  // returns, so anything thrown here would leave the report empty.
+  try {
+    initSearchablePickers(texts);
+  } catch (e) {
+    // The plain selects are still there and still submit.
+  }
+
   initTopFiltersAutoApply();
   initDateChipInteraction('grading-date-button',
     'grading-date-clear',

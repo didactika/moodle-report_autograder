@@ -1,1061 +1,1004 @@
+/* Shared dimensions follow Moodle form controls and theme colours. */
+.report-autograder-page {
+    --autograder-control-height: 2.75rem;
+    --autograder-radius: 0.375rem;
+    --autograder-border: var(--bs-border-color, #8f959e);
+    --autograder-surface: var(--bs-body-bg, #fff);
+    --autograder-text: var(--bs-body-color, #212529);
+}
+
+@charset "UTF-8";
+
 @keyframes autograder-skeleton-pulse {
     0% {
         opacity: 1;
     }
-
     50% {
         opacity: 0.6;
     }
-
     100% {
         opacity: 1;
     }
 }
-
 /* Scoped to a class this page adds to the body rather than to its page id.
-   The site-level report goes through admin_externalpage_setup(), which
-   prefixes the page type with "admin-" — so the id is not the same on all
-   three levels, and scoping by it left the whole site report unstyled. */
+     The site-level report goes through admin_externalpage_setup(), which
+     prefixes the page type with "admin-" — so the id is not the same on all
+     three levels, and scoping by it left the whole site report unstyled. */
 .report-autograder-page {
-    .activity-description {
-        display: none;
-    }
-    #autograder-filter-form {
-        position: relative;
-        z-index: 80;
-        max-width: 100%;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .autograder-quick-search-wrapper {
-        position: relative;
-        flex: 1 1 14rem;
-        min-width: 0;
-        max-width: 100%;
-        margin-right: 0 !important;
-    }
-
-    .autograder-top-filters {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        align-items: center;
-        width: 100%;
-        max-width: 100%;
-        overflow: visible;
-        padding-bottom: 2px;
-        position: relative;
-        z-index: 80;
-    }
-
-    .autograder-right-filters {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 0.75rem;
-        margin-left: 0;
-        min-width: 0;
-        max-width: 100%;
-        flex: 4 1 48rem;
-    }
-
-    .autograder-status-filter-wrapper {
-        display: flex;
-        align-items: center;
-        margin: 0;
-    }
-
-    .autograder-top-date-filter {
-        min-width: 230px;
-        max-width: 230px;
-        flex: 0 0 230px;
-    }
-
-    .autograder-top-status-filter {
-        min-width: 240px;
-        max-width: 240px;
-        flex: 0 0 240px;
-        position: relative;
-    }
-
-    .autograder-quick-search-icon {
-        position: absolute;
-        top: 50%;
-        left: 12px;
-        transform: translateY(-50%);
-        color: #6c757d;
-        pointer-events: none;
-    }
-
-    .autograder-quick-search-input {
-        padding-left: 34px;
-    }
-
-    .autograder-unified-input {
-        height: 38px;
-        border: 1px solid #98a1ad;
-        border-radius: 8px;
-        font-size: 1rem;
-        line-height: 1.2;
-        box-shadow: none;
-        background-color: #fff;
-    }
-
-    .autograder-daterange-input::placeholder {
-        font-size: 0.88rem;
-        letter-spacing: 0.01em;
-    }
-
-    .autograder-unified-input:focus {
-        border-color: #5b7fa4;
-        box-shadow: 0 0 0 2px rgba(91, 127, 164, 0.15);
-    }
-
-    .autograder-date-filter-wrapper label,
-    .autograder-status-filter-wrapper label {
-        font-size: 0.85rem;
-        margin-bottom: 0.25rem;
-        font-weight: 500;
-        color: #2e4257;
-        display: block;
-    }
-
     /* The course and activity pickers are ordinary selects, dressed as the
-       same chip as the date and status filters so the bar reads as one row of
-       controls rather than two kinds. The native arrow is taken off and one
-       of ours put in its place, which is what makes them match. */
-    .autograder-select-chip-wrapper {
-        position: relative;
-        flex: 1 1 10rem;
-        min-width: 0;
-        display: inline-flex;
-        align-items: center;
-    }
-
-    .autograder-select-chip {
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        background-color: #f0f4f8;
-        border: 1px solid #d0d7e0;
-        border-radius: 20px;
-        height: 38px;
-        padding: 0.45rem 2rem 0.45rem 0.75rem;
-        font-size: 0.9rem;
-        color: #2e4257;
-        width: 100%;
-        min-width: 0;
-        max-width: 100%;
-        text-overflow: ellipsis;
-        cursor: pointer;
-        transition: filter 0.15s ease;
-    }
-
-    .autograder-select-chip:hover,
-    .autograder-select-chip:focus {
-        filter: brightness(98%);
-        outline: none;
-        box-shadow: none;
-    }
-
-    .autograder-select-chip-arrow {
-        position: absolute;
-        right: 12px;
-        pointer-events: none;
-        color: #2e4257;
-        font-size: 0.8rem;
-        line-height: 1;
-    }
-
+         same chip as the date and status filters so the bar reads as one row of
+         controls rather than two kinds. The native arrow is taken off and one
+         of ours put in its place, which is what makes them match. */
+    /* A header that wraps onto a second line makes its own column taller than
+         the rest, and the whole row then reads as crooked. They are short
+         labels, so they stay on one line and each column is simply as wide as
+         its own name. */
+    /* The course and activity pickers search the server as the reader types,
+         because a campus-wide list cannot be put in a <select>. They are the
+         same chip as every other filter all the same — a button showing the
+         choice, and a panel underneath — built in ui/searchable_select.js
+         rather than taken from core/form-autocomplete, which puts the chosen
+         value in a separate tag under the row and cannot be made to read like
+         the rest of the bar. */
+    /* Nothing here paints the chosen state or the clear button: the active
+         colour comes from .autograder-filter-active and the button is
+         .autograder-chip-clear-btn, both shared with every other chip, so this
+         one is not a lookalike but the thing itself. All that is left is room
+         for the clear button in the corner the arrow used to hold. */
+    /* The arrow goes when the clear button arrives, rather than the two
+         sharing that corner. Done here as well as in JavaScript so the two can
+         never disagree about which of them is showing. */
     /* Chip Button Styles */
-    .autograder-date-field-wrapper {
-        flex: 1 1 14rem;
-        min-width: 0;
-        position: relative;
-    }
-
     /* A filter that is on is painted in the theme's light primary: the chip,
-       the status toggle and the selected rows of its menu. --primary-light is
-       the site theme's own variable (theme_vle defines it); the fallback is
-       that theme's own default, so a site on plain Boost - which does not
-       expose it - still gets the light blue rather than losing the rule. */
-    .autograder-filter-active {
-        background-color: var(--primary-light, #e6f0f9) !important;
-    }
-
-    .autograder-chip-button.autograder-filter-active:hover {
-        filter: none;
-    }
-
-    .autograder-status-menu .dropdown-item.autograder-filter-active:hover,
-    .autograder-status-menu .dropdown-item.autograder-filter-active:focus,
-    .autograder-status-menu .dropdown-item.autograder-filter-active:active {
-        background-color: var(--primary-light, #e6f0f9) !important;
-        color: unset;
-    }
-
-    .autograder-chip-button {
-        background-color: #f0f4f8 !important;
-        border: 1px solid #d0d7e0 !important;
-        border-radius: 20px !important;
-        height: 38px;
-        padding: 0.45rem 0.75rem !important;
-        font-size: 0.9rem;
-        color: #2e4257 !important;
-        transition: filter 0.15s ease;
-        white-space: nowrap;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        user-select: none;
-        -webkit-user-select: none;
-    }
-
+         the status toggle and the selected rows of its menu. --primary-light is
+         the site theme's own variable (theme_vle defines it); the fallback is
+         that theme's own default, so a site on plain Boost - which does not
+         expose it - still gets the light blue rather than losing the rule. */
     /* Must follow .autograder-chip-button: same specificity + order would lose to chip gray */
-    .autograder-chip-button.autograder-filter-active {
-        background-color: var(--primary-light, #e6f0f9) !important;
-    }
-
-    .autograder-chip-button:hover {
-        filter: brightness(98%);
-    }
-
-    .autograder-chip-button:focus {
-        outline: none !important;
-        box-shadow: none !important;
-        filter: brightness(98%);
-    }
-
-    .autograder-chip-button:focus-visible {
-        outline: none !important;
-        box-shadow: none !important;
-        filter: brightness(98%);
-    }
-
-    .autograder-chip-button .autograder-chip-text {
-        flex: 1;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        text-align: left;
-        cursor: pointer;
-    }
-
-    .autograder-chip-button .d-none {
-        display: none !important;
-    }
-
-    .autograder-chip-button span[id$="-arrow"] {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 18px;
-        height: 18px;
-        padding: 0;
-        flex-shrink: 0;
-        cursor: pointer;
-        color: #2e4257;
-    }
-
     /* Sibling of main chip button — must sit above .autograder-daterange-input (z-index 10) */
-    .autograder-date-chip-host {
-        display: block;
-        max-width: 100%;
-    }
-
     /* Same icon hit + hover as #clear-status (status chip); only positioning differs (sibling of main chip). */
-    .autograder-chip-clear-btn {
-        position: absolute;
-        right: 2px;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 25;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 34px;
-        height: 34px;
-        padding: 0;
-        margin: 0;
-        border: none;
-        background: transparent;
-        color: #2e4257;
-        cursor: pointer;
-        line-height: 1;
-        user-select: none;
-        -webkit-user-select: none;
-    }
-
-    #grading-date-clear.autograder-chip-clear-btn:hover {
-        filter: brightness(98%);
-    }
-
-    #grading-date-button.autograder-chip-has-clear {
-        padding-right: 2rem !important;
-    }
-
-    .dropdown-item:active, .dropdown-item:focus {
-        background-color: #e6edf5;
-    }
-
-    .autograder-chip-text {
-        flex: 1;
-    }
-
     /* Hidden input for daterangepicker — never capture clicks (picker opens via JS .click() on main button). */
-    .autograder-daterange-input {
-        position: absolute;
-        top: 0;
-        left: 0;
-        opacity: 0;
-        width: 100%;
-        height: 38px;
-        pointer-events: none !important;
-        z-index: 10;
-    }
-
-    .autograder-status-dropdown {
-        min-width: 0;
-        width: 100%;
-    }
-
-    .autograder-status-button {
-        justify-content: flex-start;
-        min-width: 0;
-        width: 100%;
-        max-width: 100%;
-    }
-
-    #selected-status-text {
-        flex: 1;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    #status-selection-count {
-        font-size: 0.9rem;
-        color: #2e4257;
-        white-space: nowrap;
-    }
-
-    #clear-status:hover {
-        filter: brightness(98%);
-    }
-
-    #status-chevron i {
-        font-size: 0.7rem;
-        transition: transform 0.2s ease;
-        line-height: 1;
-    }
-
-    .autograder-status-multiselect.is-open #status-chevron i {
-        transform: rotate(180deg);
-    }
-
-    .autograder-date-field-wrapper .autograder-chip-button {
-        min-width: 0;
-        width: 100%;
-    }
-
-    .autograder-date-field-wrapper .autograder-chip-button span[id$="-arrow"] i {
-        font-size: 0.7rem;
-        transition: transform 0.2s ease;
-        line-height: 1;
-    }
-
-    .autograder-date-field-wrapper.is-open span[id$="-arrow"] i {
-        transform: rotate(180deg);
-    }
-
-    .autograder-status-multiselect {
-        position: relative;
-        z-index: 30;
-    }
-
-    .autograder-status-menu {
-        display: none;
-        position: absolute;
-        top: calc(100% + 4px);
-        left: 0;
-        width: 100%;
-        max-height: min(300px, 60vh);
-        overflow-x: hidden;
-        overflow-y: auto;
-        white-space: normal;
-        background: #fff;
-        border: 1px solid #c9d1d9;
-        border-radius: 8px;
-        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
-        z-index: 120;
-        padding: 6px;
-    }
-
-    .autograder-status-menu .list-item {
-        list-style: none;
-    }
-
-    .autograder-status-multiselect.is-open .autograder-status-menu {
-        display: block;
-    }
-
-    .autograder-status-menu .dropdown-item {
-        position: relative;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin: 0;
-        width: 100%;
-        overflow-x: hidden;
-        white-space: normal;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        cursor: pointer;
-        color: #1f2a36;
-    }
-
-    .autograder-status-menu .dropdown-item:hover {
-        background-color: #e6edf5;
-        color: unset;
-    }
-
-    .autograder-status-checkbox+.autograder-status-label {
-        display: inline-block;
-        position: relative;
-        cursor: pointer;
-        user-select: none;
-        padding-left: 1.5rem;
-        line-height: 1.5;
-        width: 100%;
-        white-space: normal;
-        word-break: break-word;
-    }
-
     /* The box, anchored to the first line of the label rather than to the
-       middle of it, so a label that wraps to two lines keeps its box beside
-       the first word. */
-    .autograder-status-checkbox+.autograder-status-label::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0.15em;
-        width: 16px;
-        height: 16px;
-        border: 1px solid var(--primary, #0f6cbf);
-        background-color: #fff;
-        border-radius: 3px;
-        transition: all 0.2s ease-in-out;
-    }
-
-    .autograder-status-checkbox:checked+.autograder-status-label::before {
-        background-color: var(--primary, #0f6cbf);
-    }
-
+         middle of it, so a label that wraps to two lines keeps its box beside
+         the first word. */
     /* The tick is two borders of an empty box, rotated — not a "✔" character.
-       A glyph is at the mercy of whichever font the theme happens to load: it
-       lands at a different size and baseline in each, which is what left it
-       clipped against the corner of the box. Two borders are always the same
-       shape, always white, and always where they were put. */
-    .autograder-status-checkbox:checked+.autograder-status-label::after {
-        content: "";
-        position: absolute;
-        left: 5px;
-        top: calc(0.15em + 2px);
-        width: 5px;
-        height: 9px;
-        border: solid #fff;
-        border-width: 0 2px 2px 0;
-        transform: rotate(45deg);
-    }
-
-    #autograder-report-container,
-    #autograder-report-container .table {
-        position: relative;
-        z-index: 1;
-    }
-
-    .autograder-skeleton {
-        animation: autograder-skeleton-pulse 1.3s ease-in-out infinite;
-        background-color: #e9ecef;
-        border-radius: 4px;
-        display: inline-block;
-        height: 20px;
-        width: 100%;
-    }
-
-    .activity-information {
-        display: none;
-    }
-
-    .autograder-skeleton.avatar {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-    }
-
-    .autograder-skeleton.button {
-        width: 42px;
-        height: 38px;
-        border-radius: 4px;
-    }
-
-    .autograder-skeleton.badge {
-        width: 80px;
-        height: 24px;
-        border-radius: 12px;
-    }
-
-    .daterangepicker.autograder-single-calendar .drp-calendar.right {
-        display: none !important;
-    }
-
-    .daterangepicker.autograder-single-calendar .drp-calendar.left {
-        float: none;
-        margin: 0 auto;
-        max-width: 280px;
-    }
-
-    .daterangepicker.autograder-single-calendar .calendar-table {
-        margin: 0 auto;
-    }
-
-    .daterangepicker.autograder-single-calendar .drp-calendar.left .month {
-        text-align: center;
-    }
-
-    .daterangepicker.autograder-single-calendar .drp-buttons {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-    }
-
-    .daterangepicker.autograder-single-calendar .autograder-picker-title {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #2e4257;
-        margin: 4px 8px 8px 8px;
-        padding-bottom: 6px;
-        border-bottom: 1px solid #e5e9ef;
-        text-align: center;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
+         A glyph is at the mercy of whichever font the theme happens to load: it
+         lands at a different size and baseline in each, which is what left it
+         clipped against the corner of the box. Two borders are always the same
+         shape, always white, and always where they were put. */
     /* Pagination (course-finder style: pill per-page, range + plain chevrons) */
-    .autograder-pagination {
-        border-top: 1px solid #e5e9ef;
-        padding-top: 0.75rem;
-        padding-bottom: 0.25rem;
-        color: #2d3748;
-        font-size: 0.95rem;
-    }
-
-    .autograder-per-page-label {
-        color: #4a5568;
-        white-space: nowrap;
-    }
-
-    .autograder-pagination-result {
-        color: #4a5568;
-        white-space: nowrap;
-    }
-
-    .autograder-page-arrows .autograder-page-chevron {
-        font-size: 0.95rem;
-        line-height: 1;
-        color: #4a5568;
-        text-decoration: none;
-        min-width: 2.75rem;
-        min-height: 2.75rem;
-    }
-
-    .autograder-page-arrows .autograder-page-chevron:hover:not(:disabled),
-    .autograder-page-arrows .autograder-page-chevron:focus:not(:disabled) {
-        color: #2d3748;
-        text-decoration: none;
-    }
-
-    .autograder-page-arrows .autograder-page-chevron:disabled {
-        color: #cbd5e0;
-        cursor: default;
-        opacity: 1;
-    }
-
-    .autograder-page-arrows .autograder-page-chevron:disabled .fa {
-        color: #cbd5e0;
-    }
-
     /* Sortable column headers (name + grading date) */
-    #autograder-report-container .autograder-sort-th {
-        vertical-align: middle;
-        min-width: 9rem;
-    }
-
-    #autograder-report-container .autograder-sort-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        padding: 0;
-        margin: 0;
-        border: 0;
-        background: transparent;
-        font-weight: 600;
-        font-size: 0.95rem;
-        color: #1a6b7a;
-        cursor: pointer;
-        text-align: left;
-        line-height: 1.3;
-        max-width: 100%;
-    }
-
-    #autograder-report-container .autograder-sort-btn:hover,
-    #autograder-report-container .autograder-sort-btn:focus {
-        color: #145a66;
-        text-decoration: none;
-        outline: none;
-    }
-
-    #autograder-report-container .autograder-sort-btn:focus-visible {
-        box-shadow: 0 0 0 2px rgba(26, 107, 122, 0.35);
-        border-radius: 4px;
-    }
-
-    #autograder-report-container .autograder-sort-icon-wrap {
-        display: inline-flex;
-        align-items: center;
-        font-size: 0.8rem;
-        line-height: 1;
-        color: #1a6b7a;
-    }
-
-    #autograder-report-container .autograder-sort-btn[aria-pressed="true"] .autograder-sort-glyph {
-        color: #1a6b7a;
-    }
-
     /*
      * Forum unified grader opened from this report: body is path-report-autograder, not path-mod-forum.
      * Boost scopes almost all unified-grader layout under .path-mod-forum .unified-grader (modules.scss).
      * Mirror the rules that affect drawer width, main column margin, nav, user picker, and search row.
      */
-    .unified-grader .navbar {
-        max-height: none;
-        z-index: 1;
-    }
-
-    .unified-grader .body-container {
-        overflow: auto;
-    }
-
-    .unified-grader .body-container.hidden {
-        display: none !important; /* stylelint-disable-line declaration-no-important */
-    }
-
-    .unified-grader .userpicture {
-        height: 60px;
-        width: 60px;
-    }
-
-    .unified-grader .grader-module-content {
-        overflow-y: auto;
-        margin-right: 430px;
-        transition: margin-right 0.2s ease-in-out;
-    }
-
-    .unified-grader .drawer-button {
-        position: relative;
-    }
-
-    .unified-grader .drawer-button.active::after {
-        content: "";
-        position: absolute;
-        bottom: calc(-0.5rem - 1px);
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background-color: var(--primary, #0f6cbf);
-    }
-
-    .unified-grader .drawer-button .icon {
-        font-size: 20px;
-        height: 20px;
-        width: 20px;
-    }
-
-    .unified-grader .grader-grading-panel {
-        top: 0;
-        position: absolute;
-        height: 100%;
-        z-index: 0;
-        width: 430px;
-    }
-
-    .unified-grader .grader-grading-panel.hidden {
-        right: -430px;
-    }
-
-    .unified-grader .grader-grading-panel .grading-icon {
-        width: 36px;
-    }
-
-    .unified-grader .grader-grading-panel .user-picker-container .user-full-name {
-        max-width: 240px;
-    }
-
-    .unified-grader .grader-grading-panel .user-picker-container .page-link {
-        width: 36px;
-        height: 36px;
-        display: flex;
-        text-align: center;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .unified-grader .grader-grading-panel .header-container {
-        height: 65px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .info-container {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        transform: translateY(-50%);
-        width: 100%;
-        height: 100%;
-        padding: 0.5rem;
-        padding-right: calc(36px + 0.5rem);
-        opacity: 1;
-        visibility: visible;
-        transition: left 0.3s ease-in-out;
-        z-index: 1;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container {
-        overflow: hidden;
-        position: absolute;
-        top: 50%;
-        right: 0;
-        transform: translateY(-50%);
-        z-index: 2;
-        width: 100%;
-        height: 100% !important; /* stylelint-disable-line declaration-no-important */
-        padding: 0.5rem;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container {
-        position: relative;
-        overflow: visible;
-        display: flex;
-        align-items: center;
-        flex-wrap: nowrap;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container input {
-        padding-left: calc(0.5rem + 0.5rem + (36px - 2px));
-        padding-right: calc(0.5rem + 36px);
-        opacity: 1;
-        visibility: visible;
-        transition:
-            opacity 0s linear 0.3s,
-            visibility 0s linear;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .search-icon {
-        position: absolute;
-        top: 50%;
-        left: 0.5rem;
-        transform: translateY(-50%);
-        color: #495057;
-        height: 36px;
-        width: calc(36px - 2px);
-        background-color: #fff;
-        opacity: 1;
-        visibility: visible;
-        transition:
-            opacity 0s linear 0.3s,
-            visibility 0s linear 0.3s;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button {
-        position: absolute;
-        top: 50%;
-        right: 0.5rem;
-        transform: translateY(-50%);
-        z-index: 1;
-        color: inherit;
-        text-align: left;
-        padding-left: 9px;
-        transition: right 0s linear 0.3s;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button .expanded-icon {
-        opacity: 1;
-        visibility: visible;
-        max-width: 50px;
-        max-height: 50px;
-        transition:
-            opacity 0s linear 0.3s,
-            max-height 0s linear 0.3s,
-            max-width 0s linear 0.3s,
-            visibility 0s linear 0.3s;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button .collapsed-icon {
-        opacity: 0;
-        visibility: hidden;
-        max-height: 0;
-        max-width: 0;
-        overflow: hidden;
-        transition:
-            opacity 0s linear 0.3s,
-            max-height 0s linear 0.3s,
-            max-width 0s linear 0.3s,
-            visibility 0s linear 0.3s;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed {
-        width: calc(36px + 0.5rem + 0.5rem);
-        transition: width 0.3s ease-in-out;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container {
-        flex-wrap: nowrap;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container input,
-    .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container .search-icon {
-        opacity: 0;
-        visibility: hidden;
-        transition:
-            opacity 0s linear,
-            visibility 0s linear;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container input {
-        padding-left: 0;
-        padding-right: 0;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container .toggle-search-button .expanded-icon {
-        opacity: 0;
-        visibility: hidden;
-        max-height: 0;
-        max-width: 0;
-        overflow: hidden;
-        transition:
-            opacity 0s linear,
-            max-height 0s linear,
-            max-width 0s linear,
-            visibility 0s linear;
-    }
-
-    .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container .toggle-search-button .collapsed-icon {
-        opacity: 1;
-        visibility: visible;
-        max-width: 50px;
-        max-height: 50px;
-        transition:
-            opacity 0s linear,
-            max-height 0s linear,
-            max-width 0s linear,
-            visibility 0s linear;
-    }
-
     /* Info row sits before user-search in DOM; use :has() so expanded search still hides status (Boost uses A+B but order differs). */
-    .unified-grader .grader-grading-panel .header-container:has(.user-search-container:not(.collapsed)) .info-container {
-        opacity: 0;
-        visibility: hidden;
-        left: -100%;
-        transition:
-            left 0.3s ease-in-out,
-            opacity 0s linear 0.3s,
-            visibility 0s linear 0.3s,
-            padding 0s linear 0.3s;
-    }
-
     /* Match Boost media-breakpoint-down(xs) for unified grader on small viewports */
-    @media (max-width: 575.98px) {
-        .unified-grader .grader-module-content {
-            margin-right: 0;
-        }
-
-        .unified-grader .grader-grading-panel {
-            width: 100%;
-            position: fixed;
-            height: calc(100vh - 50px);
-            height: calc(100dvh - 50px);
-            overflow: auto;
-            top: 50px;
-        }
-
-        .unified-grader .grader-grading-panel.hidden {
-            right: -100%;
-        }
-
-        .unified-grader .body-container {
-            overflow: visible;
-        }
-    }
-    #autograder-report-container,
-    .autograder-table-scroll {
-        min-width: 0;
-        max-width: 100%;
-    }
-
-    .autograder-table-scroll {
-        overflow-x: auto;
-        contain: inline-size;
-    }
-
-    #autograder-report-container th,
-    #autograder-report-container td {
-        vertical-align: middle;
-        overflow-wrap: anywhere;
-    }
-
-    #autograder-report-container td {
-        min-width: 8rem;
-        max-width: 22rem;
-    }
-
-    #autograder-report-container .autograder-student-cell {
-        min-width: 12rem;
-    }
-
-    .autograder-student-cell .userpicture {
-        margin-inline-end: 0.5rem;
-    }
-
-    .autograder-summary-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .autograder-summary-tile {
-        min-width: 0;
-    }
-
-    .autograder-badge {
-        white-space: normal;
-        overflow-wrap: anywhere;
-    }
-
-    .autograder-status-filter-wrapper {
-        flex: 1 1 12rem;
-        min-width: 0;
-    }
-
     /* Keep native checkboxes keyboard accessible behind their visual label. */
-    .autograder-status-checkbox {
-        position: absolute;
-        opacity: 0;
-        width: 1px;
-        height: 1px;
-    }
-
-    .autograder-status-checkbox:focus-visible + .autograder-status-label::before {
-        outline: 2px solid var(--primary, #0f6cbf);
-        outline-offset: 2px;
-    }
-
-    .autograder-chip-button:focus-visible,
-    .autograder-chip-clear-btn:focus-visible,
-    .autograder-select-chip:focus-visible,
-    .autograder-table-scroll:focus-visible,
-    .autograder-page-nav:focus-visible {
-        outline: 2px solid var(--primary, #0f6cbf) !important;
-        outline-offset: 2px;
-    }
-
-    #status-multiselect-toggle.autograder-filter-active {
-        padding-right: 2.5rem !important;
-    }
-
-    .autograder-pagination,
-    .autograder-pagination-page-selector,
-    .autograder-change-page-buttons {
-        gap: 0.5rem;
-        min-width: 0;
-        flex-wrap: wrap;
-    }
-
-    .autograder-pagination-page-selector .autograder-per-page-label {
-        white-space: normal;
-    }
-
-    .autograder-per-page-select {
-        width: auto;
-        min-height: 2.75rem;
-        max-width: 100%;
-    }
-
-    .daterangepicker.autograder-single-calendar {
-        max-width: calc(100vw - 1rem);
-    }
-
-    .daterangepicker.autograder-single-calendar .drp-buttons {
-        flex-wrap: wrap;
-        white-space: normal;
-    }
-
-    @media (max-width: 575.98px) {
-        .autograder-quick-search-wrapper,
-        .autograder-right-filters {
-            flex-basis: 100%;
-        }
-
-        .autograder-right-filters > div {
-            flex-basis: 100%;
-        }
-
-        .autograder-chip-button,
-        .autograder-unified-input,
-        .autograder-select-chip {
-            height: 2.75rem;
-        }
-
-        .daterangepicker.autograder-single-calendar {
-            left: 0.5rem !important;
-            right: auto !important;
-            width: min(20rem, calc(100vw - 1rem)) !important;
-        }
-
-        .daterangepicker.autograder-single-calendar .drp-calendar.left {
-            width: 100%;
-            max-width: 100%;
-            padding: 0.5rem;
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .autograder-skeleton {
-            animation: none;
-        }
-    }
-
-
 }
-/* One pill, six meanings, each in its own soft tone: waiting is amber, done is
-   green, a person stepping in is blue, a failure is red, and the two states
-   where nothing is going to happen are grey. Soft rather than solid because a
-   whole column of saturated pills is hard to read down.
+.report-autograder-page .activity-description {
+    display: none;
+}
+.report-autograder-page #autograder-filter-form {
+    position: relative;
+    z-index: 80;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+.report-autograder-page .autograder-quick-search-wrapper {
+    position: relative;
+    flex: 1 1 14rem;
+    min-width: 0;
+    max-width: 100%;
+    margin-right: 0;
+}
+.report-autograder-page .autograder-top-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 0.75rem;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+    padding-bottom: 2px;
+    position: relative;
+    z-index: 80;
+}
+.report-autograder-page .autograder-right-filters {
+    display: contents;
+}
+.report-autograder-page .autograder-status-filter-wrapper {
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+.report-autograder-page .autograder-top-date-filter {
+    min-width: 230px;
+    max-width: 230px;
+    flex: 0 0 230px;
+}
+.report-autograder-page .autograder-top-status-filter {
+    min-width: 240px;
+    max-width: 240px;
+    flex: 0 0 240px;
+    position: relative;
+}
+.report-autograder-page .autograder-quick-search-icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+}
+.report-autograder-page .autograder-quick-search-input {
+    padding-left: 34px;
+}
+.report-autograder-page .autograder-unified-input {
+    height: var(--autograder-control-height);
+    border: 1px solid var(--autograder-border);
+    border-radius: var(--autograder-radius);
+    font-size: 1rem;
+    line-height: 1.5;
+    box-shadow: none;
+    background-color: #fff;
+}
+.report-autograder-page .autograder-daterange-input::placeholder {
+    font-size: 0.88rem;
+    letter-spacing: 0.01em;
+}
+.report-autograder-page .autograder-unified-input:focus {
+    border-color: #5b7fa4;
+    box-shadow: 0 0 0 2px rgba(91, 127, 164, 0.15);
+}
+.report-autograder-page .autograder-date-filter-wrapper label,
+.report-autograder-page .autograder-status-filter-wrapper label {
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+    color: var(--autograder-text);
+    display: block;
+}
+.report-autograder-page .autograder-select-chip-wrapper {
+    position: relative;
+    flex: 1 1 10rem;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+}
+.report-autograder-page .autograder-table-scroll th {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.report-autograder-page .autograder-search-chip-wrapper {
+    position: relative;
+    flex: 1 1 10rem;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+}
+.report-autograder-page .autograder-searchable-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    text-align: left;
+}
+.report-autograder-page .autograder-searchable-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.report-autograder-page .autograder-searchable-arrow {
+    font-size: 0.8rem;
+    line-height: 1;
+    flex: 0 0 auto;
+}
+.report-autograder-page .autograder-searchable-button.autograder-chip-has-clear {
+    padding-right: 2.25rem;
+}
+.report-autograder-page .autograder-searchable-button.autograder-chip-has-clear .autograder-searchable-arrow {
+    display: none;
+}
+.report-autograder-page .autograder-searchable-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    min-width: 0;
+    background: #fff;
+    border: 1px solid var(--autograder-border);
+    border-radius: var(--autograder-radius);
+    box-shadow: 0 6px 18px rgba(46, 66, 87, 0.12);
+    padding: 0.5rem;
+    z-index: 1000;
+}
+.report-autograder-page .autograder-search-chip-wrapper.is-open .autograder-searchable-panel {
+    display: block;
+}
+.report-autograder-page .autograder-searchable-input {
+    height: 34px;
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+}
+.report-autograder-page .autograder-searchable-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 14rem;
+    overflow-y: auto;
+}
+.report-autograder-page .autograder-searchable-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: 0;
+    background: none;
+    padding: 0.35rem 0.5rem;
+    border-radius: var(--autograder-radius);
+    font-size: 1rem;
+    color: var(--autograder-text);
+    cursor: pointer;
+}
+.report-autograder-page .autograder-searchable-option:hover,
+.report-autograder-page .autograder-searchable-option:focus {
+    background-color: var(--autograder-surface);
+    outline-offset: 2px;
+}
+.report-autograder-page .autograder-searchable-empty {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+.report-autograder-page .autograder-select-chip {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--autograder-surface);
+    border: 1px solid var(--autograder-border);
+    border-radius: var(--autograder-radius);
+    height: var(--autograder-control-height);
+    padding: 0.45rem 2rem 0.45rem 0.75rem;
+    font-size: 1rem;
+    color: var(--autograder-text);
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    transition: filter 0.15s ease;
+}
+.report-autograder-page .autograder-select-chip:hover,
+.report-autograder-page .autograder-select-chip:focus {
+    filter: brightness(98%);
+    outline-offset: 2px;
+    box-shadow: none;
+}
+.report-autograder-page .autograder-select-chip-arrow {
+    position: absolute;
+    right: 12px;
+    pointer-events: none;
+    color: var(--autograder-text);
+    font-size: 0.8rem;
+    line-height: 1;
+}
+.report-autograder-page .autograder-date-field-wrapper {
+    flex: 1 1 14rem;
+    min-width: 0;
+    position: relative;
+}
+.report-autograder-page .autograder-filter-active {
+    background-color: var(--primary-light, #e6f0f9);
+}
+.report-autograder-page .autograder-chip-button.autograder-filter-active:hover {
+    filter: none;
+}
+.report-autograder-page .autograder-status-menu .dropdown-item.autograder-filter-active:hover,
+.report-autograder-page .autograder-status-menu .dropdown-item.autograder-filter-active:focus,
+.report-autograder-page .autograder-status-menu .dropdown-item.autograder-filter-active:active {
+    background-color: var(--primary-light, #e6f0f9);
+    color: unset;
+}
+.report-autograder-page .autograder-chip-button {
+    background-color: var(--autograder-surface);
+    border: 1px solid var(--autograder-border);
+    border-radius: var(--autograder-radius);
+    height: var(--autograder-control-height);
+    padding: 0.45rem 0.75rem;
+    font-size: 1rem;
+    color: var(--autograder-text);
+    transition: filter 0.15s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.report-autograder-page .autograder-chip-button.autograder-filter-active {
+    background-color: var(--primary-light, #e6f0f9);
+}
+.report-autograder-page .autograder-chip-button:hover {
+    filter: brightness(98%);
+}
+.report-autograder-page .autograder-chip-button:focus {
+    outline-offset: 2px;
+    box-shadow: none;
+    filter: brightness(98%);
+}
+.report-autograder-page .autograder-chip-button:focus-visible {
+    outline-offset: 2px;
+    box-shadow: none;
+    filter: brightness(98%);
+}
+.report-autograder-page .autograder-chip-button .autograder-chip-text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    cursor: pointer;
+}
+.report-autograder-page .autograder-chip-button .d-none {
+    display: none;
+}
+.report-autograder-page .autograder-chip-button span[id$=-arrow] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    color: var(--autograder-text);
+}
+.report-autograder-page .autograder-date-chip-host {
+    display: block;
+    max-width: 100%;
+}
+.report-autograder-page .autograder-chip-clear-btn {
+    position: absolute;
+    right: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 25;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: var(--autograder-text);
+    cursor: pointer;
+    line-height: 1;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.report-autograder-page #grading-date-clear.autograder-chip-clear-btn:hover {
+    filter: brightness(98%);
+}
+.report-autograder-page #grading-date-button.autograder-chip-has-clear {
+    padding-right: 2rem;
+}
+.report-autograder-page .dropdown-item:active,
+.report-autograder-page .dropdown-item:focus {
+    background-color: #e6edf5;
+}
+.report-autograder-page .autograder-chip-text {
+    flex: 1;
+}
+.report-autograder-page .autograder-daterange-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    width: 100%;
+    height: var(--autograder-control-height);
+    pointer-events: none;
+    z-index: 10;
+}
+.report-autograder-page .autograder-status-dropdown {
+    min-width: 0;
+    width: 100%;
+}
+.report-autograder-page .autograder-status-button {
+    justify-content: flex-start;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+}
+.report-autograder-page #selected-status-text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.report-autograder-page #status-selection-count {
+    font-size: 1rem;
+    color: var(--autograder-text);
+    white-space: nowrap;
+}
+.report-autograder-page #clear-status:hover {
+    filter: brightness(98%);
+}
+.report-autograder-page #status-chevron i {
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+    line-height: 1;
+}
+.report-autograder-page .autograder-status-multiselect.is-open #status-chevron i {
+    transform: rotate(180deg);
+}
+.report-autograder-page .autograder-date-field-wrapper .autograder-chip-button {
+    min-width: 0;
+    width: 100%;
+}
+.report-autograder-page .autograder-date-field-wrapper .autograder-chip-button span[id$=-arrow] i {
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+    line-height: 1;
+}
+.report-autograder-page .autograder-date-field-wrapper.is-open span[id$=-arrow] i {
+    transform: rotate(180deg);
+}
+.report-autograder-page .autograder-status-multiselect {
+    position: relative;
+    z-index: 30;
+}
+.report-autograder-page .autograder-status-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    max-height: 60vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    white-space: normal;
+    background: #fff;
+    border: 1px solid #c9d1d9;
+    border-radius: var(--autograder-radius);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+    z-index: 120;
+    padding: 6px;
+}
+.report-autograder-page .autograder-status-menu .list-item {
+    list-style: none;
+}
+.report-autograder-page .autograder-status-multiselect.is-open .autograder-status-menu {
+    display: block;
+}
+.report-autograder-page .autograder-status-menu .dropdown-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    width: 100%;
+    overflow-x: hidden;
+    white-space: normal;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #1f2a36;
+}
+.report-autograder-page .autograder-status-menu .dropdown-item:hover {
+    background-color: #e6edf5;
+    color: unset;
+}
+.report-autograder-page .autograder-status-checkbox + .autograder-status-label {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    padding-left: 1.5rem;
+    line-height: 1.5;
+    width: 100%;
+    white-space: normal;
+    word-break: break-word;
+}
+.report-autograder-page .autograder-status-checkbox + .autograder-status-label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.15em;
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--primary, #0f6cbf);
+    background-color: #fff;
+    border-radius: 3px;
+    transition: all 0.2s ease-in-out;
+}
+.report-autograder-page .autograder-status-checkbox:checked + .autograder-status-label::before {
+    background-color: var(--primary, #0f6cbf);
+}
+.report-autograder-page .autograder-status-checkbox:checked + .autograder-status-label::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: calc(0.15em + 2px);
+    width: 5px;
+    height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.report-autograder-page #autograder-report-container,
+.report-autograder-page #autograder-report-container .table {
+    position: relative;
+    z-index: 1;
+}
+.report-autograder-page .autograder-skeleton {
+    animation: autograder-skeleton-pulse 1.3s ease-in-out infinite;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    display: inline-block;
+    height: 20px;
+    width: 100%;
+}
+.report-autograder-page .activity-information {
+    display: none;
+}
+.report-autograder-page .autograder-skeleton.avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+}
+.report-autograder-page .autograder-skeleton.button {
+    width: 42px;
+    height: var(--autograder-control-height);
+    border-radius: 4px;
+}
+.report-autograder-page .autograder-skeleton.badge {
+    width: 80px;
+    height: 24px;
+    border-radius: var(--autograder-radius);
+}
+.report-autograder-page .daterangepicker.autograder-single-calendar .drp-calendar.right {
+    display: none;
+}
+.report-autograder-page .daterangepicker.autograder-single-calendar .drp-calendar.left {
+    float: none;
+    margin: 0 auto;
+    max-width: 280px;
+}
+.report-autograder-page .daterangepicker.autograder-single-calendar .calendar-table {
+    margin: 0 auto;
+}
+.report-autograder-page .daterangepicker.autograder-single-calendar .drp-calendar.left .month {
+    text-align: center;
+}
+.report-autograder-page .daterangepicker.autograder-single-calendar .drp-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.report-autograder-page .daterangepicker.autograder-single-calendar .autograder-picker-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--autograder-text);
+    margin: 4px 8px 8px 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e5e9ef;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.report-autograder-page .autograder-pagination {
+    border-top: 1px solid #e5e9ef;
+    padding-top: 0.75rem;
+    padding-bottom: 0.25rem;
+    color: #2d3748;
+    font-size: 0.95rem;
+}
+.report-autograder-page .autograder-per-page-label {
+    color: #4a5568;
+    white-space: nowrap;
+}
+.report-autograder-page .autograder-pagination-result {
+    color: #4a5568;
+    white-space: nowrap;
+}
+.report-autograder-page .autograder-page-arrows .autograder-page-chevron {
+    font-size: 0.95rem;
+    line-height: 1;
+    color: #4a5568;
+    text-decoration: none;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+}
+.report-autograder-page .autograder-page-arrows .autograder-page-chevron:hover:not(:disabled),
+.report-autograder-page .autograder-page-arrows .autograder-page-chevron:focus:not(:disabled) {
+    color: #2d3748;
+    text-decoration: none;
+}
+.report-autograder-page .autograder-page-arrows .autograder-page-chevron:disabled {
+    color: #cbd5e0;
+    cursor: default;
+    opacity: 1;
+}
+.report-autograder-page .autograder-page-arrows .autograder-page-chevron:disabled .fa {
+    color: #cbd5e0;
+}
+.report-autograder-page #autograder-report-container .autograder-sort-th {
+    vertical-align: middle;
+    min-width: 9rem;
+}
+.report-autograder-page #autograder-report-container .autograder-sort-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1a6b7a;
+    cursor: pointer;
+    text-align: left;
+    line-height: 1.3;
+    max-width: 100%;
+}
+.report-autograder-page #autograder-report-container .autograder-sort-btn:hover,
+.report-autograder-page #autograder-report-container .autograder-sort-btn:focus {
+    color: #145a66;
+    text-decoration: none;
+    outline-offset: 2px;
+}
+.report-autograder-page #autograder-report-container .autograder-sort-btn:focus-visible {
+    box-shadow: 0 0 0 2px rgba(26, 107, 122, 0.35);
+    border-radius: 4px;
+}
+.report-autograder-page #autograder-report-container .autograder-sort-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.8rem;
+    line-height: 1;
+    color: #1a6b7a;
+}
+.report-autograder-page #autograder-report-container .autograder-sort-btn[aria-pressed=true] .autograder-sort-glyph {
+    color: #1a6b7a;
+}
+.report-autograder-page .unified-grader .navbar {
+    max-height: none;
+    z-index: 1;
+}
+.report-autograder-page .unified-grader .body-container {
+    overflow: auto;
+}
+.report-autograder-page .unified-grader .body-container.hidden {
+    display: none; /* stylelint-disable-line declaration-no-important */
+}
+.report-autograder-page .unified-grader .userpicture {
+    height: 60px;
+    width: 60px;
+}
+.report-autograder-page .unified-grader .grader-module-content {
+    overflow-y: auto;
+    margin-right: 430px;
+    transition: margin-right 0.2s ease-in-out;
+}
+.report-autograder-page .unified-grader .drawer-button {
+    position: relative;
+}
+.report-autograder-page .unified-grader .drawer-button.active::after {
+    content: "";
+    position: absolute;
+    bottom: calc(-0.5rem - 1px);
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary, #0f6cbf);
+}
+.report-autograder-page .unified-grader .drawer-button .icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+}
+.report-autograder-page .unified-grader .grader-grading-panel {
+    top: 0;
+    position: absolute;
+    height: 100%;
+    z-index: 0;
+    width: 430px;
+}
+.report-autograder-page .unified-grader .grader-grading-panel.hidden {
+    right: -430px;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .grading-icon {
+    width: 36px;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .user-picker-container .user-full-name {
+    max-width: 240px;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .user-picker-container .page-link {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container {
+    height: 65px;
+    position: relative;
+    overflow: hidden;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .info-container {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
+    padding-right: calc(36px + 0.5rem);
+    opacity: 1;
+    visibility: visible;
+    transition: left 0.3s ease-in-out;
+    z-index: 1;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container {
+    overflow: hidden;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 100%;
+    height: 100%; /* stylelint-disable-line declaration-no-important */
+    padding: 0.5rem;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container {
+    position: relative;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container input {
+    padding-left: calc(1rem + 34px);
+    padding-right: calc(0.5rem + 36px);
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0s linear 0.3s, visibility 0s linear;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .search-icon {
+    position: absolute;
+    top: 50%;
+    left: 0.5rem !important; /* stylelint-disable-line declaration-no-important */
+    transform: translateY(-50%);
+    color: #495057;
+    height: 36px;
+    width: 34px;
+    background-color: #fff;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0s linear 0.3s, visibility 0s linear 0.3s;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button {
+    position: absolute;
+    top: 50%;
+    right: 0.5rem;
+    transform: translateY(-50%);
+    z-index: 1;
+    color: inherit;
+    text-align: left;
+    padding-left: 9px;
+    transition: right 0s linear 0.3s;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button .expanded-icon {
+    opacity: 1;
+    visibility: visible;
+    max-width: 50px;
+    max-height: 50px;
+    transition: opacity 0s linear 0.3s, max-height 0s linear 0.3s, max-width 0s linear 0.3s, visibility 0s linear 0.3s;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container .search-input-container .toggle-search-button .collapsed-icon {
+    opacity: 0;
+    visibility: hidden;
+    max-height: 0;
+    max-width: 0;
+    overflow: hidden;
+    transition: opacity 0s linear 0.3s, max-height 0s linear 0.3s, max-width 0s linear 0.3s, visibility 0s linear 0.3s;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed {
+    width: calc(36px + 0.5rem + 0.5rem);
+    transition: width 0.3s ease-in-out;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container {
+    flex-wrap: nowrap;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container input,
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container .search-icon {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0s linear, visibility 0s linear;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container input {
+    padding-left: 0;
+    padding-right: 0;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container .toggle-search-button .expanded-icon {
+    opacity: 0;
+    visibility: hidden;
+    max-height: 0;
+    max-width: 0;
+    overflow: hidden;
+    transition: opacity 0s linear, max-height 0s linear, max-width 0s linear, visibility 0s linear;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container .user-search-container.collapsed .search-input-container .toggle-search-button .collapsed-icon {
+    opacity: 1;
+    visibility: visible;
+    max-width: 50px;
+    max-height: 50px;
+    transition: opacity 0s linear, max-height 0s linear, max-width 0s linear, visibility 0s linear;
+}
+.report-autograder-page .unified-grader .grader-grading-panel .header-container:has(.user-search-container:not(.collapsed)) .info-container {
+    opacity: 0;
+    visibility: hidden;
+    left: -100%;
+    transition: left 0.3s ease-in-out, opacity 0s linear 0.3s, visibility 0s linear 0.3s, padding 0s linear 0.3s;
+}
 
-   The tones are written out here rather than taken from Bootstrap's badge
-   classes on purpose. Bootstrap 4 and Bootstrap 5 do not name their badge
-   colours the same way (`badge-success` against `text-bg-success`) and this
-   report is drawn on Moodle branches that ship both, so a colour class picked
-   from either would simply do nothing on the other. The light primary belongs
-   to the filter bar — it says "this filter is on" — and reusing it here would
-   make a status look like a selection. */
+@media (max-width: 575.98px) {
+    .report-autograder-page .unified-grader .grader-module-content {
+        margin-right: 0;
+    }
+    .report-autograder-page .unified-grader .grader-grading-panel {
+        width: 100%;
+        position: fixed;
+        height: calc(100dvh - 50px);
+        overflow: auto;
+        top: 50px;
+    }
+    .report-autograder-page .unified-grader .grader-grading-panel.hidden {
+        right: -100%;
+    }
+    .report-autograder-page .unified-grader .body-container {
+        overflow: visible;
+    }
+}
+.report-autograder-page #autograder-report-container,
+.report-autograder-page .autograder-table-scroll {
+    min-width: 0;
+    max-width: 100%;
+}
+.report-autograder-page .autograder-table-scroll {
+    overflow-x: auto;
+    contain: inline-size;
+}
+.report-autograder-page #autograder-report-container th,
+.report-autograder-page #autograder-report-container td {
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+.report-autograder-page #autograder-report-container td {
+    min-width: 8rem;
+    max-width: 22rem;
+}
+.report-autograder-page #autograder-report-container .autograder-student-cell {
+    min-width: 12rem;
+}
+.report-autograder-page .autograder-student-cell .userpicture {
+    margin-inline-end: 0.5rem;
+}
+.report-autograder-page .autograder-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.report-autograder-page .autograder-summary-tile {
+    min-width: 0;
+}
+.report-autograder-page .autograder-badge {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+.report-autograder-page .autograder-status-filter-wrapper {
+    flex: 1 1 12rem;
+    min-width: 0;
+}
+.report-autograder-page .autograder-status-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+.report-autograder-page .autograder-status-checkbox:focus-visible + .autograder-status-label::before {
+    outline: 2px solid var(--primary, #0f6cbf);
+    outline-offset: 2px;
+}
+.report-autograder-page .autograder-chip-button:focus-visible,
+.report-autograder-page .autograder-chip-clear-btn:focus-visible,
+.report-autograder-page .autograder-select-chip:focus-visible,
+.report-autograder-page .autograder-table-scroll:focus-visible,
+.report-autograder-page .autograder-page-nav:focus-visible {
+    outline: 2px solid var(--primary, #0f6cbf);
+    outline-offset: 2px;
+}
+.report-autograder-page #status-multiselect-toggle.autograder-filter-active {
+    padding-right: 2.5rem;
+}
+.report-autograder-page .autograder-pagination,
+.report-autograder-page .autograder-pagination-page-selector,
+.report-autograder-page .autograder-change-page-buttons {
+    gap: 0.5rem;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+.report-autograder-page .autograder-pagination-page-selector .autograder-per-page-label {
+    white-space: normal;
+}
+.report-autograder-page .autograder-per-page-select {
+    width: auto;
+    min-height: 2.75rem;
+    max-width: 100%;
+}
+.report-autograder-page .daterangepicker.autograder-single-calendar {
+    max-width: calc(100vw - 1rem);
+}
+.report-autograder-page .daterangepicker.autograder-single-calendar .drp-buttons {
+    flex-wrap: wrap;
+    white-space: normal;
+}
+
+@media (max-width: 575.98px) {
+    .report-autograder-page .autograder-quick-search-wrapper,
+    .report-autograder-page .autograder-right-filters {
+        flex-basis: 100%;
+    }
+    .report-autograder-page .autograder-right-filters > div {
+        flex-basis: 100%;
+    }
+    .report-autograder-page .autograder-chip-button,
+    .report-autograder-page .autograder-unified-input,
+    .report-autograder-page .autograder-select-chip {
+        height: 2.75rem;
+    }
+    .report-autograder-page .daterangepicker.autograder-single-calendar {
+        left: 0.5rem;
+        right: auto !important; /* stylelint-disable-line declaration-no-important */
+        width: 20rem;
+    }
+    .report-autograder-page .daterangepicker.autograder-single-calendar .drp-calendar.left {
+        width: 100%;
+        max-width: 100%;
+        padding: 0.5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .report-autograder-page .autograder-skeleton {
+        animation: none;
+    }
+}
+
+/* One pill, six meanings, each in its own soft tone: waiting is amber, done is
+     green, a person stepping in is blue, a failure is red, and the two states
+     where nothing is going to happen are grey. Soft rather than solid because a
+     whole column of saturated pills is hard to read down.
+
+     The tones are written out here rather than taken from Bootstrap's badge
+     classes on purpose. Bootstrap 4 and Bootstrap 5 do not name their badge
+     colours the same way (`badge-success` against `text-bg-success`) and this
+     report is drawn on Moodle branches that ship both, so a colour class picked
+     from either would simply do nothing on the other. The light primary belongs
+     to the filter bar — it says "this filter is on" — and reusing it here would
+     make a status look like a selection. */
 .autograder-badge {
     display: inline-block;
     padding: 2px 10px;
@@ -1093,7 +1036,7 @@
 }
 
 /* Nothing is going to happen here, and the student has not started: both grey,
-   but the second is an outline, because an empty state should look empty. */
+     but the second is an outline, because an empty state should look empty. */
 .autograder-badge-notengaged {
     color: #5b6671;
     background-color: transparent;
@@ -1124,9 +1067,159 @@
 }
 
 /* The teacher a waiting row is going to be graded as. Set apart from a name in
-   the same column that has already graded, because it is a plan and not a
-   record — nobody has acted on this row yet. */
+     the same column that has already graded, because it is a plan and not a
+     record — nobody has acted on this row yet. */
 .autograder-prospective {
     font-style: italic;
     color: #5b6671;
+}
+
+/* Shared layout for the report and the course association page. */
+.report-autograder-page .autograder-pagination,
+.report-autograder-page .autograder-pagination-page-selector,
+.report-autograder-page .autograder-change-page-buttons {
+    gap: 0.75rem;
+}
+
+.report-autograder-page .autograder-per-page-select {
+    width: auto;
+    min-width: 5rem;
+    height: var(--autograder-control-height);
+    border: 1px solid var(--autograder-border);
+    border-radius: var(--autograder-radius);
+}
+
+.report-autograder-page #graders-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 0.75rem;
+    padding-block: 1rem;
+}
+
+.report-autograder-page #graders-form > label {
+    flex-basis: 100%;
+    margin: 0;
+}
+
+.report-autograder-page #graders-form .autograder-search-chip-wrapper {
+    flex: 1 1 18rem;
+    max-width: 45rem;
+}
+
+.report-autograder-page #graders-form > .btn {
+    min-height: var(--autograder-control-height);
+    margin-top: 0;
+}
+
+.report-autograder-page .autograder-table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    contain: inline-size;
+}
+
+.report-autograder-page .autograder-table-scroll td {
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+
+.report-autograder-page .autograder-pagination .btn {
+    min-height: var(--autograder-control-height);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.report-autograder-page .autograder-chip-button:focus-visible,
+.report-autograder-page .autograder-select-chip:focus-visible,
+.report-autograder-page .autograder-chip-clear-btn:focus-visible,
+.report-autograder-page .autograder-searchable-option:focus-visible,
+.report-autograder-page .autograder-page-nav:focus-visible,
+.report-autograder-page .autograder-table-scroll:focus-visible {
+    outline: 2px solid var(--bs-primary, var(--primary, #0f6cbf));
+    outline-offset: 2px;
+}
+
+@media (max-width: 575.98px) {
+    .report-autograder-page .autograder-top-filters {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .report-autograder-page #graders-form > .btn {
+        width: 100%;
+    }
+
+    .report-autograder-page .autograder-pagination-page-selector,
+    .report-autograder-page .autograder-change-page-buttons {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* The graders-by-course page. Its own small layer rather than the report's:
+     it is a summary, not a table with a filter bar, and the two only share the
+     course picker and the pagination. */
+.report-autograder-page .autograder-graders-summary {
+    gap: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e3e8ee;
+}
+
+.report-autograder-page .autograder-graders-counts {
+    color: #5b6671;
+    font-size: 0.9rem;
+    gap: 0 1.25rem;
+}
+
+/* The figure carries the weight; the word beside it stays quiet, so a row of
+     counts reads as numbers rather than as a sentence. */
+.report-autograder-page .autograder-graders-figure {
+    color: #2e4257;
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-right: 0.25rem;
+}
+
+.report-autograder-page .autograder-graders-panel {
+    background-color: #f7f9fb;
+    border: 1px solid #e3e8ee;
+    border-radius: var(--autograder-radius, 0.375rem);
+    padding: 0.85rem 1rem;
+}
+
+.report-autograder-page .autograder-graders-panel-title {
+    color: #5b6671;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+}
+
+.report-autograder-page .autograder-graders-names {
+    gap: 0.4rem 0.5rem;
+}
+
+.report-autograder-page .autograder-graders-name {
+    background-color: #fff;
+    border: 1px solid #d0d7e0;
+    border-radius: 20px;
+    color: #2e4257;
+    font-size: 0.9rem;
+    padding: 0.2rem 0.75rem;
+}
+
+.report-autograder-page .autograder-graders-note {
+    font-size: 0.85rem;
+    margin-top: 0.7rem;
+}
+
+/* Pagination is shared with the report's table, so it only needs the spacing
+     a server-rendered page gives it. */
+.report-autograder-page .report-autograder-graders .autograder-pagination {
+    margin-top: 0.75rem;
+}
+
+.report-autograder-page .report-autograder-graders .autograder-pagination-page-selector .autograder-per-page-select {
+    margin-left: 0.5rem;
+    width: auto;
 }

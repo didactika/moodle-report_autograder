@@ -18,6 +18,7 @@ namespace report_autograder\local\page;
 
 use report_autograder\local\format\status;
 use report_autograder\local\groups\group_access;
+use report_autograder\local\query\filters;
 use report_autograder\local\query\scope;
 
 /**
@@ -35,13 +36,20 @@ use report_autograder\local\query\scope;
  */
 final class page_context {
     /**
-     * The filter bar.
+     * The filter bar, showing whatever the report is already narrowed to.
+     *
+     * A report opened from a bookmark, or from a link somebody was sent, is
+     * narrowed before anybody touches a control — so the controls have to say
+     * so. They used to open blank whatever the URL said: the table came back
+     * filtered while the bar claimed it was not, which reads as a broken
+     * report rather than a narrowed one.
      *
      * @param scope $scope
+     * @param filters|null $filters What the request asked for.
      * @return array
      */
-    public static function filters(scope $scope): array {
-        $groups = group_access::for_scope($scope);
+    public static function filters(scope $scope, ?filters $filters = null): array {
+        $groups = $scope->level() === scope::LEVEL_SITE ? null : group_access::for_scope($scope);
         $statuses = [];
 
         foreach (status::filterable($scope->can_see_failures()) as $key) {
@@ -54,17 +62,100 @@ final class page_context {
         return [
             'filter_action_url' => $scope->url()->out(false),
             'statuses' => $statuses,
+            'filters' => self::chosen_values($filters),
+            'selected_course' => self::chosen_course($filters),
+            'selected_activity' => self::chosen_activity($filters),
             'shows_activity_filter' => $scope->level() !== scope::LEVEL_ACTIVITY,
-            'activities' => self::activity_options($scope),
             'shows_course_filter' => $scope->level() === scope::LEVEL_SITE,
-            'courses' => self::course_options($scope),
+            // What the two pickers need to search themselves: which report
+            // they belong to. Their options are not listed here — they are
+            // fetched as the reader types, by
+            // {@see \report_autograder\external\search_filter_options}.
+            'scope_cmid' => $scope->level() === scope::LEVEL_ACTIVITY ? (int) $scope->cm()->id : 0,
+            'scope_courseid' => $scope->level() === scope::LEVEL_COURSE ? (int) $scope->course()->id : 0,
             'moment_url' => self::library_url('moment/moment-with-locales.min.js'),
             'picker_url' => self::library_url('daterangepicker/daterangepicker.js'),
-            'shows_group_filter' => $groups->shows_picker(),
-            'groups' => $groups->picker_options(),
-            'offers_all_groups' => $groups->offers_all_groups(),
-            'opening_group' => $groups->opening_choice(),
+            'shows_group_filter' => $groups ? $groups->shows_picker() : false,
+            'groups' => $groups ? $groups->picker_options() : [],
+            'offers_all_groups' => $groups ? $groups->offers_all_groups() : true,
+            'opening_group' => $groups ? $groups->opening_choice() : 0,
         ];
+    }
+
+    /**
+     * The plain values the filter bar's own inputs carry.
+     *
+     * @param filters|null $filters
+     * @return array
+     */
+    private static function chosen_values(?filters $filters): array {
+        if ($filters === null) {
+            return ['searchname' => '', 'status' => '', 'grading_date_from' => '', 'grading_date_to' => ''];
+        }
+
+        return [
+            'searchname' => $filters->search(),
+            'status' => implode(',', $filters->statuses()),
+            // The date chip reads these back and paints itself from them, so
+            // they have to be written the way it writes them, not as a
+            // timestamp it would show verbatim.
+            'grading_date_from' => self::as_date($filters->datefrom()),
+            'grading_date_to' => self::as_date($filters->dateto()),
+        ];
+    }
+
+    /**
+     * The course the report is already narrowed to, ready for its picker.
+     *
+     * Labelled exactly as the picker's own search labels it, so the option it
+     * opens showing reads like the ones it offers.
+     *
+     * @param filters|null $filters
+     * @return array|null
+     */
+    private static function chosen_course(?filters $filters): ?array {
+        global $DB;
+
+        if ($filters === null || $filters->courseid() <= 0) {
+            return null;
+        }
+
+        $course = $DB->get_record('course', ['id' => $filters->courseid()], 'id, shortname', IGNORE_MISSING);
+
+        return $course ? ['id' => (int) $course->id, 'name' => format_string($course->shortname)] : null;
+    }
+
+    /**
+     * The activity the report is already narrowed to, ready for its picker.
+     *
+     * @param filters|null $filters
+     * @return array|null
+     */
+    private static function chosen_activity(?filters $filters): ?array {
+        if ($filters === null || $filters->cmid() <= 0) {
+            return null;
+        }
+
+        $cm = get_coursemodule_from_id(null, $filters->cmid(), 0, false, IGNORE_MISSING);
+
+        if (!$cm) {
+            return null;
+        }
+
+        return [
+            'id' => (int) $cm->id,
+            'name' => format_string($cm->name, true, ['context' => \context_module::instance((int) $cm->id)]),
+        ];
+    }
+
+    /**
+     * One end of the date range, written the way the date chip writes it.
+     *
+     * @param int|null $timestamp
+     * @return string Empty when that end is open.
+     */
+    private static function as_date(?int $timestamp): string {
+        return $timestamp === null ? '' : userdate($timestamp, '%d/%m/%Y');
     }
 
     /**
@@ -79,7 +170,8 @@ final class page_context {
         $context = [
             'shows_activity_column' => $scope->shows_activity_column(),
             'shows_course_column' => $scope->shows_course_column(),
-            'shows_group_column' => group_access::for_scope($scope)->shows_column(),
+            'shows_group_column' => $scope->level() !== scope::LEVEL_SITE
+                && group_access::for_scope($scope)->shows_column(),
             'skeletonRows' => array_fill(0, 4, []),
         ];
 
@@ -105,90 +197,5 @@ final class page_context {
      */
     private static function library_url(string $path): string {
         return (new \moodle_url('/report/autograder/lib/' . $path))->out(false);
-    }
-
-    /**
-     * The activities the viewer could narrow to.
-     *
-     * Only the ones autograder is switched on for: offering an activity with
-     * no rows behind it wastes the reader's time.
-     *
-     * @param scope $scope
-     * @return array<int, array{id: int, name: string}>
-     */
-    private static function activity_options(scope $scope): array {
-        global $DB;
-
-        if ($scope->level() === scope::LEVEL_ACTIVITY) {
-            return [];
-        }
-
-        $params = ['enabled' => 1];
-        $where = 'cfg.enabled = :enabled AND cm.deletioninprogress = 0';
-
-        if ($scope->level() === scope::LEVEL_COURSE) {
-            $where .= ' AND cfg.courseid = :courseid';
-            $params['courseid'] = (int) $scope->course()->id;
-        }
-
-        $rows = $DB->get_records_sql(
-            "SELECT cfg.cmid, cfg.courseid
-               FROM {local_autograder_config} cfg
-               JOIN {course_modules} cm ON cm.id = cfg.cmid
-              WHERE {$where}",
-            $params
-        );
-        $options = [];
-
-        foreach ($rows as $row) {
-            $modinfo = get_fast_modinfo((int) $row->courseid);
-
-            if (!isset($modinfo->cms[(int) $row->cmid])) {
-                continue;
-            }
-
-            $options[] = [
-                'id' => (int) $row->cmid,
-                'name' => format_string($modinfo->cms[(int) $row->cmid]->name),
-            ];
-        }
-
-        usort($options, function (array $a, array $b): int {
-            return strcasecmp(
-                \core_text::strtolower($a['name']),
-                \core_text::strtolower($b['name'])
-            );
-        });
-
-        return $options;
-    }
-
-    /**
-     * The courses the viewer could narrow to, at site level.
-     *
-     * @param scope $scope
-     * @return array<int, array{id: int, name: string}>
-     */
-    private static function course_options(scope $scope): array {
-        global $DB;
-
-        if ($scope->level() !== scope::LEVEL_SITE) {
-            return [];
-        }
-
-        $rows = $DB->get_records_sql(
-            "SELECT DISTINCT co.id, co.shortname, co.fullname
-               FROM {local_autograder_config} cfg
-               JOIN {course} co ON co.id = cfg.courseid
-              WHERE cfg.enabled = 1
-           ORDER BY co.shortname"
-        );
-        $options = [];
-
-        foreach ($rows as $row) {
-            $options[] = ['id' => (int) $row->id, 'name' => format_string($row->shortname)];
-        }
-
-        return $options;
     }
 }

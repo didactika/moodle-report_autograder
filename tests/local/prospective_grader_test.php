@@ -167,6 +167,35 @@ final class prospective_grader_test extends \advanced_testcase {
     }
 
     /**
+     * The report names the same validated fallback as the grading worker.
+     */
+    public function test_pending_row_includes_the_validated_fallback(): void {
+        $fallback = $this->getDataGenerator()->create_and_enrol($this->course, 'teacher');
+        set_config('teacher_roles', 'editingteacher', 'local_autograder');
+        set_config('fallback_grader', $fallback->id, 'local_autograder');
+        $this->decide_pending();
+        $this->assertSame(fullname($fallback), $this->formatted_row()['will_grade']);
+    }
+
+    /**
+     * A gradebook record without a grade is not evidence that someone graded.
+     */
+    public function test_empty_gradebook_record_does_not_hide_the_planned_teacher(): void {
+        global $DB;
+        $teacher = $this->getDataGenerator()->create_and_enrol($this->course, 'editingteacher');
+        set_config('teacher_roles', 'editingteacher', 'local_autograder');
+        $item = $DB->get_record('grade_items', ['itemmodule' => 'assign', 'iteminstance' => $this->cm->instance]);
+        $DB->insert_record('grade_grades', (object) [
+            'itemid' => $item->id, 'userid' => $this->student->id,
+            'usermodified' => get_admin()->id, 'finalgrade' => null,
+        ]);
+        $this->decide_pending();
+        $row = $this->formatted_row();
+        $this->assertArrayNotHasKey('graded_by', $row);
+        $this->assertSame(fullname($teacher), $row['will_grade']);
+    }
+
+    /**
      * Puts the student's decision in the waiting state, due tomorrow.
      */
     private function decide_pending(): void {
