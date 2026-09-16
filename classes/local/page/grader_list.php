@@ -25,9 +25,8 @@ use local_autograder\local\grading\teacher_source;
  * Two questions, deliberately answered separately, because one is cheap and
  * the other is not:
  *
- * - *Who could grade here* is a property of the course. One capability query
- *   and one call to local_resume answer it, whatever the course's size. This
- *   is what the page opens on.
+ * - *Who could grade here* is a property of the course. One role query answers
+ *   it, whatever the course's size. This is what the page opens on.
  * - *Who would grade this student* is decided per student, from that
  *   student's own teachers. Answering it for a whole course means asking it
  *   once per student, so it is asked for one page of students at a time and

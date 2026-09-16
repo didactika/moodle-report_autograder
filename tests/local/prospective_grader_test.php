@@ -171,7 +171,7 @@ final class prospective_grader_test extends \advanced_testcase {
      */
     public function test_pending_row_includes_the_validated_fallback(): void {
         $fallback = $this->getDataGenerator()->create_and_enrol($this->course, 'teacher');
-        set_config('teacher_roles', 'editingteacher', 'local_resume');
+        set_config('teacher_roles', 'editingteacher', 'local_autograder');
         set_config('fallback_grader', $fallback->id, 'local_autograder');
         $this->decide_pending();
         $this->assertSame(fullname($fallback), $this->formatted_row()['will_grade']);
@@ -183,7 +183,7 @@ final class prospective_grader_test extends \advanced_testcase {
     public function test_empty_gradebook_record_does_not_hide_the_planned_teacher(): void {
         global $DB;
         $teacher = $this->getDataGenerator()->create_and_enrol($this->course, 'editingteacher');
-        set_config('teacher_roles', 'editingteacher', 'local_resume');
+        set_config('teacher_roles', 'editingteacher', 'local_autograder');
         $item = $DB->get_record('grade_items', ['itemmodule' => 'assign', 'iteminstance' => $this->cm->instance]);
         $DB->insert_record('grade_grades', (object) [
             'itemid' => $item->id, 'userid' => $this->student->id,

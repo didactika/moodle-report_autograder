@@ -71,7 +71,7 @@ final class grader_list_test extends \advanced_testcase {
         $course = $generator->create_course();
         $teacher = $generator->create_and_enrol($course, 'editingteacher');
         $generator->create_and_enrol($course, 'teacher');
-        set_config('teacher_roles', 'editingteacher', 'local_resume');
+        set_config('teacher_roles', 'editingteacher', 'local_autograder');
         set_config('fallback_grader', 0, 'local_autograder');
         $result = grader_list::graders_of((int) $course->id);
         $this->assertSame([(int) $teacher->id], array_column($result['graders'], 'id'));
