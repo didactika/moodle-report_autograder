@@ -134,6 +134,15 @@
         align-items: center;
     }
 
+    /* A header that wraps onto a second line makes its own column taller than
+       the rest, and the whole row then reads as crooked. They are short
+       labels, so they stay on one line and each column is simply as wide as
+       its own name. */
+    .autograder-table-scroll th {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
     /* The course and activity pickers are searched from the server, so they
        are not plain selects: core/form-autocomplete replaces each one with a
        field and a selection list of its own, both placed inside this wrapper.

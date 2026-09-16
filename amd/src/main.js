@@ -27,6 +27,9 @@ import { updateSortHeaderUI } from './ui/table_sort';
 
 let requestId = 0;
 
+// The last row count the server actually made, reused while turning pages.
+let knownTotal = 0;
+
 /**
  * @param {'user_name'|'completed_at_sort'} key
  */
@@ -36,6 +39,24 @@ const toggleColumnSort = (key) => {
     } else {
         setSort(key, key === 'completed_at_sort' ? 'desc' : 'asc');
     }
+};
+
+/**
+ * Says the report is waiting to be narrowed, instead of drawing a table.
+ *
+ * The site-wide report refuses to run unfiltered — see get_report — so there
+ * is nothing to draw and nothing to page through until the reader picks
+ * something.
+ */
+const showNeedsFilter = async () => {
+    const message = await getString('needsfilter', 'report_autograder');
+
+    $('#autograder-pagination-container').empty();
+    $('#autograder-table-body').html(
+        $('<tr>').append(
+            $('<td>').attr('colspan', 99).addClass('text-center text-muted py-5').text(message)
+        )
+    );
 };
 
 /**
@@ -52,6 +73,11 @@ const fetchAndRenderReport = (page) => {
 
     const sortCol = getSortColumn();
 
+    // Counting the rows runs the whole query a second time, so it is asked for
+    // only when the answer can have changed — a new set of filters, which
+    // always lands on page 0. Turning a page reuses the number already known.
+    const withTotal = page === 0;
+
     getReportData(
         getScope(),
         page,
@@ -59,6 +85,7 @@ const fetchAndRenderReport = (page) => {
         getRequestedLimit(),
         sortCol || '',
         sortCol ? getSortDirection() : 'asc',
+        withTotal,
     )
         .then((response) => {
             if (!isCurrent()) {
@@ -67,14 +94,27 @@ const fetchAndRenderReport = (page) => {
             const rows = response.data || [];
             const limit = response.limit || getRequestedLimit();
 
+            // The site-wide report will not run until it is narrowed: asking
+            // it for the whole campus at once is what holds the database down.
+            if (response.needsfilter) {
+                showNeedsFilter();
+                return response;
+            }
+
             setRecordsPerPage(limit);
+
+            // -1 is the server saying it did not count, because nothing that
+            // could change the count has happened since it last did.
+            if (response.totalrecords >= 0) {
+                knownTotal = response.totalrecords;
+            }
 
             const $reportRoot = $('#autograder-report-container');
 
             renderTable(rows, () => {
                 updateSortHeaderUI($reportRoot);
                 renderPagination(
-                    response.totalrecords,
+                    knownTotal,
                     rows,
                     page,
                     limit,

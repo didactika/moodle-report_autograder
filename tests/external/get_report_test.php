@@ -138,19 +138,38 @@ final class get_report_test extends \advanced_testcase {
     }
 
     /**
-     * The course and site reports answer through the same service.
+     * The course report answers through the same service.
      */
     public function test_the_wider_reports_answer_too(): void {
         $course = $this->call(['courseid' => (int) $this->course->id]);
-        $site = $this->call([]);
 
         $this->assertSame(3, $course['totalrecords']);
-        $this->assertSame(3, $site['totalrecords']);
         $this->assertSame(
             scope::LEVEL_SITE,
             scope::from_params(0, 0)->level(),
             'The site report is the one asked for with neither parameter.'
         );
+    }
+
+    /**
+     * The site-wide report will not run until it is narrowed.
+     *
+     * Unfiltered it asks the database about every gradable enrolment on the
+     * campus at once, which is the one question here big enough to hold the
+     * database down on its own. Any filter is enough to let it run.
+     */
+    public function test_the_site_report_waits_for_a_filter(): void {
+        $waiting = $this->call([]);
+
+        $this->assertTrue($waiting['needsfilter'], 'Unfiltered, it must not run at all.');
+        $this->assertSame([], $waiting['data']);
+
+        $narrowed = $this->call([
+            'filters' => [['name' => 'courseid', 'value' => (string) $this->course->id]],
+        ]);
+
+        $this->assertFalse($narrowed['needsfilter'], 'Narrowed to a course, it runs.');
+        $this->assertSame(3, $narrowed['totalrecords']);
     }
 
     /**

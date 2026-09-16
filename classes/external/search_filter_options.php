@@ -114,7 +114,14 @@ class search_filter_options extends external_api {
         // The same scope the report itself is being read at, checked the same
         // way: a picker must never offer a course its reader could not open
         // the report for.
-        $scope = scope::from_params($params['cmid'], $params['courseid']);
+        //
+        // Resolved defensively. A picker is opened with whatever ids the page
+        // was rendered with, and an activity or course deleted since then (or
+        // a hand-edited URL) would otherwise raise "invalid record" from
+        // inside a dropdown, which is no way to tell anybody anything. An id
+        // that names nothing simply widens the search to the site, where the
+        // capability check below still applies.
+        $scope = self::scope_or_site($params['cmid'], $params['courseid']);
         self::validate_context($scope->context());
         $scope->require_capability();
 
@@ -129,6 +136,21 @@ class search_filter_options extends external_api {
             'options' => array_slice($found, 0, self::MAX_RESULTS),
             'hasmore' => $hasmore,
         ];
+    }
+
+    /**
+     * The scope those ids name, or the site-level one when they name nothing.
+     *
+     * @param int $cmid
+     * @param int $courseid
+     * @return scope
+     */
+    private static function scope_or_site(int $cmid, int $courseid): scope {
+        try {
+            return scope::from_params($cmid, $courseid);
+        } catch (\moodle_exception $e) {
+            return scope::from_params(0, 0);
+        }
     }
 
     /**

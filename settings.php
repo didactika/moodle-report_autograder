@@ -29,10 +29,28 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$ADMIN->add('reports', new admin_externalpage(
+// Its own heading in the reports menu, with a link per report under it, the
+// way core's own multi-report plugins present themselves. Two flat entries
+// side by side in the reports list would not say that they belong together.
+$ADMIN->add('reports', new admin_category(
+    'reportautogradercategory',
+    get_string('pluginname', 'report_autograder')
+));
+
+$ADMIN->add('reportautogradercategory', new admin_externalpage(
     'reportautograder',
-    get_string('pluginname', 'report_autograder'),
+    get_string('menu:report', 'report_autograder'),
     new moodle_url('/report/autograder/index.php'),
+    'report/autograder:viewsite'
+));
+
+// Who autograder would grade as, one course at a time. Its own page rather
+// than a column on the report: the answer is worked out per student, so it is
+// never asked for the whole site at once.
+$ADMIN->add('reportautogradercategory', new admin_externalpage(
+    'reportautogradergraders',
+    get_string('menu:graders', 'report_autograder'),
+    new moodle_url('/report/autograder/graders.php'),
     'report/autograder:viewsite'
 ));
 
