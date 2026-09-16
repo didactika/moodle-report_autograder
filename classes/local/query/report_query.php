@@ -18,6 +18,7 @@ namespace report_autograder\local\query;
 
 use core_user\fields;
 use local_autograder\local\config\eligibility;
+use report_autograder\local\availability\availability_access;
 use report_autograder\local\format\status;
 use report_autograder\local\groups\group_access;
 
@@ -258,9 +259,39 @@ final class report_query {
 
         self::apply_scope($scope, $conditions, $params);
         self::apply_group_access($scope, $filters, $conditions, $params);
+        self::apply_availability($scope, $conditions, $params);
         self::apply_filters($filters, $conditions, $params);
 
         return [$from, implode(' AND ', $conditions), $params];
+    }
+
+    /**
+     * Drops the students an activity's own access restrictions keep out.
+     *
+     * A student who cannot see the activity cannot submit to it and will never
+     * be graded on it, so listing them as not having submitted is simply
+     * wrong — and on an activity restricted to one group it is wrong about
+     * most of the course. Whose restriction admits whom is core's answer, not
+     * this plugin's: see {@see availability_access}.
+     *
+     * One condition per restricted activity, each leaving every other
+     * activity's rows alone. An unrestricted activity adds nothing at all, so
+     * the usual report pays nothing for this.
+     *
+     * @param scope $scope
+     * @param array $conditions Added to.
+     * @param array $params Added to.
+     */
+    private static function apply_availability(scope $scope, array &$conditions, array &$params): void {
+        $index = 0;
+
+        foreach (availability_access::for_scope($scope)->restrictions() as $cmid => [$sql, $sqlparams]) {
+            $key = "availcm{$index}";
+            $params[$key] = (int) $cmid;
+            $params += $sqlparams;
+            $conditions[] = "(cfg.cmid <> :{$key} OR u.id IN ({$sql}))";
+            $index++;
+        }
     }
 
     /**

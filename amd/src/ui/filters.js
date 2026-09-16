@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import * as Autocomplete from 'core/form-autocomplete';
 
 const FORMAT = 'YYYY-MM-DD';
 const SEPARATOR = ' - ';
@@ -247,6 +248,47 @@ const initDateChipInteraction = (buttonId, clearBtnId, inputId, fromId, toId, te
   });
 };
 
+/**
+ * Turns the course and activity pickers into searchable ones.
+ *
+ * They are fetched from the server as the reader types rather than rendered
+ * into the page: a site-wide report on a campus of a hundred thousand courses
+ * cannot put its course list in a `<select>`, and its activity list is worse.
+ *
+ * The arguments of enhance() are positional — selector, tags, the ajax module,
+ * placeholder, case sensitivity, and then *show suggestions*, which has to be
+ * true or the field takes what is typed and never offers anything back.
+ *
+ * @returns {Promise}
+ */
+const initSearchablePickers = () => {
+  const pickers = [
+    ['#autograder-filter-course', 'filter_course_placeholder'],
+    ['#autograder-filter-activity', 'filter_activity_placeholder'],
+  ];
+
+  return Promise.all(pickers.map(([selector, placeholderKey]) => {
+    const element = $(selector);
+
+    if (!element.length) {
+      return Promise.resolve();
+    }
+
+    return Autocomplete.enhance(
+      selector,
+      false,
+      'report_autograder/service/filter_datasource',
+      element.data(placeholderKey.replace(/_/g, '-')) || element.data('placeholder') || '',
+      false,
+      true
+    ).catch(() => {
+      // An enhancement that fails leaves the plain select behind, which still
+      // submits — worse to search with, but never a dead filter bar.
+      return;
+    });
+  }));
+};
+
 const initTopFiltersAutoApply = () => {
   $('#autograder-quick-search-input').off('input.autograder').on('input.autograder', function () {
     syncSearchHidden();
@@ -446,6 +488,7 @@ export const init = (presetStatus) => {
   }
 
   initStatusMultiselect(texts, statusLabels);
+  initSearchablePickers();
   initTopFiltersAutoApply();
   initDateChipInteraction('grading-date-button',
     'grading-date-clear',

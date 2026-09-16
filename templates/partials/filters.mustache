@@ -50,11 +50,16 @@
             {{#shows_course_filter}}
             <div class="autograder-select-chip-wrapper">
                 <label class="sr-only" for="autograder-filter-course">{{#str}}filter_course, report_autograder{{/str}}</label>
-                <select class="autograder-select-chip" id="autograder-filter-course" name="courseid">
+                {{! Searched from the server as the reader types - see
+                    report_autograder/service/filter_datasource. The list is
+                    deliberately not rendered here: a site-wide report can span
+                    every course on the campus. }}
+                <select class="autograder-select-chip" id="autograder-filter-course" name="courseid"
+                        data-optiontype="course"
+                        data-scopecmid="{{scope_cmid}}"
+                        data-scopecourseid="{{scope_courseid}}"
+                        data-placeholder="{{#str}}filter_course_placeholder, report_autograder{{/str}}">
                     <option value="">{{#str}}filter_course_placeholder, report_autograder{{/str}}</option>
-                    {{#courses}}
-                    <option value="{{id}}">{{name}}</option>
-                    {{/courses}}
                 </select>
                 <span class="autograder-select-chip-arrow" aria-hidden="true">
                     <i class="fa fa-chevron-down"></i>
@@ -65,11 +70,14 @@
             {{#shows_activity_filter}}
             <div class="autograder-select-chip-wrapper">
                 <label class="sr-only" for="autograder-filter-activity">{{#str}}filter_activity, report_autograder{{/str}}</label>
-                <select class="autograder-select-chip" id="autograder-filter-activity" name="cmid">
+                {{! Searched from the server, and narrowed to whichever course
+                    the picker beside it is on. }}
+                <select class="autograder-select-chip" id="autograder-filter-activity" name="cmid"
+                        data-optiontype="activity"
+                        data-scopecmid="{{scope_cmid}}"
+                        data-scopecourseid="{{scope_courseid}}"
+                        data-placeholder="{{#str}}filter_activity_placeholder, report_autograder{{/str}}">
                     <option value="">{{#str}}filter_activity_placeholder, report_autograder{{/str}}</option>
-                    {{#activities}}
-                    <option value="{{id}}">{{name}}</option>
-                    {{/activities}}
                 </select>
                 <span class="autograder-select-chip-arrow" aria-hidden="true">
                     <i class="fa fa-chevron-down"></i>

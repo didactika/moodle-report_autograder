@@ -55,9 +55,13 @@ final class page_context {
             'filter_action_url' => $scope->url()->out(false),
             'statuses' => $statuses,
             'shows_activity_filter' => $scope->level() !== scope::LEVEL_ACTIVITY,
-            'activities' => self::activity_options($scope),
             'shows_course_filter' => $scope->level() === scope::LEVEL_SITE,
-            'courses' => self::course_options($scope),
+            // What the two pickers need to search themselves: which report
+            // they belong to. Their options are not listed here — they are
+            // fetched as the reader types, by
+            // {@see \report_autograder\external\search_filter_options}.
+            'scope_cmid' => $scope->level() === scope::LEVEL_ACTIVITY ? (int) $scope->cm()->id : 0,
+            'scope_courseid' => $scope->level() === scope::LEVEL_COURSE ? (int) $scope->course()->id : 0,
             'moment_url' => self::library_url('moment/moment-with-locales.min.js'),
             'picker_url' => self::library_url('daterangepicker/daterangepicker.js'),
             'shows_group_filter' => $groups->shows_picker(),
@@ -105,90 +109,5 @@ final class page_context {
      */
     private static function library_url(string $path): string {
         return (new \moodle_url('/report/autograder/lib/' . $path))->out(false);
-    }
-
-    /**
-     * The activities the viewer could narrow to.
-     *
-     * Only the ones autograder is switched on for: offering an activity with
-     * no rows behind it wastes the reader's time.
-     *
-     * @param scope $scope
-     * @return array<int, array{id: int, name: string}>
-     */
-    private static function activity_options(scope $scope): array {
-        global $DB;
-
-        if ($scope->level() === scope::LEVEL_ACTIVITY) {
-            return [];
-        }
-
-        $params = ['enabled' => 1];
-        $where = 'cfg.enabled = :enabled AND cm.deletioninprogress = 0';
-
-        if ($scope->level() === scope::LEVEL_COURSE) {
-            $where .= ' AND cfg.courseid = :courseid';
-            $params['courseid'] = (int) $scope->course()->id;
-        }
-
-        $rows = $DB->get_records_sql(
-            "SELECT cfg.cmid, cfg.courseid
-               FROM {local_autograder_config} cfg
-               JOIN {course_modules} cm ON cm.id = cfg.cmid
-              WHERE {$where}",
-            $params
-        );
-        $options = [];
-
-        foreach ($rows as $row) {
-            $modinfo = get_fast_modinfo((int) $row->courseid);
-
-            if (!isset($modinfo->cms[(int) $row->cmid])) {
-                continue;
-            }
-
-            $options[] = [
-                'id' => (int) $row->cmid,
-                'name' => format_string($modinfo->cms[(int) $row->cmid]->name),
-            ];
-        }
-
-        usort($options, function (array $a, array $b): int {
-            return strcasecmp(
-                \core_text::strtolower($a['name']),
-                \core_text::strtolower($b['name'])
-            );
-        });
-
-        return $options;
-    }
-
-    /**
-     * The courses the viewer could narrow to, at site level.
-     *
-     * @param scope $scope
-     * @return array<int, array{id: int, name: string}>
-     */
-    private static function course_options(scope $scope): array {
-        global $DB;
-
-        if ($scope->level() !== scope::LEVEL_SITE) {
-            return [];
-        }
-
-        $rows = $DB->get_records_sql(
-            "SELECT DISTINCT co.id, co.shortname, co.fullname
-               FROM {local_autograder_config} cfg
-               JOIN {course} co ON co.id = cfg.courseid
-              WHERE cfg.enabled = 1
-           ORDER BY co.shortname"
-        );
-        $options = [];
-
-        foreach ($rows as $row) {
-            $options[] = ['id' => (int) $row->id, 'name' => format_string($row->shortname)];
-        }
-
-        return $options;
     }
 }

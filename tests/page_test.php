@@ -148,15 +148,23 @@ final class page_test extends \advanced_testcase {
     }
 
     /**
-     * The activity filter lists the autograded activities, and drops one whose
-     * autograder has been switched off.
+     * The activity picker searches the autograded activities, and drops one
+     * whose autograder has been switched off.
+     *
+     * The options are not rendered into the page any more — a site-wide report
+     * would have to list every activity on the campus — so what is asserted
+     * here is the search behind the picker.
      */
-    public function test_the_activity_filter_lists_what_is_autograded(): void {
-        $scope = $this->scope_for(scope::LEVEL_COURSE);
-        $context = page_context::filters($scope);
+    public function test_the_activity_filter_searches_what_is_autograded(): void {
+        $found = \report_autograder\external\search_filter_options::execute(
+            'activity',
+            '',
+            0,
+            (int) $this->course->id
+        );
 
-        $this->assertCount(1, $context['activities']);
-        $this->assertEquals((int) $this->cm->id, $context['activities'][0]['id']);
+        $this->assertCount(1, $found['options']);
+        $this->assertEquals((int) $this->cm->id, $found['options'][0]['id']);
 
         config_repository::upsert_for_cm(
             (int) $this->cm->id,
@@ -169,7 +177,37 @@ final class page_test extends \advanced_testcase {
             2
         );
 
-        $this->assertSame([], page_context::filters($scope)['activities']);
+        $found = \report_autograder\external\search_filter_options::execute(
+            'activity',
+            '',
+            0,
+            (int) $this->course->id
+        );
+
+        $this->assertSame([], $found['options']);
+    }
+
+    /**
+     * The activity search matches on what the reader typed.
+     */
+    public function test_the_activity_search_matches_a_name(): void {
+        $matching = \report_autograder\external\search_filter_options::execute(
+            'activity',
+            $this->cm->name,
+            0,
+            (int) $this->course->id
+        );
+
+        $this->assertCount(1, $matching['options']);
+
+        $missing = \report_autograder\external\search_filter_options::execute(
+            'activity',
+            'nothing is called this',
+            0,
+            (int) $this->course->id
+        );
+
+        $this->assertSame([], $missing['options']);
     }
 
     /**
