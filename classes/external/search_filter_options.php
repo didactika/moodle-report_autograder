@@ -367,8 +367,13 @@ class search_filter_options extends external_api {
 
         foreach ($columns as $column) {
             $key = 'namematch' . $index++;
-            $params[$key] = '%' . $DB->sql_like_escape(\core_text::strtolower($query)) . '%';
-            $branches[] = $DB->sql_like("LOWER({$column})", ":{$key}", false);
+            $params[$key] = '%' . $DB->sql_like_escape($query) . '%';
+            // The column is compared as it is stored. sql_like() already
+            // matches without regard to case when told to — on Postgres by
+            // emitting ILIKE — so lowering the column as well was a function
+            // call per row on top of that, and it put an expression where the
+            // column should be, which is the one shape an index cannot serve.
+            $branches[] = $DB->sql_like($column, ":{$key}", false);
         }
 
         return [' AND (' . implode(' OR ', $branches) . ')', $params];
