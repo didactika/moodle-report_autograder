@@ -1,0 +1,41 @@
+{{!
+    @template report_autograder/partials/summary
+
+    How a course or the whole site looks at a glance, above the table.
+
+    Context variables required for this template:
+    * total - How many rows the report has in all
+    * tiles - One per state, each a way into the table filtered by it
+
+    Example context (json):
+    {
+        "total": 42,
+        "tiles": [
+            {
+                "key": "pending",
+                "label": "Pending",
+                "count": 7,
+                "class": "autograder-badge autograder-badge-pending",
+                "url": "#",
+                "empty": false,
+                "attention": false
+            }
+        ]
+    }
+}}
+<div class="autograder-summary mb-3" aria-label="{{#str}}summary:heading, report_autograder{{/str}}">
+    <div class="autograder-summary-grid">
+        {{#tiles}}
+        <a href="{{url}}"
+           class="autograder-summary-tile card text-decoration-none {{#attention}}autograder-summary-tile-attention{{/attention}} {{#empty}}autograder-summary-tile-empty{{/empty}}">
+            <div class="card-body py-2 px-3">
+                <div class="autograder-summary-count h4 m-0">{{count}}</div>
+                <div class="autograder-summary-label small">
+                    <span class="{{class}}">{{label}}</span>
+                </div>
+            </div>
+        </a>
+        {{/tiles}}
+    </div>
+    <p class="small text-muted m-0">{{#str}}summary:total, report_autograder, {{total}}{{/str}}</p>
+</div>

@@ -18,18 +18,36 @@ const getTexts = () => {
 
   return {
     statusPlaceholder: form.data('status-placeholder') || 'Status...',
-    submissionDate: form.data('submission-label') || 'Submission date',
     gradingDate: form.data('grading-label') || 'Grading date',
     dpApply: form.data('dp-apply') || 'Apply',
     dpCancel: form.data('dp-cancel') || 'Clear',
     dpFrom: form.data('dp-from') || 'From',
     dpTo: form.data('dp-to') || 'To',
     dpCustom: form.data('dp-custom') || 'Custom',
-    dpWeek: form.data('dp-week') || 'Wk',
-    statusPending: form.data('status-pending-label') || 'Pending',
-    statusManual: form.data('status-manual-label') || 'Manual grading',
-    statusGraded: form.data('status-graded-label') || 'Graded'
+    dpWeek: form.data('dp-week') || 'Wk'
   };
+};
+
+/**
+ * The label of each status, read off the menu the server drew.
+ *
+ * Which statuses there are depends on the viewer — only somebody who may see
+ * failures is offered "Failed" — so the list cannot be fixed here.
+ *
+ * @returns {Object<string, string>}
+ */
+const getStatusLabels = () => {
+  const labels = {};
+
+  $('#autograder-status-multiselect .autograder-status-label').each(function () {
+    const input = $(this).closest('.dropdown-item').find('input[type="checkbox"]');
+
+    if (input.length) {
+      labels[input.val()] = $(this).text().trim();
+    }
+  });
+
+  return labels;
 };
 
 const triggerFilterSubmit = () => {
@@ -127,14 +145,15 @@ const initStatusMultiselect = (texts, statusLabels) => {
     wrapper.find('input[type="checkbox"]').prop('checked', false);
     syncStatusHidden();
     renderStatusSelection(texts, statusLabels);
+    toggle.trigger('focus');
     debounceSubmit(150);
   });
 
-  wrapper.find('.dropdown-item').off('click.autograder').on('click.autograder', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const checkbox = $(this).find('input[type="checkbox"]');
-    checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
+  wrapper.off('keydown.autograder').on('keydown.autograder', function (e) {
+    if (e.key === 'Escape') {
+      wrapper.removeClass('is-open');
+      toggle.attr('aria-expanded', 'false').trigger('focus');
+    }
   });
 
   wrapper.find('.autograder-status-menu').off('click.autograder').on('click.autograder', function (e) {
@@ -170,7 +189,7 @@ const renderDateChip = (fromValue, toValue, buttonId, clearBtnId, textSpanId, te
     return;
   }
 
-  textSpan.text(buttonId === 'submission-date-button' ? texts.submissionDate : texts.gradingDate);
+  textSpan.text(texts.gradingDate);
   clearBtn.addClass('d-none');
   arrowBtn.removeClass('d-none');
   btn.removeClass('autograder-filter-active autograder-chip-has-clear');
@@ -223,6 +242,7 @@ const initDateChipInteraction = (buttonId, clearBtnId, inputId, fromId, toId, te
       picker.setEndDate(today);
     }
     renderDateChip('', '', buttonId, clearBtnId, buttonId.replace('-button', '-text'), texts);
+    button.trigger('focus');
     triggerFilterSubmit();
   });
 };
@@ -231,22 +251,6 @@ const initTopFiltersAutoApply = () => {
   $('#autograder-quick-search-input').off('input.autograder').on('input.autograder', function () {
     syncSearchHidden();
     debounceSubmit(350);
-  });
-};
-
-const loadCss = (href) => {
-  return new Promise((resolve) => {
-    if (document.querySelector('link[href="' + href + '"]')) {
-      resolve();
-      return;
-    }
-
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = href;
-    link.onload = resolve;
-    link.onerror = resolve;
-    document.head.appendChild(link);
   });
 };
 
@@ -284,10 +288,25 @@ const loadScript = (src, forceGlobal) => {
   });
 };
 
+/**
+ * Loads the calendar and the date library it needs, from the copies that ship
+ * with this plugin. Their addresses come from the form, which the server built:
+ * nothing here reaches out to the internet.
+ *
+ * Both are loaded as plain scripts with AMD hidden, because each would
+ * otherwise register itself as an anonymous module and Moodle's loader only
+ * accepts named ones. Their stylesheet is asked for by the page itself.
+ *
+ * @returns {Promise}
+ */
 const ensureDateRangeAssets = () => {
-  const cssUrl = 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css';
-  const momentUrl = 'https://cdn.jsdelivr.net/npm/moment@2.30.1/min/moment-with-locales.min.js';
-  const pickerUrl = 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js';
+  const form = $('#autograder-filter-form');
+  const momentUrl = form.data('moment-url');
+  const pickerUrl = form.data('picker-url');
+
+  if (!momentUrl || !pickerUrl) {
+    return Promise.reject(new Error('The date filter has no libraries to load.'));
+  }
 
   if (!window.jQuery) {
     window.jQuery = $;
@@ -297,7 +316,7 @@ const ensureDateRangeAssets = () => {
     window.$ = $;
   }
 
-  return loadCss(cssUrl)
+  return Promise.resolve()
     .then(() => {
       if (typeof window.moment === 'undefined') {
         return loadScript(momentUrl, true);
@@ -398,7 +417,12 @@ const initRangePicker = (inputSelector, fromSelector, toSelector, buttonId, clea
   });
 };
 
-export const init = () => {
+/**
+ * @param {string} [presetStatus] A status the page was opened on, from a
+ *        summary tile. It has to be applied after the inputs are cleared,
+ *        or the clearing would throw it away.
+ */
+export const init = (presetStatus) => {
   const form = $('#autograder-filter-form');
   if (!form.length) {
     return;
@@ -406,11 +430,7 @@ export const init = () => {
 
   const texts = getTexts();
   const activeLang = parseLang();
-  const statusLabels = {
-    PENDING: texts.statusPending,
-    MANUAL_GRADING: texts.statusManual,
-    GRADED: texts.statusGraded
-  };
+  const statusLabels = getStatusLabels();
 
   // Clear all filter inputs on load — prevents browser form restoration from
   // showing stale values that won't be applied to the current data fetch.
@@ -418,6 +438,12 @@ export const init = () => {
   $('#status').val('');
   $('#autograder-status-multiselect input[type="checkbox"]').prop('checked', false);
   $('#autograder-quick-search-input, #searchname').val('');
+
+  if (presetStatus) {
+    $(`#autograder-status-multiselect input[type="checkbox"][value="${presetStatus}"]`)
+      .prop('checked', true);
+    $('#status').val(presetStatus);
+  }
 
   initStatusMultiselect(texts, statusLabels);
   initTopFiltersAutoApply();

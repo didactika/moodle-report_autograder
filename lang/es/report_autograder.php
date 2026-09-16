@@ -15,93 +15,80 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Lang strings
+ * Spanish language strings.
  *
- * @package    report
- * @subpackage autograder
- * @copyright  2026 Acción Docente SDR <ct.accion.docente@funiber.org>
- * @author     Hector Arrechea <hector.arrechea@uneatlantico.es>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     report_autograder
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Calificación automática'; //TODO: preguntar cómo debia se
-$string['header:student'] = 'Nombre / Apellido(s)';
-$string['header:delivery_date'] = 'Fecha de entrega';
-$string['header:modification_date'] = 'Última modificación (calificación)';
-$string['header:grade_date'] = 'Fecha a calificar';
-$string['header:grade'] = 'Calificación';
-$string['header:status'] = 'Estado';
-$string['header:external_status'] = 'Estado';
-$string['header:completed_at'] = 'Fecha de calificación';
-$string['status:pending'] = 'Pendiente de calificar';
-$string['status:awaiting_confirmation_of_rating'] = 'Pendiente de calificar';
-$string['status:ready_to_grade'] = 'Pendiente de calificar';
-$string['status:retry'] = 'Pendiente de calificar';
-$string['status:graded'] = 'Calificado automaticamente';
-$string['status:failed'] = 'Pendiente de calificar';
-$string['status:failed_notified'] = 'Fallo notificado al administrador';
-$string['status:skipped'] = 'Pendiente de calificar';
-$string['status:manual_grading'] = 'Calificado manualmente';
-$string['status:pending_delivery'] = 'Pendiente de entrega';
-$string['feedback:nothing_to_show'] = 'No se encontraron registros';
-$string['placeholder:automatic_grade'] = 'Calificación automática';
-$string['navigation:go_back'] = 'Volver';
-$string['navigation:location'] = 'Informe de Calificaciones Automáticas';
-$string['error:apirequest'] = 'Error al comunicarse con el servicio externo: {$a}';
-$string['error:grade_required'] = 'La calificación es obligatoria';
-$string['action:grade'] = 'Calificar';
-$string['setting:site_external_id'] = 'ID externo del sitio';
-$string['setting:site_externalid_desc'] = 'El identificador externo para este sitio Moodle utilizado por el servicio de calificación automática';
-$string['setting:url_field_name'] = 'URL del servicio externo';
-$string['setting:url_field_desc'] = 'URL del servicio externo al que se pedirán los datos de calificación';
-$string['error:missing_config'] = 'Falta la configuración de {$a}. Por favor, contacte al administrador.';
-$string['error:building_report_data'] = 'Error al generar los datos del informe. Por favor, contacte al administrador.';
-$string['feedback:no_status'] = 'Sin estado';
-$string['setting:pagination_limit_name'] = 'Límite de paginación';
-$string['setting:pagination_limit_desc'] = 'Número de elementos a mostrar por página en el informe del Auto Calificador.';
-$string['autograder:view'] = 'Ver informe del Auto Calificador';
-$string['filter_all'] = 'Todos';
-$string['manual_grading'] = 'Calificación manual'; // TODO: ESTO YA NO EXISTIRA
-$string['manual_grading_send'] = 'Enviar calificación';
-$string['success:gradeupdated'] = '¡Calificación actualizada correctamente!';
-$string['error:updatefailed'] = 'Error al actualizar la calificación:';
-$string['error:invalidgrade'] = 'Ingrese una calificación numérica válida.';
-$string['error:gradetoolarge'] = 'La calificación no puede ser mayor que {$a->maxgrade}.';
-$string['error:negativegrade'] = 'La calificación no puede ser negativa.';
-$string['filter_button'] = 'Filtrar';
-$string['filter_submission_date'] = 'Fecha de entrega';
-$string['filter_grading_date'] = 'Fecha de calificación';
-$string['filter_datefrom'] = 'Fecha de entrega desde';
-$string['filter_dateto'] = 'Fecha calificada desde';
-$string['filter_grade'] = 'Calificación desde';
-$string['filter_grade_placeholder'] = 'Ingrese la calificación';
-$string['filter_status'] = 'Estado';
-$string['filter_status_placeholder'] = 'Estado...';
-$string['filter_status_pending'] = 'Pendiente';
-$string['filter_status_manual_grading'] = 'Calificación manual';
-$string['filter_status_graded'] = 'Calificado';
-$string['pagination:results_per_page'] = 'Resultados por página';
-$string['pagination:all_results'] = 'Todos';
-$string['pagination:of'] = 'de';
-$string['pagination:previous'] = 'Página anterior';
-$string['pagination:next'] = 'Página siguiente';
-$string['filter_clear'] = 'Limpiar filtros';
-$string['filter_search'] = 'Buscar';
+$string['autograder:view'] = 'Ver el informe de autograder de una actividad';
+$string['autograder:viewcourse'] = 'Ver el informe de autograder de un curso entero';
+$string['autograder:viewfailed'] = 'Ver qué autocalificaciones fallaron, y por qué';
+$string['autograder:viewsite'] = 'Ver el informe de autograder de todo el sitio';
 $string['datepicker_apply'] = 'Aplicar';
 $string['datepicker_cancel'] = 'Limpiar';
+$string['datepicker_custom'] = 'Personalizado';
 $string['datepicker_from'] = 'Desde';
 $string['datepicker_to'] = 'Hasta';
-$string['datepicker_custom'] = 'Personalizado';
-$string['datepicker_week'] = 'Sm';
-$string['filter_active'] = 'Filtros activos:';
-$string['filter_active_searchname'] = 'Nombre: {$a}';
-$string['filter_active_datefrom'] = 'Desde: {$a}';
-$string['filter_active_dateto'] = 'Desde: {$a}';
-$string['filter_active_grade'] = 'Calificación: {$a}';
-$string['filter_active_status'] = 'Estado: {$a}';
-$string['gradeuser'] = 'Calificar usuario';
-$string['sortby_name'] = 'Ordenar por nombre del estudiante';
-$string['sortby_date'] = 'Ordenar por fecha de calificación';
-$string['grade_provisional_help'] = 'La calificación indicada es provisional y no se guardará hasta la fecha indicada en la columna \'Fecha de calificación\'.';
+$string['datepicker_week'] = 'Sem';
+$string['error:apirequest'] = 'No se ha podido cargar el informe: {$a}';
+$string['failure:grade_write_failed'] = 'Moodle rechazó la nota que autograder intentó poner.';
+$string['failure:no_grader'] = 'Ningún profesor del curso podía ser elegido para calificar en su nombre.';
+$string['feedback:nothing_to_show'] = 'No se han encontrado registros';
+$string['filter_activity'] = 'Actividad';
+$string['filter_activity_placeholder'] = 'Todas las actividades';
+$string['filter_course'] = 'Curso';
+$string['filter_course_placeholder'] = 'Todos los cursos';
+$string['filter_grading_date'] = 'Fecha de calificación';
+$string['filter_group'] = 'Grupo';
+$string['filter_group_placeholder'] = 'Todos los grupos';
+$string['filter_search'] = 'Buscar';
+$string['filter_status_placeholder'] = 'Estado...';
+$string['grade_provisional_help'] = 'La nota indicada es provisional y no se guardará hasta la fecha que muestra la columna \'Fecha de calificación\'.';
+$string['gradedby_prospective'] = 'Se calificará en nombre de';
+$string['gradedby_prospective_help'] = 'Autograder pondrá esta nota en nombre de este profesor. El profesor se elige en el momento de calificar, así que esto aún puede cambiar: si deja el curso o el grupo, se elegirá a otro.';
+$string['gradeuser'] = 'Calificar al estudiante';
+$string['header:activity'] = 'Actividad';
+$string['header:completed_at'] = 'Fecha de calificación';
+$string['header:course'] = 'Curso';
+$string['header:external_status'] = 'Estado';
+$string['header:grade'] = 'Nota';
+$string['header:gradedby'] = 'Calificado como';
+$string['header:groups'] = 'Grupos';
+$string['header:student'] = 'Nombre';
+$string['heading:activity'] = 'Autograder: {$a}';
+$string['heading:course'] = 'Autograder: {$a}';
+$string['heading:site'] = 'Autograder en todo el sitio';
 $string['helper'] = 'Nota provisional';
+$string['pagination:all_results'] = 'Todos';
+$string['pagination:next'] = 'Página siguiente';
+$string['pagination:of'] = 'de';
+$string['pagination:previous'] = 'Página anterior';
+$string['pagination:results_per_page'] = 'Resultados por página';
+$string['pluginname'] = 'Informe de autograder';
+$string['privacy:metadata'] = 'El informe de autograder muestra lo que registró local_autograder y lo que ya está en el libro de calificaciones. No guarda nada propio.';
+$string['provisional:advancedstale'] = 'La rúbrica o guía de evaluación cambió después de indicarle a autograder qué marcar, así que no hay nota que prometer. Abre las opciones de autograder de la actividad y vuelve a elegir los niveles.';
+$string['provisional:noscale'] = 'Esta actividad ya no usa una escala.';
+$string['provisional:scalemismatch'] = 'El elemento que pondría autograder no pertenece a la escala que usa ahora la actividad.';
+$string['provisional:unknown'] = 'Autograder no puede calificar esta actividad tal y como está configurada.';
+$string['provisional:unset'] = 'No se ha fijado ninguna nota para que autograder la ponga.';
+$string['reason:completion'] = 'Se cuenta desde que el estudiante finalizó la actividad.';
+$string['reason:duedate'] = 'Se cuenta desde la fecha de cierre de la actividad.';
+$string['reason:groupoverride'] = 'Se cuenta desde la fecha de cierre que le concede a este estudiante una excepción de grupo.';
+$string['reason:submission'] = 'Se cuenta desde que el estudiante entregó.';
+$string['reason:useroverride'] = 'Se cuenta desde la fecha de cierre que le concede a este estudiante una excepción.';
+$string['sortby_date'] = 'Ordenar por fecha de calificación';
+$string['sortby_name'] = 'Ordenar por nombre del estudiante';
+$string['status:failed'] = 'Fallido';
+$string['status:graded'] = 'Autocalificado';
+$string['status:manual'] = 'Por un profesor';
+$string['status:notautograded'] = 'Sin autocalificar';
+$string['status:notengaged'] = 'Sin entregar';
+$string['status:pending'] = 'Pendiente';
+$string['summary:heading'] = 'De un vistazo';
+$string['summary:total'] = '{$a} estudiante(s) en las actividades autocalificadas que se muestran.';
+$string['willgrade:nobody'] = 'Ningún profesor de esta actividad puede ser el calificador, así que esta nota no se podrá poner. Revisa quién tiene el permiso para que se califique en su nombre y si comparte grupo con el estudiante.';

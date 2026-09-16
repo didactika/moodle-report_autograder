@@ -18,20 +18,22 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     report_autograder
- * @copyright   2026 Acción Docente SDR <ct.accion.docente@funiber.org>
- * @author      Eduardo Cubias <eduardo.cubias@ct.uneatlantico.es>
- * @author      Hector Arrechea <hector.arrechea@uneatlantico.es>
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'report_autograder';
-$plugin->release = '2.0.1';
-$plugin->version = 2026060200;
-$plugin->requires = 2020061500;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->supported = [401, 405];
+$plugin->release = '3.0.0';
+$plugin->version = 2026091302;
+$plugin->requires = 2023042400; // Moodle 4.2, floor for the oldest branch in $supported.
+$plugin->maturity = MATURITY_ALPHA;
+$plugin->supported = [405, 502];
+
+// Everything this report shows comes out of local_autograder's own tables, so
+// it cannot work without it. The floor is the v3 release that created them.
 $plugin->dependencies = [
-    'local_autograder' => 2025111103,
+    'local_autograder' => 2026091105,
 ];

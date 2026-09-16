@@ -1,36 +1,17 @@
 <div class="autograder-pagination autograder-pagination-container d-flex flex-wrap justify-content-between align-items-center">
     <div class="autograder-pagination-page-selector d-flex align-items-center mb-2 mb-md-0">
-        <span class="mr-2 autograder-per-page-label">{{#str}}pagination:results_per_page, report_autograder{{/str}}</span>
-        <div class="dropdown autograder-per-page-dropdown" id="autograder-per-page-dropdown">
-            <button type="button"
-                class="dropdown-button badge rounded-pill bg-light border-0 d-flex align-items-center p-2 autograder-per-page-toggle"
-                aria-haspopup="true" aria-expanded="false">
-                <span class="autograder-per-page-value">
-                    {{#current_is_all}}
-                        {{#all_results_label}}{{{.}}}{{/all_results_label}}
-                        {{^all_results_label}}{{#str}}pagination:all_results, report_autograder{{/str}}{{/all_results_label}}
-                    {{/current_is_all}}
-                    {{^current_is_all}}{{current_numeric}}{{/current_is_all}}
-                </span>
-                <span class="ml-2" aria-hidden="true">
-                    <i class="fa fa-chevron-down autograder-per-page-chevron"></i>
-                </span>
-            </button>
-            <ul class="autograder-per-page-menu dropdown-menu shadow" aria-labelledby="autograder-per-page-dropdown">
-                {{#peroptions}}
-                <li class="list-item">
-                    <button type="button" class="dropdown-item autograder-per-page-item{{#selected}} autograder-filter-active{{/selected}}"
-                        data-limit="{{value}}">
-                        {{#is_all}}
-                            {{#all_results_label}}{{{.}}}{{/all_results_label}}
-                            {{^all_results_label}}{{#str}}pagination:all_results, report_autograder{{/str}}{{/all_results_label}}
-                        {{/is_all}}
-                        {{^is_all}}{{value}}{{/is_all}}
-                    </button>
-                </li>
-                {{/peroptions}}
-            </ul>
-        </div>
+        <label for="autograder-per-page" class="mb-0 autograder-per-page-label">{{#str}}pagination:results_per_page, report_autograder{{/str}}</label>
+        <select id="autograder-per-page" class="form-control autograder-per-page-select">
+            {{#peroptions}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>
+                {{#is_all}}
+                    {{#all_results_label}}{{.}}{{/all_results_label}}
+                    {{^all_results_label}}{{#str}}pagination:all_results, report_autograder{{/str}}{{/all_results_label}}
+                {{/is_all}}
+                {{^is_all}}{{value}}{{/is_all}}
+            </option>
+            {{/peroptions}}
+        </select>
     </div>
 
     <div class="autograder-change-page-buttons d-flex flex-wrap align-items-center justify-content-md-end">

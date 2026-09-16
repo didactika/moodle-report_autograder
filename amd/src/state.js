@@ -1,18 +1,21 @@
 import { BASE_ITEMS_PER_PAGE } from "./ui/pagination";
 
-let currentCmid = null;
+/**
+ * What the page is looking at and what it has been asked to show.
+ *
+ * There is no longer a cache of "every row for these filters": the server now
+ * returns one page at a time, because the site-wide report cannot send every
+ * row to the browser and let it do the slicing.
+ */
+
+/** @type {{cmid?: number, courseid?: number}} Which report this is. */
+let scope = {};
 let currentPage = 0;
 let recordsPerPage = BASE_ITEMS_PER_PAGE;
 let requestedLimit = BASE_ITEMS_PER_PAGE;
-let maxGrade = null;
 let currentFilters = [];
 
-/** @type {Array|null} Full enriched rows for the current filter set (this page load only). */
-let clientCachedFullRows = null;
-/** @type {string|null} Fingerprint of {@link currentFilters} when the cache was filled. */
-let clientCacheFiltersFingerprint = null;
-
-/** @type {'user_name'|'completed_at_sort'|null} Active sort column; null = API order. */
+/** @type {'user_name'|'completed_at_sort'|null} Active sort column; null = default order. */
 let sortColumn = null;
 /** @type {'asc'|'desc'} */
 let sortDirection = 'asc';
@@ -35,17 +38,19 @@ export const resetSort = () => {
     sortDirection = 'asc';
 };
 
-export const init = (cmid) => {
-    currentCmid = cmid;
+/**
+ * @param {{cmid?: number, courseid?: number}} scopeParams Empty for the site report.
+ */
+export const init = (scopeParams) => {
+    scope = scopeParams || {};
     currentPage = 0;
+    currentFilters = [];
+    recordsPerPage = BASE_ITEMS_PER_PAGE;
+    requestedLimit = BASE_ITEMS_PER_PAGE;
     resetSort();
 };
 
-export const setCmid = (cmid) => {
-    currentCmid = cmid;
-};
-
-export const getCmid = () => currentCmid;
+export const getScope = () => scope;
 
 export const setCurrentPage = (page) => {
     currentPage = page;
@@ -65,77 +70,8 @@ export const setRequestedLimit = (limit) => {
 
 export const getRequestedLimit = () => requestedLimit;
 
-export const setMaxGrade = (grade) => {
-    maxGrade = grade;
-};
-
-export const getMaxGrade = () => maxGrade;
-
 export const setFilters = (filters) => {
-    currentFilters = filters;
+    currentFilters = filters || [];
 };
 
 export const getFilters = () => currentFilters;
-
-/**
- * Stable string for comparing filter sets (pagination / per-page must not be part of this).
- *
- * @param {Array} filters
- * @returns {string}
- */
-export const getFiltersFingerprint = (filters) => {
-    if (!filters || !filters.length) {
-        return "[]";
-    }
-    const normalized = filters
-        .map((f) => ({
-            name: String(f.name || ""),
-            value: String(f.value ?? ""),
-        }))
-        .sort((a, b) => a.name.localeCompare(b.name) || a.value.localeCompare(b.value));
-    return JSON.stringify(normalized);
-};
-
-/**
- * Cache key for the report payload: filters + server-side sort (must match webservice args).
- *
- * @param {Array} filters
- * @returns {string}
- */
-export const getReportCacheFingerprint = (filters) => {
-    const base = getFiltersFingerprint(filters);
-    const sc = sortColumn ?? "";
-    const sd = sortDirection ?? "asc";
-    return `${base}::sort:${sc}:${sd}`;
-};
-
-/**
- * Drops the in-memory report rows (e.g. after filter change; full reload clears JS anyway).
- */
-export const clearClientReportCache = () => {
-    clientCachedFullRows = null;
-    clientCacheFiltersFingerprint = null;
-};
-
-/**
- * @param {Array} rows Full enriched rows from the last webservice response.
- * @param {string} fingerprint From {@link getReportCacheFingerprint}.
- */
-export const setClientReportCache = (rows, fingerprint) => {
-    clientCachedFullRows = Array.isArray(rows) ? rows : [];
-    clientCacheFiltersFingerprint = fingerprint;
-};
-
-/**
- * @param {string} fingerprint
- * @returns {Array|null}
- */
-export const getClientReportCache = (fingerprint) => {
-    if (
-        clientCachedFullRows !== null &&
-        clientCacheFiltersFingerprint === fingerprint
-    ) {
-        return clientCachedFullRows;
-    }
-    return null;
-};

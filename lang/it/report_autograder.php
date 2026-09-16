@@ -15,92 +15,80 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Lang strings
+ * Italian language strings.
  *
- * @package    report
- * @subpackage autograder
- * @copyright  2026 Acción Docente SDR <ct.accion.docente@funiber.org>
- * @author     Hector Arrechea <hector.arrechea@uneatlantico.es>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     report_autograder
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Rapporto dell’Auto Valutatore';
-$string['header:student'] = 'Nome';
-$string['header:delivery_date'] = 'Data di consegna';
-$string['header:modification_date'] = 'Ultima modifica (valutazione)';
-$string['header:grade_date'] = 'Data da valutare';
-$string['header:grade'] = 'Voto';
-$string['header:status'] = 'Stato';
-$string['header:external_status'] = 'Stato';
-$string['header:completed_at'] = 'Data di valutazione';
-$string['status:pending'] = 'In sospeso';
-$string['status:awaiting_confirmation_of_rating'] = 'In attesa che la valutazione venga elaborata';
-$string['status:ready_to_grade'] = 'Pronto per la valutazione';
-$string['status:retry'] = 'Riprova in corso';
-$string['status:graded'] = 'Valutato';
-$string['status:failed'] = 'Fallito';
-$string['status:failed_notified'] = 'Fallimento notificato all\'amministratore';
-$string['status:skipped'] = 'Saltato';
-$string['status:manual_grading'] = 'Valutazione manuale';
+$string['autograder:view'] = 'Visualizzare il report di autograder di un\'attività';
+$string['autograder:viewcourse'] = 'Visualizzare il report di autograder di un intero corso';
+$string['autograder:viewfailed'] = 'Vedere quali valutazioni automatiche non sono riuscite, e perché';
+$string['autograder:viewsite'] = 'Visualizzare il report di autograder dell\'intero sito';
+$string['datepicker_apply'] = 'Applica';
+$string['datepicker_cancel'] = 'Cancella';
+$string['datepicker_custom'] = 'Personalizzato';
+$string['datepicker_from'] = 'Dal';
+$string['datepicker_to'] = 'Al';
+$string['datepicker_week'] = 'Sett';
+$string['error:apirequest'] = 'Non è stato possibile caricare il report: {$a}';
+$string['failure:grade_write_failed'] = 'Moodle ha rifiutato il voto che autograder ha tentato di inserire.';
+$string['failure:no_grader'] = 'Nessun docente del corso poteva essere scelto per valutare a suo nome.';
 $string['feedback:nothing_to_show'] = 'Nessun record trovato';
-$string['placeholder:automatic_grade'] = 'Voto automatico';
-$string['navigation:go_back'] = 'Indietro';
-$string['navigation:location'] = 'Rapporto dei voti automatici';
-$string['error:grade_required'] = 'Il voto è obbligatorio';
-$string['action:grade'] = 'Valuta';
-$string['setting:site_external_id'] = 'ID esterno del sito';
-$string['setting:site_externalid_desc'] = "L'identificatore esterno per questo sito Moodle utilizzato dal servizio di valutazione automatica";
-$string['setting:url_field_name'] = 'URL del servizio esterno';
-$string['setting:url_field_desc'] = "URL del servizio esterno da cui verranno richiesti i dati dei voti";
-$string['error:apirequest'] = 'Errore nella comunicazione con il servizio esterno: {$a}';
-$string['error:missing_config'] = 'La configurazione per {$a} è mancante. Contattare l’amministratore.';
-$string['error:building_report_data'] = 'Errore nella generazione del rapporto. Contattare l’amministratore.';
-$string['feedback:no_status'] = 'Nessuno stato';
-$string['setting:pagination_limit_name'] = 'Limite di paginazione';
-$string['setting:pagination_limit_desc'] = 'Numero di elementi da visualizzare per pagina nel rapporto dell’Auto Valutatore.';
-$string['autograder:view'] = 'Visualizza rapporto dell’Auto Valutatore';
-$string['filter_all'] = 'Tutti';
-$string['manual_grading'] = 'Valutazione manuale';
-$string['manual_grading_send'] = 'Invia voto';
-$string['success:gradeupdated'] = 'Voto aggiornato con successo!';
-$string['error:updatefailed'] = 'Impossibile aggiornare il voto:';
-$string['error:invalidgrade'] = 'Inserisci un voto numerico valido.';
-$string['error:gradetoolarge'] = 'Il voto non può essere superiore a {$a->maxgrade}.';
-$string['error:negativegrade'] = 'Il voto non può essere negativo.';
-$string['filter_button'] = 'Filtra';
-$string['filter_submission_date'] = 'Data di consegna';
+$string['filter_activity'] = 'Attività';
+$string['filter_activity_placeholder'] = 'Tutte le attività';
+$string['filter_course'] = 'Corso';
+$string['filter_course_placeholder'] = 'Tutti i corsi';
 $string['filter_grading_date'] = 'Data di valutazione';
-$string['filter_datefrom'] = 'Data di consegna da';
-$string['filter_dateto'] = 'Data valutata da';
-$string['filter_grade'] = 'Voto da';
-$string['filter_grade_placeholder'] = 'Inserisci il voto';
-$string['filter_status'] = 'Stato';
+$string['filter_group'] = 'Gruppo';
+$string['filter_group_placeholder'] = 'Tutti i gruppi';
+$string['filter_search'] = 'Cerca';
 $string['filter_status_placeholder'] = 'Stato...';
-$string['filter_status_pending'] = 'In attesa';
-$string['filter_status_manual_grading'] = 'Valutazione manuale';
-$string['filter_status_graded'] = 'Valutato';
-$string['pagination:results_per_page'] = 'Risultati per pagina';
+$string['grade_provisional_help'] = 'Il voto indicato è provvisorio e non sarà salvato fino alla data riportata nella colonna \'Data di valutazione\'.';
+$string['gradedby_prospective'] = 'Sarà valutato a nome di';
+$string['gradedby_prospective_help'] = 'Autograder assegnerà questo voto a nome di questo docente. Il docente viene scelto al momento della valutazione, quindi questo può ancora cambiare: se lascia il corso o il gruppo, verrà scelto un altro.';
+$string['gradeuser'] = 'Valuta lo studente';
+$string['header:activity'] = 'Attività';
+$string['header:completed_at'] = 'Data di valutazione';
+$string['header:course'] = 'Corso';
+$string['header:external_status'] = 'Stato';
+$string['header:grade'] = 'Voto';
+$string['header:gradedby'] = 'Valutato come';
+$string['header:groups'] = 'Gruppi';
+$string['header:student'] = 'Nome';
+$string['heading:activity'] = 'Autograder: {$a}';
+$string['heading:course'] = 'Autograder: {$a}';
+$string['heading:site'] = 'Autograder nell\'intero sito';
+$string['helper'] = 'Voto provvisorio';
 $string['pagination:all_results'] = 'Tutti';
+$string['pagination:next'] = 'Pagina successiva';
 $string['pagination:of'] = 'di';
 $string['pagination:previous'] = 'Pagina precedente';
-$string['pagination:next'] = 'Pagina successiva';
-$string['filter_clear'] = 'Cancella filtri';
-$string['filter_search'] = 'Cerca';
-$string['datepicker_apply'] = 'Applica';
-$string['datepicker_cancel'] = 'Pulisci';
-$string['datepicker_from'] = 'Da';
-$string['datepicker_to'] = 'A';
-$string['datepicker_custom'] = 'Personalizzato';
-$string['datepicker_week'] = 'Sett';
-$string['filter_active'] = 'Filtri attivi:';
-$string['filter_active_searchname'] = 'Nome: {$a}';
-$string['filter_active_datefrom'] = 'Da: {$a}';
-$string['filter_active_dateto'] = 'Da: {$a}';
-$string['filter_active_grade'] = 'Voto: {$a}';
-$string['filter_active_status'] = 'Stato: {$a}';
-$string['gradeuser'] = 'Valuta utente';
-$string['sortby_name'] = 'Ordina per nome studente';
+$string['pagination:results_per_page'] = 'Risultati per pagina';
+$string['pluginname'] = 'Report di autograder';
+$string['privacy:metadata'] = 'Il report di autograder mostra ciò che local_autograder ha registrato e ciò che è già nel registro valutatore. Non memorizza nulla di proprio.';
+$string['provisional:advancedstale'] = 'La rubric o la griglia di valutazione è cambiata dopo aver indicato ad autograder cosa contrassegnare, quindi non c\'è alcun voto da promettere. Apri le impostazioni autograder dell\'attività e scegli di nuovo i livelli.';
+$string['provisional:noscale'] = 'Questa attività non usa più una scala.';
+$string['provisional:scalemismatch'] = 'La voce che autograder assegnerebbe non appartiene alla scala che l\'attività usa adesso.';
+$string['provisional:unknown'] = 'Autograder non può valutare questa attività così com\'è configurata.';
+$string['provisional:unset'] = 'Non è stato impostato alcun voto da assegnare.';
+$string['reason:completion'] = 'Conteggiato da quando lo studente ha completato l\'attività.';
+$string['reason:duedate'] = 'Conteggiato dalla data di chiusura dell\'attività.';
+$string['reason:groupoverride'] = 'Conteggiato dalla data di chiusura che una deroga di gruppo concede a questo studente.';
+$string['reason:submission'] = 'Conteggiato da quando lo studente ha consegnato.';
+$string['reason:useroverride'] = 'Conteggiato dalla data di chiusura che una deroga concede a questo studente.';
 $string['sortby_date'] = 'Ordina per data di valutazione';
-$string['grade_provisional_help'] = 'Il voto indicato è provvisorio e non verrà salvato fino alla data indicata nella colonna \'Data di valutazione\'.';
-$string['helper'] = 'Voto provvisorio';
+$string['sortby_name'] = 'Ordina per nome dello studente';
+$string['status:failed'] = 'Fallito';
+$string['status:graded'] = 'Auto-valutato';
+$string['status:manual'] = 'Da un docente';
+$string['status:notautograded'] = 'Non auto-valutato';
+$string['status:notengaged'] = 'Non consegnato';
+$string['status:pending'] = 'In attesa';
+$string['summary:heading'] = 'A colpo d\'occhio';
+$string['summary:total'] = '{$a} studente/i nelle attività a valutazione automatica mostrate.';
+$string['willgrade:nobody'] = 'Nessun docente di questa attività può essere il valutatore, quindi questo voto non potrà essere assegnato. Controlla chi ha la capacità di essere valutato a suo nome e se condivide un gruppo con lo studente.';

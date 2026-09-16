@@ -1,68 +1,126 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Index.php.
+ * The autograder report, at whichever level it was asked for.
+ *
+ * `cmid` gives one activity, `courseid` a whole course, and neither the whole
+ * site. One page rather than three, because they are the same table with a
+ * different reach.
  *
  * @package     report_autograder
- * @copyright   2026 Acción Docente SDR <ct.accion.docente@funiber.org>
- * @author      Eduardo Cubias <eduardo.cubias@ct.uneatlantico.es>
- * @author      Hector Arrechea <hector.arrechea@uneatlantico.es>
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use report_autograder\local\grader_ui;
+require_once(__DIR__ . '/../../config.php');
+// The admin_externalpage_setup() call below lives in adminlib, and a page
+// under /report/ does not get that file loaded for it.
+require_once($CFG->libdir . '/adminlib.php');
 
-require_once('../../config.php');
+use report_autograder\local\page\grader_ui;
+use report_autograder\local\page\page_context;
+use report_autograder\local\query\scope;
+use report_autograder\local\format\status;
+use report_autograder\local\page\summary;
 
-// We need to output the header first, so we can see error messages.
-try {
-    defined('MOODLE_INTERNAL') || die();
-    global $PAGE, $OUTPUT, $USER;
+$cmid = optional_param('cmid', 0, PARAM_INT);
+$courseid = optional_param('courseid', 0, PARAM_INT);
 
-    $cmid = required_param('cmid', PARAM_INT);
+$scope = scope::from_params($cmid, $courseid);
 
-    list($course, $cm) = get_course_and_cm_from_cmid($cmid);
-    if (!$course || !$cm) {
-        throw new \moodle_exception('invalidcourseorcm');
-    }
+switch ($scope->level()) {
+    case scope::LEVEL_ACTIVITY:
+        require_login($scope->course(), false, $scope->cm());
+        break;
 
-    require_login($course, true, $cm);
-    $context = \context_module::instance($cm->id);
-    require_capability('report/autograder:view', $context);
+    case scope::LEVEL_COURSE:
+        require_login($scope->course());
+        break;
 
-    $PAGE->set_url('/report/autograder/index.php', ['cmid' => $cmid]);
-    $PAGE->set_pagelayout('report');
-    $PAGE->set_title(get_string('pluginname', 'report_autograder'));
-    $PAGE->set_heading(get_string('pluginname', 'report_autograder'));
-    $PAGE->set_context($context);
-
-    $filtertemplatecontext = [
-        'filter_action_url' => (new \moodle_url('/report/autograder/index.php', ['cmid' => $cmid]))->out(false),
-        'filters' => [],
-    ];
-
-    // Forum grader context: per-row "Grade user" buttons + registerLaunchListeners.
-    $forumgradecontext = grader_ui::get_forum_grade_context($course, $cm, $USER);
-
-    echo $OUTPUT->header();
-
-    echo $OUTPUT->render_from_template('report_autograder/partials/filters', $filtertemplatecontext);
-    $reporttablecontext = ['skeletonRows' => array_fill(0, 4, [])];
-    if ($forumgradecontext !== null) {
-        $reporttablecontext['forum_grade'] = $forumgradecontext;
-    }
-    echo $OUTPUT->render_from_template('report_autograder/report_table', $reporttablecontext);
-    $PAGE->requires->js_call_amd('report_autograder/main', 'init', [$cmid]);
-    if ($forumgradecontext !== null) {
-        $PAGE->requires->js_call_amd('mod_forum/grades/grader', 'registerLaunchListeners');
-    }
-
-    echo $OUTPUT->footer();
-} catch (\Exception $e) {
-    // If an exception was thrown, we display it here.
-    // This is to help debug issues like missing cmid, permissions, etc.
-    echo $OUTPUT->header();
-    echo $OUTPUT->notification('A critical error occurred: ' . $e->getMessage() . '<br><pre>' . $e->getTraceAsString() . '</pre>', 'error');
-    echo $OUTPUT->footer();
-    die();
+    default:
+        require_login();
+        admin_externalpage_setup('reportautograder');
+        break;
 }
+
+$PAGE->set_context($scope->context());
+$PAGE->set_url($scope->url());
+
+// This report's stylesheet hangs off this class rather than off the page id:
+// the site-level report goes through admin_externalpage_setup(), which
+// prefixes the page type with "admin-", so the id differs between the three
+// levels and scoping by it would leave one of them unstyled.
+$PAGE->add_body_class('report-autograder-page');
+$PAGE->set_title(get_string('pluginname', 'report_autograder'));
+$PAGE->set_heading($scope->heading());
+
+if ($scope->level() !== scope::LEVEL_SITE) {
+    $PAGE->set_pagelayout('report');
+}
+
+$scope->require_capability();
+
+// The date filter's calendar, from the copy that ships with this plugin. Asked
+// for here rather than injected by the module that uses it, because a
+// stylesheet has to be in the page before the header goes out.
+$PAGE->requires->css(new moodle_url('/report/autograder/lib/daterangepicker/daterangepicker.css'));
+
+// The forum grader is launched from the activity's own report, where the page
+// has been set up to carry its data attributes.
+$forumgrade = null;
+
+if ($scope->level() === scope::LEVEL_ACTIVITY) {
+    $forumgrade = grader_ui::get_forum_grade_context($scope->course(), $scope->cm(), $USER);
+}
+
+echo $OUTPUT->header();
+
+$summary = summary::for_scope($scope);
+
+if ($summary['show']) {
+    echo $OUTPUT->render_from_template('report_autograder/partials/summary', $summary);
+}
+
+echo $OUTPUT->render_from_template(
+    'report_autograder/partials/filters',
+    page_context::filters($scope)
+);
+echo $OUTPUT->render_from_template(
+    'report_autograder/report_table',
+    page_context::table($scope, $forumgrade)
+);
+
+// A summary tile links straight into the table filtered by its own state, so
+// the page has to arrive already showing that rather than everything.
+$presetstatus = optional_param('status', '', PARAM_ALPHANUMEXT);
+
+if (!in_array($presetstatus, status::filterable($scope->can_see_failures()), true)) {
+    $presetstatus = '';
+}
+
+$PAGE->requires->js_call_amd(
+    'report_autograder/main',
+    'init',
+    [$scope->url_params(), $presetstatus]
+);
+
+if ($forumgrade !== null) {
+    $PAGE->requires->js_call_amd('mod_forum/grades/grader', 'registerLaunchListeners');
+}
+
+echo $OUTPUT->footer();

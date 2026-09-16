@@ -15,30 +15,73 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * @param $navigation
- * @param $cm
+ * How this report is reached.
  *
- * @return void
- * @throws coding_exception
- * @throws dml_exception
- * @throws moodle_exception
+ * @package     report_autograder
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function report_autograder_extend_navigation_module($navigation, $cm)
-{
-    global $PAGE, $DB;
 
-    // First, check if the module is one of the supported types.
-    $supported_modules = ['assign', 'quiz', 'forum'];
-    if (!in_array($cm->modname, $supported_modules)) {
+use local_autograder\local\config\config_repository;
+
+/**
+ * Adds the report to an activity's own menu, where autograder is on for it.
+ *
+ * @param navigation_node $navigation
+ * @param cm_info $cm
+ */
+function report_autograder_extend_navigation_module(navigation_node $navigation, cm_info $cm): void {
+    $context = context_module::instance($cm->id);
+
+    if (!has_capability('report/autograder:view', $context)) {
         return;
     }
 
-    if (!\get_config('local_autograder', 'enable')) return; // get_config() is a critical global function, good to be explicit.
+    $config = config_repository::get_for_cm((int) $cm->id);
 
-    $is_autograded = $DB->get_record('local_autograder', ['cmid' => $cm->id])->enable ?? false;
-    if ($is_autograded && \has_capability('gradereport/grader:view', $PAGE->context)) {
-        $url = new \moodle_url('/report/autograder/index.php', ['cmid' => $cm->id]);
-        $navigation->add(get_string('pluginname', 'report_autograder'), $url, \navigation_node::TYPE_SETTING, null, null, new \pix_icon('i/report', ''));
+    if (!$config || empty($config->enabled)) {
+        // Autograder is not doing anything here, so there is nothing to report.
+        return;
     }
+
+    $navigation->add(
+        get_string('pluginname', 'report_autograder'),
+        new moodle_url('/report/autograder/index.php', ['cmid' => $cm->id]),
+        navigation_node::TYPE_SETTING,
+        null,
+        'reportautograder',
+        new pix_icon('i/report', '')
+    );
 }
 
+/**
+ * Adds the report to a course's reports menu, where autograder is on for any
+ * of its activities.
+ *
+ * @param navigation_node $navigation
+ * @param stdClass $course
+ * @param context_course $context
+ */
+function report_autograder_extend_navigation_course(
+    navigation_node $navigation,
+    stdClass $course,
+    context_course $context
+): void {
+    if (!has_capability('report/autograder:viewcourse', $context)) {
+        return;
+    }
+
+    if (config_repository::enabled_for_course((int) $course->id) === []) {
+        return;
+    }
+
+    $navigation->add(
+        get_string('pluginname', 'report_autograder'),
+        new moodle_url('/report/autograder/index.php', ['courseid' => $course->id]),
+        navigation_node::TYPE_SETTING,
+        null,
+        'reportautograder',
+        new pix_icon('i/report', '')
+    );
+}
