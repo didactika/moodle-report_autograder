@@ -172,12 +172,11 @@ final class report_query {
         // One row per student and course, whatever else is true of them.
         //
         // A student can be enrolled in the same course twice — manually and by
-        // self enrolment, say — and can hold a gradeable role in more than one
-        // context above that course. Joined directly, either of those
-        // multiplies the student's row for every activity, and the report
-        // would list them twice and count them twice. So the enrolment is
-        // reduced to distinct (course, user) pairs before it is joined, and
-        // the role is asked as a question rather than joined at all.
+        // self enrolment, say. Joined directly that multiplies the student's
+        // row for every activity, and the report would list them twice and
+        // count them twice. So the enrolment is reduced to distinct
+        // (course, user) pairs before it is joined, and the role is asked as a
+        // question rather than joined at all.
         $enrolledwhere = '';
 
         if ($onecourseid > 0) {
@@ -227,11 +226,10 @@ final class report_query {
         $params['uenow1'] = $now;
         $params['uenow2'] = $now;
 
-        // Holding a gradeable role in the course, or anywhere above it — the
-        // gradebook's own rule for who is in the class. Asked as a question
-        // rather than joined, so that a student holding the role in two
-        // contexts is still one student.
-        $conditions[] = self::gradable_role_sql($onecourseid, $rolesql, $params);
+        // Holding a gradeable role in the course — the gradebook's own rule
+        // for who is in the class. Asked as a question rather than joined, so
+        // that a student holding the role twice is still one student.
+        $conditions[] = self::gradable_role_sql($rolesql);
 
         self::apply_scope($scope, $conditions, $params);
         // Narrow expensive module/group/availability discovery before loading
@@ -314,60 +312,40 @@ final class report_query {
 
         if ($filters->cmid() > 0) {
             $cm = get_coursemodule_from_id(null, $filters->cmid(), 0, false, IGNORE_MISSING);
+
             return $cm ? (int) $cm->course : $filters->courseid();
         }
+
         return $filters->courseid();
     }
 
     /**
-     * "Holds a gradeable role here", written the cheapest way the shape of
-     * the report allows.
+     * "Holds a gradeable role in this course", as an index lookup.
      *
-     * With one course in view the contexts that can grant it are known — the
-     * course and everything above it — so the question is an `IN` over a
-     * handful of ids, which is an index lookup. Spanning courses there is no
-     * such list, and the ancestry has to be compared as text: a `LIKE` whose
-     * left side is a column, which no index can serve. On a campus of a
-     * hundred thousand courses that difference is the whole report.
-     *
-     * @param int $onecourseid Zero when the report spans more than one course.
      * @param string $rolesql The gradebook roles, as an IN fragment.
-     * @param array $params Added to.
      * @return string
      */
-    private static function gradable_role_sql(int $onecourseid, string $rolesql, array &$params): string {
-        global $DB;
-
-        if ($onecourseid > 0) {
-            $context = \context_course::instance($onecourseid, IGNORE_MISSING);
-            $contextids = $context ? $context->get_parent_context_ids(true) : [];
-
-            if ($contextids === []) {
-                return '1 = 0';
-            }
-
-            [$ctxsql, $ctxparams] = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'rctx');
-            $params += $ctxparams;
-
-            return "EXISTS (SELECT 1
-                              FROM {role_assignments} ra
-                             WHERE ra.userid = u.id
-                               AND ra.roleid {$rolesql}
-                               AND ra.contextid {$ctxsql})";
-        }
-
-        // The LIKE is written out rather than built with sql_like(), which
-        // only accepts a bound parameter on the right and so cannot compare
-        // one column against another. Nothing needs escaping here: a context
-        // path is digits and slashes, never a wildcard.
-        $ancestry = 'ctx.path = rctx.path OR ctx.path LIKE ' . $DB->sql_concat('rctx.path', "'/%'");
-
+    private static function gradable_role_sql(string $rolesql): string {
+        // Two equalities against the course context the outer query has
+        // already joined, both served by the index role_assignments carries on
+        // (userid, contextid, roleid). It is the same shape whether the report
+        // covers one activity or the whole site, so the site-wide report is
+        // not a different, heavier question.
+        //
+        // This used to walk the context tree instead — comparing ctx.path
+        // against every role-holding context with a LIKE built from a column,
+        // which no index can serve. On a campus of a hundred thousand courses
+        // that was the query that took the site down.
+        //
+        // The cost is that a gradebook role granted above the course, over a
+        // whole category, is not counted. Enrolling somebody is what gives
+        // them the role in practice, and the query already requires an active
+        // enrolment in the course, so the two rarely disagree.
         return "EXISTS (SELECT 1
                           FROM {role_assignments} ra
-                          JOIN {context} rctx ON rctx.id = ra.contextid
                          WHERE ra.userid = u.id
                            AND ra.roleid {$rolesql}
-                           AND ({$ancestry}))";
+                           AND ra.contextid = ctx.id)";
     }
 
     /**

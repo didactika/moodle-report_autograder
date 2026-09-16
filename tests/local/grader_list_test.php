@@ -16,6 +16,7 @@
 
 namespace report_autograder\local;
 
+use local_autograder\local\grading\teacher_source;
 use report_autograder\local\page\grader_list;
 
 /**
@@ -62,18 +63,55 @@ final class grader_list_test extends \advanced_testcase {
     }
 
     /**
-     * A gradebook capability alone never makes somebody an associated teacher.
+     * A site that pins its teaching roles by hand sees only those.
      */
-    public function test_directory_uses_only_the_resume_role_family(): void {
+    public function test_the_directory_honours_roles_chosen_by_hand(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
         $teacher = $generator->create_and_enrol($course, 'editingteacher');
         $generator->create_and_enrol($course, 'teacher');
+        set_config('teacher_source_mode', teacher_source::MODE_CHOSEN_ROLES, 'local_autograder');
         set_config('teacher_roles', 'editingteacher', 'local_autograder');
         set_config('fallback_grader', 0, 'local_autograder');
+        \cache_helper::purge_all();
         $result = grader_list::graders_of((int) $course->id);
         $this->assertSame([(int) $teacher->id], array_column($result['graders'], 'id'));
+    }
+
+    /**
+     * Left automatic, any role that may grade counts — including one a site
+     * invented, which is what a hand-written list kept leaving out.
+     */
+    public function test_the_directory_finds_a_role_nobody_listed(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        // A role built on the teacher archetype, the way the roles page builds
+        // one: the archetype's capabilities are copied in, and grading is
+        // among them. Nothing tells autograder the role exists.
+        $roleid = create_role('Corrector', 'corrector', '', 'teacher');
+        reset_role_capabilities($roleid);
+        $corrector = $generator->create_user();
+        $generator->enrol_user($corrector->id, $course->id, $roleid);
+        set_config('fallback_grader', 0, 'local_autograder');
+        \cache_helper::purge_all();
+
+        $this->assertTrue(
+            $DB->record_exists('role_capabilities', [
+                'roleid' => $roleid,
+                'capability' => 'mod/assign:grade',
+                'permission' => CAP_ALLOW,
+            ]),
+            'The archetype gives the new role a grading capability, which is what finds it.'
+        );
+
+        $result = grader_list::graders_of((int) $course->id);
+
+        $this->assertSame([(int) $corrector->id], array_column($result['graders'], 'id'));
     }
 }
