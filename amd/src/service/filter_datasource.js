@@ -27,8 +27,10 @@ const contextOf = (selector) => {
 
     const courseFilter = document.querySelector('#autograder-filter-course');
 
+    const declared = element.dataset.optiontype;
+
     return {
-        type: element.dataset.optiontype === 'activity' ? 'activity' : 'course',
+        type: ['activity', 'anycourse', 'course'].indexOf(declared) === -1 ? 'course' : declared,
         cmid: parseInt(element.dataset.scopecmid || 0, 10),
         courseid: parseInt(element.dataset.scopecourseid || 0, 10),
         // An activity search follows whatever course the reader already picked,
@@ -47,6 +49,21 @@ const contextOf = (selector) => {
  * @returns {Promise}
  */
 export const transport = (selector, query, success, failure) => {
+    return searchOptions(selector, query).then(success).catch(failure);
+};
+
+/**
+ * The matches for what the reader typed, as the service returns them.
+ *
+ * The searchable chips (ui/searchable_select) call this directly; transport()
+ * above is the same thing wrapped in the callback shape form-autocomplete
+ * expects.
+ *
+ * @param {String} selector The element being searched.
+ * @param {String} query What the reader typed.
+ * @returns {Promise<{options: Array, hasmore: Boolean}>}
+ */
+export const searchOptions = (selector, query) => {
     const context = contextOf(selector);
 
     return ajax.call([{
@@ -58,7 +75,7 @@ export const transport = (selector, query, success, failure) => {
             courseid: context.courseid,
             filtercourseid: context.type === 'activity' ? context.filtercourseid : 0,
         },
-    }])[0].then(success).catch(failure);
+    }])[0];
 };
 
 /**

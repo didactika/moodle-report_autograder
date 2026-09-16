@@ -44,20 +44,30 @@ $PAGE->add_body_class('report-autograder-page');
 $PAGE->set_title(get_string('graders:heading', 'report_autograder'));
 $PAGE->set_heading(get_string('graders:heading', 'report_autograder'));
 
-$context = ['formurl' => (new moodle_url('/report/autograder/graders.php'))->out(false)];
+$context = [
+    'formurl' => (new moodle_url('/report/autograder/graders.php'))->out(false),
+    'courseid' => $courseid,
+];
 
 if ($courseid > 0) {
     $course = get_course($courseid);
     require_capability('report/autograder:viewcourse', context_course::instance($courseid));
 
     $context += grader_list::for_course($courseid);
-    $context['course'] = format_string($course->shortname);
+    // The same label the picker's own search returns, so the option it is
+    // left showing reads the way the ones it offers do.
+    $context['course'] = format_string($course->shortname) . ' — ' . format_string($course->fullname);
     $context['haschosen'] = true;
     $context['reporturl'] = (new moodle_url(
         '/report/autograder/index.php',
         ['courseid' => $courseid]
     ))->out(false);
 }
+
+$PAGE->requires->js_call_amd('report_autograder/ui/graders', 'init', [
+    get_string('search:nomatches', 'report_autograder'),
+    get_string('search:loading', 'report_autograder'),
+]);
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('report_autograder/graders', $context);

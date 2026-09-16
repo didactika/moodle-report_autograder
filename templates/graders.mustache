@@ -41,11 +41,24 @@
     }
 }}
 <div class="report-autograder-graders">
-    <form method="get" action="{{formurl}}" class="form-inline mb-3">
-        <label class="mr-2" for="graders-courseid">{{#str}}graders:pickcourse, report_autograder{{/str}}</label>
-        <input type="number" class="form-control mr-2" id="graders-courseid" name="courseid"
-               min="1" value="{{courseid}}" placeholder="{{#str}}graders:courseidplaceholder, report_autograder{{/str}}">
-        <button type="submit" class="btn btn-primary">{{#str}}graders:show, report_autograder{{/str}}</button>
+    <form method="get" action="{{formurl}}" class="mb-3" id="graders-form">
+        <label for="graders-courseid">{{#str}}graders:pickcourse, report_autograder{{/str}}</label>
+        {{!
+            Searched from the server as the reader types, never rendered in
+            full: a campus can hold a hundred thousand courses. The option
+            below is only the one already chosen, so the picker can show it.
+        }}
+        <select class="form-control" id="graders-courseid" name="courseid"
+                data-optiontype="anycourse"
+                data-scopecmid="0"
+                data-scopecourseid="0"
+                data-placeholder="{{#str}}graders:courseidplaceholder, report_autograder{{/str}}">
+            <option value="">{{#str}}graders:courseidplaceholder, report_autograder{{/str}}</option>
+            {{#haschosen}}
+            <option value="{{courseid}}" selected>{{course}}</option>
+            {{/haschosen}}
+        </select>
+        <button type="submit" class="btn btn-primary mt-2">{{#str}}graders:show, report_autograder{{/str}}</button>
     </form>
 
     {{#haschosen}}

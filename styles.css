@@ -143,67 +143,109 @@
         vertical-align: middle;
     }
 
-    /* The course and activity pickers are searched from the server, so they
-       are not plain selects: core/form-autocomplete replaces each one with a
-       field and a selection list of its own, both placed inside this wrapper.
-       Which is why this one is a plain block and not the inline-flex above —
-       as a flex container it turned the enhanced field into a column one
-       letter wide. The widget draws its own arrow, so there is none here. */
+    /* The course and activity pickers search the server as the reader types,
+       because a campus-wide list cannot be put in a <select>. They are the
+       same chip as every other filter all the same — a button showing the
+       choice, and a panel underneath — built in ui/searchable_select.js
+       rather than taken from core/form-autocomplete, which puts the chosen
+       value in a separate tag under the row and cannot be made to read like
+       the rest of the bar. */
     .autograder-search-chip-wrapper {
         position: relative;
         flex: 1 1 10rem;
         min-width: 0;
+        display: inline-flex;
+        align-items: center;
     }
 
-    .autograder-search-chip-wrapper .form-autocomplete-downarrow {
-        top: 0.5rem;
-        right: 0.85rem;
+    .autograder-searchable-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        text-align: left;
+    }
+
+    .autograder-searchable-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .autograder-searchable-arrow {
+        font-size: 0.8rem;
+        line-height: 1;
+        flex: 0 0 auto;
+    }
+
+    .autograder-searchable-clear {
+        position: absolute;
+        right: 26px;
+        border: 0;
+        background: none;
+        padding: 0 0.2rem;
+        line-height: 1;
         color: #2e4257;
-        z-index: 2;
+        font-size: 1.1rem;
+        cursor: pointer;
     }
 
-    /* form-autocomplete shows what is chosen as a removable tag beneath the
-       field. In a bar of chips that reads as a stray label hanging under the
-       row, so it is hidden and the chosen text is put inside the field
-       instead — see showSelectionInChip() in ui/filters.js. The picker then
-       looks like the plain select it replaced. */
-    .autograder-search-chip-wrapper .form-autocomplete-selection {
-        display: none !important;
-    }
-
-    .autograder-search-chip-wrapper input.form-autocomplete-input.autograder-filter-active {
-        border-color: var(--primary, #0f6cbf);
-        background-color: #e7f0f9;
-    }
-
-    .autograder-search-chip-wrapper input.form-autocomplete-input.autograder-filter-active::placeholder {
-        color: #2e4257;
-        opacity: 1;
-    }
-
-    .autograder-search-chip-wrapper input.form-autocomplete-input {
-        background-color: #f0f4f8;
+    .autograder-searchable-panel {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        min-width: 16rem;
+        background: #fff;
         border: 1px solid #d0d7e0;
-        border-radius: 20px;
-        height: 38px;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(46, 66, 87, 0.12);
+        padding: 0.5rem;
+        z-index: 1000;
+    }
+
+    .autograder-search-chip-wrapper.is-open .autograder-searchable-panel {
+        display: block;
+    }
+
+    .autograder-searchable-input {
+        height: 34px;
+        font-size: 0.9rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .autograder-searchable-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        max-height: 14rem;
+        overflow-y: auto;
+    }
+
+    .autograder-searchable-option {
+        display: block;
         width: 100%;
-        min-width: 0;
-        padding: 0.45rem 2rem 0.45rem 0.75rem;
+        text-align: left;
+        border: 0;
+        background: none;
+        padding: 0.35rem 0.5rem;
+        border-radius: 8px;
         font-size: 0.9rem;
         color: #2e4257;
+        cursor: pointer;
     }
 
-    .autograder-search-chip-wrapper input.form-autocomplete-input:hover,
-    .autograder-search-chip-wrapper input.form-autocomplete-input:focus {
-        filter: brightness(98%);
+    .autograder-searchable-option:hover,
+    .autograder-searchable-option:focus {
+        background-color: #f0f4f8;
         outline: none;
-        box-shadow: none;
     }
 
-    .autograder-search-chip-wrapper .form-autocomplete-suggestions {
-        z-index: 1000;
-        max-height: 16rem;
-        overflow-y: auto;
+    .autograder-searchable-empty {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.85rem;
+        color: #6c757d;
     }
 
     .autograder-select-chip {

@@ -5,6 +5,10 @@ import templates from "core/templates";
 export const BASE_ITEMS_PER_PAGE = 12;
 const STEP_ITEMS_PER_PAGE = [24, 48, 96];
 
+// The largest page this report will ever ask for. 'All' is deliberately not
+// on offer: site-wide there can be tens of thousands of rows.
+const MAX_ITEMS_PER_PAGE = 96;
+
 /**
  * Values shown in the per-page dropdown (mirrors course-finder: no 24+ when total ≤ 12).
  *
@@ -15,13 +19,25 @@ const buildPerPageValues = (totalRecords) => {
     if (totalRecords <= BASE_ITEMS_PER_PAGE) {
         return [totalRecords];
     }
+
     const values = [BASE_ITEMS_PER_PAGE];
+
     STEP_ITEMS_PER_PAGE.forEach((step) => {
-        if (step < totalRecords) {
+        if (step < totalRecords && step <= MAX_ITEMS_PER_PAGE) {
             values.push(step);
         }
     });
-    values.push(totalRecords);
+
+    // No "all". A site-wide report can have tens of thousands of rows, and
+    // asking for them in one page is a request no server should be given the
+    // chance to accept — so the largest page is the largest step, and the
+    // total is only offered when it is smaller than that.
+    if (totalRecords <= MAX_ITEMS_PER_PAGE) {
+        values.push(totalRecords);
+    } else if (values.indexOf(MAX_ITEMS_PER_PAGE) === -1) {
+        values.push(MAX_ITEMS_PER_PAGE);
+    }
+
     return values;
 };
 

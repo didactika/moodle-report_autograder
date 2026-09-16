@@ -46,6 +46,16 @@ class search_filter_options extends external_api {
     /** @var string Searching the activity picker. */
     public const TYPE_ACTIVITY = 'activity';
 
+    /**
+     * Searching every course on the site, not only the ones that already have
+     * an autograded activity.
+     *
+     * What the graders page needs: who would grade a course is worth asking
+     * before anything in it is set up to be autograded, and answering "no such
+     * course" for one that plainly exists would be the wrong answer.
+     */
+    public const TYPE_ANY_COURSE = 'anycourse';
+
     /** @var int The most matches one search will ever return. */
     private const MAX_RESULTS = 30;
 
@@ -125,9 +135,19 @@ class search_filter_options extends external_api {
         self::validate_context($scope->context());
         $scope->require_capability();
 
-        $found = $params['type'] === self::TYPE_ACTIVITY
-            ? self::activities($scope, $params['query'], $params['filtercourseid'])
-            : self::courses($scope, $params['query']);
+        switch ($params['type']) {
+            case self::TYPE_ACTIVITY:
+                $found = self::activities($scope, $params['query'], $params['filtercourseid']);
+                break;
+
+            case self::TYPE_ANY_COURSE:
+                $found = self::any_courses($params['query']);
+                break;
+
+            default:
+                $found = self::courses($scope, $params['query']);
+                break;
+        }
 
         // One more than asked for is how the search knows there were more.
         $hasmore = count($found) > self::MAX_RESULTS;
@@ -185,6 +205,43 @@ class search_filter_options extends external_api {
 
         foreach ($rows as $row) {
             $options[] = ['id' => (int) $row->id, 'name' => format_string($row->shortname)];
+        }
+
+        return $options;
+    }
+
+    /**
+     * Every course on the site whose name matches, autograded or not.
+     *
+     * Only ever reached at site level, where the caller already had to hold
+     * the site-wide capability — see the check in {@see self::execute()}.
+     * The front page is left out: it is not a course anybody grades.
+     *
+     * @param string $query
+     * @return array<int, array{id: int, name: string}>
+     */
+    private static function any_courses(string $query): array {
+        global $DB, $SITE;
+
+        [$where, $params] = self::name_match(['co.shortname', 'co.fullname'], $query);
+        $params['siteid'] = (int) $SITE->id;
+
+        $rows = $DB->get_records_sql(
+            "SELECT co.id, co.shortname, co.fullname
+               FROM {course} co
+              WHERE co.id <> :siteid {$where}
+           ORDER BY co.shortname",
+            $params,
+            0,
+            self::MAX_RESULTS + 1
+        );
+        $options = [];
+
+        foreach ($rows as $row) {
+            $options[] = [
+                'id' => (int) $row->id,
+                'name' => format_string($row->shortname) . ' — ' . format_string($row->fullname),
+            ];
         }
 
         return $options;

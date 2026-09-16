@@ -213,7 +213,11 @@ class get_report extends external_api {
             'totalrecords' => new external_value(PARAM_INT, 'Rows the report has, before paging'),
             'limit' => new external_value(PARAM_INT, 'Rows on this page'),
             'page' => new external_value(PARAM_INT, 'Which page this is'),
-            'needsfilter' => new external_value(PARAM_BOOL, 'The report is waiting for a filter before it will run', VALUE_OPTIONAL),
+            'needsfilter' => new external_value(
+                PARAM_BOOL,
+                'The report is waiting for a filter before it will run',
+                VALUE_OPTIONAL
+            ),
             'data' => new external_multiple_structure(
                 new external_single_structure([
                     'rowkey' => new external_value(PARAM_RAW, 'Unique per activity and student'),

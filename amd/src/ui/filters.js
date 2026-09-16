@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import * as Autocomplete from 'core/form-autocomplete';
+import { init as initSearchableSelects } from './searchable_select';
 
 const FORMAT = 'YYYY-MM-DD';
 const SEPARATOR = ' - ';
@@ -25,7 +25,9 @@ const getTexts = () => {
     dpFrom: form.data('dp-from') || 'From',
     dpTo: form.data('dp-to') || 'To',
     dpCustom: form.data('dp-custom') || 'Custom',
-    dpWeek: form.data('dp-week') || 'Wk'
+    dpWeek: form.data('dp-week') || 'Wk',
+    searchEmpty: form.data('search-empty') || 'No matches',
+    searchLoading: form.data('search-loading') || 'Searching…'
   };
 };
 
@@ -249,80 +251,21 @@ const initDateChipInteraction = (buttonId, clearBtnId, inputId, fromId, toId, te
 };
 
 /**
- * Turns the course and activity pickers into searchable ones.
+ * Turns the course and activity pickers into searchable chips.
  *
- * They are fetched from the server as the reader types rather than rendered
- * into the page: a site-wide report on a campus of a hundred thousand courses
- * cannot put its course list in a `<select>`, and its activity list is worse.
+ * Their options are fetched from the server as the reader types rather than
+ * rendered into the page: a site-wide report on a campus of a hundred thousand
+ * courses cannot put its course list in a `<select>`, and its activity list is
+ * worse. See ui/searchable_select for the chip itself.
  *
- * The arguments of enhance() are positional — selector, tags, the ajax module,
- * placeholder, case sensitivity, and then *show suggestions*, which has to be
- * true or the field takes what is typed and never offers anything back.
- *
- * @returns {Promise}
+ * @param {Object} texts The bar's own labels, read off the form.
  */
-const initSearchablePickers = () => {
-  const selectors = ['#autograder-filter-course', '#autograder-filter-activity'];
-
-  return Promise.all(selectors.map((selector) => {
-    const element = $(selector);
-
-    if (!element.length) {
-      return Promise.resolve();
-    }
-
-    const placeholder = element.data('placeholder') || '';
-
-    // Wrapped, not just chained: enhance() can throw before it ever returns a
-    // promise, and this runs before the table is asked for. A filter bar that
-    // cannot be enhanced is a worse filter bar; it must never be a report that
-    // does not load.
-    try {
-      return Autocomplete.enhance(
-        selector,
-        false,
-        'report_autograder/service/filter_datasource',
-        placeholder,
-        false,
-        true
-      ).then(() => {
-        showSelectionInChip(selector, placeholder);
-        element.on('change', () => showSelectionInChip(selector, placeholder));
-        return;
-      }).catch(() => {
-        return;
-      });
-    } catch (e) {
-      return Promise.resolve();
-    }
-  }));
-};
-
-/**
- * Shows what is chosen inside the chip itself, the way the plain selects used
- * to, rather than as a removable tag underneath it.
- *
- * form-autocomplete keeps its own selection list, which reads as a stray
- * labelled tag below the bar. That list is hidden (see styles.css) and the
- * chosen label is put in the field instead, so a picker with something chosen
- * looks like every other chip in the row.
- *
- * @param {String} selector The original select.
- * @param {String} placeholder What to show when nothing is chosen.
- */
-const showSelectionInChip = (selector, placeholder) => {
-  const element = $(selector);
-  const chosen = element.find('option:selected').first();
-  const label = chosen.length ? (chosen.text() || '').trim() : '';
-  const hasChoice = Boolean(element.val()) && label !== '';
-  const field = element.closest('.autograder-search-chip-wrapper').find('input.form-autocomplete-input');
-
-  if (!field.length) {
-    return;
-  }
-
-  field.attr('placeholder', hasChoice ? label : placeholder);
-  field.toggleClass('autograder-filter-active', hasChoice);
+const initSearchablePickers = (texts) => {
+  initSearchableSelects(
+    ['#autograder-filter-course', '#autograder-filter-activity'],
+    texts.searchEmpty,
+    texts.searchLoading
+  );
 };
 
 const initTopFiltersAutoApply = () => {
@@ -528,7 +471,7 @@ export const init = (presetStatus) => {
   // Never allowed to interrupt init(): the table is asked for after this
   // returns, so anything thrown here would leave the report empty.
   try {
-    initSearchablePickers();
+    initSearchablePickers(texts);
   } catch (e) {
     // The plain selects are still there and still submit.
   }
