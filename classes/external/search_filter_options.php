@@ -208,10 +208,13 @@ class search_filter_options extends external_api {
         // The activity's name lives in its own module table, which differs per
         // module type, so the union of the enabled types is built rather than
         // joined: `{assign} a ON ...` cannot be written once for all of them.
+        // Joined to the course as well, so that a configuration left behind by
+        // a deleted course cannot put a name in the picker that leads nowhere.
         $rows = $DB->get_records_sql(
             "SELECT cfg.cmid, cfg.courseid, md.name
                FROM {local_autograder_config} cfg
                JOIN {course_modules} cm ON cm.id = cfg.cmid
+               JOIN {course} co ON co.id = cfg.courseid
                JOIN {modules} m ON m.id = cm.module
                JOIN " . self::module_names_union($params) . " md
                     ON md.modname = m.name AND md.instanceid = cm.instance
@@ -224,13 +227,12 @@ class search_filter_options extends external_api {
         $options = [];
 
         foreach ($rows as $row) {
+            $context = \context_module::instance((int) $row->cmid, IGNORE_MISSING);
             $options[] = [
                 'id' => (int) $row->cmid,
-                'name' => format_string(
-                    $row->name,
-                    true,
-                    ['context' => \context_module::instance((int) $row->cmid, IGNORE_MISSING)]
-                ),
+                'name' => $context
+                    ? format_string($row->name, true, ['context' => $context])
+                    : format_string($row->name),
             ];
         }
 

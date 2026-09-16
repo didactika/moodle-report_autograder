@@ -48,7 +48,11 @@
 
         <div class="autograder-right-filters">
             {{#shows_course_filter}}
-            <div class="autograder-select-chip-wrapper">
+            {{! Its own wrapper, not the select chip's: form-autocomplete puts
+                its field and its selection inside whatever holds the select,
+                and the chip wrapper is a narrow inline-flex that squeezes them
+                into a column one letter wide. It also draws its own arrow. }}
+            <div class="autograder-search-chip-wrapper">
                 <label class="sr-only" for="autograder-filter-course">{{#str}}filter_course, report_autograder{{/str}}</label>
                 {{! Searched from the server as the reader types - see
                     report_autograder/service/filter_datasource. The list is
@@ -61,14 +65,11 @@
                         data-placeholder="{{#str}}filter_course_placeholder, report_autograder{{/str}}">
                     <option value="">{{#str}}filter_course_placeholder, report_autograder{{/str}}</option>
                 </select>
-                <span class="autograder-select-chip-arrow" aria-hidden="true">
-                    <i class="fa fa-chevron-down"></i>
-                </span>
             </div>
             {{/shows_course_filter}}
 
             {{#shows_activity_filter}}
-            <div class="autograder-select-chip-wrapper">
+            <div class="autograder-search-chip-wrapper">
                 <label class="sr-only" for="autograder-filter-activity">{{#str}}filter_activity, report_autograder{{/str}}</label>
                 {{! Searched from the server, and narrowed to whichever course
                     the picker beside it is on. }}
@@ -79,9 +80,6 @@
                         data-placeholder="{{#str}}filter_activity_placeholder, report_autograder{{/str}}">
                     <option value="">{{#str}}filter_activity_placeholder, report_autograder{{/str}}</option>
                 </select>
-                <span class="autograder-select-chip-arrow" aria-hidden="true">
-                    <i class="fa fa-chevron-down"></i>
-                </span>
             </div>
             {{/shows_activity_filter}}
 
