@@ -11,8 +11,9 @@ import { init as initSearchableSelects } from './searchable_select';
  *
  * @param {String} emptyText Shown when a search matches nothing.
  * @param {String} loadingText Shown while a search is in flight.
+ * @param {String} clearLabel The label of the clear button.
  */
-export const init = (emptyText, loadingText) => {
+export const init = (emptyText, loadingText, clearLabel) => {
     const select = $('#graders-courseid');
 
     if (!select.length) {
@@ -27,5 +28,5 @@ export const init = (emptyText, loadingText) => {
         }
     });
 
-    initSearchableSelects(['#graders-courseid'], emptyText, loadingText);
+    initSearchableSelects(['#graders-courseid'], emptyText, loadingText, clearLabel);
 };

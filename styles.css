@@ -178,16 +178,20 @@
         flex: 0 0 auto;
     }
 
+    /* The clear button is .autograder-chip-clear-btn, the same one the date
+       chip uses, so it only needs placing — and the active colour comes from
+       .autograder-filter-active, shared with every other chip. */
+    .autograder-searchable-button.autograder-filter-active {
+        background-color: var(--primary-light, #e6f0f9);
+        border-color: var(--primary-light, #e6f0f9);
+    }
+
+    .autograder-searchable-button.autograder-chip-has-clear {
+        padding-right: 2rem;
+    }
+
     .autograder-searchable-clear {
-        position: absolute;
-        right: 26px;
-        border: 0;
-        background: none;
-        padding: 0 0.2rem;
-        line-height: 1;
-        color: #2e4257;
-        font-size: 1.1rem;
-        cursor: pointer;
+        right: 2px;
     }
 
     .autograder-searchable-panel {

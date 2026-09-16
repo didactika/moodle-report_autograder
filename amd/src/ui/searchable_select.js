@@ -58,8 +58,11 @@ const paint = (parts, placeholder) => {
     const { label, chosen } = currentChoice(parts.select, placeholder);
 
     parts.text.text(label);
-    parts.button.toggleClass('autograder-filter-active', chosen);
+    // Exactly what the date chip does: the active colour, the clear button in
+    // place of the arrow rather than on top of it, and room made for it.
+    parts.button.toggleClass('autograder-filter-active autograder-chip-has-clear', chosen);
     parts.clear.toggleClass('d-none', !chosen);
+    parts.arrow.toggleClass('d-none', chosen);
 };
 
 /**
@@ -95,8 +98,9 @@ const renderOptions = (parts, options, emptyText) => {
  * @param {String} selector The original select.
  * @param {String} emptyText Shown when a search matches nothing.
  * @param {String} loadingText Shown while a search is in flight.
+ * @param {String} clearLabel The label of the clear button.
  */
-const enhanceOne = (selector, emptyText, loadingText) => {
+const enhanceOne = (selector, emptyText, loadingText, clearLabel) => {
     const select = $(selector);
 
     if (!select.length || select.data('autograderSearchable')) {
@@ -108,15 +112,21 @@ const enhanceOne = (selector, emptyText, loadingText) => {
     const placeholder = select.data('placeholder') || '';
     const wrapper = select.closest('.autograder-search-chip-wrapper');
     const text = $('<span>').addClass('autograder-searchable-text');
+    // The same clear button and the same arrow as every other chip, so that
+    // this one is not a lookalike but the thing itself.
     const clear = $('<button>')
-        .attr({ type: 'button', 'aria-label': emptyText })
-        .addClass('autograder-searchable-clear d-none')
-        .html('&times;');
+        .attr({ type: 'button', 'aria-label': clearLabel })
+        .addClass('autograder-chip-clear-btn autograder-searchable-clear d-none')
+        .append($('<i>').addClass('fa fa-times-circle').attr('aria-hidden', 'true'));
+    const arrow = $('<span>')
+        .addClass('autograder-searchable-arrow')
+        .attr('aria-hidden', 'true')
+        .append($('<i>').addClass('fa fa-chevron-down'));
     const button = $('<button>')
         .attr({ type: 'button', 'aria-expanded': 'false', 'aria-haspopup': 'listbox' })
         .addClass('autograder-select-chip autograder-searchable-button')
         .append(text)
-        .append($('<i>').addClass('fa fa-chevron-down autograder-searchable-arrow'));
+        .append(arrow);
     const input = $('<input>')
         .attr({ type: 'text', placeholder: placeholder })
         .addClass('form-control autograder-searchable-input');
@@ -126,7 +136,7 @@ const enhanceOne = (selector, emptyText, loadingText) => {
     select.addClass('sr-only').attr('tabindex', '-1').attr('aria-hidden', 'true');
     wrapper.append(button).append(clear).append(panel);
 
-    const parts = { select, button, text, clear, list };
+    const parts = { select, button, text, clear, arrow, list };
     let timer = null;
     let token = 0;
 
@@ -216,12 +226,13 @@ const enhanceOne = (selector, emptyText, loadingText) => {
 /**
  * Turns every searchable chip on the page into one.
  *
- * @param {String[]} selectors
- * @param {String} emptyText
- * @param {String} loadingText
+ * @param {String[]} selectors The selects to enhance.
+ * @param {String} emptyText Shown when a search matches nothing.
+ * @param {String} loadingText Shown while a search is in flight.
+ * @param {String} clearLabel The label of the clear button.
  */
-export const init = (selectors, emptyText, loadingText) => {
-    selectors.forEach((selector) => enhanceOne(selector, emptyText, loadingText));
+export const init = (selectors, emptyText, loadingText, clearLabel = '') => {
+    selectors.forEach((selector) => enhanceOne(selector, emptyText, loadingText, clearLabel));
 
     $(document).off('click.autograder.searchable').on('click.autograder.searchable', closeOpenPanel);
 };

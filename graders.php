@@ -67,6 +67,7 @@ if ($courseid > 0) {
 $PAGE->requires->js_call_amd('report_autograder/ui/graders', 'init', [
     get_string('search:nomatches', 'report_autograder'),
     get_string('search:loading', 'report_autograder'),
+    get_string('datepicker_cancel', 'report_autograder'),
 ]);
 
 echo $OUTPUT->header();

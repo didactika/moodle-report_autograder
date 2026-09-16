@@ -264,7 +264,8 @@ const initSearchablePickers = (texts) => {
   initSearchableSelects(
     ['#autograder-filter-course', '#autograder-filter-activity'],
     texts.searchEmpty,
-    texts.searchLoading
+    texts.searchLoading,
+    texts.dpCancel
   );
 };
 

@@ -48,7 +48,8 @@
             full: a campus can hold a hundred thousand courses. The option
             below is only the one already chosen, so the picker can show it.
         }}
-        <select class="form-control" id="graders-courseid" name="courseid"
+        <div class="autograder-search-chip-wrapper">
+        <select class="autograder-select-chip" id="graders-courseid" name="courseid"
                 data-optiontype="anycourse"
                 data-scopecmid="0"
                 data-scopecourseid="0"
@@ -58,6 +59,7 @@
             <option value="{{courseid}}" selected>{{course}}</option>
             {{/haschosen}}
         </select>
+        </div>
         <button type="submit" class="btn btn-primary mt-2">{{#str}}graders:show, report_autograder{{/str}}</button>
     </form>
 
