@@ -363,8 +363,8 @@ final class row_formatter {
      * row.
      *
      * @param \stdClass[] $rows
-     * @param array<string, int> $prospective From {@see self::prospective_graders()}.
-     * @return array<int, string>
+     * @param array $prospective User ids, from {@see self::prospective_graders()}.
+     * @return array Their names, by user id.
      */
     private static function grader_names(array $rows, array $prospective): array {
         global $DB;

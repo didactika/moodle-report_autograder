@@ -53,7 +53,31 @@ if ($courseid > 0) {
     $course = get_course($courseid);
     require_capability('report/autograder:viewcourse', context_course::instance($courseid));
 
-    $context += grader_list::for_course($courseid);
+    $showstudents = optional_param('students', 0, PARAM_BOOL);
+    $page = optional_param('page', 0, PARAM_INT);
+
+    $context += grader_list::graders_of($courseid);
+    $context['showstudents'] = $showstudents;
+    $context['studentsurl'] = (new moodle_url(
+        '/report/autograder/graders.php',
+        ['courseid' => $courseid, 'students' => 1]
+    ))->out(false);
+
+    if ($showstudents) {
+        // Only now is anything asked per student, and only for one page of
+        // them: who would grade a student is worked out from that student's
+        // own teachers, so it is a question with a cost per row.
+        $students = grader_list::students_of($courseid, $page);
+        $context['studentlist'] = $students;
+        $context['prevurl'] = (new moodle_url(
+            '/report/autograder/graders.php',
+            ['courseid' => $courseid, 'students' => 1, 'page' => $students['prevpage']]
+        ))->out(false);
+        $context['nexturl'] = (new moodle_url(
+            '/report/autograder/graders.php',
+            ['courseid' => $courseid, 'students' => 1, 'page' => $students['nextpage']]
+        ))->out(false);
+    }
     // The same label the picker's own search returns, so the option it is
     // left showing reads the way the ones it offers do.
     $context['course'] = format_string($course->shortname) . ' — ' . format_string($course->fullname);

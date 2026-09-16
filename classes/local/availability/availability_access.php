@@ -53,7 +53,7 @@ final class availability_access {
     /**
      * Built by {@see self::for_scope()}, which is what knows how to ask.
      *
-     * @param array<int, array{0: string, 1: array}> $restrictions
+     * @param array $restrictions The user-list SQL and its parameters, by cmid.
      */
     private function __construct(array $restrictions) {
         $this->restrictions = $restrictions;

@@ -22,22 +22,29 @@
     Context variables required for this template:
     * formurl - Where the course picker submits
     * haschosen - Whether a course has been picked yet
-    * course - Its shortname
-    * graders - One entry per grader: id, name, count, students, viafallback
-    * nobody / hasnobody / nobodycount - Students with no grader at all
-    * total, truncated, max - How many students were walked
+    * course - Its name
+    * graders / hasgraders / gradercount - Everybody who could grade here
+    * studentcount - How many gradable students the course has
+    * showstudents / studentsurl - The per-student list, fetched on request
+    * studentlist - One page of it, when it was asked for
 
     Example context (json):
     {
         "formurl": "/report/autograder/graders.php",
         "haschosen": true,
         "course": "MATH101",
-        "graders": [{"id": 4, "name": "Ada Lovelace", "count": 2, "students": ["A B"], "viafallback": false}],
-        "hasnobody": false,
-        "nobodycount": 0,
-        "total": 2,
-        "truncated": false,
-        "max": 2000
+        "graders": [{"id": 4, "name": "Ada Lovelace", "isfallback": false}],
+        "hasgraders": true,
+        "gradercount": 1,
+        "studentcount": 40,
+        "reporturl": "/report/autograder/index.php?courseid=2",
+        "showstudents": true,
+        "studentsurl": "/report/autograder/graders.php?courseid=2&students=1",
+        "studentlist": {
+            "students": [{"name": "A B", "grader": "Ada Lovelace", "hasgrader": true, "viafallback": false}],
+            "pageshown": 1, "pages": 2, "hasprev": false, "hasnext": true,
+            "prevurl": "#", "nexturl": "#"
+        }
     }
 }}
 <div class="report-autograder-graders">
@@ -65,59 +72,80 @@
 
     {{#haschosen}}
     <p>
-        <strong>{{course}}</strong> &mdash; {{#str}}graders:studentswalked, report_autograder, {{total}}{{/str}}
+        <strong>{{course}}</strong>
+        &mdash; {{#str}}graders:gradercount, report_autograder, {{gradercount}}{{/str}}
+        &mdash; {{#str}}graders:studentcount, report_autograder, {{studentcount}}{{/str}}
         <a href="{{reporturl}}" class="ml-2">{{#str}}graders:openreport, report_autograder{{/str}}</a>
     </p>
 
-    {{#truncated}}
-    <div class="alert alert-warning">{{#str}}graders:truncated, report_autograder, {{max}}{{/str}}</div>
-    {{/truncated}}
+    {{^hasgraders}}
+    <div class="alert alert-danger">{{#str}}graders:nograders, report_autograder{{/str}}</div>
+    {{/hasgraders}}
 
-    {{#hasnobody}}
-    <div class="alert alert-danger">
-        {{#str}}graders:nobody, report_autograder, {{nobodycount}}{{/str}}
-        <ul class="mb-0 mt-2">
-            {{#nobody}}
-            <li>{{.}}</li>
-            {{/nobody}}
-        </ul>
-    </div>
-    {{/hasnobody}}
+    {{#hasgraders}}
+    <h3 class="h5">{{#str}}graders:possible, report_autograder{{/str}}</h3>
+    <ul class="list-unstyled">
+        {{#graders}}
+        <li>
+            {{name}}
+            {{#isfallback}}
+            <span class="badge badge-info ml-1">{{#str}}graders:viafallback, report_autograder{{/str}}</span>
+            {{/isfallback}}
+        </li>
+        {{/graders}}
+    </ul>
+    {{/hasgraders}}
 
+    {{! Who would grade whom is decided per student, so the list of students is
+        only fetched when it is asked for, and then a page at a time. }}
+    {{^showstudents}}
+    <p><a href="{{studentsurl}}" class="btn btn-secondary">{{#str}}graders:seestudents, report_autograder{{/str}}</a></p>
+    {{/showstudents}}
+
+    {{#showstudents}}
+    {{#studentlist}}
+    <h3 class="h5">{{#str}}graders:students, report_autograder{{/str}}</h3>
     <table class="table table-striped">
         <thead>
             <tr>
+                <th scope="col">{{#str}}graders:student, report_autograder{{/str}}</th>
                 <th scope="col">{{#str}}graders:grader, report_autograder{{/str}}</th>
-                <th scope="col">{{#str}}graders:students, report_autograder{{/str}}</th>
             </tr>
         </thead>
         <tbody>
-            {{#graders}}
+            {{#students}}
             <tr>
+                <td>{{name}}</td>
                 <td>
-                    {{name}}
+                    {{#hasgrader}}
+                    {{grader}}
                     {{#viafallback}}
                     <span class="badge badge-info ml-1">{{#str}}graders:viafallback, report_autograder{{/str}}</span>
                     {{/viafallback}}
-                </td>
-                <td>
-                    <strong>{{count}}</strong>
-                    {{#ischosen}}
-                    <span class="badge badge-success ml-1">{{#str}}graders:wouldpick, report_autograder, {{chosen}}{{/str}}</span>
-                    {{/ischosen}}
-                    <div class="text-muted small">
-                        {{#students}}{{.}}; {{/students}}
-                    </div>
+                    {{/hasgrader}}
+                    {{^hasgrader}}
+                    <span class="text-danger">{{#str}}graders:nobodyfor, report_autograder{{/str}}</span>
+                    {{/hasgrader}}
                 </td>
             </tr>
-            {{/graders}}
-            {{^graders}}
-            <tr>
-                <td colspan="2">{{#str}}graders:none, report_autograder{{/str}}</td>
-            </tr>
-            {{/graders}}
+            {{/students}}
+            {{^students}}
+            <tr><td colspan="2">{{#str}}graders:none, report_autograder{{/str}}</td></tr>
+            {{/students}}
         </tbody>
     </table>
+
+    <nav class="d-flex align-items-center" aria-label="{{#str}}graders:students, report_autograder{{/str}}">
+        {{#hasprev}}
+        <a class="btn btn-sm btn-outline-secondary mr-2" href="{{prevurl}}">{{#str}}pagination:previous, report_autograder{{/str}}</a>
+        {{/hasprev}}
+        <span class="text-muted">{{pageshown}} / {{pages}}</span>
+        {{#hasnext}}
+        <a class="btn btn-sm btn-outline-secondary ml-2" href="{{nexturl}}">{{#str}}pagination:next, report_autograder{{/str}}</a>
+        {{/hasnext}}
+    </nav>
+    {{/studentlist}}
+    {{/showstudents}}
     {{/haschosen}}
 
     {{^haschosen}}

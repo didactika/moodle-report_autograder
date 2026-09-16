@@ -66,8 +66,8 @@ final class group_access {
     /**
      * Built by {@see self::for_scope()}, which is what knows how to ask.
      *
-     * @param array<int, int[]> $restrictions
-     * @param array<int, string> $options
+     * @param array $restrictions Group ids, by cmid.
+     * @param array $options Group names, by group id.
      * @param bool $offersall
      * @param int $default
      * @param bool $hasgroups
@@ -231,7 +231,7 @@ final class group_access {
      * restriction still applies there; only the choice is missing.
      *
      * @param scope $scope
-     * @param array<int, int[]> $restrictions
+     * @param array $restrictions Group ids, by cmid.
      * @param bool $hasgroups
      * @return array{0: array<int, string>, 1: bool, 2: int}
      */
@@ -253,7 +253,7 @@ final class group_access {
      *
      * @param \cm_info $cm
      * @param \stdClass $course
-     * @param array<int, int[]> $restrictions
+     * @param array $restrictions Group ids, by cmid.
      * @return array{0: array<int, string>, 1: bool, 2: int}
      */
     private static function activity_picker(\cm_info $cm, \stdClass $course, array $restrictions): array {
@@ -285,7 +285,7 @@ final class group_access {
      * activities.
      *
      * @param \stdClass $course
-     * @param array<int, int[]> $restrictions
+     * @param array $restrictions Group ids, by cmid.
      * @param bool $hasgroups
      * @return array{0: array<int, string>, 1: bool, 2: int}
      */
@@ -331,7 +331,7 @@ final class group_access {
      * for a teacher who may only see their own.
      *
      * @param int $remembered
-     * @param array<int, string> $options
+     * @param array $options Group names, by group id.
      * @param bool $offersall
      * @return int Zero for all groups.
      */

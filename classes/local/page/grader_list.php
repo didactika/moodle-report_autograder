@@ -17,21 +17,25 @@
 namespace report_autograder\local\page;
 
 use local_autograder\local\grading\grader_picker;
+use local_autograder\local\grading\teacher_source;
 
 /**
- * Who would actually be grading, in one course, before anything is graded.
+ * Who could grade in one course, and who would be picked for whom.
  *
- * The choice is made per student, from the student's own teachers, so the
- * only way to know what a course is going to do is to ask it of every student
- * in that course. Which is what this does — and why it is one course at a
- * time and never the whole site: the answer costs a handful of queries per
- * student, and a campus-wide version of this question would be a campus-wide
- * walk.
+ * Two questions, deliberately answered separately, because one is cheap and
+ * the other is not:
  *
- * Read-only, and it grades nothing. It is here so that a course can be
- * checked *before* its deadlines pass, rather than after — a student with no
- * teacher and no fallback is a decision that will fail, and this says so
- * while there is still time to fix it.
+ * - *Who could grade here* is a property of the course. One capability query
+ *   and one call to local_resume answer it, whatever the course's size. This
+ *   is what the page opens on.
+ * - *Who would grade this student* is decided per student, from that
+ *   student's own teachers. Answering it for a whole course means asking it
+ *   once per student, so it is asked for one page of students at a time and
+ *   only when somebody asks to see them.
+ *
+ * The first version of this page did the second for every student in the
+ * course before drawing anything, which on a large course is a few thousand
+ * round trips nobody asked for.
  *
  * @package     report_autograder
  * @copyright  2026 Didactika.org
@@ -39,88 +43,164 @@ use local_autograder\local\grading\grader_picker;
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class grader_list {
-    /** @var int The most students one course is walked for. */
-    private const MAX_STUDENTS = 2000;
+    /** @var int Students shown per page of the student list. */
+    public const PER_PAGE = 25;
 
     /**
-     * Every grader a course would use, and who they would be grading.
+     * Everybody who could grade in this course at all.
+     *
+     * Costs the same whether the course has ten students or ten thousand: it
+     * is asked of the course, not of its students.
      *
      * @param int $courseid
-     * @return array The template context: `graders`, `nobody`, `total`, `truncated`.
+     * @return array The template context.
      */
-    public static function for_course(int $courseid): array {
-        $students = self::gradable_students($courseid);
-        $truncated = count($students) > self::MAX_STUDENTS;
-        $students = array_slice($students, 0, self::MAX_STUDENTS, true);
+    public static function graders_of(int $courseid): array {
+        $possible = grader_picker::usable(teacher_source::possible_graders_in($courseid));
+        $fallback = grader_picker::fallback_for(0);
 
-        $bygrader = [];
-        $nobody = [];
+        if ($fallback !== null && !in_array($fallback, $possible, true)) {
+            $possible[] = $fallback;
+        }
 
-        foreach ($students as $studentid => $student) {
-            $candidates = grader_picker::candidates_for_course($courseid, (int) $studentid);
-            $chosen = grader_picker::pick_for_course($courseid, (int) $studentid);
-            $viafallback = false;
+        $graders = [];
 
-            if ($candidates === []) {
-                $fallback = grader_picker::fallback_for(0);
-
-                if ($fallback === null) {
-                    $nobody[] = fullname($student);
-
-                    continue;
-                }
-
-                $candidates = [$fallback];
-                $chosen = $fallback;
-                $viafallback = true;
-            }
-
-            // Every candidate is listed, not only the one who would be picked
-            // today: a teacher can join or leave the course before the grade
-            // is due, and the reader is asking who might end up grading.
-            foreach ($candidates as $graderid) {
-                if (!isset($bygrader[$graderid])) {
-                    $bygrader[$graderid] = [
-                        'students' => [],
-                        'viafallback' => $viafallback,
-                        'chosen' => 0,
-                    ];
-                }
-
-                $bygrader[$graderid]['students'][] = fullname($student);
-
-                if ($graderid === $chosen) {
-                    $bygrader[$graderid]['chosen']++;
-                }
-            }
+        foreach (self::named($possible) as $id => $name) {
+            $graders[] = [
+                'id' => $id,
+                'name' => $name,
+                'isfallback' => $id === $fallback,
+            ];
         }
 
         return [
-            'graders' => self::named($bygrader),
-            'nobody' => $nobody,
-            'hasnobody' => $nobody !== [],
-            'nobodycount' => count($nobody),
-            'total' => count($students),
-            'truncated' => $truncated,
-            'max' => self::MAX_STUDENTS,
+            'graders' => $graders,
+            'hasgraders' => $graders !== [],
+            'gradercount' => count($graders),
+            'studentcount' => self::count_students($courseid),
+            'hasfallback' => $fallback !== null,
         ];
     }
 
     /**
-     * The students a course would grade: the same rule the report's own table
-     * uses, which is the gradebook's rule — actively enrolled, holding one of
-     * `$CFG->gradebookroles`.
+     * One page of students, each with the grader they would actually get.
+     *
+     * The per-student question, asked only for the students on this page.
      *
      * @param int $courseid
+     * @param int $page Zero-based.
+     * @return array The template context.
+     */
+    public static function students_of(int $courseid, int $page): array {
+        $total = self::count_students($courseid);
+        $page = max(0, $page);
+        $students = self::students_page($courseid, $page);
+        $fallback = grader_picker::fallback_for(0);
+        $picked = [];
+        $fellback = [];
+
+        foreach (array_keys($students) as $studentid) {
+            $graderid = grader_picker::pick_for_course($courseid, (int) $studentid);
+            $fellback[(int) $studentid] = $graderid === null && $fallback !== null;
+            $picked[(int) $studentid] = $graderid ?? $fallback;
+        }
+
+        // Named in one query for the whole page rather than one per row: the
+        // graders of a course repeat across its students, so a page of
+        // twenty-five students is usually a handful of distinct names.
+        $names = self::named(array_filter($picked));
+        $rows = [];
+
+        foreach ($students as $studentid => $student) {
+            $graderid = $picked[(int) $studentid];
+
+            $rows[] = [
+                'name' => fullname($student),
+                'grader' => $graderid === null ? null : ($names[$graderid] ?? (string) $graderid),
+                'hasgrader' => $graderid !== null,
+                'viafallback' => $fellback[(int) $studentid],
+            ];
+        }
+
+        $pages = (int) ceil($total / self::PER_PAGE);
+
+        return [
+            'students' => $rows,
+            'total' => $total,
+            'page' => $page,
+            'pageshown' => $page + 1,
+            'pages' => $pages,
+            'hasprev' => $page > 0,
+            'hasnext' => $page + 1 < $pages,
+            'prevpage' => $page - 1,
+            'nextpage' => $page + 1,
+        ];
+    }
+
+    /**
+     * How many gradable students the course has.
+     *
+     * @param int $courseid
+     * @return int
+     */
+    public static function count_students(int $courseid): int {
+        global $DB;
+
+        [$sql, $params] = self::students_sql($courseid, 'COUNT(DISTINCT u.id)');
+
+        return $sql === '' ? 0 : (int) $DB->count_records_sql($sql, $params);
+    }
+
+    /**
+     * One page of the course's gradable students.
+     *
+     * @param int $courseid
+     * @param int $page
      * @return \stdClass[] Keyed by user id.
      */
-    private static function gradable_students(int $courseid): array {
+    private static function students_page(int $courseid, int $page): array {
+        global $DB;
+
+        $namefields = \core_user\fields::for_name()->get_sql('u', false, '', '', true)->selects;
+        [$sql, $params] = self::students_sql($courseid, "DISTINCT u.id {$namefields}");
+
+        if ($sql === '') {
+            return [];
+        }
+
+        return $DB->get_records_sql(
+            $sql . ' ORDER BY u.lastname, u.firstname, u.id',
+            $params,
+            $page * self::PER_PAGE,
+            self::PER_PAGE
+        );
+    }
+
+    /**
+     * The gradable-student query, shaped for whichever columns are wanted.
+     *
+     * The same rule the report's own table uses, which is the gradebook's:
+     * actively enrolled, holding one of `$CFG->gradebookroles`. The contexts
+     * that can grant that role are listed rather than compared as text, so the
+     * role check is an index lookup.
+     *
+     * @param int $courseid
+     * @param string $select What to select.
+     * @return array{0: string, 1: array} An empty string when the course is gone.
+     */
+    private static function students_sql(int $courseid, string $select): array {
         global $CFG, $DB;
 
         $context = \context_course::instance($courseid, IGNORE_MISSING);
 
         if (!$context) {
-            return [];
+            return ['', []];
+        }
+
+        $contextids = $context->get_parent_context_ids(true);
+
+        if ($contextids === []) {
+            return ['', []];
         }
 
         [$rolesql, $params] = $DB->get_in_or_equal(
@@ -128,81 +208,57 @@ final class grader_list {
             SQL_PARAMS_NAMED,
             'gbr'
         );
+        [$ctxsql, $ctxparams] = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'rctx');
+        $params += $ctxparams;
         $params['courseid'] = $courseid;
-        $params['ctxpath'] = $context->path;
-        $params['ctxpath2'] = $context->path;
         $params['enrolenabled'] = ENROL_INSTANCE_ENABLED;
         $params['ueactive'] = ENROL_USER_ACTIVE;
 
-        // With the leading comma, so the list stays valid however many name
-        // fields the site is configured to show.
-        $namefields = \core_user\fields::for_name()->get_sql('u', false, '', '', true)->selects;
+        $sql = "SELECT {$select}
+                  FROM {user} u
+                  JOIN {user_enrolments} ue ON ue.userid = u.id
+                  JOIN {enrol} e ON e.id = ue.enrolid AND e.courseid = :courseid
+                 WHERE u.deleted = 0
+                   AND e.status = :enrolenabled
+                   AND ue.status = :ueactive
+                   AND EXISTS (SELECT 1
+                                 FROM {role_assignments} ra
+                                WHERE ra.userid = u.id
+                                  AND ra.roleid {$rolesql}
+                                  AND ra.contextid {$ctxsql})";
 
-        // One row per student however many enrolments or role assignments they
-        // have: the same DISTINCT the report's own query needs, for the same
-        // reason.
-        return $DB->get_records_sql(
-            "SELECT DISTINCT u.id {$namefields}
-               FROM {user} u
-               JOIN {user_enrolments} ue ON ue.userid = u.id
-               JOIN {enrol} e ON e.id = ue.enrolid AND e.courseid = :courseid
-              WHERE u.deleted = 0
-                AND e.status = :enrolenabled
-                AND ue.status = :ueactive
-                AND EXISTS (SELECT 1
-                              FROM {role_assignments} ra
-                              JOIN {context} rctx ON rctx.id = ra.contextid
-                             WHERE ra.userid = u.id
-                               AND ra.roleid {$rolesql}
-                               AND (:ctxpath = rctx.path OR :ctxpath2 LIKE " .
-                                    $DB->sql_concat('rctx.path', "'/%'") . "))
-           ORDER BY u.lastname, u.firstname, u.id",
-            $params
-        );
+        return [$sql, $params];
     }
 
     /**
-     * Puts a name and a count on each grader, in the order a person would read
-     * them: the busiest first.
+     * Names for some user ids, in one query.
      *
-     * @param array $bygrader
-     * @return array
+     * @param int[] $userids
+     * @return array<int, string> Keyed by id.
      */
-    private static function named(array $bygrader): array {
+    private static function named(array $userids): array {
         global $DB;
 
-        if ($bygrader === []) {
+        $userids = array_values(array_unique(array_filter(array_map('intval', $userids))));
+
+        if ($userids === []) {
             return [];
         }
 
-        [$insql, $params] = $DB->get_in_or_equal(array_keys($bygrader), SQL_PARAMS_NAMED);
+        [$insql, $params] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         $namefields = \core_user\fields::for_name()->get_sql('u', false, '', '', true)->selects;
         $users = $DB->get_records_sql(
             "SELECT u.id {$namefields} FROM {user} u WHERE u.id {$insql}",
             $params
         );
+        $named = [];
 
-        $graders = [];
-
-        foreach ($bygrader as $graderid => $entry) {
-            $graders[] = [
-                'id' => (int) $graderid,
-                'name' => isset($users[$graderid]) ? fullname($users[$graderid]) : (string) $graderid,
-                'count' => count($entry['students']),
-                'chosen' => (int) $entry['chosen'],
-                'ischosen' => (int) $entry['chosen'] > 0,
-                'students' => $entry['students'],
-                'viafallback' => $entry['viafallback'],
-            ];
+        foreach ($users as $user) {
+            $named[(int) $user->id] = fullname($user);
         }
 
-        // Whoever would actually be picked for the most students first, then
-        // by how many they could grade at all.
-        usort(
-            $graders,
-            static fn(array $a, array $b): int => [$b['chosen'], $b['count']] <=> [$a['chosen'], $a['count']]
-        );
+        \core_collator::asort($named);
 
-        return $graders;
+        return $named;
     }
 }

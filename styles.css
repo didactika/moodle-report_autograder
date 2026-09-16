@@ -178,20 +178,20 @@
         flex: 0 0 auto;
     }
 
-    /* The clear button is .autograder-chip-clear-btn, the same one the date
-       chip uses, so it only needs placing — and the active colour comes from
-       .autograder-filter-active, shared with every other chip. */
-    .autograder-searchable-button.autograder-filter-active {
-        background-color: var(--primary-light, #e6f0f9);
-        border-color: var(--primary-light, #e6f0f9);
-    }
-
+    /* Nothing here paints the chosen state or the clear button: the active
+       colour comes from .autograder-filter-active and the button is
+       .autograder-chip-clear-btn, both shared with every other chip, so this
+       one is not a lookalike but the thing itself. All that is left is room
+       for the clear button in the corner the arrow used to hold. */
     .autograder-searchable-button.autograder-chip-has-clear {
-        padding-right: 2rem;
+        padding-right: 2.25rem;
     }
 
-    .autograder-searchable-clear {
-        right: 2px;
+    /* The arrow goes when the clear button arrives, rather than the two
+       sharing that corner. Done here as well as in JavaScript so the two can
+       never disagree about which of them is showing. */
+    .autograder-searchable-button.autograder-chip-has-clear .autograder-searchable-arrow {
+        display: none;
     }
 
     .autograder-searchable-panel {
