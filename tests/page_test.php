@@ -363,4 +363,59 @@ final class page_test extends \advanced_testcase {
             'PHP complained while the page was drawn: ' . implode(' | ', array_unique($matches[0] ?? []))
         );
     }
+
+    /**
+     * A report opened already narrowed says so in its own filter bar.
+     *
+     * The bar used to be drawn blank whatever the URL asked for: the table
+     * came back filtered while every control claimed it was not, which reads
+     * as a broken report rather than a narrowed one. The activity picker is
+     * the one that showed it worst, because its options are fetched as the
+     * reader types — with nothing selected in the select there was nothing for
+     * the chip to show and nothing to paint it as on.
+     */
+    public function test_the_filter_bar_shows_what_the_report_is_narrowed_to(): void {
+        global $OUTPUT;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $assign = $generator->create_module('assign', ['course' => $course->id]);
+        $cm = get_coursemodule_from_instance('assign', $assign->id, $course->id, false, MUST_EXIST);
+
+        $context = page_context::filters(
+            scope::from_params(0, (int) $course->id),
+            \report_autograder\local\query\filters::from_request([
+                ['name' => 'cmid', 'value' => (string) $cm->id],
+                ['name' => 'searchname', 'value' => 'Lovelace'],
+            ], true)
+        );
+
+        $this->assertSame((int) $cm->id, $context['selected_activity']['id']);
+        $this->assertSame('Lovelace', $context['filters']['searchname']);
+
+        $html = $OUTPUT->render_from_template('report_autograder/partials/filters', $context);
+
+        $this->assertStringContainsString('<option value="' . $cm->id . '" selected>', $html);
+        $this->assertStringContainsString('value="Lovelace"', $html);
+    }
+
+    /**
+     * With nothing asked for, the bar opens empty rather than inventing a
+     * selection.
+     */
+    public function test_the_filter_bar_opens_empty_when_nothing_is_asked_for(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = page_context::filters(scope::from_params(0, (int) $course->id));
+
+        $this->assertNull($context['selected_activity']);
+        $this->assertNull($context['selected_course']);
+        $this->assertSame('', $context['filters']['searchname']);
+        $this->assertSame('', $context['filters']['grading_date_from']);
+    }
 }

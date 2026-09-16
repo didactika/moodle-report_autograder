@@ -28,5 +28,14 @@ export const init = (emptyText, loadingText, clearLabel) => {
         }
     });
 
+    // The page-size chooser is a plain select in a plain GET form: changing it
+    // is the whole interaction, so it applies itself the way the report's own
+    // does, rather than waiting for a button nobody would look for.
+    const perpage = $('#graders-perpage');
+
+    if (perpage.length) {
+        perpage.on('change', () => perpage.closest('form').trigger('submit'));
+    }
+
     initSearchableSelects(['#graders-courseid'], emptyText, loadingText, clearLabel);
 };

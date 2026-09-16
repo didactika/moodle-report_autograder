@@ -66,6 +66,9 @@
                         data-scopecourseid="{{scope_courseid}}"
                         data-placeholder="{{#str}}filter_course_placeholder, report_autograder{{/str}}">
                     <option value="">{{#str}}filter_course_placeholder, report_autograder{{/str}}</option>
+                    {{#selected_course}}
+                    <option value="{{id}}" selected>{{name}}</option>
+                    {{/selected_course}}
                 </select>
             </div>
             {{/shows_course_filter}}
@@ -81,6 +84,9 @@
                         data-scopecourseid="{{scope_courseid}}"
                         data-placeholder="{{#str}}filter_activity_placeholder, report_autograder{{/str}}">
                     <option value="">{{#str}}filter_activity_placeholder, report_autograder{{/str}}</option>
+                    {{#selected_activity}}
+                    <option value="{{id}}" selected>{{name}}</option>
+                    {{/selected_activity}}
                 </select>
             </div>
             {{/shows_activity_filter}}

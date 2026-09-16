@@ -114,4 +114,66 @@ final class grader_list_test extends \advanced_testcase {
 
         $this->assertSame([(int) $corrector->id], array_column($result['graders'], 'id'));
     }
+
+    /**
+     * The student list turns by page, and says which page it is showing.
+     *
+     * The page it reports is what the pagination control draws — "13 - 24 of
+     * 31" — so it is the count, the range and the neighbours that matter here,
+     * not the rows themselves.
+     */
+    public function test_the_student_list_reports_the_range_it_shows(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $generator->create_and_enrol($course, 'editingteacher');
+
+        for ($i = 0; $i < 31; $i++) {
+            $generator->create_and_enrol($course, 'student');
+        }
+
+        $first = grader_list::students_of((int) $course->id, 0, 12);
+
+        $this->assertCount(12, $first['students']);
+        $this->assertSame([1, 12, 31], [$first['from'], $first['to'], $first['total']]);
+        $this->assertFalse($first['hasprev']);
+        $this->assertTrue($first['hasnext']);
+
+        $last = grader_list::students_of((int) $course->id, 2, 12);
+
+        $this->assertCount(7, $last['students']);
+        $this->assertSame([25, 31], [$last['from'], $last['to']]);
+        $this->assertTrue($last['hasprev']);
+        $this->assertFalse($last['hasnext']);
+
+        // A page number out of range is pulled back rather than showing an
+        // empty table somebody would read as "no students".
+        $beyond = grader_list::students_of((int) $course->id, 99, 12);
+
+        $this->assertSame(2, $beyond['page']);
+        $this->assertNotEmpty($beyond['students']);
+    }
+
+    /**
+     * Only the page sizes on offer are honoured.
+     *
+     * The size arrives from a URL anybody can edit, and this list costs a
+     * question per student — so "all of them" is not something to be talked
+     * into by a query parameter.
+     */
+    public function test_an_unoffered_page_size_falls_back_to_the_default(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        foreach ([100000, 0, -5, 13] as $asked) {
+            $page = grader_list::students_of((int) $course->id, 0, $asked);
+
+            $this->assertSame(grader_list::PER_PAGE, $page['perpage']);
+        }
+
+        $this->assertSame(48, grader_list::students_of((int) $course->id, 0, 48)['perpage']);
+    }
 }

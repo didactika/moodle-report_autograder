@@ -29,12 +29,24 @@ export const collectFilters = () => {
 };
 
 /**
- * Marks the course and activity pickers as "on" when something is chosen, the
- * same way the date and status chips mark themselves.
+ * Marks a plain picker as "on" when something is chosen, the same way the date
+ * and status chips mark themselves.
+ *
+ * Selects only, and only the ones still drawn as selects. A searchable picker
+ * hides its select and draws a button that carries the same class — and a
+ * button has no value, so including it here read every searchable chip as
+ * empty and stripped the "on" colour off it a moment after it was chosen. Its
+ * own paint() is what marks it, from the option actually selected.
  */
 const markChosenPickers = () => {
-    $('.autograder-select-chip').each(function () {
-        $(this).toggleClass('autograder-filter-active', Boolean($(this).val()));
+    $('select.autograder-select-chip').each(function () {
+        const select = $(this);
+
+        if (select.data('autograderSearchable')) {
+            return;
+        }
+
+        select.toggleClass('autograder-filter-active', Boolean(select.val()));
     });
 };
 

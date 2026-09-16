@@ -34,6 +34,7 @@ require_once($CFG->libdir . '/adminlib.php');
 
 use report_autograder\local\page\grader_ui;
 use report_autograder\local\page\page_context;
+use report_autograder\local\query\filters;
 use report_autograder\local\query\scope;
 use report_autograder\local\format\status;
 
@@ -94,9 +95,20 @@ echo $OUTPUT->header();
 // before the page could send a single byte, and on a site-wide report that is
 // the most expensive question this plugin can ask. The table below answers
 // the same thing a page at a time, as it is scrolled.
+// A link can arrive already narrowed — a bookmark, or one somebody was sent —
+// so the bar is drawn showing what the URL asks for rather than blank. The
+// table is fetched with the same values a moment later.
+$openingfilters = filters::from_request(
+    array_map(
+        static fn(string $name): array => ['name' => $name, 'value' => optional_param($name, '', PARAM_RAW_TRIMMED)],
+        ['searchname', 'status', 'grading_date_from', 'grading_date_to', 'courseid', 'cmid', 'groupid']
+    ),
+    $scope->can_see_failures()
+);
+
 echo $OUTPUT->render_from_template(
     'report_autograder/partials/filters',
-    page_context::filters($scope)
+    page_context::filters($scope, $openingfilters)
 );
 echo $OUTPUT->render_from_template(
     'report_autograder/report_table',

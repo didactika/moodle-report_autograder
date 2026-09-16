@@ -42,8 +42,17 @@ use local_autograder\local\grading\teacher_source;
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class grader_list {
-    /** @var int Students shown per page of the student list. */
-    public const PER_PAGE = 25;
+    /** @var int Students shown per page until somebody asks for more. */
+    public const PER_PAGE = 24;
+
+    /**
+     * The page sizes on offer, the same ones the report's own table offers.
+     *
+     * Capped rather than open-ended, and with no "all": this list is worked
+     * out a student at a time, so "all" on a course of ten thousand is ten
+     * thousand answers nobody asked for.
+     */
+    public const PER_PAGE_OPTIONS = [12, 24, 48, 96];
 
     /**
      * Everybody who could grade in this course at all.
@@ -88,12 +97,14 @@ final class grader_list {
      *
      * @param int $courseid
      * @param int $page Zero-based.
+     * @param int $perpage How many to show; anything not on offer is ignored.
      * @return array The template context.
      */
-    public static function students_of(int $courseid, int $page): array {
+    public static function students_of(int $courseid, int $page, int $perpage = self::PER_PAGE): array {
+        $perpage = in_array($perpage, self::PER_PAGE_OPTIONS, true) ? $perpage : self::PER_PAGE;
         $total = self::count_students($courseid);
-        $page = min(max(0, $page), max(0, (int) ceil($total / self::PER_PAGE) - 1));
-        $students = self::students_page($courseid, $page);
+        $page = min(max(0, $page), max(0, (int) ceil($total / $perpage) - 1));
+        $students = self::students_page($courseid, $page, $perpage);
         $fallback = grader_picker::fallback_for();
         teacher_source::prime_groups($courseid, array_merge(
             array_keys($students),
@@ -125,12 +136,23 @@ final class grader_list {
             ];
         }
 
-        $pages = max(1, (int) ceil($total / self::PER_PAGE));
+        $pages = max(1, (int) ceil($total / $perpage));
+        $peroptions = [];
+
+        foreach (self::PER_PAGE_OPTIONS as $option) {
+            $peroptions[] = ['value' => $option, 'selected' => $option === $perpage];
+        }
 
         return [
             'students' => $rows,
             'total' => $total,
             'page' => $page,
+            'perpage' => $perpage,
+            'peroptions' => $peroptions,
+            // The range this page covers, counted from one, and empty when the
+            // course has no students rather than reading "1 - 0 of 0".
+            'from' => $total === 0 ? 0 : ($page * $perpage) + 1,
+            'to' => min($total, ($page + 1) * $perpage),
             'pageshown' => $page + 1,
             'pages' => $pages,
             'hasprev' => $page > 0,
@@ -159,9 +181,10 @@ final class grader_list {
      *
      * @param int $courseid
      * @param int $page
+     * @param int $perpage
      * @return \stdClass[] Keyed by user id.
      */
-    private static function students_page(int $courseid, int $page): array {
+    private static function students_page(int $courseid, int $page, int $perpage): array {
         global $DB;
 
         $namefields = \core_user\fields::for_name()->get_sql('u', false, '', '', true)->selects;
@@ -174,8 +197,8 @@ final class grader_list {
         return $DB->get_records_sql(
             $sql . ' ORDER BY u.lastname, u.firstname, u.id',
             $params,
-            $page * self::PER_PAGE,
-            self::PER_PAGE
+            $page * $perpage,
+            $perpage
         );
     }
 
