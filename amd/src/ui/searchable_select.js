@@ -58,6 +58,7 @@ const paint = (parts, placeholder) => {
     const { label, chosen } = currentChoice(parts.select, placeholder);
 
     parts.text.text(label);
+    parts.button.attr('aria-label', chosen ? `${placeholder}: ${label}` : placeholder);
     // Exactly what the date chip does: the active colour, the clear button in
     // place of the arrow rather than on top of it, and room made for it.
     parts.button.toggleClass('autograder-filter-active autograder-chip-has-clear', chosen);
@@ -123,15 +124,18 @@ const enhanceOne = (selector, emptyText, loadingText, clearLabel) => {
         .attr('aria-hidden', 'true')
         .append($('<i>').addClass('fa fa-chevron-down'));
     const button = $('<button>')
-        .attr({ type: 'button', 'aria-expanded': 'false', 'aria-haspopup': 'listbox' })
+        .attr({type: 'button', 'aria-expanded': 'false', 'aria-haspopup': 'dialog',
+            'aria-controls': `${select.attr('id')}-panel`})
         .addClass('autograder-select-chip autograder-searchable-button')
         .append(text)
         .append(arrow);
     const input = $('<input>')
-        .attr({ type: 'text', placeholder: placeholder })
+        .attr({ type: 'text', placeholder: placeholder, 'aria-label': placeholder })
         .addClass('form-control autograder-searchable-input');
-    const list = $('<ul>').addClass('autograder-searchable-list').attr('role', 'listbox');
-    const panel = $('<div>').addClass('autograder-searchable-panel').append(input).append(list);
+    const list = $('<ul>').addClass('autograder-searchable-list');
+    const panel = $('<div>').addClass('autograder-searchable-panel')
+        .attr({id: `${select.attr('id')}-panel`, role: 'dialog', 'aria-label': placeholder})
+        .append(input).append(list);
 
     select.addClass('sr-only').attr('tabindex', '-1').attr('aria-hidden', 'true');
     wrapper.append(button).append(clear).append(panel);
@@ -181,13 +185,31 @@ const enhanceOne = (selector, emptyText, loadingText, clearLabel) => {
 
     input.on('input', () => {
         clearTimeout(timer);
+        token++;
         timer = setTimeout(() => search(input.val() || ''), DEBOUNCE_MS);
     });
 
-    input.on('keydown', (e) => {
+    panel.on('keydown', (e) => {
         if (e.key === 'Escape') {
+            e.preventDefault();
             closeOpenPanel();
             button.trigger('focus');
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const options = list.find('button');
+            const current = options.index(e.target);
+            const next = e.key === 'ArrowDown' ? current + 1 : current - 1;
+            if (next < 0) {
+                input.trigger('focus');
+            } else {
+                options.eq(Math.min(next, options.length - 1)).trigger('focus');
+            }
+        }
+    });
+
+    wrapper.on('focusout', (e) => {
+        if (!wrapper[0].contains(e.relatedTarget) && openPanel?.wrapper[0] === wrapper[0]) {
+            closeOpenPanel();
         }
     });
 
@@ -209,6 +231,7 @@ const enhanceOne = (selector, emptyText, loadingText, clearLabel) => {
         select.val(value);
         paint(parts, placeholder);
         closeOpenPanel();
+        button.trigger('focus');
         select.trigger('change');
     });
 

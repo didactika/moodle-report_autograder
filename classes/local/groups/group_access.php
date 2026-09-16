@@ -159,7 +159,7 @@ final class group_access {
     /**
      * The activities this report covers, as the course cache knows them.
      *
-     * A viewer who may see every group everywhere is spared the walk: at site
+     * A site administrator is spared the walk (other users can have module overrides): at site
      * level that would mean reading the module cache of every course with an
      * autograded activity to reach a conclusion already known.
      *
@@ -175,7 +175,7 @@ final class group_access {
 
         if (
             $scope->level() === scope::LEVEL_SITE
-            && has_capability('moodle/site:accessallgroups', \context_system::instance())
+            && is_siteadmin()
         ) {
             return [];
         }

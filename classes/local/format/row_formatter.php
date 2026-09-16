@@ -17,6 +17,7 @@
 namespace report_autograder\local\format;
 
 use local_autograder\local\grading\grader_picker;
+use local_autograder\local\grading\teacher_source;
 use report_autograder\local\groups\group_access;
 use report_autograder\local\groups\group_names;
 use report_autograder\local\page\grader_ui;
@@ -40,14 +41,14 @@ final class row_formatter {
      * @return array<int, array<string, mixed>>
      */
     public static function format_all(array $rows, scope $scope): array {
-        $access = group_access::for_scope($scope);
+        $access = $scope->level() === scope::LEVEL_SITE ? null : group_access::for_scope($scope);
         $prospective = self::prospective_graders($rows, $scope);
         $page = [
             'canseefailures' => $scope->can_see_failures(),
             'prospective' => $prospective,
             'graders' => self::grader_names($rows, $prospective),
-            'showsgroups' => $access->shows_column(),
-            'groups' => group_names::for_rows($rows, $access),
+            'showsgroups' => $access ? $access->shows_column() : false,
+            'groups' => $access ? group_names::for_rows($rows, $access) : [],
         ];
         $out = [];
 
@@ -318,7 +319,7 @@ final class row_formatter {
     private static function grader_of(\stdClass $row): int {
         $fromgradebook = (int) ($row->gradedbyid ?? 0);
 
-        if ($fromgradebook > 0) {
+        if ($fromgradebook > 0 && $row->finalgrade !== null) {
             return $fromgradebook;
         }
 
@@ -341,6 +342,18 @@ final class row_formatter {
     private static function prospective_graders(array $rows, scope $scope): array {
         $canseefailures = $scope->can_see_failures();
         $graders = [];
+        $students = [];
+        foreach ($rows as $row) {
+            if (
+                status::is_awaiting(status::from_decision($row->decisionstatus, $canseefailures))
+                    && self::grader_of($row) === 0
+            ) {
+                $students[(int) $row->courseid][] = (int) $row->userid;
+            }
+        }
+        foreach ($students as $courseid => $userids) {
+            teacher_source::prime_groups($courseid, array_merge($userids, teacher_source::possible_graders_in($courseid)));
+        }
 
         foreach ($rows as $row) {
             $status = status::from_decision($row->decisionstatus, $canseefailures);
@@ -349,7 +362,7 @@ final class row_formatter {
                 continue;
             }
 
-            $graders[$row->rowkey] = (int) grader_picker::pick_for(
+            $graders[$row->rowkey] = (int) grader_picker::resolve_for(
                 (int) $row->cmid,
                 (int) $row->userid
             );

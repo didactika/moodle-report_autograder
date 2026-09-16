@@ -96,13 +96,16 @@ export const renderPagination = (
     const container = $("#autograder-pagination-container");
 
     if (totalRecords === 0) {
+        if (isCurrent()) {
+            container.empty();
+        }
         return;
     }
 
-    const from = currentPage * recordsPerPage + 1;
+    const from = currentRecords.length ? currentPage * recordsPerPage + 1 : 0;
     // Use actual count of received records for `to` — more accurate than arithmetic
     // since the last page (or filtered results) may return fewer than the limit.
-    const to = from + currentRecords.length - 1;
+    const to = currentRecords.length ? from + currentRecords.length - 1 : 0;
     const totalPages = Math.ceil(totalRecords / recordsPerPage);
 
     const hasprev = currentPage > 0;

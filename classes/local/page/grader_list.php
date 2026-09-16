@@ -57,7 +57,7 @@ final class grader_list {
      */
     public static function graders_of(int $courseid): array {
         $possible = grader_picker::usable(teacher_source::possible_graders_in($courseid));
-        $fallback = grader_picker::fallback_for(0);
+        $fallback = grader_picker::fallback_for();
 
         if ($fallback !== null && !in_array($fallback, $possible, true)) {
             $possible[] = $fallback;
@@ -93,9 +93,13 @@ final class grader_list {
      */
     public static function students_of(int $courseid, int $page): array {
         $total = self::count_students($courseid);
-        $page = max(0, $page);
+        $page = min(max(0, $page), max(0, (int) ceil($total / self::PER_PAGE) - 1));
         $students = self::students_page($courseid, $page);
-        $fallback = grader_picker::fallback_for(0);
+        $fallback = grader_picker::fallback_for();
+        teacher_source::prime_groups($courseid, array_merge(
+            array_keys($students),
+            teacher_source::possible_graders_in($courseid)
+        ));
         $picked = [];
         $fellback = [];
 
@@ -122,7 +126,7 @@ final class grader_list {
             ];
         }
 
-        $pages = (int) ceil($total / self::PER_PAGE);
+        $pages = max(1, (int) ceil($total / self::PER_PAGE));
 
         return [
             'students' => $rows,
@@ -204,7 +208,7 @@ final class grader_list {
         }
 
         [$rolesql, $params] = $DB->get_in_or_equal(
-            array_filter(explode(',', (string) $CFG->gradebookroles)),
+            array_filter(explode(',', (string) $CFG->gradebookroles)) ?: [0],
             SQL_PARAMS_NAMED,
             'gbr'
         );
@@ -213,6 +217,8 @@ final class grader_list {
         $params['courseid'] = $courseid;
         $params['enrolenabled'] = ENROL_INSTANCE_ENABLED;
         $params['ueactive'] = ENROL_USER_ACTIVE;
+        $params['nowstart'] = time();
+        $params['nowend'] = $params['nowstart'];
 
         $sql = "SELECT {$select}
                   FROM {user} u
@@ -221,6 +227,8 @@ final class grader_list {
                  WHERE u.deleted = 0
                    AND e.status = :enrolenabled
                    AND ue.status = :ueactive
+                   AND (ue.timestart = 0 OR ue.timestart <= :nowstart)
+                   AND (ue.timeend = 0 OR ue.timeend > :nowend)
                    AND EXISTS (SELECT 1
                                  FROM {role_assignments} ra
                                 WHERE ra.userid = u.id

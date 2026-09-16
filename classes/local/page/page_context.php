@@ -41,7 +41,7 @@ final class page_context {
      * @return array
      */
     public static function filters(scope $scope): array {
-        $groups = group_access::for_scope($scope);
+        $groups = $scope->level() === scope::LEVEL_SITE ? null : group_access::for_scope($scope);
         $statuses = [];
 
         foreach (status::filterable($scope->can_see_failures()) as $key) {
@@ -64,10 +64,10 @@ final class page_context {
             'scope_courseid' => $scope->level() === scope::LEVEL_COURSE ? (int) $scope->course()->id : 0,
             'moment_url' => self::library_url('moment/moment-with-locales.min.js'),
             'picker_url' => self::library_url('daterangepicker/daterangepicker.js'),
-            'shows_group_filter' => $groups->shows_picker(),
-            'groups' => $groups->picker_options(),
-            'offers_all_groups' => $groups->offers_all_groups(),
-            'opening_group' => $groups->opening_choice(),
+            'shows_group_filter' => $groups ? $groups->shows_picker() : false,
+            'groups' => $groups ? $groups->picker_options() : [],
+            'offers_all_groups' => $groups ? $groups->offers_all_groups() : true,
+            'opening_group' => $groups ? $groups->opening_choice() : 0,
         ];
     }
 
@@ -83,7 +83,8 @@ final class page_context {
         $context = [
             'shows_activity_column' => $scope->shows_activity_column(),
             'shows_course_column' => $scope->shows_course_column(),
-            'shows_group_column' => group_access::for_scope($scope)->shows_column(),
+            'shows_group_column' => $scope->level() !== scope::LEVEL_SITE
+                && group_access::for_scope($scope)->shows_column(),
             'skeletonRows' => array_fill(0, 4, []),
         ];
 

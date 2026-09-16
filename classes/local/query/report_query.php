@@ -60,7 +60,7 @@ final class report_query {
     public static function count(scope $scope, filters $filters): int {
         global $DB;
 
-        [$from, $where, $params] = self::build($scope, $filters);
+        [$from, $where, $params] = self::build($scope, $filters, false);
 
         return (int) $DB->count_records_sql("SELECT COUNT(1) {$from} WHERE {$where}", $params);
     }
@@ -147,16 +147,17 @@ final class report_query {
      *
      * @param scope $scope
      * @param filters $filters
+     * @param bool $withgrades Include gradebook joins only when fetching rows.
      * @return array{0: string, 1: string, 2: array}
      */
-    private static function build(scope $scope, filters $filters): array {
+    private static function build(scope $scope, filters $filters, bool $withgrades = true): array {
         global $CFG, $DB;
 
         $params = [];
         $conditions = ['cfg.enabled = 1', 'cm.deletioninprogress = 0', 'u.deleted = 0'];
 
         [$rolesql, $roleparams] = $DB->get_in_or_equal(
-            array_filter(explode(',', (string) $CFG->gradebookroles)),
+            array_filter(explode(',', (string) $CFG->gradebookroles)) ?: [0],
             SQL_PARAMS_NAMED,
             'gbr'
         );
@@ -203,13 +204,17 @@ final class report_query {
                  JOIN {context} ctx ON ctx.instanceid = co.id AND ctx.contextlevel = :ctxcourse
                  JOIN ({$enrolled}) en ON en.courseid = co.id
                  JOIN {user} u ON u.id = en.userid
-            LEFT JOIN {local_autograder_decision} d ON d.cmid = cfg.cmid AND d.userid = u.id
+            LEFT JOIN {local_autograder_decision} d ON d.cmid = cfg.cmid AND d.userid = u.id";
+
+        if ($withgrades) {
+            $from .= "
             LEFT JOIN {grade_items} gi ON gi.itemtype = 'mod'
                                      AND gi.itemmodule = m.name
                                      AND gi.iteminstance = cm.instance
                                      AND gi.courseid = co.id
                                      AND gi.itemnumber = " . self::item_number_sql($params) . "
             LEFT JOIN {grade_grades} g ON g.itemid = gi.id AND g.userid = u.id";
+        }
 
         $params['ctxcourse'] = CONTEXT_COURSE;
         $params['enrolenabled'] = ENROL_INSTANCE_ENABLED;
@@ -229,11 +234,37 @@ final class report_query {
         $conditions[] = self::gradable_role_sql($onecourseid, $rolesql, $params);
 
         self::apply_scope($scope, $conditions, $params);
-        self::apply_group_access($scope, $filters, $conditions, $params);
-        self::apply_availability($scope, $conditions, $params);
+        // Narrow expensive module/group/availability discovery before loading
+        // course caches, while keeping the original scope for authorisation.
+        $accessscope = self::filtered_scope($scope, $filters);
+        self::apply_group_access($scope, $accessscope, $filters, $conditions, $params);
+        self::apply_availability($accessscope, $conditions, $params);
         self::apply_filters($filters, $conditions, $params);
 
         return [$from, implode(' AND ', $conditions), $params];
+    }
+
+    /**
+     * Limit access-rule discovery to the filtered course/activity.
+     *
+     * @param scope $scope Original authorised scope.
+     * @param filters $filters
+     * @return scope
+     */
+    private static function filtered_scope(scope $scope, filters $filters): scope {
+        if ($scope->level() === scope::LEVEL_ACTIVITY) {
+            return $scope;
+        }
+        if ($filters->cmid() > 0) {
+            $cm = get_coursemodule_from_id(null, $filters->cmid(), 0, false, IGNORE_MISSING);
+            if ($cm && (!$scope->course() || (int) $scope->course()->id === (int) $cm->course)) {
+                return scope::from_params($filters->cmid(), 0);
+            }
+        }
+        if ($scope->level() === scope::LEVEL_SITE && $filters->courseid() > 0) {
+            return scope::from_params(0, $filters->courseid());
+        }
+        return $scope;
     }
 
     /**
@@ -281,6 +312,10 @@ final class report_query {
             return (int) $scope->course()->id;
         }
 
+        if ($filters->cmid() > 0) {
+            $cm = get_coursemodule_from_id(null, $filters->cmid(), 0, false, IGNORE_MISSING);
+            return $cm ? (int) $cm->course : $filters->courseid();
+        }
         return $filters->courseid();
     }
 
@@ -395,21 +430,25 @@ final class report_query {
      * against an empty list.
      *
      * @param scope $scope
+     * @param scope $accessscope Filtered scope used for activity restrictions.
      * @param filters $filters
      * @param array $conditions Added to.
      * @param array $params Added to.
      */
     private static function apply_group_access(
         scope $scope,
+        scope $accessscope,
         filters $filters,
         array &$conditions,
         array &$params
     ): void {
         global $DB;
 
-        $access = group_access::for_scope($scope);
-
-        if ($access->offers_group($filters->groupid())) {
+        $access = group_access::for_scope($accessscope);
+        // The selected group belongs to the original page's picker, even if
+        // the activity filter narrows to a different grouping afterwards.
+        $picker = $filters->groupid() > 0 ? group_access::for_scope($scope) : $access;
+        if ($picker->offers_group($filters->groupid())) {
             $conditions[] = 'u.id IN (SELECT gmf.userid FROM {groups_members} gmf WHERE gmf.groupid = :filtergroupid)';
             $params['filtergroupid'] = $filters->groupid();
         }

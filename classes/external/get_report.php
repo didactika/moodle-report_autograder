@@ -139,19 +139,23 @@ class get_report extends external_api {
         // cannot change that number, so the client asks for it once per set of
         // filters and reuses it; -1 means "unchanged, keep what you have".
         $total = $params['withtotal'] ? report_query::count($scope, $filters) : -1;
-        $rows = report_query::rows(
+        $page = max(0, $params['page']);
+        if ($total >= 0) {
+            $page = min($page, max(0, (int) ceil($total / $limit) - 1));
+        }
+        $rows = $total === 0 ? [] : report_query::rows(
             $scope,
             $filters,
             $sortcolumn,
             $params['sortdir'],
-            max(0, $params['page']),
+            $page,
             $limit
         );
 
         return [
             'totalrecords' => $total,
             'limit' => $limit,
-            'page' => max(0, $params['page']),
+            'page' => $page,
             'data' => row_formatter::format_all($rows, $scope),
             'needsfilter' => false,
         ];
