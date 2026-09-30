@@ -181,7 +181,7 @@ final class report_query {
 
         if ($onecourseid > 0) {
             // Cuts the DISTINCT down to one course's enrolments instead of
-            // every enrolment on the site, which on a large campus is the
+            // every enrolment on the site, which on a large site is the
             // difference between a few rows and a few million.
             $enrolledwhere = ' AND e.courseid = :enrolcourseid';
             $params['enrolcourseid'] = $onecourseid;
@@ -334,7 +334,7 @@ final class report_query {
         //
         // This used to walk the context tree instead — comparing ctx.path
         // against every role-holding context with a LIKE built from a column,
-        // which no index can serve. On a campus of a hundred thousand courses
+        // which no index can serve. On a site of a hundred thousand courses
         // that was the query that took the site down.
         //
         // The cost is that a gradebook role granted above the course, over a

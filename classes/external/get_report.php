@@ -119,7 +119,7 @@ class get_report extends external_api {
         $sortcolumn = self::normalise_sort_column($params['sortcolumn']);
 
         // The site-wide report, unfiltered, is every gradable enrolment on the
-        // campus joined to every decision and every grade — the one question
+        // site joined to every decision and every grade — the one question
         // here big enough to hold the database down on its own. So it is not
         // asked until the reader has narrowed it to a course or an activity,
         // the same way core's own heavy reports wait for a filter. Course and

@@ -152,7 +152,7 @@ final class page_test extends \advanced_testcase {
      * whose autograder has been switched off.
      *
      * The options are not rendered into the page any more — a site-wide report
-     * would have to list every activity on the campus — so what is asserted
+     * would have to list every activity on the site — so what is asserted
      * here is the search behind the picker.
      */
     public function test_the_activity_filter_searches_what_is_autograded(): void {

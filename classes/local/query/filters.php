@@ -232,7 +232,7 @@ final class filters {
     public function narrows_anything(): bool {
         // Only a course or an activity counts. A status or a date narrows what
         // comes back but not what has to be looked at: the query still has to
-        // consider every gradable enrolment on the campus to decide which of
+        // consider every gradable enrolment on the site to decide which of
         // them match, which is exactly the work this is meant to prevent.
         return $this->courseid > 0 || $this->cmid > 0;
     }
