@@ -180,26 +180,23 @@ final class group_access {
             return [];
         }
 
-        $params = ['enabled' => 1];
-        $where = 'cfg.enabled = :enabled AND cm.deletioninprogress = 0';
-
-        if ($scope->level() === scope::LEVEL_COURSE) {
-            $where .= ' AND cfg.courseid = :courseid';
-            $params['courseid'] = (int) $scope->course()->id;
-        }
-
         // Joined to the course rather than trusting `cfg.courseid`: a
         // configuration can outlive the course it was made in, and asking the
         // module cache about a course that is gone raises "invalid record"
         // rather than returning nothing.
-        $rows = $DB->get_records_sql(
-            "SELECT cfg.cmid, cfg.courseid
-               FROM {local_autograder_config} cfg
-               JOIN {course_modules} cm ON cm.id = cfg.cmid
-               JOIN {course} co ON co.id = cfg.courseid
-              WHERE {$where}",
-            $params
-        );
+        $sql = 'SELECT cfg.cmid, cfg.courseid
+                  FROM {local_autograder_config} cfg
+                  JOIN {course_modules} cm ON cm.id = cfg.cmid
+                  JOIN {course} co ON co.id = cfg.courseid
+                 WHERE cfg.enabled = :enabled AND cm.deletioninprogress = 0';
+        $params = ['enabled' => 1];
+
+        if ($scope->level() === scope::LEVEL_COURSE) {
+            $sql .= ' AND cfg.courseid = :courseid';
+            $params['courseid'] = (int) $scope->course()->id;
+        }
+
+        $rows = $DB->get_records_sql($sql, $params);
         $activities = [];
 
         foreach ($rows as $row) {

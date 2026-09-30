@@ -136,32 +136,28 @@ final class availability_access {
             return self::carries_restriction($cm->availability ?? null) ? [$cm] : [];
         }
 
-        $params = ['enabled' => 1];
-        $where = 'cfg.enabled = :enabled
-                  AND cm.deletioninprogress = 0
-                  AND cm.availability IS NOT NULL
-                  AND ' . $DB->sql_compare_text('cm.availability') . " <> :empty
-                  AND " . $DB->sql_compare_text('cm.availability') . ' <> :null';
-        $params['empty'] = '';
-        $params['null'] = 'null';
-
-        if ($scope->level() === scope::LEVEL_COURSE) {
-            $where .= ' AND cfg.courseid = :courseid';
-            $params['courseid'] = (int) $scope->course()->id;
-        }
-
         // Joined to the course rather than trusting `cfg.courseid`: a
         // configuration can outlive the course it was made in, and asking the
         // module cache about a course that is gone raises "invalid record"
         // rather than returning nothing.
-        $rows = $DB->get_records_sql(
-            "SELECT cfg.cmid, cfg.courseid
-               FROM {local_autograder_config} cfg
-               JOIN {course_modules} cm ON cm.id = cfg.cmid
-               JOIN {course} co ON co.id = cfg.courseid
-              WHERE {$where}",
-            $params
-        );
+        $availability = $DB->sql_compare_text('cm.availability');
+        $sql = 'SELECT cfg.cmid, cfg.courseid
+                  FROM {local_autograder_config} cfg
+                  JOIN {course_modules} cm ON cm.id = cfg.cmid
+                  JOIN {course} co ON co.id = cfg.courseid
+                 WHERE cfg.enabled = :enabled
+                   AND cm.deletioninprogress = 0
+                   AND cm.availability IS NOT NULL
+                   AND ' . $availability . ' <> :empty
+                   AND ' . $availability . ' <> :null';
+        $params = ['enabled' => 1, 'empty' => '', 'null' => 'null'];
+
+        if ($scope->level() === scope::LEVEL_COURSE) {
+            $sql .= ' AND cfg.courseid = :courseid';
+            $params['courseid'] = (int) $scope->course()->id;
+        }
+
+        $rows = $DB->get_records_sql($sql, $params);
         $activities = [];
 
         foreach ($rows as $row) {

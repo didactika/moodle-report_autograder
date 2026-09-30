@@ -143,29 +143,34 @@ final class group_names {
     private static function membership(array $courseids, array $userids): array {
         global $DB;
 
-        [$coursesql, $courseparams] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'gnco');
-        [$usersql, $userparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'gnus');
+        // Two reads rather than one join: the groups of the page's courses,
+        // then the page's students' memberships, kept where they fall in one
+        // of those groups. Both are bounded by the page.
+        $groups = $DB->get_records_list('groups', 'courseid', $courseids, '', 'id, name, courseid');
 
-        $rows = $DB->get_records_sql(
-            "SELECT gm.id, gm.userid, g.id AS groupid, g.name, g.courseid
-               FROM {groups_members} gm
-               JOIN {groups} g ON g.id = gm.groupid
-              WHERE g.courseid {$coursesql} AND gm.userid {$usersql}",
-            $courseparams + $userparams
-        );
+        if ($groups === []) {
+            return [];
+        }
+
+        $rows = $DB->get_records_list('groups_members', 'userid', $userids, '', 'id, userid, groupid');
         $membership = [];
 
         foreach ($rows as $row) {
             $groupid = (int) $row->groupid;
 
+            if (!isset($groups[$groupid])) {
+                continue;
+            }
+
             if (!isset($membership[$groupid])) {
+                $group = $groups[$groupid];
                 $membership[$groupid] = [
                     'name' => format_string(
-                        $row->name,
+                        $group->name,
                         true,
-                        ['context' => \context_course::instance((int) $row->courseid)]
+                        ['context' => \context_course::instance((int) $group->courseid)]
                     ),
-                    'courseid' => (int) $row->courseid,
+                    'courseid' => (int) $group->courseid,
                     'members' => [],
                 ];
             }
@@ -185,13 +190,7 @@ final class group_names {
     private static function groupings(array $groupids): array {
         global $DB;
 
-        [$insql, $params] = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, 'gngr');
-        $rows = $DB->get_records_sql(
-            "SELECT gg.id, gg.groupid, gg.groupingid
-               FROM {groupings_groups} gg
-              WHERE gg.groupid {$insql}",
-            $params
-        );
+        $rows = $DB->get_records_list('groupings_groups', 'groupid', $groupids, '', 'id, groupid, groupingid');
         $groupings = [];
 
         foreach ($rows as $row) {

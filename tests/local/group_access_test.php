@@ -100,6 +100,19 @@ final class group_access_test extends \advanced_testcase {
     }
 
     /**
+     * The course report keeps to each activity's groups too: a teacher who
+     * can't see every group only finds their own group's students there.
+     */
+    public function test_the_course_report_holds_only_the_students_of_the_visible_groups(): void {
+        $this->become_a_teacher_of_one_group();
+
+        $scope = scope::from_params(0, (int) $this->course->id);
+        $rows = report_query::rows($scope, $this->no_filters(), report_query::SORT_NAME, 'asc', 0, 0);
+
+        $this->assertSame(['Lopez'], array_column(array_values($rows), 'lastname'));
+    }
+
+    /**
      * An activity that does not use groups says nothing about them: no picker
      * in the bar, no column in the table, nobody hidden.
      */
