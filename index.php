@@ -98,10 +98,25 @@ echo $OUTPUT->header();
 // A link can arrive already narrowed — a bookmark, or one somebody was sent —
 // so the bar is drawn showing what the URL asks for rather than blank. The
 // table is fetched with the same values a moment later.
+// Each filter is read as the narrowest type that holds it; filters::from_request()
+// then checks the values themselves, such as a status against the known list.
+$filtertypes = [
+    'searchname' => PARAM_TEXT,
+    'status' => PARAM_TAGLIST,
+    'grading_date_from' => PARAM_TEXT,
+    'grading_date_to' => PARAM_TEXT,
+    'courseid' => PARAM_INT,
+    'cmid' => PARAM_INT,
+    'groupid' => PARAM_INT,
+];
 $openingfilters = filters::from_request(
     array_map(
-        static fn(string $name): array => ['name' => $name, 'value' => optional_param($name, '', PARAM_RAW_TRIMMED)],
-        ['searchname', 'status', 'grading_date_from', 'grading_date_to', 'courseid', 'cmid', 'groupid']
+        static fn(string $name, string $type): array => [
+            'name' => $name,
+            'value' => trim((string) optional_param($name, '', $type)),
+        ],
+        array_keys($filtertypes),
+        $filtertypes
     ),
     $scope->can_see_failures()
 );
