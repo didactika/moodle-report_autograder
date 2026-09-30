@@ -196,6 +196,29 @@ final class prospective_grader_test extends \advanced_testcase {
     }
 
     /**
+     * A grade the activity gave itself — a quiz marking an attempt, which the
+     * gradebook records against the student — names nobody as its grader.
+     */
+    public function test_a_grade_the_activity_gave_itself_names_no_grader(): void {
+        $this->getDataGenerator()->create_and_enrol($this->course, 'editingteacher');
+        $this->decide_pending();
+
+        $item = \grade_item::fetch([
+            'itemtype' => 'mod',
+            'itemmodule' => 'assign',
+            'iteminstance' => $this->cm->instance,
+            'courseid' => $this->course->id,
+            'itemnumber' => 0,
+        ]);
+        $item->update_raw_grade((int) $this->student->id, 50.0, 'test', false, FORMAT_MOODLE, (int) $this->student->id);
+
+        $row = $this->formatted_row();
+
+        $this->assertArrayNotHasKey('graded_by', $row, 'The student is not their own grader.');
+        $this->assertArrayNotHasKey('will_grade', $row);
+    }
+
+    /**
      * Puts the student's decision in the waiting state, due tomorrow.
      */
     private function decide_pending(): void {

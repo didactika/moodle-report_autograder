@@ -313,6 +313,11 @@ final class row_formatter {
      * the column is there to show. Autograder's own rows agree either way,
      * since it posts as the teacher it chose.
      *
+     * Except where the gradebook names the student: that is an activity that
+     * graded itself — a quiz marking an attempt — with nobody to name. The
+     * decision's teacher would be wrong there too, since the grade shown is
+     * the activity's own and not the one autograder posted.
+     *
      * @param \stdClass $row
      * @return int Zero when nobody has graded it.
      */
@@ -320,7 +325,7 @@ final class row_formatter {
         $fromgradebook = (int) ($row->gradedbyid ?? 0);
 
         if ($fromgradebook > 0 && $row->finalgrade !== null) {
-            return $fromgradebook;
+            return $fromgradebook === (int) $row->userid ? 0 : $fromgradebook;
         }
 
         return (int) ($row->graderid ?? 0);
