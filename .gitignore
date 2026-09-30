@@ -3,6 +3,14 @@ node_modules/
 package-lock.json
 package.json
 
-# The v2 plugin, congelado como referencia de negocio y de interfaz — no se
-# copia sin revisar. Ver docs-refactor/autograder-local/report-plan.md.
-old/
+# Non-English language packs are managed by Moodle's own translation system
+# (AMOS, https://lang.moodle.org/) once this plugin is registered in the
+# Moodle plugins directory, not by this repository. Keeping only lang/en/
+# here avoids this repo and AMOS fighting over the same files.
+lang/*
+!lang/en/
+!lang/en/**
+
+# Generated per site by admin/tool/phpunit/cli/util.php --buildcomponentconfigs,
+# with a PHPUNIT_SEQUENCE_START that is random on every run.
+phpunit.xml
