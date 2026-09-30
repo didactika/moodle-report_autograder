@@ -22,7 +22,7 @@
  */
 
 import $ from 'jquery';
-import { get_string as getString } from 'core/str';
+import {get_string as getString} from 'core/str';
 import notification from 'core/notification';
 import IconSystem from 'core/icon_system';
 
@@ -41,12 +41,12 @@ import {
     setSort,
     resetSort,
 } from './state';
-import { getReportData } from './service/repository';
-import { showLoading, renderTable } from './ui/report';
-import { renderPagination } from './ui/pagination';
-import { attachFilterListeners, collectFilters } from './ui/form';
-import { init as initFiltersUi } from './ui/filters';
-import { updateSortHeaderUI } from './ui/table_sort';
+import {getReportData} from './service/repository';
+import {showLoading, renderTable} from './ui/report';
+import {renderPagination} from './ui/pagination';
+import {attachFilterListeners, collectFilters} from './ui/form';
+import {init as initFiltersUi} from './ui/filters';
+import {updateSortHeaderUI} from './ui/table_sort';
 
 let requestId = 0;
 
@@ -71,7 +71,7 @@ const toggleColumnSort = (key) => {
  * is nothing to draw and nothing to page through until the reader picks
  * something.
  */
-const showNeedsFilter = async () => {
+const showNeedsFilter = async() => {
     const message = await getString('needsfilter', 'report_autograder');
 
     $('#autograder-pagination-container').empty();
@@ -153,7 +153,7 @@ const fetchAndRenderReport = (page) => {
 
             return response;
         })
-        .catch(async (error) => {
+        .catch(async(error) => {
             if (!isCurrent()) {
                 return;
             }
@@ -165,7 +165,7 @@ const fetchAndRenderReport = (page) => {
             if (!isCurrent()) {
                 return;
             }
-            notification.addNotification({ message: msg, type: 'error' });
+            notification.addNotification({message: msg, type: 'error'});
 
             renderTable([], null, isCurrent);
         });
@@ -181,7 +181,7 @@ export const init = (scope, presetStatus) => {
 
     if (presetStatus) {
         $('#status').val(presetStatus);
-        setFilters([{ name: 'status', value: presetStatus }]);
+        setFilters([{name: 'status', value: presetStatus}]);
     }
 
     const container = $('#autograder-report-container');
@@ -227,7 +227,7 @@ export const init = (scope, presetStatus) => {
         },
     );
 
-    container.on('click', '[data-autograder-sort]', function (e) {
+    container.on('click', '[data-autograder-sort]', function(e) {
         e.preventDefault();
         const key = this.getAttribute('data-autograder-sort');
 

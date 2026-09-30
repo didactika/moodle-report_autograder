@@ -36,7 +36,7 @@ export const collectFilters = () => {
     const filters = [];
     const add = (name, value) => {
         if (value) {
-            filters.push({ name, value: String(value) });
+            filters.push({name, value: String(value)});
         }
     };
 
@@ -62,7 +62,7 @@ export const collectFilters = () => {
  * own paint() is what marks it, from the option actually selected.
  */
 const markChosenPickers = () => {
-    $('select.autograder-select-chip').each(function () {
+    $('select.autograder-select-chip').each(function() {
         const select = $(this);
 
         if (select.data('autograderSearchable')) {

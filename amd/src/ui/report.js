@@ -23,7 +23,7 @@
 
 import $ from 'jquery';
 import templates from 'core/templates';
-import { get_string as getString } from 'core/str';
+import {get_string as getString} from 'core/str';
 import notification from 'core/notification';
 
 /** The table's own root, which every helper here works inside. */
@@ -48,7 +48,7 @@ const columnCount = () => $(`${ROOT} thead th`).length || 5;
  */
 export const renderTable = (records, onRenderComplete, isCurrent = () => true) => {
     const container = $(`${ROOT} tbody`);
-    const done = () => {
+    const finishRendering = () => {
         if (!isCurrent()) {
             return;
         }
@@ -74,7 +74,7 @@ export const renderTable = (records, onRenderComplete, isCurrent = () => true) =
             const cell = $('<td>').attr('colspan', columnCount()).addClass('text-center');
             cell.append($('<p>').addClass('m-0 p-0').text(msg));
             container.empty().append($('<tr>').append(cell));
-            done();
+            finishRendering();
 
             return null;
         }).catch(failed);
@@ -82,13 +82,13 @@ export const renderTable = (records, onRenderComplete, isCurrent = () => true) =
         return;
     }
 
-    templates.render('report_autograder/table_rows', { records })
+    templates.render('report_autograder/table_rows', {records})
         .then(html => {
             if (!isCurrent()) {
                 return null;
             }
             container.html(html);
-            done();
+            finishRendering();
 
             return null;
         })

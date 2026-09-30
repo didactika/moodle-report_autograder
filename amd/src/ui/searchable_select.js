@@ -22,7 +22,7 @@
  */
 
 import $ from 'jquery';
-import { searchOptions } from '../service/filter_datasource';
+import {searchOptions} from '../service/filter_datasource';
 
 /**
  * A chip that searches the server, built here rather than taken from core.
@@ -68,7 +68,7 @@ const currentChoice = (select, placeholder) => {
     const label = option.length ? (option.text() || '').trim() : '';
     const chosen = Boolean(select.val()) && label !== '';
 
-    return { label: chosen ? label : placeholder, chosen };
+    return {label: chosen ? label : placeholder, chosen};
 };
 
 /**
@@ -78,7 +78,7 @@ const currentChoice = (select, placeholder) => {
  * @param {String} placeholder
  */
 const paint = (parts, placeholder) => {
-    const { label, chosen } = currentChoice(parts.select, placeholder);
+    const {label, chosen} = currentChoice(parts.select, placeholder);
 
     parts.text.text(label);
     parts.button.attr('aria-label', chosen ? `${placeholder}: ${label}` : placeholder);
@@ -108,7 +108,7 @@ const renderOptions = (parts, options, emptyText) => {
         parts.list.append(
             $('<li>').append(
                 $('<button>')
-                    .attr({ type: 'button', 'data-value': option.id })
+                    .attr({type: 'button', 'data-value': option.id})
                     .addClass('autograder-searchable-option')
                     .text(option.name)
             )
@@ -139,7 +139,7 @@ const enhanceOne = (selector, emptyText, loadingText, clearLabel) => {
     // The same clear button and the same arrow as every other chip, so that
     // this one is not a lookalike but the thing itself.
     const clear = $('<button>')
-        .attr({ type: 'button', 'aria-label': clearLabel })
+        .attr({type: 'button', 'aria-label': clearLabel})
         .addClass('autograder-chip-clear-btn autograder-searchable-clear d-none')
         .append($('<i>').addClass('fa fa-times-circle').attr('aria-hidden', 'true'));
     const arrow = $('<span>')
@@ -153,7 +153,7 @@ const enhanceOne = (selector, emptyText, loadingText, clearLabel) => {
         .append(text)
         .append(arrow);
     const input = $('<input>')
-        .attr({ type: 'text', placeholder: placeholder, 'aria-label': placeholder })
+        .attr({type: 'text', placeholder: placeholder, 'aria-label': placeholder})
         .addClass('form-control autograder-searchable-input');
     const list = $('<ul>').addClass('autograder-searchable-list');
     const panel = $('<div>').addClass('autograder-searchable-panel')
@@ -163,7 +163,7 @@ const enhanceOne = (selector, emptyText, loadingText, clearLabel) => {
     select.addClass('sr-only').attr('tabindex', '-1').attr('aria-hidden', 'true');
     wrapper.append(button).append(clear).append(panel);
 
-    const parts = { select, button, text, clear, arrow, list };
+    const parts = {select, button, text, clear, arrow, list};
     let timer = null;
     let token = 0;
 
@@ -200,7 +200,7 @@ const enhanceOne = (selector, emptyText, loadingText, clearLabel) => {
 
         wrapper.addClass('is-open');
         button.attr('aria-expanded', 'true');
-        openPanel = { wrapper, button };
+        openPanel = {wrapper, button};
         input.val('');
         input.trigger('focus');
         search('');
@@ -238,7 +238,7 @@ const enhanceOne = (selector, emptyText, loadingText, clearLabel) => {
 
     panel.on('click', (e) => e.stopPropagation());
 
-    list.on('click', '.autograder-searchable-option', function (e) {
+    list.on('click', '.autograder-searchable-option', function(e) {
         e.preventDefault();
 
         const value = $(this).attr('data-value');

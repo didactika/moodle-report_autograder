@@ -22,7 +22,7 @@
  */
 
 import $ from 'jquery';
-import { getSortColumn, getSortDirection } from '../state';
+import {getSortColumn, getSortDirection} from '../state';
 
 /**
  * Updates sort icons and aria-sort on thead buttons (static DOM, survives tbody refresh).
@@ -33,7 +33,7 @@ export const updateSortHeaderUI = ($container) => {
     const col = getSortColumn();
     const dir = getSortDirection();
 
-    $container.find('[data-autograder-sort]').each(function () {
+    $container.find('[data-autograder-sort]').each(function() {
         const key = this.getAttribute('data-autograder-sort');
         const $btn = $(this);
         const $th = $btn.closest('th');

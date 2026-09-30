@@ -22,7 +22,7 @@
  */
 
 import $ from 'jquery';
-import { init as initSearchableSelects } from './searchable_select';
+import {init as initSearchableSelects} from './searchable_select';
 
 /**
  * The course picker on the graders page.

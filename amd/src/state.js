@@ -21,7 +21,7 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import { BASE_ITEMS_PER_PAGE } from "./ui/pagination";
+import {BASE_ITEMS_PER_PAGE} from "./ui/pagination";
 
 /**
  * What the page is looking at and what it has been asked to show.

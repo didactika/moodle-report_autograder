@@ -22,7 +22,7 @@
  */
 
 import $ from 'jquery';
-import { init as initSearchableSelects } from './searchable_select';
+import {init as initSearchableSelects} from './searchable_select';
 
 const FORMAT = 'YYYY-MM-DD';
 const SEPARATOR = ' - ';
@@ -65,7 +65,7 @@ const getTexts = () => {
 const getStatusLabels = () => {
   const labels = {};
 
-  $('#autograder-status-multiselect .autograder-status-label').each(function () {
+  $('#autograder-status-multiselect .autograder-status-label').each(function() {
     const input = $(this).closest('.dropdown-item').find('input[type="checkbox"]');
 
     if (input.length) {
@@ -94,7 +94,7 @@ const syncSearchHidden = () => {
 
 const syncStatusHidden = () => {
   const selectedValues = [];
-  $('#autograder-status-multiselect input[type="checkbox"]:checked').each(function () {
+  $('#autograder-status-multiselect input[type="checkbox"]:checked').each(function() {
     selectedValues.push($(this).val());
   });
   $('#status').val(selectedValues.join(','));
@@ -108,12 +108,12 @@ const renderStatusSelection = (texts, statusLabels) => {
   const toggle = $('#status-multiselect-toggle');
   const selectedValues = [];
 
-  $('#autograder-status-multiselect input[type="checkbox"]:checked').each(function () {
+  $('#autograder-status-multiselect input[type="checkbox"]:checked').each(function() {
     selectedValues.push($(this).val());
   });
 
   // Highlight dropdown items that are selected
-  $('#autograder-status-multiselect .dropdown-item').each(function () {
+  $('#autograder-status-multiselect .dropdown-item').each(function() {
     const cb = $(this).find('input[type="checkbox"]');
     $(this).toggleClass('autograder-filter-active', cb.prop('checked'));
   });
@@ -151,21 +151,21 @@ const initStatusMultiselect = (texts, statusLabels) => {
 
   if (hiddenStatus) {
     const statuses = hiddenStatus.split(',');
-    wrapper.find('input[type="checkbox"]').each(function () {
+    wrapper.find('input[type="checkbox"]').each(function() {
       if (statuses.indexOf($(this).val()) !== -1) {
         $(this).prop('checked', true);
       }
     });
   }
 
-  toggle.off('click.autograder').on('click.autograder', function (e) {
+  toggle.off('click.autograder').on('click.autograder', function(e) {
     e.preventDefault();
     e.stopPropagation();
     wrapper.toggleClass('is-open');
     toggle.attr('aria-expanded', wrapper.hasClass('is-open') ? 'true' : 'false');
   });
 
-  $('#clear-status').off('click.autograder').on('click.autograder', function (e) {
+  $('#clear-status').off('click.autograder').on('click.autograder', function(e) {
     e.preventDefault();
     e.stopPropagation();
     wrapper.find('input[type="checkbox"]').prop('checked', false);
@@ -175,18 +175,18 @@ const initStatusMultiselect = (texts, statusLabels) => {
     debounceSubmit(150);
   });
 
-  wrapper.off('keydown.autograder').on('keydown.autograder', function (e) {
+  wrapper.off('keydown.autograder').on('keydown.autograder', function(e) {
     if (e.key === 'Escape') {
       wrapper.removeClass('is-open');
       toggle.attr('aria-expanded', 'false').trigger('focus');
     }
   });
 
-  wrapper.find('.autograder-status-menu').off('click.autograder').on('click.autograder', function (e) {
+  wrapper.find('.autograder-status-menu').off('click.autograder').on('click.autograder', function(e) {
     e.stopPropagation();
   });
 
-  wrapper.find('input[type="checkbox"]').off('change.autograder').on('change.autograder', function () {
+  wrapper.find('input[type="checkbox"]').off('change.autograder').on('change.autograder', function() {
     syncStatusHidden();
     renderStatusSelection(texts, statusLabels);
     debounceSubmit(150);
@@ -247,14 +247,14 @@ const initDateChipInteraction = (buttonId, clearBtnId, inputId, fromId, toId, te
   const fromInput = $('#' + fromId);
   const toInput = $('#' + toId);
 
-  button.off('click.autograder').on('click.autograder', function (e) {
+  button.off('click.autograder').on('click.autograder', function(e) {
     e.preventDefault();
     input.removeClass('d-none');
     input.focus();
     input.click();
   });
 
-  clearBtn.off('click.autograder').on('click.autograder', function (e) {
+  clearBtn.off('click.autograder').on('click.autograder', function(e) {
     e.preventDefault();
     e.stopPropagation();
     fromInput.val('');
@@ -293,7 +293,7 @@ const initSearchablePickers = (texts) => {
 };
 
 const initTopFiltersAutoApply = () => {
-  $('#autograder-quick-search-input').off('input.autograder').on('input.autograder', function () {
+  $('#autograder-quick-search-input').off('input.autograder').on('input.autograder', function() {
     syncSearchHidden();
     debounceSubmit(350);
   });
@@ -366,13 +366,13 @@ const ensureDateRangeAssets = () => {
       if (typeof window.moment === 'undefined') {
         return loadScript(momentUrl, true);
       }
-      return Promise.resolve();
+      return null;
     })
     .then(() => {
       if (!$.fn.daterangepicker) {
         return loadScript(pickerUrl, true);
       }
-      return Promise.resolve();
+      return null;
     });
 };
 
@@ -529,6 +529,8 @@ export const init = (presetStatus) => {
       'grading-date-text',
       texts
     );
+
+    return null;
   }).catch(() => {
     return;
   });

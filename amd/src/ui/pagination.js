@@ -164,9 +164,9 @@ export const renderPagination = (
         const isAll = isAllOption || onlyAllMode;
         return {
             value: val,
-            is_all: isAll,
+            'is_all': isAll,
             selected: val === selectedLimit,
-            all_results_label: override,
+            'all_results_label': override,
         };
     });
 
@@ -174,7 +174,7 @@ export const renderPagination = (
         from,
         to,
         total: totalRecords,
-        all_results_label: override,
+        'all_results_label': override,
         hasprev,
         hasnext,
         prevpage: currentPage - 1,
@@ -186,11 +186,11 @@ export const renderPagination = (
         .render("report_autograder/pagination", context)
         .then((html) => {
             if (!isCurrent()) {
-                return;
+                return null;
             }
             container.html(html);
 
-            container.find('#autograder-per-page').on('change.pgn', function () {
+            container.find('#autograder-per-page').on('change.pgn', function() {
                 if (typeof onPerPageChange === 'function') {
                     onPerPageChange(parseInt($(this).val(), 10));
                 }
@@ -214,6 +214,8 @@ export const renderPagination = (
                         }
                     },
                 );
+
+            return null;
         })
         .catch(() => {
             // Handle error silently.

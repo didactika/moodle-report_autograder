@@ -61,5 +61,5 @@ export const getReportData = (
         withtotal: withTotal,
     };
 
-    return ajax.call([{ methodname: 'report_autograder_get_report', args: params }])[0];
+    return ajax.call([{methodname: 'report_autograder_get_report', args: params}])[0];
 };
