@@ -15,26 +15,29 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * The one service this report exposes: a page of its own table.
  *
  * @package     report_autograder
- * @copyright   2026 Didactika.org
- * @author      Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'report_autograder';
-$plugin->release = '1.0.0';
-$plugin->version = 2026093000;
-$plugin->requires = 2024100700;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->supported = [405, 502];
-
-// Everything this report shows comes out of local_autograder's own tables and
-// grader selection, so it cannot work without it, and needs the version it
-// was released alongside.
-$plugin->dependencies = [
-    'local_autograder' => 2026093000,
+$functions = [
+    'report_autograder_get_report' => [
+        'classname' => 'report_autograder\external\get_report',
+        'description' => 'One page of the autograder report, for an activity, a course or the site.',
+        'type' => 'read',
+        'ajax' => true,
+        'loginrequired' => true,
+    ],
+    'report_autograder_search_filter_options' => [
+        'classname' => 'report_autograder\external\search_filter_options',
+        'description' => 'Searches the course and activity pickers of the report\'s filter bar.',
+        'type' => 'read',
+        'ajax' => true,
+        'loginrequired' => true,
+    ],
 ];

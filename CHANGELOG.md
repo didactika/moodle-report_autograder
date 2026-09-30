@@ -20,3 +20,18 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 -->
 
 ## [Unreleased]
+
+## [1.0.0] - 2026-09-30
+
+First public release.
+
+### Added
+
+- Report of Autograder's decisions at three levels: one activity, one course and the whole site.
+- For each student: their status, when they will be or were graded and on what basis, the grade, and the teacher it is or would be attributed to.
+- Flagging of pending students who have nobody able to grade them, so the problem can be fixed before the date arrives.
+- Counts of students per status on the course and site reports, each opening the matching list.
+- Filters by course, activity, group, status and grading date, and search by student.
+- *Graders by course* page showing which teacher each student of a course would be graded as.
+- Respect for separate groups, and a dedicated capability to see failed gradings and their reasons.
+- Privacy API support: the report stores no personal data of its own.

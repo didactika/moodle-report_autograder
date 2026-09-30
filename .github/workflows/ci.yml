@@ -199,6 +199,11 @@ jobs:
           sudo locale-gen en_AU.UTF-8
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
 
+      # This report reads local_autograder's records and declares it as a
+      # dependency in version.php, so it has to be installed alongside.
+      - name: Add local_autograder
+        run: moodle-plugin-ci add-plugin --branch main didactika/moodle-local_autograder
+
       - name: Install moodle-plugin-ci
         run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
         env:

@@ -1,3 +1,8 @@
+# Node modules
+node_modules/
+package-lock.json
+package.json
+
 # Non-English language packs are managed by Moodle's own translation system
 # (AMOS, https://lang.moodle.org/) once this plugin is registered in the
 # Moodle plugins directory, not by this repository. Keeping only lang/en/
@@ -5,3 +10,7 @@
 lang/*
 !lang/en/
 !lang/en/**
+
+# Generated per site by admin/tool/phpunit/cli/util.php --buildcomponentconfigs,
+# with a PHPUNIT_SEQUENCE_START that is random on every run.
+phpunit.xml

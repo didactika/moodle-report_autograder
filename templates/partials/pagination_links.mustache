@@ -1,0 +1,105 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_autograder/partials/pagination_links
+
+    The report's pagination, for a page that turns by link rather than by fetch.
+
+    The same control as report_autograder/pagination and deliberately the same
+    markup, so the two read as one thing: a page-size chooser on the left, the
+    range and total on the right, chevrons beside it. What differs is only how
+    a page is turned — an anchor and a GET form here, because this page is
+    rendered by the server rather than filled in by the web service.
+
+    Context variables required for this template:
+    * formurl / hiddenfields - Where the page-size chooser submits, and what it carries
+    * peroptions - The page sizes on offer
+    * from / to / total - The range this page shows
+    * hasprev / prevurl, hasnext / nexturl - The neighbouring pages
+
+    Example context (json):
+    {
+        "formurl": "/report/autograder/graders.php",
+        "hiddenfields": [{"name": "courseid", "value": "2"}],
+        "peroptions": [{"value": 25, "selected": true}],
+        "from": 1, "to": 25, "total": 120,
+        "hasprev": false, "prevurl": "#",
+        "hasnext": true, "nexturl": "#"
+    }
+}}
+<nav aria-label="{{#str}}pagination:label, report_autograder{{/str}}" class="autograder-pagination autograder-pagination-container d-flex flex-wrap justify-content-between align-items-center">
+    <form method="get" action="{{formurl}}" class="autograder-pagination-page-selector d-flex align-items-center mb-2 mb-md-0">
+        {{#hiddenfields}}
+        <input type="hidden" name="{{name}}" value="{{value}}">
+        {{/hiddenfields}}
+        <label for="graders-perpage" class="mb-0 autograder-per-page-label">{{#str}}pagination:results_per_page, report_autograder{{/str}}</label>
+        <select id="graders-perpage" name="perpage" class="form-control autograder-per-page-select">
+            {{#peroptions}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+            {{/peroptions}}
+        </select>
+        {{! Without JavaScript the chooser still applies, by this button. }}
+        <noscript>
+            <button type="submit" class="btn btn-sm btn-outline-secondary ml-2">{{#str}}graders:show, report_autograder{{/str}}</button>
+        </noscript>
+    </form>
+
+    <div class="autograder-change-page-buttons d-flex flex-wrap align-items-center justify-content-md-end">
+        <div role="status" aria-live="polite" class="autograder-pagination-result d-flex flex-wrap align-items-center mb-2 mb-md-0 mr-md-3">
+            <div class="d-flex align-items-center mr-2">
+                <span class="autograder-page-min mr-1">{{from}}</span>
+                <span class="mr-1">-</span>
+                <span class="autograder-page-max mr-1">{{to}}</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <span class="mr-1">{{#str}}pagination:of, report_autograder{{/str}}</span>
+                <span class="autograder-page-total mr-1">{{total}}</span>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center autograder-page-arrows">
+            <div class="mr-2">
+                {{#hasprev}}
+                <a href="{{prevurl}}" class="autograder-page-nav btn btn-outline-secondary autograder-page-chevron"
+                    aria-label="{{#str}}pagination:previous, report_autograder{{/str}}">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </a>
+                {{/hasprev}}
+                {{^hasprev}}
+                <button type="button" class="autograder-page-nav btn btn-outline-secondary autograder-page-chevron"
+                    aria-label="{{#str}}pagination:previous, report_autograder{{/str}}" disabled>
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                {{/hasprev}}
+            </div>
+            <div>
+                {{#hasnext}}
+                <a href="{{nexturl}}" class="autograder-page-nav btn btn-outline-secondary autograder-page-chevron"
+                    aria-label="{{#str}}pagination:next, report_autograder{{/str}}">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+                {{/hasnext}}
+                {{^hasnext}}
+                <button type="button" class="autograder-page-nav btn btn-outline-secondary autograder-page-chevron"
+                    aria-label="{{#str}}pagination:next, report_autograder{{/str}}" disabled>
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </button>
+                {{/hasnext}}
+            </div>
+        </div>
+    </div>
+</nav>

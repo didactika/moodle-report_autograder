@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>lib/moment</location>
+    <name>Moment.js</name>
+    <description>Date library the range picker below is built on. Shipped with its locales, so that the calendar names its months and weekdays in the language the site is being read in.</description>
+    <version>2.30.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/moment/moment</repository>
+    <copyrights>
+      <copyright>JS Foundation and other contributors</copyright>
+    </copyrights>
+  </library>
+  <library>
+    <location>lib/daterangepicker</location>
+    <name>Date Range Picker</name>
+    <description>The calendar behind the report's "Grading date" filter, which asks for a range rather than a day.</description>
+    <version>3.1.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/dangrossman/daterangepicker</repository>
+    <copyrights>
+      <copyright>2012-2019 Dan Grossman</copyright>
+    </copyrights>
+  </library>
+</libraries>
