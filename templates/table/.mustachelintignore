@@ -1,0 +1,4 @@
+# Table rows render as <tr> elements, which only validate inside a <table>:
+# the linter checks each template on its own, wrapped in a bare <body>.
+_row.mustache
+skeleton_rows.mustache

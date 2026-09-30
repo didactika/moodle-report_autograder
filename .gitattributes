@@ -13,3 +13,4 @@ amd/build/** linguist-generated=true
 /.github        export-ignore
 /.gitignore     export-ignore
 /.gitattributes export-ignore
+.mustachelintignore export-ignore
