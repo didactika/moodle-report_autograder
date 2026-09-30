@@ -7,7 +7,7 @@
 [![Release](https://img.shields.io/github/v/release/didactika/moodle-report_autograder?style=flat-square)](https://github.com/didactika/moodle-report_autograder/releases)
 [![Moodle](https://img.shields.io/badge/Moodle-4.5+-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
 [![PHP](https://img.shields.io/badge/PHP-8.1+-777bb4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
-[![License](https://img.shields.io/badge/License-GPL_v3-blue?style=flat-square)](LICENSE.md)
+[![License](https://img.shields.io/badge/License-GPL_v3-blue?style=flat-square)](LICENSE)
 
 [Overview](#overview) • [Installation](#installation) • [Usage](#usage) • [Capabilities](#capabilities) • [Troubleshooting](#troubleshooting)
 
