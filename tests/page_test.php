@@ -229,7 +229,7 @@ final class page_test extends \advanced_testcase {
         $this->assertStringNotContainsString('autograder-filter-group', $before);
 
         $this->getDataGenerator()->create_group(['courseid' => $this->course->id, 'name' => 'Group A']);
-        set_coursemodule_groupmode((int) $this->cm->id, SEPARATEGROUPS);
+        $this->set_groupmode(SEPARATEGROUPS);
         rebuild_course_cache((int) $this->course->id, true);
         \cache_helper::purge_all();
 
@@ -256,7 +256,7 @@ final class page_test extends \advanced_testcase {
         $this->assertFalse(page_context::table($scope, null)['shows_group_column']);
 
         $this->getDataGenerator()->create_group(['courseid' => $this->course->id, 'name' => 'Group A']);
-        set_coursemodule_groupmode((int) $this->cm->id, SEPARATEGROUPS);
+        $this->set_groupmode(SEPARATEGROUPS);
         rebuild_course_cache((int) $this->course->id, true);
         \cache_helper::purge_all();
 
@@ -342,6 +342,23 @@ final class page_test extends \advanced_testcase {
 
             default:
                 return scope::from_params(0, 0);
+        }
+    }
+
+    /**
+     * Sets the group mode of the activity under test.
+     *
+     * Moodle 5.2 deprecates set_coursemodule_groupmode() in favour of
+     * cmactions::set_groupmode() (MDL-86857), which older releases do not have.
+     *
+     * @param int $groupmode One of NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS.
+     */
+    private function set_groupmode(int $groupmode): void {
+        $actions = \core_courseformat\formatactions::cm((int) $this->course->id);
+        if (method_exists($actions, 'set_groupmode')) {
+            $actions->set_groupmode((int) $this->cm->id, $groupmode);
+        } else {
+            set_coursemodule_groupmode((int) $this->cm->id, $groupmode);
         }
     }
 

@@ -21,6 +21,14 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-06
+
+### Changed
+
+- Compatibility with Moodle 5.3 (now 4.5 to 5.3).
+- Tests set the group mode through the course format actions on Moodle 5.2+, instead of `set_coursemodule_groupmode()`, which 5.2 deprecated (MDL-86857).
+- CI runs Moodle 5.3 against PostgreSQL 17 and MariaDB 11.4, the minimum versions it requires.
+
 ## [1.0.0] - 2026-09-30
 
 First public release.

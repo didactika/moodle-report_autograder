@@ -26,11 +26,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'report_autograder';
-$plugin->release = '1.0.0';
-$plugin->version = 2026093000;
+$plugin->release = '1.0.1';
+$plugin->version = 2026100600;
 $plugin->requires = 2024100700;
 $plugin->maturity = MATURITY_STABLE;
-$plugin->supported = [405, 502];
+$plugin->supported = [405, 503];
 
 // Everything this report shows comes out of local_autograder's own tables and
 // grader selection, so it cannot work without it, and needs the version it
