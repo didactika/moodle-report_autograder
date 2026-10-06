@@ -23,6 +23,10 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [1.0.1] - 2026-10-06
 
+### Fixed
+
+- The icons that explain a status or a grading problem open their popover again on Moodle 5.0 and later, which reads Bootstrap 5's own attribute names.
+
 ### Changed
 
 - Compatibility with Moodle 5.3 (now 4.5 to 5.3).

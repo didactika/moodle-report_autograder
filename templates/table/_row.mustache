@@ -19,6 +19,14 @@
 
     One student's row.
 
+    The popovers carry each attribute twice, once for Bootstrap 4 and once
+    for Bootstrap 5: Moodle 4.5 reads data-toggle and Moodle 5.0 onwards
+    reads data-bs-toggle, and each ignores the other's. Both are needed
+    because these rows arrive after the page has loaded, so they are picked
+    up by the delegated handler each Moodle installs, not by the one-off
+    pass it makes over the page at load. Drop the data-* half when this
+    plugin stops supporting 4.5.
+
     Context variables required for this template:
     * rowkey - Unique per activity and student
     * user_col - The student column, picture and name
@@ -69,13 +77,13 @@
         {{#failure_reason}}
         <a class="btn btn-link p-0 ml-1 icon-no-margin"
            role="button"
-           data-container="body"
-           data-toggle="popover"
-           data-placement="right"
-           data-content="{{failure_reason}}"
-           data-html="true"
+           data-container="body" data-bs-container="body"
+           data-toggle="popover" data-bs-toggle="popover"
+           data-placement="right" data-bs-placement="right"
+           data-content="{{failure_reason}}" data-bs-content="{{failure_reason}}"
+           data-html="true" data-bs-html="true"
            tabindex="0"
-           data-trigger="focus"
+           data-trigger="focus" data-bs-trigger="focus"
            aria-label="{{status}}">
             <i class="icon fa fa-circle-exclamation text-danger fa-fw" title="{{status}}" aria-hidden="true"></i>
         </a>
@@ -87,13 +95,13 @@
         {{#date_reason}}
         <a class="btn btn-link p-0 ml-1 icon-no-margin"
            role="button"
-           data-container="body"
-           data-toggle="popover"
-           data-placement="right"
-           data-content="{{date_reason}}"
-           data-html="true"
+           data-container="body" data-bs-container="body"
+           data-toggle="popover" data-bs-toggle="popover"
+           data-placement="right" data-bs-placement="right"
+           data-content="{{date_reason}}" data-bs-content="{{date_reason}}"
+           data-html="true" data-bs-html="true"
            tabindex="0"
-           data-trigger="focus"
+           data-trigger="focus" data-bs-trigger="focus"
            aria-label="{{#str}}helper, report_autograder{{/str}}">
             <i class="icon fa fa-circle-info text-muted fa-fw" aria-hidden="true"></i>
         </a>
@@ -108,13 +116,13 @@
             {{#provisional_grade}}
             {{.}} <a class="btn btn-link p-0 me-2 icon-no-margin"
                             role="button"
-                            data-container="body"
-                            data-toggle="popover"
-                            data-placement="right"
-                            data-content="{{#str}}grade_provisional_help, report_autograder{{/str}}"
-                            data-html="true"
+                            data-container="body" data-bs-container="body"
+                            data-toggle="popover" data-bs-toggle="popover"
+                            data-placement="right" data-bs-placement="right"
+                            data-content="{{#str}}grade_provisional_help, report_autograder{{/str}}" data-bs-content="{{#str}}grade_provisional_help, report_autograder{{/str}}"
+                            data-html="true" data-bs-html="true"
                             tabindex="0"
-                            data-trigger="focus"
+                            data-trigger="focus" data-bs-trigger="focus"
                             aria-label="{{#str}}helper, report_autograder{{/str}}">
 
             <i class="icon fa fa-circle-info text-info fa-fw " title="{{#str}}helper, report_autograder{{/str}}" aria-hidden="true"></i>
@@ -123,13 +131,13 @@
             {{#grade_problem}}
             <a class="btn btn-link p-0 icon-no-margin"
                role="button"
-               data-container="body"
-               data-toggle="popover"
-               data-placement="right"
-               data-content="{{grade_problem}}"
-               data-html="true"
+               data-container="body" data-bs-container="body"
+               data-toggle="popover" data-bs-toggle="popover"
+               data-placement="right" data-bs-placement="right"
+               data-content="{{grade_problem}}" data-bs-content="{{grade_problem}}"
+               data-html="true" data-bs-html="true"
                tabindex="0"
-               data-trigger="focus"
+               data-trigger="focus" data-bs-trigger="focus"
                aria-label="{{grade_problem}}">
                 <i class="icon fa fa-triangle-exclamation text-warning fa-fw" aria-hidden="true"></i>
             </a>
@@ -146,13 +154,13 @@
             <span class="autograder-prospective">{{.}}</span>
             <a class="btn btn-link p-0 ml-1 icon-no-margin"
                role="button"
-               data-container="body"
-               data-toggle="popover"
-               data-placement="left"
-               data-content="{{#str}}gradedby_prospective_help, report_autograder{{/str}}"
-               data-html="true"
+               data-container="body" data-bs-container="body"
+               data-toggle="popover" data-bs-toggle="popover"
+               data-placement="left" data-bs-placement="left"
+               data-content="{{#str}}gradedby_prospective_help, report_autograder{{/str}}" data-bs-content="{{#str}}gradedby_prospective_help, report_autograder{{/str}}"
+               data-html="true" data-bs-html="true"
                tabindex="0"
-               data-trigger="focus"
+               data-trigger="focus" data-bs-trigger="focus"
                aria-label="{{#str}}gradedby_prospective, report_autograder{{/str}}">
                 <i class="icon fa fa-circle-info text-info fa-fw" aria-hidden="true"></i>
             </a>
@@ -160,13 +168,13 @@
             {{#will_grade_problem}}
             <a class="btn btn-link p-0 icon-no-margin"
                role="button"
-               data-container="body"
-               data-toggle="popover"
-               data-placement="left"
-               data-content="{{will_grade_problem}}"
-               data-html="true"
+               data-container="body" data-bs-container="body"
+               data-toggle="popover" data-bs-toggle="popover"
+               data-placement="left" data-bs-placement="left"
+               data-content="{{will_grade_problem}}" data-bs-content="{{will_grade_problem}}"
+               data-html="true" data-bs-html="true"
                tabindex="0"
-               data-trigger="focus"
+               data-trigger="focus" data-bs-trigger="focus"
                aria-label="{{will_grade_problem}}">
                 <i class="icon fa fa-triangle-exclamation text-warning fa-fw" aria-hidden="true"></i>
             </a>
