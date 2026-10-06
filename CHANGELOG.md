@@ -21,6 +21,19 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-06
+
+### Fixed
+
+- The icons that explain a status or a grading problem open their popover again on Moodle 5.0 and later, which reads Bootstrap 5's own attribute names.
+
+### Changed
+
+- Compatibility with Moodle 5.3 (now 4.5 to 5.3).
+- Tests set the group mode through the course format actions on Moodle 5.2+, instead of `set_coursemodule_groupmode()`, which 5.2 deprecated (MDL-86857).
+- CI runs Moodle 5.3 against PostgreSQL 17 and MariaDB 11.4, the minimum versions it requires.
+- CI tests the two ends of the supported range plus any version listed in MOODLE_EXTRA_VERSIONS, so raising the ceiling no longer quietly stops testing the version below it. It currently tests 4.5, 5.2 and 5.3.
+
 ## [1.0.0] - 2026-09-30
 
 First public release.
