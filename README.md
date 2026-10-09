@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="pix/icon.svg" width="96" alt="Autograder Icon">
+
 # Autograder Report for Moodle
 
 *Shows what [Autograder](https://github.com/didactika/moodle-local_autograder)  decided for every student, per activity, course and site*
