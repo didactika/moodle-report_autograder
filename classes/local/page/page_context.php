@@ -73,8 +73,6 @@ final class page_context {
             // {@see \report_autograder\external\search_filter_options}.
             'scope_cmid' => $scope->level() === scope::LEVEL_ACTIVITY ? (int) $scope->cm()->id : 0,
             'scope_courseid' => $scope->level() === scope::LEVEL_COURSE ? (int) $scope->course()->id : 0,
-            'moment_url' => self::library_url('moment/moment-with-locales.min.js'),
-            'picker_url' => self::library_url('daterangepicker/daterangepicker.js'),
             'shows_group_filter' => $groups ? $groups->shows_picker() : false,
             'groups' => $groups ? $groups->picker_options() : [],
             'offers_all_groups' => $groups ? $groups->offers_all_groups() : true,
@@ -180,22 +178,5 @@ final class page_context {
         }
 
         return $context;
-    }
-
-    /**
-     * Where one of this plugin's bundled libraries is served from.
-     *
-     * The date picker and the date library it needs ship with the plugin and
-     * are declared in `thirdpartylibs.xml`. They used to be fetched from a
-     * public CDN, which a Moodle site cannot allow: it hands a third party a
-     * record of who reads this report from where, and it puts the report at
-     * the mercy of a host nobody here controls — including sites that are
-     * behind a firewall and would simply be left with no calendar.
-     *
-     * @param string $path Relative to the plugin's lib directory.
-     * @return string
-     */
-    private static function library_url(string $path): string {
-        return (new \moodle_url('/report/autograder/lib/' . $path))->out(false);
     }
 }
