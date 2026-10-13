@@ -297,9 +297,10 @@ final class page_test extends \advanced_testcase {
             $this->assertFileExists($plugin . 'amd/src/datelib/' . $module . '.js');
             $this->assertDirectoryExists($plugin . $library);
             $this->assertStringContainsString($library, $declared, 'Declare it in thirdpartylibs.xml.');
-            $this->assertStringContainsString(
-                'var define = undefined;',
-                file_get_contents($plugin . 'amd/src/datelib/' . $module . '.js')
+            $this->assertMatchesRegularExpression(
+                '/^\s+var define = /m',
+                file_get_contents($plugin . 'amd/src/datelib/' . $module . '.js'),
+                'The library gets a define() of its own, not the one of the page.'
             );
         }
         $this->assertStringNotContainsString('data-moment-url', $html);

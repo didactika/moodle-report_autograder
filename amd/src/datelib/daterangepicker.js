@@ -26,12 +26,13 @@
 
 /* eslint-disable */
 define(['jquery', 'report_autograder/datelib/moment'], function(jquery, moment) {
-    var define = undefined;
-    var exports = {};
-    var module = {exports: exports};
-    var require = function(name) {
-        return name === 'moment' ? moment : jquery;
+    // The library registers itself with the AMD loader it finds. This one is its own, so it hands the library the two modules
+    // that Moodle already loaded and keeps what the library makes, and the page's loader never sees an anonymous module.
+    var made;
+    var define = function(dependencies, factory) {
+        made = factory(moment, jquery);
     };
+    define.amd = true;
 /**
 * @version: 3.1
 * @author: Dan Grossman http://www.dangrossman.info/
@@ -1610,5 +1611,5 @@ define(['jquery', 'report_autograder/datelib/moment'], function(jquery, moment) 
     return DateRangePicker;
 
 }));
-    return module.exports;
+    return made;
 });
