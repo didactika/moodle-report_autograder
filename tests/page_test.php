@@ -293,10 +293,14 @@ final class page_test extends \advanced_testcase {
         $plugin = $CFG->dirroot . '/report/autograder/';
         $declared = file_get_contents($plugin . 'thirdpartylibs.xml');
 
-        foreach (['amd/src/vendor/moment.js', 'amd/src/vendor/daterangepicker.js'] as $library) {
-            $this->assertFileExists($plugin . $library);
+        foreach (['moment' => 'lib/moment', 'daterangepicker' => 'lib/daterangepicker'] as $module => $library) {
+            $this->assertFileExists($plugin . 'amd/src/datelib/' . $module . '.js');
+            $this->assertDirectoryExists($plugin . $library);
             $this->assertStringContainsString($library, $declared, 'Declare it in thirdpartylibs.xml.');
-            $this->assertStringContainsString('var define = undefined;', file_get_contents($plugin . $library));
+            $this->assertStringContainsString(
+                'var define = undefined;',
+                file_get_contents($plugin . 'amd/src/datelib/' . $module . '.js')
+            );
         }
         $this->assertStringNotContainsString('data-moment-url', $html);
         $this->assertStringNotContainsString('data-picker-url', $html);

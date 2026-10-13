@@ -23,7 +23,7 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ### Fixed
 
-- Moment.js and the date range picker of the grading date filter are AMD modules (`report_autograder/vendor/moment` and `report_autograder/vendor/daterangepicker`) imported by the filters, instead of scripts added to the page with `define()` hidden and `window.jQuery` and `window.$` set. While `define()` was hidden, any other AMD module requested at the same moment failed with "define is not a function". The libraries are unchanged and are still declared in `thirdpartylibs.xml`.
+- Moment.js and the date range picker of the grading date filter are AMD modules (`report_autograder/datelib/moment` and `report_autograder/datelib/daterangepicker`) imported by the filters, instead of scripts added to the page with `define()` hidden and `window.jQuery` and `window.$` set. While `define()` was hidden, any other AMD module requested at the same moment failed with "define is not a function". The libraries are unchanged and are still declared in `thirdpartylibs.xml`.
 
 ## [1.0.1] - 2026-10-06
 

@@ -22,8 +22,8 @@
  */
 
 import $ from 'jquery';
-import moment from 'report_autograder/vendor/moment';
-import 'report_autograder/vendor/daterangepicker';
+import moment from 'report_autograder/datelib/moment';
+import 'report_autograder/datelib/daterangepicker';
 import {init as initSearchableSelects} from './searchable_select';
 
 const FORMAT = 'YYYY-MM-DD';

@@ -16,15 +16,16 @@
 /**
  * Moment.js 2.30.1 with its locales.
  *
- * Third-party code (see thirdpartylibs.xml), unchanged and wrapped in a named AMD module so that Moodle's loader accepts it
- * and nothing is put in the global scope.
+ * The library itself, unchanged, is in lib/ and declared in thirdpartylibs.xml. This file wraps the same code in a named AMD
+ * module so that Moodle's loader accepts it and nothing is put in the global scope; it is not code of this plugin, so it is
+ * not linted.
  *
- * @module     report_autograder/vendor/moment
+ * @module     report_autograder/datelib/moment
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+/* eslint-disable */
 define([], function() {
-    // The library registers itself with the module system it finds. Giving it a module of its own to fill keeps it from
-    // reaching for a global define() or window.moment.
     var define = undefined;
     var exports = {};
     var module = {exports: exports};
