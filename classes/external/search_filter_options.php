@@ -141,7 +141,7 @@ class search_filter_options extends external_api {
                 break;
 
             case self::TYPE_ANY_COURSE:
-                $found = self::any_courses($params['query']);
+                $found = self::any_courses($scope, $params['query']);
                 break;
 
             default:
@@ -213,15 +213,22 @@ class search_filter_options extends external_api {
     /**
      * Every course on the site whose name matches, autograded or not.
      *
-     * Only ever reached at site level, where the caller already had to hold
-     * the site-wide capability — see the check in {@see self::execute()}.
+     * Only answered at site level, where the caller had to hold the site-wide
+     * capability to get here. Any narrower scope gets nothing: the capability
+     * that was checked there says nothing about the other courses of the site,
+     * hidden ones included, whose names this would otherwise list.
      * The front page is left out: it is not a course anybody grades.
      *
+     * @param scope $scope
      * @param string $query
      * @return array<int, array{id: int, name: string}>
      */
-    private static function any_courses(string $query): array {
+    private static function any_courses(scope $scope, string $query): array {
         global $DB, $SITE;
+
+        if ($scope->level() !== scope::LEVEL_SITE) {
+            return [];
+        }
 
         [$where, $params] = self::name_match(['co.shortname', 'co.fullname'], $query);
         $params['siteid'] = (int) $SITE->id;
