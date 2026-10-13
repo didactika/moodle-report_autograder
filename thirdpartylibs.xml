@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <libraries>
   <library>
-    <location>lib/moment</location>
+    <location>amd/src/vendor/moment.js</location>
     <name>Moment.js</name>
-    <description>Date library the range picker below is built on. Shipped with its locales, so that the calendar names its months and weekdays in the language the site is being read in.</description>
+    <description>Date library the range picker below is built on. Shipped with its locales, so that the calendar names its months and weekdays in the language the site is being read in. Wrapped, unchanged, in a named AMD module; its licence is in lib/moment/LICENSE.</description>
     <version>2.30.1</version>
     <license>MIT</license>
     <repository>https://github.com/moment/moment</repository>
@@ -12,9 +12,9 @@
     </copyrights>
   </library>
   <library>
-    <location>lib/daterangepicker</location>
+    <location>amd/src/vendor/daterangepicker.js</location>
     <name>Date Range Picker</name>
-    <description>The calendar behind the report's "Grading date" filter, which asks for a range rather than a day.</description>
+    <description>The calendar behind the report's "Grading date" filter, which asks for a range rather than a day. Wrapped, unchanged, in a named AMD module; its stylesheet stays in lib/daterangepicker/daterangepicker.css.</description>
     <version>3.1.0</version>
     <license>MIT</license>
     <repository>https://github.com/dangrossman/daterangepicker</repository>

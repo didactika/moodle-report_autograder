@@ -22,6 +22,8 @@
  */
 
 import $ from 'jquery';
+import moment from 'report_autograder/vendor/moment';
+import 'report_autograder/vendor/daterangepicker';
 import {init as initSearchableSelects} from './searchable_select';
 
 const FORMAT = 'YYYY-MM-DD';
@@ -262,8 +264,8 @@ const initDateChipInteraction = (buttonId, clearBtnId, inputId, fromId, toId, te
     input.val('');
     input.addClass('d-none');
     const picker = input.data('daterangepicker');
-    if (picker && typeof window.moment !== 'undefined') {
-      const today = window.moment();
+    if (picker) {
+      const today = moment();
       picker.setStartDate(today);
       picker.setEndDate(today);
     }
@@ -299,95 +301,18 @@ const initTopFiltersAutoApply = () => {
   });
 };
 
-const loadScript = (src, forceGlobal) => {
-  return new Promise((resolve, reject) => {
-    if (document.querySelector('script[src="' + src + '"]')) {
-      resolve();
-      return;
-    }
-
-    let previousDefine = null;
-    if (forceGlobal && typeof window.define === 'function' && window.define.amd) {
-      previousDefine = window.define;
-      window.define = undefined;
-    }
-
-    const restoreDefine = () => {
-      if (previousDefine) {
-        window.define = previousDefine;
-      }
-    };
-
-    const script = document.createElement('script');
-    script.src = src;
-    script.async = true;
-    script.onload = () => {
-      restoreDefine();
-      resolve();
-    };
-    script.onerror = () => {
-      restoreDefine();
-      reject();
-    };
-    document.head.appendChild(script);
-  });
-};
-
-/**
- * Loads the calendar and the date library it needs, from the copies that ship
- * with this plugin. Their addresses come from the form, which the server built:
- * nothing here reaches out to the internet.
- *
- * Both are loaded as plain scripts with AMD hidden, because each would
- * otherwise register itself as an anonymous module and Moodle's loader only
- * accepts named ones. Their stylesheet is asked for by the page itself.
- *
- * @returns {Promise}
- */
-const ensureDateRangeAssets = () => {
-  const form = $('#autograder-filter-form');
-  const momentUrl = form.data('moment-url');
-  const pickerUrl = form.data('picker-url');
-
-  if (!momentUrl || !pickerUrl) {
-    return Promise.reject(new Error('The date filter has no libraries to load.'));
-  }
-
-  if (!window.jQuery) {
-    window.jQuery = $;
-  }
-
-  if (!window.$) {
-    window.$ = $;
-  }
-
-  return Promise.resolve()
-    .then(() => {
-      if (typeof window.moment === 'undefined') {
-        return loadScript(momentUrl, true);
-      }
-      return null;
-    })
-    .then(() => {
-      if (!$.fn.daterangepicker) {
-        return loadScript(pickerUrl, true);
-      }
-      return null;
-    });
-};
-
 const initRangePicker = (inputSelector, fromSelector, toSelector, buttonId, clearBtnId, textSpanId, texts, activeLang) => {
   const input = $(inputSelector);
   const fromInput = $(fromSelector);
   const toInput = $(toSelector);
   const pickerTitle = input.data('picker-title') || '';
 
-  if (!input.length || !fromInput.length || !toInput.length || !$.fn.daterangepicker || typeof window.moment === 'undefined') {
+  if (!input.length || !fromInput.length || !toInput.length || !$.fn.daterangepicker) {
     return;
   }
 
-  window.moment.locale(activeLang);
-  const localeData = window.moment.localeData();
+  moment.locale(activeLang);
+  const localeData = moment.localeData();
 
   const options = {
     autoUpdateInput: false,
@@ -409,8 +334,8 @@ const initRangePicker = (inputSelector, fromSelector, toSelector, buttonId, clea
   };
 
   if (fromInput.val() && toInput.val()) {
-    options.startDate = window.moment(fromInput.val(), FORMAT);
-    options.endDate = window.moment(toInput.val(), FORMAT);
+    options.startDate = moment(fromInput.val(), FORMAT);
+    options.endDate = moment(toInput.val(), FORMAT);
     input.val(fromInput.val() + SEPARATOR + toInput.val());
   }
 
@@ -452,8 +377,8 @@ const initRangePicker = (inputSelector, fromSelector, toSelector, buttonId, clea
     toInput.val('');
     input.val('');
     input.addClass('d-none');
-    if (currentPicker && typeof window.moment !== 'undefined') {
-      const today = window.moment();
+    if (currentPicker) {
+      const today = moment();
       currentPicker.setStartDate(today);
       currentPicker.setEndDate(today);
     }
@@ -509,29 +434,23 @@ export const init = (presetStatus) => {
     texts);
   syncSearchHidden();
 
-  ensureDateRangeAssets().then(() => {
-    initRangePicker(
-      '#grading_date_range',
-      '#grading_date_from',
-      '#grading_date_to',
-      'grading-date-button',
-      'grading-date-clear',
-      'grading-date-text',
-      texts,
-      activeLang
-    );
+  initRangePicker(
+    '#grading_date_range',
+    '#grading_date_from',
+    '#grading_date_to',
+    'grading-date-button',
+    'grading-date-clear',
+    'grading-date-text',
+    texts,
+    activeLang
+  );
 
-    renderDateChip(
-      $('#grading_date_from').val(),
-      $('#grading_date_to').val(),
-      'grading-date-button',
-      'grading-date-clear',
-      'grading-date-text',
-      texts
-    );
-
-    return null;
-  }).catch(() => {
-    return;
-  });
+  renderDateChip(
+    $('#grading_date_from').val(),
+    $('#grading_date_to').val(),
+    'grading-date-button',
+    'grading-date-clear',
+    'grading-date-text',
+    texts
+  );
 };
