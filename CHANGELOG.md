@@ -21,6 +21,10 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+### Fixed
+
+- The all-courses search of the graders page (`report_autograder_search_filter_options`, type `anycourse`) answers only at site level, where `report/autograder:viewsite` was checked. Somebody who could read the report of one activity or one course could use it to list the name of every course of the site, hidden ones included.
+
 ## [1.0.1] - 2026-10-06
 
 ### Fixed
