@@ -23,6 +23,10 @@ use core_external\external_single_structure;
 use core_external\external_value;
 use report_autograder\local\query\scope;
 
+// The classes below extend those of core_external, which Moodle 4.0 and 4.1 only have under their old names.
+// phpcs:ignore moodle.Files.MoodleInternal.MoodleInternalGlobalState
+\report_autograder\compat\external_aliases::register();
+
 /**
  * Searches the course and activity pickers of the filter bar.
  *

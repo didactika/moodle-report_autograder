@@ -7,8 +7,8 @@
 *Shows what [Autograder](https://github.com/didactika/moodle-local_autograder)  decided for every student, per activity, course and site*
 
 [![Release](https://img.shields.io/github/v/release/didactika/moodle-report_autograder?style=flat-square)](https://github.com/didactika/moodle-report_autograder/releases)
-[![Moodle](https://img.shields.io/badge/Moodle-4.5+-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
-[![PHP](https://img.shields.io/badge/PHP-8.1+-777bb4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
+[![Moodle](https://img.shields.io/badge/Moodle-4.0_to_5.2-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
+[![PHP](https://img.shields.io/badge/PHP-7.4+-777bb4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
 [![License](https://img.shields.io/badge/License-GPL_v3-blue?style=flat-square)](LICENSE)
 
 [Overview](#overview) • [Installation](#installation) • [Usage](#usage) • [Capabilities](#capabilities) • [Troubleshooting](#troubleshooting)
@@ -43,7 +43,7 @@ For every student in every activity where Autograder is enabled, the report show
 
 ## Installation
 
-**Requirements:** Moodle 4.5 or later, PHP 8.1 or later, and [Autograder](https://github.com/didactika/moodle-local_autograder).
+**Requirements:** Moodle 4.0 to 5.2, PHP 7.4 or later (the one that your Moodle needs), and [Autograder](https://github.com/didactika/moodle-local_autograder).
 
 **From a release:** download the latest release ZIP files of both Autograder and this report, go to **Site administration → Plugins → Install plugins**, upload each file and follow the prompts.
 

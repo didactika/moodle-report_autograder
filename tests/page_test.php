@@ -359,8 +359,9 @@ final class page_test extends \advanced_testcase {
      * @param int $groupmode One of NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS.
      */
     private function set_groupmode(int $groupmode): void {
-        $actions = \core_courseformat\formatactions::cm((int) $this->course->id);
-        if (method_exists($actions, 'set_groupmode')) {
+        $actions = class_exists(\core_courseformat\formatactions::class)
+            ? \core_courseformat\formatactions::cm((int) $this->course->id) : null;
+        if ($actions !== null && method_exists($actions, 'set_groupmode')) {
             $actions->set_groupmode((int) $this->cm->id, $groupmode);
         } else {
             set_coursemodule_groupmode((int) $this->cm->id, $groupmode);
