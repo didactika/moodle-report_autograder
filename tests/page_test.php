@@ -18,21 +18,24 @@ namespace report_autograder;
 
 use local_autograder\local\config\config_repository;
 use report_autograder\local\format\status;
-use report_autograder\local\page\page_context;
+use report_autograder\local\query\filters;
 use report_autograder\local\query\scope;
+use report_autograder\output\graders_page;
+use report_autograder\output\report_page;
 
 /**
- * The three pages, drawn for real.
+ * What the pages give their React components.
  *
- * Rendering is where a report plugin actually breaks — an undefined function,
- * a template variable that was never passed, an admin page that collides with
- * the one core makes for you. None of that shows up in a query test, so these
- * build each page's templates and look at what comes out.
+ * The components draw the report, so what can break on the server is what they are given: a property that was never filled, a
+ * filter that does not reach the component, a text that has no place for its value. These build the properties of each level
+ * and look at them.
  *
  * @package     report_autograder
- * @copyright  2026 Didactika.org
- * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @copyright   2026 Didactika.org
+ * @author      Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers      \report_autograder\output\report_page
+ * @covers      \report_autograder\output\graders_page
  * @covers      \report_autograder\local\page\page_context
  */
 final class page_test extends \advanced_testcase {
@@ -72,31 +75,21 @@ final class page_test extends \advanced_testcase {
     }
 
     /**
-     * Each level draws its filter bar and its table, and PHP has nothing to
-     * say while it happens.
+     * Each level gives its component what it needs, and PHP has nothing to say while it happens.
      *
      * @param string $level
      * @dataProvider level_provider
      */
-    public function test_each_level_renders(string $level): void {
-        global $OUTPUT, $PAGE;
+    public function test_each_level_gives_its_properties(string $level): void {
+        $props = $this->props($this->scope_for($level));
 
-        $scope = $this->scope_for($level);
-        $PAGE->set_url('/report/autograder/index.php');
-        $PAGE->set_context($scope->context());
-
-        $filters = $OUTPUT->render_from_template(
-            'report_autograder/partials/filters',
-            page_context::filters($scope)
-        );
-        $table = $OUTPUT->render_from_template(
-            'report_autograder/report_table',
-            page_context::table($scope, null)
-        );
-
-        $this->assertStringContainsString('autograder-filter-form', $filters);
-        $this->assertStringContainsString('autograder-report-container', $table);
-        $this->assert_no_complaints($filters . $table);
+        $this->assertSame($level, $props->level);
+        $this->assertNotEmpty($props->statuses);
+        $this->assertSame('', $props->opening->searchname);
+        $this->assertSame([], $props->opening->status);
+        $this->assertNotEmpty($props->strings['pluginname']);
+        $this->assertSame([12, 25, 50, 100], $props->pagesizes);
+        $this->assert_no_complaints(report_page::placeholder() . graders_page::placeholder());
     }
 
     /**
@@ -113,47 +106,56 @@ final class page_test extends \advanced_testcase {
     }
 
     /**
-     * A row's course and activity are named only where the table holds more
-     * than one of them.
+     * A row's course and activity are named only where the table holds more than one of them.
      */
     public function test_the_extra_columns_appear_only_where_they_mean_something(): void {
-        $activity = page_context::table($this->scope_for(scope::LEVEL_ACTIVITY), null);
-        $course = page_context::table($this->scope_for(scope::LEVEL_COURSE), null);
-        $site = page_context::table($this->scope_for(scope::LEVEL_SITE), null);
+        $activity = $this->props($this->scope_for(scope::LEVEL_ACTIVITY))->columns;
+        $course = $this->props($this->scope_for(scope::LEVEL_COURSE))->columns;
+        $site = $this->props($this->scope_for(scope::LEVEL_SITE))->columns;
 
-        $this->assertFalse($activity['shows_activity_column']);
-        $this->assertFalse($activity['shows_course_column']);
+        $this->assertFalse($activity->activity);
+        $this->assertFalse($activity->course);
 
-        $this->assertTrue($course['shows_activity_column']);
-        $this->assertFalse($course['shows_course_column']);
+        $this->assertTrue($course->activity);
+        $this->assertFalse($course->course);
 
-        $this->assertTrue($site['shows_activity_column']);
-        $this->assertTrue($site['shows_course_column']);
+        $this->assertTrue($site->activity);
+        $this->assertTrue($site->course);
     }
 
     /**
-     * The status filter offers "Failed" only to somebody who could tell a
-     * failure apart if they picked it.
+     * The pickers that are offered depend on the level: the course only on the site, the activity above an activity.
+     */
+    public function test_the_pickers_depend_on_the_level(): void {
+        $activity = $this->props($this->scope_for(scope::LEVEL_ACTIVITY));
+        $course = $this->props($this->scope_for(scope::LEVEL_COURSE));
+        $site = $this->props($this->scope_for(scope::LEVEL_SITE));
+
+        $this->assertFalse($activity->showsactivityfilter);
+        $this->assertFalse($activity->showscoursefilter);
+        $this->assertTrue($course->showsactivityfilter);
+        $this->assertFalse($course->showscoursefilter);
+        $this->assertTrue($site->showsactivityfilter);
+        $this->assertTrue($site->showscoursefilter);
+    }
+
+    /**
+     * The failed state is a filter only for whoever may see failures.
      */
     public function test_the_failed_filter_is_offered_only_with_the_capability(): void {
         $scope = $this->scope_for(scope::LEVEL_COURSE);
 
-        $this->assertTrue($this->offers_failed(page_context::filters($scope)));
+        $this->assertTrue($this->offers_failed($this->props($scope)));
 
         // A teacher, who does not hold report/autograder:viewfailed.
         $teacher = $this->getDataGenerator()->create_and_enrol($this->course, 'editingteacher');
         $this->setUser($teacher);
 
-        $this->assertFalse($this->offers_failed(page_context::filters($scope)));
+        $this->assertFalse($this->offers_failed($this->props($scope)));
     }
 
     /**
-     * The activity picker searches the autograded activities, and drops one
-     * whose autograder has been switched off.
-     *
-     * The options are not rendered into the page any more — a site-wide report
-     * would have to list every activity on the site — so what is asserted
-     * here is the search behind the picker.
+     * The activity filter offers what is autograded, and stops offering what is not.
      */
     public function test_the_activity_filter_searches_what_is_autograded(): void {
         $found = \report_autograder\external\search_filter_options::execute(
@@ -188,7 +190,7 @@ final class page_test extends \advanced_testcase {
     }
 
     /**
-     * The activity search matches on what the reader typed.
+     * The activity search matches a name, and nothing else.
      */
     public function test_the_activity_search_matches_a_name(): void {
         $matching = \report_autograder\external\search_filter_options::execute(
@@ -211,118 +213,88 @@ final class page_test extends \advanced_testcase {
     }
 
     /**
-     * Switching separate groups on an activity puts a group picker in its bar,
-     * drawn and not merely decided: the whole point of the filter is being
-     * there to click.
+     * Separate groups give the report a group picker and a group column.
      */
-    public function test_separate_groups_draws_the_group_picker(): void {
-        global $OUTPUT, $PAGE;
-
-        $scope = $this->scope_for(scope::LEVEL_ACTIVITY);
-        $PAGE->set_url('/report/autograder/index.php');
-        $PAGE->set_context($scope->context());
-
-        $before = $OUTPUT->render_from_template(
-            'report_autograder/partials/filters',
-            page_context::filters($scope)
-        );
-        $this->assertStringNotContainsString('autograder-filter-group', $before);
+    public function test_separate_groups_give_the_group_picker_and_column(): void {
+        $before = $this->props($this->scope_for(scope::LEVEL_ACTIVITY));
+        $this->assertFalse($before->showsgroupfilter);
+        $this->assertFalse($before->columns->group);
 
         $this->getDataGenerator()->create_group(['courseid' => $this->course->id, 'name' => 'Group A']);
         $this->set_groupmode(SEPARATEGROUPS);
         rebuild_course_cache((int) $this->course->id, true);
         \cache_helper::purge_all();
 
-        $after = $OUTPUT->render_from_template(
-            'report_autograder/partials/filters',
-            page_context::filters(scope::from_params((int) $this->cm->id, 0))
-        );
-
-        $this->assertStringContainsString('autograder-filter-group', $after);
-        $this->assertStringContainsString('Group A', $after);
-        $this->assert_no_complaints($after);
+        $after = $this->props(scope::from_params((int) $this->cm->id, 0));
+        $this->assertTrue($after->showsgroupfilter);
+        $this->assertTrue($after->columns->group);
+        $this->assertContains('Group A', array_column($after->groups, 'name'));
     }
 
     /**
-     * And the table gets the column to go with it.
+     * A link that arrives narrowed opens the report narrowed, with the dates as the date fields write them.
      */
-    public function test_separate_groups_draws_the_group_column(): void {
-        global $OUTPUT, $PAGE;
+    public function test_the_report_opens_on_what_the_link_asks_for(): void {
+        $scope = scope::from_params(0, (int) $this->course->id);
+        $opening = filters::from_request([
+            ['name' => 'cmid', 'value' => (string) $this->cm->id],
+            ['name' => 'searchname', 'value' => 'Lovelace'],
+            ['name' => 'status', 'value' => 'pending,graded,nonsense'],
+            ['name' => 'grading_date_from', 'value' => '2026-03-05'],
+        ], true);
 
-        $scope = $this->scope_for(scope::LEVEL_ACTIVITY);
-        $PAGE->set_url('/report/autograder/index.php');
-        $PAGE->set_context($scope->context());
+        $props = (new report_page($scope, $opening, null))->get_react_component_props($this->getMockBuilder(\renderer_base::class)
+            ->disableOriginalConstructor()->getMock());
 
-        $this->assertFalse(page_context::table($scope, null)['shows_group_column']);
-
-        $this->getDataGenerator()->create_group(['courseid' => $this->course->id, 'name' => 'Group A']);
-        $this->set_groupmode(SEPARATEGROUPS);
-        rebuild_course_cache((int) $this->course->id, true);
-        \cache_helper::purge_all();
-
-        $context = page_context::table(scope::from_params((int) $this->cm->id, 0), null);
-        $this->assertTrue($context['shows_group_column']);
-
-        $table = $OUTPUT->render_from_template('report_autograder/report_table', $context);
-        $this->assertStringContainsString(
-            get_string('header:groups', 'report_autograder'),
-            $table
-        );
-        $this->assert_no_complaints($table);
+        $this->assertSame('Lovelace', $props->opening->searchname);
+        $this->assertSame(['pending', 'graded'], $props->opening->status);
+        $this->assertSame('2026-03-05', $props->opening->datefrom);
+        $this->assertSame((int) $this->cm->id, $props->opening->cmid);
+        $this->assertSame((int) $this->cm->id, $props->selectedactivity['id']);
     }
 
     /**
-     * The date filter's calendar is made of two AMD modules that ship with the plugin, and of nothing else.
-     *
-     * Fetching the libraries from a public CDN hands a third party a record of who reads this report from where, and
-     * loading them as plain scripts with define() hidden breaks any other AMD module that is requested meanwhile. They
-     * are wrapped, unchanged, in named modules, declared in thirdpartylibs.xml, and the page no longer carries their
-     * addresses.
+     * Every text that has a value puts it where the component fills it in: {n} for a single value, {name} for an object.
      */
-    public function test_the_date_filter_loads_the_bundled_libraries_as_modules(): void {
-        global $CFG, $OUTPUT, $PAGE;
+    public function test_the_texts_mark_the_place_of_their_values(): void {
+        $strings = report_page::strings();
 
-        $scope = $this->scope_for(scope::LEVEL_ACTIVITY);
-        $PAGE->set_url('/report/autograder/index.php');
-        $PAGE->set_context($scope->context());
-
-        $html = $OUTPUT->render_from_template(
-            'report_autograder/partials/filters',
-            page_context::filters($scope)
-        );
-        $plugin = $CFG->dirroot . '/report/autograder/';
-        $declared = file_get_contents($plugin . 'thirdpartylibs.xml');
-
-        foreach (['moment' => 'lib/moment', 'daterangepicker' => 'lib/daterangepicker'] as $module => $library) {
-            $this->assertFileExists($plugin . 'amd/src/datelib/' . $module . '.js');
-            $this->assertDirectoryExists($plugin . $library);
-            $this->assertStringContainsString($library, $declared, 'Declare it in thirdpartylibs.xml.');
-            $this->assertMatchesRegularExpression(
-                '/^\s+var define = /m',
-                file_get_contents($plugin . 'amd/src/datelib/' . $module . '.js'),
-                'The library gets a define() of its own, not the one of the page.'
-            );
-        }
-        $this->assertStringNotContainsString('data-moment-url', $html);
-        $this->assertStringNotContainsString('data-picker-url', $html);
-        $this->assertStringNotContainsString('//cdn.', $html);
-
-        $filters = file_get_contents($plugin . 'amd/src/ui/filters.js');
-        $this->assertStringNotContainsString('window.define', $filters, 'It must not hide define().');
-        $this->assertStringNotContainsString('window.jQuery', $filters, 'Nor put jQuery in the global scope.');
-
-        // The stylesheet is asked for by the page, so it is not in this markup, but it has to be there to be asked for.
-        $this->assertFileExists($plugin . 'lib/daterangepicker/daterangepicker.css');
+        $this->assertStringContainsString('{n}', $strings['error:apirequest']);
+        $this->assertStringContainsString('{from}', $strings['pagination:showing']);
+        $this->assertStringNotContainsString('$a', implode('', $strings));
     }
 
     /**
-     * Whether the filter bar offers the "failed" status.
+     * The graders page names the course it was asked about and offers the sizes of its pages.
+     */
+    public function test_the_graders_page_gives_its_properties(): void {
+        $props = (new graders_page((int) $this->course->id, true))
+            ->get_react_component_props($this->getMockBuilder(\renderer_base::class)->disableOriginalConstructor()->getMock());
+
+        $this->assertSame((int) $this->course->id, $props->courseid);
+        $this->assertTrue($props->students);
+        $this->assertContains($props->perpage, $props->pagesizes);
+    }
+
+    /**
+     * The properties of the report at a level, as the page gives them.
      *
-     * @param array $context From page_context::filters().
+     * @param scope $scope
+     * @return \stdClass
+     */
+    private function props(scope $scope): \stdClass {
+        $renderer = $this->getMockBuilder(\renderer_base::class)->disableOriginalConstructor()->getMock();
+        return (new report_page($scope, filters::from_request([], true), null))->get_react_component_props($renderer);
+    }
+
+    /**
+     * Whether the failed state is among the statuses that can be filtered by.
+     *
+     * @param \stdClass $props
      * @return bool
      */
-    private function offers_failed(array $context): bool {
-        foreach ($context['statuses'] as $status) {
+    private function offers_failed(\stdClass $props): bool {
+        foreach ($props->statuses as $status) {
             if ($status['key'] === status::FAILED) {
                 return true;
             }
@@ -332,7 +304,7 @@ final class page_test extends \advanced_testcase {
     }
 
     /**
-     * The scope object for one level.
+     * The scope of a level.
      *
      * @param string $level
      * @return scope
@@ -351,26 +323,19 @@ final class page_test extends \advanced_testcase {
     }
 
     /**
-     * Sets the group mode of the activity under test.
-     *
-     * Moodle 5.2 deprecates set_coursemodule_groupmode() in favour of
-     * cmactions::set_groupmode() (MDL-86857), which older releases do not have.
+     * Give the activity a group mode.
      *
      * @param int $groupmode One of NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS.
      */
     private function set_groupmode(int $groupmode): void {
         $actions = \core_courseformat\formatactions::cm((int) $this->course->id);
-        if (method_exists($actions, 'set_groupmode')) {
-            $actions->set_groupmode((int) $this->cm->id, $groupmode);
-        } else {
-            set_coursemodule_groupmode((int) $this->cm->id, $groupmode);
-        }
+        $actions->set_groupmode((int) $this->cm->id, $groupmode);
     }
 
     /**
-     * Fails if PHP complained anywhere in the rendered output.
+     * Fail when PHP complained while something was drawn.
      *
-     * @param string $html
+     * @param string $html What was drawn.
      */
     private function assert_no_complaints(string $html): void {
         $matches = [];
@@ -384,60 +349,5 @@ final class page_test extends \advanced_testcase {
             $matches[0] ?? [],
             'PHP complained while the page was drawn: ' . implode(' | ', array_unique($matches[0] ?? []))
         );
-    }
-
-    /**
-     * A report opened already narrowed says so in its own filter bar.
-     *
-     * The bar used to be drawn blank whatever the URL asked for: the table
-     * came back filtered while every control claimed it was not, which reads
-     * as a broken report rather than a narrowed one. The activity picker is
-     * the one that showed it worst, because its options are fetched as the
-     * reader types — with nothing selected in the select there was nothing for
-     * the chip to show and nothing to paint it as on.
-     */
-    public function test_the_filter_bar_shows_what_the_report_is_narrowed_to(): void {
-        global $OUTPUT;
-
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $generator = $this->getDataGenerator();
-        $course = $generator->create_course();
-        $assign = $generator->create_module('assign', ['course' => $course->id]);
-        $cm = get_coursemodule_from_instance('assign', $assign->id, $course->id, false, MUST_EXIST);
-
-        $context = page_context::filters(
-            scope::from_params(0, (int) $course->id),
-            \report_autograder\local\query\filters::from_request([
-                ['name' => 'cmid', 'value' => (string) $cm->id],
-                ['name' => 'searchname', 'value' => 'Lovelace'],
-            ], true)
-        );
-
-        $this->assertSame((int) $cm->id, $context['selected_activity']['id']);
-        $this->assertSame('Lovelace', $context['filters']['searchname']);
-
-        $html = $OUTPUT->render_from_template('report_autograder/partials/filters', $context);
-
-        $this->assertStringContainsString('<option value="' . $cm->id . '" selected>', $html);
-        $this->assertStringContainsString('value="Lovelace"', $html);
-    }
-
-    /**
-     * With nothing asked for, the bar opens empty rather than inventing a
-     * selection.
-     */
-    public function test_the_filter_bar_opens_empty_when_nothing_is_asked_for(): void {
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $course = $this->getDataGenerator()->create_course();
-        $context = page_context::filters(scope::from_params(0, (int) $course->id));
-
-        $this->assertNull($context['selected_activity']);
-        $this->assertNull($context['selected_course']);
-        $this->assertSame('', $context['filters']['searchname']);
-        $this->assertSame('', $context['filters']['grading_date_from']);
     }
 }

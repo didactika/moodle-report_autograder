@@ -1,0 +1,11 @@
+import{useEffect as p,useState as g}from"react";import b from"./DateFilter";import C from"./GroupFilter";import u from"./PickerFilter";import N from"./StatusFilter";import{IconActivity as P,IconCourse as T,IconReset as _,IconSearch as F}from"./common/Icons";import{useDebounced as O}from"../hooks/useDebounced";import{isNarrowed as w}from"../lib/filters";import{jsx as e,jsxs as i}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
+ * The bar above the table: the search box, the filters and the button that clears them all.
+ *
+ * @module     report_autograder/components/Toolbar
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */function I({props:a,filters:r,course:m,activity:h,text:o,onFilters:s,onCourse:d,onActivity:f,onReset:v}){const[c,l]=g(r.searchname),n=O(c,300);return p(()=>{n!==r.searchname&&s({searchname:n})},[n]),p(()=>{l(r.searchname)},[r.searchname]),i("div",{className:"arp-toolbar",role:"search",children:[i("div",{className:`arp-search${c!==""?" arp-search-on":""}`,children:[e("span",{className:"arp-search-icon",children:e(F,{})}),e("input",{type:"search",className:"arp-search-field",value:c,placeholder:`${o("filter_search")}\u2026`,"aria-label":o("filter_search"),onChange:t=>l(t.target.value)})]}),i("div",{className:"arp-filters",children:[a.showscoursefilter&&e(u,{type:"course",icon:e(T,{}),label:o("filter_course"),chosen:m,scope:a.scope,courseid:0,text:o,onChange:d}),a.showsactivityfilter&&e(u,{type:"activity",icon:e(P,{}),label:o("filter_activity"),chosen:h,scope:a.scope,courseid:r.courseid,text:o,onChange:f}),a.showsgroupfilter&&e(C,{groups:a.groups,offersAll:a.offersallgroups,chosen:r.groupid,text:o,onChange:t=>s({groupid:t})}),e(N,{options:a.statuses,chosen:r.status,text:o,onChange:t=>s({status:t})}),e(b,{from:r.datefrom,to:r.dateto,text:o,onChange:(t,y)=>s({datefrom:t,dateto:y})}),w(r)&&i("button",{type:"button",className:"arp-reset",onClick:v,"aria-label":o("filters_reset"),children:[e(_,{}),e("span",{className:"arp-reset-text",children:o("filters_reset")})]})]})]})}export{I as default};

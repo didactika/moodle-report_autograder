@@ -1,0 +1,360 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// The table of the report, its badges, its hints and the pages under it.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+.arp {
+    & .arp-table-wrap {
+        position: relative;
+        background: var(--arp-surface);
+        border: 1px solid var(--arp-border);
+        border-radius: var(--arp-radius);
+        overflow: hidden;
+    }
+
+    & .arp-table-scroll {
+        overflow-x: auto;
+
+        &:focus-visible {
+            outline: 0;
+            box-shadow: inset 0 0 0 0.2rem var(--arp-accent-ring);
+        }
+    }
+
+    & .arp-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+
+        & th,
+        & td {
+            padding: 0.7rem 1rem;
+            text-align: left;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--arp-border);
+        }
+
+        & th {
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            color: var(--arp-muted);
+            background: var(--arp-faint);
+        }
+
+        & tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        & tbody tr:hover td {
+            background: var(--arp-hover);
+        }
+    }
+
+    & .arp-table-loading tbody {
+        opacity: 0.55;
+        transition: opacity 0.15s ease;
+    }
+
+    & .arp-sort {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0;
+        font: inherit;
+        letter-spacing: inherit;
+        text-transform: inherit;
+        color: inherit;
+        background: transparent;
+        border: 0;
+
+        &:hover,
+        &:focus-visible {
+            outline: 0;
+            color: var(--arp-text);
+        }
+    }
+
+    & .arp-sort-on {
+        color: var(--arp-accent-text);
+    }
+
+    & .arp-student {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+        color: inherit;
+        text-decoration: none;
+
+        &:hover .arp-student-name {
+            color: var(--arp-accent-text);
+            text-decoration: underline;
+        }
+    }
+
+    & .arp-avatar {
+        width: 2.25rem;
+        height: 2.25rem;
+        object-fit: cover;
+        border-radius: var(--arp-pill);
+        background: var(--arp-hover);
+    }
+
+    & .arp-student-name {
+        font-weight: 600;
+    }
+
+    & .arp-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    & .arp-dot {
+        display: inline-block;
+        flex: none;
+        width: 0.55rem;
+        height: 0.55rem;
+        background: var(--arp-neutral);
+        border-radius: var(--arp-pill);
+    }
+
+    & .arp-dot-pending {
+        background: var(--arp-info);
+    }
+
+    & .arp-dot-graded {
+        background: var(--arp-success);
+    }
+
+    & .arp-dot-manual {
+        background: var(--arp-neutral);
+    }
+
+    & .arp-dot-failed {
+        background: var(--arp-danger);
+    }
+
+    & .arp-dot-notautograded {
+        background: var(--arp-warning);
+    }
+
+    & .arp-dot-notengaged {
+        background: var(--arp-border-strong);
+    }
+
+    & .arp-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.2rem 0.7rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        white-space: nowrap;
+        color: var(--arp-text);
+        background: var(--arp-hover);
+        border-radius: var(--arp-pill);
+    }
+
+    & .arp-badge-pending {
+        color: color-mix(in srgb, var(--arp-info) 78%, var(--arp-text));
+        background: color-mix(in srgb, var(--arp-info) 14%, var(--arp-surface));
+
+        & .arp-dot {
+            background: var(--arp-info);
+        }
+    }
+
+    & .arp-badge-graded {
+        color: color-mix(in srgb, var(--arp-success) 70%, var(--arp-text));
+        background: color-mix(in srgb, var(--arp-success) 16%, var(--arp-surface));
+
+        & .arp-dot {
+            background: var(--arp-success);
+        }
+    }
+
+    & .arp-badge-failed {
+        color: color-mix(in srgb, var(--arp-danger) 78%, var(--arp-text));
+        background: color-mix(in srgb, var(--arp-danger) 14%, var(--arp-surface));
+
+        & .arp-dot {
+            background: var(--arp-danger);
+        }
+    }
+
+    & .arp-badge-notautograded {
+        color: color-mix(in srgb, var(--arp-warning) 45%, var(--arp-text));
+        background: color-mix(in srgb, var(--arp-warning) 22%, var(--arp-surface));
+
+        & .arp-dot {
+            background: var(--arp-warning);
+        }
+    }
+
+    & .arp-badge-manual,
+    & .arp-badge-notengaged {
+        color: var(--arp-muted);
+        background: var(--arp-hover);
+
+        & .arp-dot {
+            background: var(--arp-neutral);
+        }
+    }
+
+    & .arp-hint {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.6rem;
+        height: 1.6rem;
+        margin-left: 0.2rem;
+        padding: 0;
+        color: var(--arp-muted);
+        background: transparent;
+        border: 0;
+        border-radius: var(--arp-pill);
+
+        &:hover,
+        &:focus-visible {
+            outline: 0;
+            color: var(--arp-text);
+            background: var(--arp-hover);
+        }
+    }
+
+    & .arp-grade {
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    & .arp-grade-provisional {
+        font-style: italic;
+        color: var(--arp-muted);
+    }
+
+    & .arp-prospective {
+        font-style: italic;
+        color: var(--arp-muted);
+    }
+
+    & .arp-cell-action {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    & .arp-action {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.4rem 1rem;
+        font-weight: 600;
+        color: var(--arp-accent-text);
+        text-decoration: none;
+        background: var(--arp-accent-soft);
+        border: 1px solid transparent;
+        border-radius: var(--arp-pill);
+
+        &:hover,
+        &:focus-visible {
+            outline: 0;
+            color: var(--arp-on-accent);
+            background: var(--arp-accent);
+        }
+    }
+
+    & .arp-action-quiet {
+        color: var(--arp-text);
+        background: transparent;
+        border-color: var(--arp-border-strong);
+    }
+
+    & .arp-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 2.5rem 1rem;
+        text-align: center;
+        color: var(--arp-muted);
+    }
+
+    & .arp-empty-text {
+        margin: 0;
+        max-width: 40rem;
+    }
+
+    & .arp-pagination {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.8rem 1.5rem;
+        margin: 1rem 0;
+    }
+
+    & .arp-pagination-showing {
+        margin: 0;
+        color: var(--arp-muted);
+    }
+
+    & .arp-pagination-size {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: var(--arp-muted);
+
+        & select {
+            padding: 0.3rem 0.6rem;
+            color: var(--arp-text);
+            background: var(--arp-surface);
+            border: 1px solid var(--arp-border-strong);
+            border-radius: var(--arp-pill);
+        }
+    }
+
+    & .arp-pages {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    & .arp-page {
+        min-width: 2.2rem;
+        height: 2.2rem;
+        padding: 0 0.5rem;
+        color: var(--arp-text);
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: var(--arp-pill);
+
+        &:hover:not(:disabled) {
+            background: var(--arp-hover);
+        }
+
+        &:disabled {
+            opacity: 0.4;
+        }
+    }
+
+    & .arp-page-on {
+        color: var(--arp-on-accent);
+        background: var(--arp-accent);
+
+        &:hover:not(:disabled) {
+            background: var(--arp-accent);
+        }
+    }
+
+    & .arp-page-gap {
+        padding: 0 0.3rem;
+        color: var(--arp-muted);
+    }
+}

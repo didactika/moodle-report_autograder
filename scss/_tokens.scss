@@ -1,0 +1,38 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// The colours of the report, which all come from the theme.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+/*
+ * Moodle 5 is Bootstrap 5.3, which names its colours --bs-primary and so on and changes them with the colour mode. Every colour of
+ * the report is one of the tokens below, so a piece never mixes a colour of the theme with a fixed one, and the last value of each
+ * chain is the colour Boost has when the theme gives none. A theme overrides the report by changing a token.
+ *
+ * The floating panels are drawn at the end of the page, outside the report, so the tokens are on the root as well.
+ */
+:root,
+.arp {
+    --arp-text: var(--bs-body-color, #212529);
+    --arp-surface: var(--bs-body-bg, #fff);
+    --arp-border: var(--bs-border-color, #dee2e6);
+    --arp-border-strong: color-mix(in srgb, var(--arp-text) 40%, var(--arp-surface));
+    --arp-muted: var(--bs-secondary-color, #6c757d);
+    --arp-accent: var(--bs-primary, #0f6cbf);
+    --arp-accent-soft: color-mix(in srgb, var(--arp-accent) 12%, var(--arp-surface));
+    --arp-accent-text: color-mix(in srgb, var(--arp-accent) 80%, var(--arp-text));
+    --arp-accent-ring: color-mix(in srgb, var(--arp-accent) 28%, transparent);
+    --arp-on-accent: #fff;
+    --arp-danger: var(--bs-danger, #ca3120);
+    --arp-success: var(--bs-success, #357a32);
+    --arp-warning: var(--bs-warning, #f0ad4e);
+    --arp-info: var(--bs-info, #0f6cbf);
+    --arp-neutral: var(--arp-muted);
+    --arp-hover: color-mix(in srgb, var(--arp-text) 5%, var(--arp-surface));
+    --arp-faint: color-mix(in srgb, var(--arp-text) 3%, var(--arp-surface));
+    --arp-radius: 0.75rem;
+    --arp-pill: 999px;
+    --arp-shadow: 0 0.5rem 1.5rem color-mix(in srgb, var(--arp-text) 16%, transparent);
+}

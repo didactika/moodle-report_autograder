@@ -1,0 +1,164 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// The page of the graders, and the grey blocks that hold the place of a page while it loads.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+.arp {
+    & .arp-intro {
+        margin: 1rem 0;
+        color: var(--arp-muted);
+    }
+
+    & .arp-card {
+        padding: 1.25rem;
+        background: var(--arp-surface);
+        border: 1px solid var(--arp-border);
+        border-radius: var(--arp-radius);
+    }
+
+    & .arp-card-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    & .arp-card-title {
+        margin: 0 0 0.3rem;
+        font-size: 1.25rem;
+    }
+
+    & .arp-counts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 1.5rem;
+        margin: 0;
+        color: var(--arp-muted);
+
+        & strong {
+            color: var(--arp-text);
+            font-size: 1.1rem;
+        }
+    }
+
+    & .arp-alert {
+        margin: 0 0 1rem;
+        padding: 0.8rem 1rem;
+        border-radius: var(--arp-radius);
+    }
+
+    & .arp-alert-danger {
+        color: color-mix(in srgb, var(--arp-danger) 78%, var(--arp-text));
+        background: color-mix(in srgb, var(--arp-danger) 12%, var(--arp-surface));
+    }
+
+    & .arp-panel {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: var(--arp-faint);
+        border-radius: var(--arp-radius);
+    }
+
+    & .arp-panel-title {
+        margin: 0 0 0.6rem;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        color: var(--arp-muted);
+    }
+
+    & .arp-graders-names {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0 0 0.8rem;
+        padding: 0;
+        list-style: none;
+
+        & li {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.8rem;
+            background: var(--arp-surface);
+            border: 1px solid var(--arp-border);
+            border-radius: var(--arp-pill);
+        }
+    }
+
+    & .arp-note {
+        margin: 0;
+        color: var(--arp-muted);
+    }
+
+    & .arp-students-toggle {
+        margin: 1rem 0;
+    }
+
+    & .arp-sk {
+        display: inline-block;
+        background: linear-gradient(90deg, var(--arp-hover), var(--arp-faint), var(--arp-hover));
+        background-size: 200% 100%;
+        border-radius: 0.4rem;
+        animation: arp-shimmer 1.4s ease-in-out infinite;
+    }
+
+    & .arp-sk-pill {
+        height: 2.5rem;
+        border-radius: var(--arp-pill);
+    }
+
+    & .arp-sk-dot {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: var(--arp-pill);
+    }
+
+    & .arp-sk-line {
+        width: 100%;
+        height: 0.9rem;
+    }
+
+    & .arp-sk-short {
+        width: 30%;
+    }
+
+    & .arp-sk-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    & .arp-sk-table {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--arp-border);
+        border-radius: var(--arp-radius);
+    }
+
+    & .arp-sk-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.7rem 0;
+    }
+
+    & .arp-skeleton-row td {
+        padding: 1rem;
+    }
+}
+
+@keyframes arp-shimmer {
+    from {
+        background-position: 100% 0;
+    }
+
+    to {
+        background-position: -100% 0;
+    }
+}

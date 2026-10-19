@@ -1,0 +1,58 @@
+{
+  "components/common/Chip": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/common/Floating": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/common/Hint": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/DateFilter": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/GroupFilter": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/Pagination": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/PickerFilter": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/ReportRow": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/ReportTable": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/StatusBadge": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/StatusFilter": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/Toolbar": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "Graders": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "Report": {
+    "eject": "risky",
+    "wrap": "risky"
+  }
+}

@@ -7,8 +7,8 @@
 *Shows what [Autograder](https://github.com/didactika/moodle-local_autograder)  decided for every student, per activity, course and site*
 
 [![Release](https://img.shields.io/github/v/release/didactika/moodle-report_autograder?style=flat-square)](https://github.com/didactika/moodle-report_autograder/releases)
-[![Moodle](https://img.shields.io/badge/Moodle-4.5+-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
-[![PHP](https://img.shields.io/badge/PHP-8.1+-777bb4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
+[![Moodle](https://img.shields.io/badge/Moodle-5.3-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
+[![PHP](https://img.shields.io/badge/PHP-8.3+-777bb4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
 [![License](https://img.shields.io/badge/License-GPL_v3-blue?style=flat-square)](LICENSE)
 
 [Overview](#overview) • [Installation](#installation) • [Usage](#usage) • [Capabilities](#capabilities) • [Troubleshooting](#troubleshooting)
@@ -41,9 +41,13 @@ For every student in every activity where Autograder is enabled, the report show
 > [!TIP]
 > A pending student with **nobody** as their grader will fail to be graded when the date arrives, because no teacher can currently grade them. The report flags these students so the problem can be fixed in advance.
 
+## Technology
+
+The report and the page of the graders are React 19 components written in TypeScript, mounted by Moodle's own `core/react_autoinit` from classes that implement `core\output\react_component_renderable`. The source is in `js/esm/src` (`components/`, `hooks/`, `lib/`, `services/`) and the build that Moodle serves is committed in `js/esm/build`; rebuild it with `npx grunt esm` from the root of Moodle. Everything the report shows is read from the server through web services (`report_autograder_get_report`, `report_autograder_search_filter_options` and `report_autograder_get_graders`). The styles are nested SCSS (`styles.scss` and `scss/`) compiled into the distributed `styles.css` by `node tools/build-styles.mjs /path/to/moodle`; every colour is a token that comes from the theme (`--arp-*`), so a theme restyles the report by changing its own colours, and each component can be overridden with the swizzle mechanism of Moodle 5.3 (`js/esm/src/swizzle.json`). The server side is the same as in the line for Moodle 4.0 to 5.2.
+
 ## Installation
 
-**Requirements:** Moodle 4.5 or later, PHP 8.1 or later, and [Autograder](https://github.com/didactika/moodle-local_autograder).
+**Requirements:** Moodle 5.3, PHP 8.3 or later, and [Autograder](https://github.com/didactika/moodle-local_autograder).
 
 **From a release:** download the latest release ZIP files of both Autograder and this report, go to **Site administration → Plugins → Install plugins**, upload each file and follow the prompts.
 

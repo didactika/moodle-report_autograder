@@ -1,0 +1,294 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// The bar above the table: search, filters and the panels that hang from them.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+.arp {
+    color: var(--arp-text);
+
+    & .arp-glyph {
+        font-size: 0.9rem;
+        line-height: 1;
+    }
+
+    & .arp-icon-danger {
+        color: var(--arp-danger);
+    }
+
+    & .arp-icon-warning {
+        color: var(--arp-warning);
+    }
+
+    & .arp-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 1rem 0;
+    }
+
+    & .arp-filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    & .arp-search {
+        position: relative;
+        flex: 1 1 16rem;
+        max-width: 26rem;
+        min-width: 12rem;
+    }
+
+    & .arp-search-icon {
+        position: absolute;
+        top: 50%;
+        left: 0.9rem;
+        transform: translateY(-50%);
+        color: var(--arp-muted);
+        pointer-events: none;
+    }
+
+    & .arp-search-field {
+        width: 100%;
+        height: 2.5rem;
+        padding: 0 1rem 0 2.4rem;
+        color: var(--arp-text);
+        background: var(--arp-surface);
+        border: 1px solid var(--arp-border-strong);
+        border-radius: var(--arp-pill);
+
+        &:focus {
+            outline: 0;
+            border-color: var(--arp-accent);
+            box-shadow: 0 0 0 0.2rem var(--arp-accent-ring);
+        }
+    }
+
+    & .arp-search-on .arp-search-field {
+        border-color: var(--arp-accent);
+    }
+
+    & .arp-chip {
+        display: inline-flex;
+        align-items: center;
+        height: 2.5rem;
+        background: var(--arp-surface);
+        border: 1px solid var(--arp-border-strong);
+        border-radius: var(--arp-pill);
+
+        &:hover {
+            background: var(--arp-hover);
+        }
+    }
+
+    & .arp-chip-on,
+    & .arp-chip-open {
+        color: var(--arp-accent-text);
+        background: var(--arp-accent-soft);
+        border-color: var(--arp-accent);
+    }
+
+    & .arp-chip-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        height: 100%;
+        padding: 0 0.9rem;
+        color: inherit;
+        background: transparent;
+        border: 0;
+        border-radius: var(--arp-pill);
+        max-width: 16rem;
+
+        &:focus-visible {
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem var(--arp-accent-ring);
+        }
+    }
+
+    & .arp-chip-text {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    & .arp-chip-arrow {
+        color: var(--arp-muted);
+    }
+
+    & .arp-chip-clear {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        margin-right: 0.35rem;
+        color: inherit;
+        background: transparent;
+        border: 0;
+        border-radius: var(--arp-pill);
+
+        &:hover {
+            background: var(--arp-accent-ring);
+        }
+    }
+
+    & .arp-reset {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        height: 2.5rem;
+        padding: 0 0.9rem;
+        color: var(--arp-muted);
+        background: transparent;
+        border: 0;
+        border-radius: var(--arp-pill);
+
+        &:hover {
+            color: var(--arp-text);
+            background: var(--arp-hover);
+        }
+    }
+}
+
+.arp-floating {
+    position: fixed;
+    z-index: 1060;
+    max-width: calc(100vw - 1.5rem);
+    overflow: auto;
+    color: var(--arp-text);
+    background: var(--arp-surface);
+    border: 1px solid var(--arp-border);
+    border-radius: var(--arp-radius);
+    box-shadow: var(--arp-shadow);
+
+    & .arp-options {
+        margin: 0;
+        padding: 0.35rem;
+        list-style: none;
+    }
+
+    & .arp-option {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        width: 100%;
+        padding: 0.5rem 0.7rem;
+        text-align: left;
+        color: inherit;
+        background: transparent;
+        border: 0;
+        border-radius: 0.5rem;
+
+        &:hover,
+        &:focus-visible {
+            outline: 0;
+            background: var(--arp-hover);
+        }
+    }
+
+    & .arp-option-on {
+        color: var(--arp-accent-text);
+        background: var(--arp-accent-soft);
+    }
+
+    & .arp-option-label {
+        flex: 1;
+        overflow-wrap: anywhere;
+    }
+
+    & .arp-option-check {
+        color: var(--arp-accent);
+    }
+
+    & .arp-picker-field {
+        display: block;
+        width: calc(100% - 0.7rem);
+        margin: 0.35rem;
+        padding: 0.45rem 0.8rem;
+        color: var(--arp-text);
+        background: var(--arp-surface);
+        border: 1px solid var(--arp-border-strong);
+        border-radius: var(--arp-pill);
+
+        &:focus {
+            outline: 0;
+            border-color: var(--arp-accent);
+            box-shadow: 0 0 0 0.2rem var(--arp-accent-ring);
+        }
+    }
+
+    & .arp-picker-status {
+        margin: 0;
+        padding: 0.5rem 1rem 0.8rem;
+        color: var(--arp-muted);
+    }
+
+    & .arp-dates {
+        padding: 0.7rem;
+    }
+
+    & .arp-presets {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin: 0 0 0.8rem;
+        padding: 0;
+        list-style: none;
+    }
+
+    & .arp-preset {
+        padding: 0.3rem 0.8rem;
+        color: inherit;
+        background: var(--arp-surface);
+        border: 1px solid var(--arp-border-strong);
+        border-radius: var(--arp-pill);
+
+        &:hover {
+            background: var(--arp-hover);
+        }
+    }
+
+    & .arp-preset-on {
+        color: var(--arp-accent-text);
+        background: var(--arp-accent-soft);
+        border-color: var(--arp-accent);
+    }
+
+    & .arp-date-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+    }
+
+    & .arp-date-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        font-size: 0.85rem;
+        color: var(--arp-muted);
+
+        & input {
+            padding: 0.4rem 0.5rem;
+            color: var(--arp-text);
+            background: var(--arp-surface);
+            border: 1px solid var(--arp-border-strong);
+            border-radius: 0.5rem;
+        }
+    }
+
+    & .arp-hint-text {
+        margin: 0;
+        padding: 0.7rem 0.9rem;
+        max-width: 22rem;
+    }
+}
+
+.arp-hint-panel {
+    max-width: 24rem;
+}

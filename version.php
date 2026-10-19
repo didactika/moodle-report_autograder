@@ -26,15 +26,15 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'report_autograder';
-$plugin->release = '1.0.3-m405';
-$plugin->version = 2026101400;
-$plugin->requires = 2024100700;
+$plugin->release = '1.1.0-m503';
+$plugin->version = 2026101900;
+$plugin->requires = 2026100500; // Moodle 5.3.
 $plugin->maturity = MATURITY_STABLE;
-$plugin->supported = [405, 503];
+$plugin->supported = [503, 503];
 
 // Everything this report shows comes out of local_autograder's own tables and
 // grader selection, so it cannot work without it, and needs the version it
 // was released alongside.
 $plugin->dependencies = [
-    'local_autograder' => 2026093000,
+    'local_autograder' => 2026101900,
 ];

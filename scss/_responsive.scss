@@ -1,0 +1,76 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// The report follows the room it has: on a narrow screen every row of the table becomes a card that names each value.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+@media (max-width: 52rem) {
+    .arp {
+        & .arp-search {
+            max-width: none;
+        }
+
+        & .arp-table-wrap {
+            background: transparent;
+            border: 0;
+        }
+
+        & .arp-table thead {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip-path: inset(50%);
+        }
+
+        & .arp-table,
+        & .arp-table tbody,
+        & .arp-table tr,
+        & .arp-table td {
+            display: block;
+            width: 100%;
+        }
+
+        & .arp-table tr {
+            margin-bottom: 0.8rem;
+            padding: 0.5rem 0;
+            background: var(--arp-surface);
+            border: 1px solid var(--arp-border);
+            border-radius: var(--arp-radius);
+        }
+
+        & .arp-table td {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.45rem 1rem;
+            text-align: right;
+            border-bottom: 0;
+
+            &::before {
+                content: attr(data-label);
+                flex: none;
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                color: var(--arp-muted);
+            }
+        }
+
+        & .arp-table .arp-cell-student::before,
+        & .arp-table .arp-cell-action::before {
+            content: none;
+        }
+
+        & .arp-table .arp-cell-student {
+            justify-content: flex-start;
+        }
+
+        & .arp-table .arp-cell-action {
+            justify-content: flex-end;
+        }
+    }
+}

@@ -1,0 +1,12 @@
+import{useEffect as b,useRef as P,useState as k}from"react";import N from"./common/Chip";import{IconCheck as v}from"./common/Icons";import{useDebounced as C}from"../hooks/useDebounced";import{searchOptions as F}from"../services/api";import{jsx as o,jsxs as g}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
+ * A filter whose options are searched from the server as the reader types, for the courses and the activities: the list is never
+ * sent whole, because a site can have a hundred thousand courses.
+ *
+ * @module     report_autograder/components/PickerFilter
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */function O({type:s,icon:p,label:c,chosen:t,scope:u,courseid:r,text:d,onChange:i}){return o(N,{icon:p,label:c,value:t?.name??"",clearLabel:d("filter_clear"),onClear:()=>i(null),minWidth:280,children:f=>o(S,{type:s,label:c,chosen:t,scope:u,courseid:r,text:d,onPick:m=>{i(m),f()}})})}const S=({type:s,label:p,chosen:c,scope:t,courseid:u,text:r,onPick:d})=>{const i=P(null),[f,m]=k(""),y=C(f.trim(),250),[n,h]=k({options:[],hasmore:!1,loading:!0,failed:!1});b(()=>{i.current?.focus()},[]),b(()=>{let e=!0;return h(a=>({...a,loading:!0,failed:!1})),F(s,y,t,u).then(a=>{e&&h({options:a.options,hasmore:a.hasmore,loading:!1,failed:!1})}).catch(()=>{e&&h({options:[],hasmore:!1,loading:!1,failed:!0})}),()=>{e=!1}},[s,y,u,t.cmid,t.courseid]);let l="";return n.loading?l=r("search:loading"):n.failed?l=r("error:retry"):n.options.length===0&&(l=r("search:nomatches")),g("div",{className:"arp-picker",children:[o("input",{ref:i,type:"search",className:"arp-picker-field",value:f,placeholder:r("search:typetosearch"),"aria-label":p,onChange:e=>m(e.target.value)}),o("ul",{className:"arp-options",role:"listbox","aria-label":p,"aria-busy":n.loading,children:n.options.map(e=>{const a=c?.id===e.id;return o("li",{role:"option","aria-selected":a,children:g("button",{type:"button",className:`arp-option${a?" arp-option-on":""}`,onClick:()=>d(e),children:[o("span",{className:"arp-option-label",children:e.name}),a&&o("span",{className:"arp-option-check",children:o(v,{})})]})},e.id)})}),l!==""&&o("p",{className:"arp-picker-status",role:"status",children:l})]})};export{O as default};
