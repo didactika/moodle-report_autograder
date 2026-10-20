@@ -78,4 +78,35 @@ final class get_graders_test extends \advanced_testcase {
         $this->expectException(\required_capability_exception::class);
         get_graders::execute((int) $course->id);
     }
+
+    /**
+     * A teacher sees the report of their course, but not the page of the graders, so they cannot read it through this either.
+     */
+    public function test_it_needs_the_capability_of_the_site(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $this->setUser($teacher);
+        $this->assertTrue(has_capability('report/autograder:viewcourse', \context_course::instance($course->id)));
+
+        $this->expectException(\required_capability_exception::class);
+        get_graders::execute((int) $course->id);
+    }
+
+    /**
+     * A manager of the site, who has the page of the graders, reads the graders of any course.
+     */
+    public function test_a_manager_of_the_site_reads_the_graders(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $manager = $generator->create_user();
+        $generator->role_assign('manager', $manager->id, \context_system::instance()->id);
+        $this->setUser($manager);
+
+        $result = get_graders::execute((int) $course->id);
+        $result = \core_external\external_api::clean_returnvalue(get_graders::execute_returns(), $result);
+
+        $this->assertSame(0, $result['studentcount']);
+    }
 }

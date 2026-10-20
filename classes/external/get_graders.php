@@ -67,6 +67,8 @@ class get_graders extends external_api {
         $course = get_course($params['courseid']);
         $context = \context_course::instance($course->id);
         self::validate_context($context);
+        // The same two capabilities as the page of the graders, which is a page of the site administration.
+        require_capability('report/autograder:viewsite', \context_system::instance());
         require_capability('report/autograder:viewcourse', $context);
 
         $result = grader_list::graders_of($course->id) + [
