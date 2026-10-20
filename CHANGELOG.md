@@ -21,6 +21,24 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+## [1.1.0-m503] - 2026-10-19
+
+First release of the Moodle 5.3 line, on `main`. The Moodle 4.0 to 5.2 line is on `MOODLE_400_STABLE` (1.1.0-m400).
+
+### Changed
+
+- The report is a React component written in TypeScript, mounted by Moodle's own `core/react_autoinit`, with a new design: a bar of pills for the search and the filters, a table with coloured states, hints that open a short explanation, and pagination with the size of the page. Filtering, sorting and paging are still done by the server.
+- The filters follow what the viewer may do: course and activity pickers that search from the server as the reader types, a status filter that takes several states at once, a group picker where groups are in play, and a date filter with ranges that are chosen with one press and two date fields. The date fields are the ones of the browser, so the calendar library that shipped with the plugin is gone.
+- On a narrow screen every row of the table becomes a card that names each value, and the page follows the colour modes of Moodle and the colours of the theme.
+- The page of the graders is a React component that reads the graders and one page of the students through the new function `report_autograder_get_graders`.
+- The forum grader of Moodle still opens from the button of a row.
+- The AMD modules, the Mustache templates and the bundled libraries (moment and the date range picker) are gone.
+- The styles are written as nested SCSS compiled into `styles.css`, with every colour taken from the theme.
+
+### Added
+
+- Behat scenarios for the report (rows, search, status filter, sorting) and for the page of the graders, and the screenshots of the manual taken from the real report.
+
 ## [1.0.3-m405] - 2026-10-13
 
 ### Changed
