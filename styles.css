@@ -882,6 +882,7 @@ input {
     .report-autograder-page .unified-grader .grader-grading-panel {
         width: 100%;
         position: fixed;
+        /* stylelint-disable-next-line unit-no-unknown */
         height: calc(100dvh - 50px);
         overflow: auto;
         top: 50px;

@@ -172,7 +172,9 @@ const fetchAndRenderReport = (page) => {
 };
 
 /**
- * @param {{cmid?: number, courseid?: number}} scope Which report this is.
+ * @param {Object} scope Which report this is.
+ * @param {number} [scope.cmid] The activity, for the report of one activity.
+ * @param {number} [scope.courseid] The course, for the report of one course.
  * @param {string} [presetStatus] The status the page was opened on, when it
  *        was reached from one of the summary tiles.
  */

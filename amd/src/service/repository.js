@@ -29,8 +29,10 @@ import ajax from 'core/ajax';
  * Everything — filtering, sorting and paging — is done by the server, because
  * the site-wide report can have more rows than a browser should ever be sent.
  *
- * @param {{cmid?: number, courseid?: number}} scope Which report: one activity,
- *        one course, or neither for the whole site.
+ * @param {Object} scope Which report: one activity, one course, or neither for
+ *        the whole site.
+ * @param {number} [scope.cmid] The activity, for the report of one activity.
+ * @param {number} [scope.courseid] The course, for the report of one course.
  * @param {number} page Zero-based page number.
  * @param {Array} filters What to narrow the table to.
  * @param {number} limit Rows per page.
