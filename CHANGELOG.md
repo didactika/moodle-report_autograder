@@ -27,7 +27,7 @@ First release of the Moodle 4.0 to 5.2 line, on `MOODLE_400_STABLE`. The Moodle 
 
 ### Changed
 
-- The report installs on Moodle 4.0 to 5.2 and works with Autograder from the same line; the web service classes take the `core_external` names through an alias on Moodle 4.0 and 4.1, which only have the old ones.
+- The report installs on Moodle 4.0 to 5.2 and works with Autograder from the same line, 1.1.0-m400 or later; the web service classes take the `core_external` names through an alias on Moodle 4.0 and 4.1, which only have the old ones.
 - The pipeline tests Moodle 4.0 and 5.2 and the releases of 4.1 and 4.5 between them.
 
 ## [1.0.3-m405] - 2026-10-13

@@ -900,6 +900,7 @@ input {
 }
 .report-autograder-page .autograder-table-scroll {
     overflow-x: auto;
+    /* stylelint-disable-next-line csstree/validator */
     contain: inline-size;
 }
 .report-autograder-page #autograder-report-container th,
@@ -1134,12 +1135,6 @@ input {
 .report-autograder-page #graders-form > .btn {
     min-height: var(--autograder-control-height);
     margin-top: 0;
-}
-
-.report-autograder-page .autograder-table-scroll {
-    max-width: 100%;
-    overflow-x: auto;
-    contain: inline-size;
 }
 
 .report-autograder-page .autograder-table-scroll td {
