@@ -126,7 +126,7 @@ jobs:
           # regression could reach without CI noticing. Each one listed needs
           # a MOODLE_PHP_TABLE and a MOODLE_DB_TABLE row, and has to fall
           # strictly inside the range, or the matrix refuses to build.
-          MOODLE_EXTRA_VERSIONS='["502"]'
+          MOODLE_EXTRA_VERSIONS='["401", "405"]'
 
           supported_raw=$(grep -oP '\$plugin->supported\s*=\s*\[\K[^\]]+' version.php || true)
           if [ -z "$supported_raw" ]; then
@@ -253,7 +253,7 @@ jobs:
       # This report reads local_autograder's records and declares it as a
       # dependency in version.php, so it has to be installed alongside.
       - name: Add local_autograder
-        run: moodle-plugin-ci add-plugin --branch main didactika/moodle-local_autograder
+        run: moodle-plugin-ci add-plugin --branch MOODLE_400_STABLE didactika/moodle-local_autograder
 
       - name: Install moodle-plugin-ci
         run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1

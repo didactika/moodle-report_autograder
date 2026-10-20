@@ -31,7 +31,7 @@ import {BASE_ITEMS_PER_PAGE} from "./ui/pagination";
  * row to the browser and let it do the slicing.
  */
 
-/** @type {{cmid?: number, courseid?: number}} Which report this is. */
+/** @type {Object} Which report this is: cmid for one activity, courseid for one course. */
 let scope = {};
 let currentPage = 0;
 let recordsPerPage = BASE_ITEMS_PER_PAGE;
@@ -62,7 +62,9 @@ export const resetSort = () => {
 };
 
 /**
- * @param {{cmid?: number, courseid?: number}} scopeParams Empty for the site report.
+ * @param {Object} scopeParams Empty for the site report.
+ * @param {number} [scopeParams.cmid] The activity, for the report of one activity.
+ * @param {number} [scopeParams.courseid] The course, for the report of one course.
  */
 export const init = (scopeParams) => {
     scope = scopeParams || {};

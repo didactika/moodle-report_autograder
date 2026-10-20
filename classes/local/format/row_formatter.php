@@ -79,11 +79,10 @@ final class row_formatter {
 
         $formatted = [
             'rowkey' => $row->rowkey,
-            'user_col' => $OUTPUT->render(\core_user::get_profile_picture(
+            'user_col' => $OUTPUT->user_picture(
                 $user,
-                null,
-                ['courseid' => $courseid, 'includefullname' => true]
-            )),
+                ['courseid' => $courseid, 'includefullname' => true, 'link' => true, 'size' => 35]
+            ),
             'user_name' => fullname($user),
             'user_profile_url' => (new \moodle_url('/user/view.php', [
                 'id' => $userid,

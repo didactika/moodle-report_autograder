@@ -27,7 +27,7 @@ import {getSortColumn, getSortDirection} from '../state';
 /**
  * Updates sort icons and aria-sort on thead buttons (static DOM, survives tbody refresh).
  *
- * @param {import('jquery')} $container Wrapped `#autograder-report-container`
+ * @param {jQuery} $container Wrapped `#autograder-report-container`
  */
 export const updateSortHeaderUI = ($container) => {
     const col = getSortColumn();

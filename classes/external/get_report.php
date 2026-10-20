@@ -26,6 +26,10 @@ use report_autograder\local\query\report_query;
 use report_autograder\local\format\row_formatter;
 use report_autograder\local\query\scope;
 
+// The classes below extend those of core_external, which Moodle 4.0 and 4.1 only have under their old names.
+// phpcs:ignore moodle.Files.MoodleInternal.MoodleInternalGlobalState
+\report_autograder\compat\external_aliases::register();
+
 /**
  * One page of the report, for whichever of the three levels was asked for.
  *
