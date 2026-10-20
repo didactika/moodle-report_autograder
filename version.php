@@ -36,5 +36,5 @@ $plugin->supported = [503, 503];
 // grader selection, so it cannot work without it, and needs the version it
 // was released alongside.
 $plugin->dependencies = [
-    'local_autograder' => 2026101900,
+    'local_autograder' => 2026101901,
 ];
