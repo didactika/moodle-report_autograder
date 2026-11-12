@@ -53,6 +53,10 @@
     }
 }}
 <div class="report-autograder-graders">
+    <div class="autograder-head">
+        <span class="autograder-tile" aria-hidden="true"><i class="fa fa-users"></i></span>
+        <p class="autograder-lead">{{#str}}lead_graders, report_autograder{{/str}}</p>
+    </div>
     <form method="get" action="{{formurl}}" class="mb-3" id="graders-form">
         <label for="graders-courseid">{{#str}}graders:pickcourse, report_autograder{{/str}}</label>
         {{!

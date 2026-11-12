@@ -20,6 +20,7 @@
     The filter bar above the table.
 
     Context variables required for this template:
+    * lead - What this report is about, in a line
     * filter_action_url - Where the form points
     * statuses - The states this viewer may filter by
     * shows_course_filter / courses - The course picker, at site level
@@ -29,6 +30,7 @@
 
     Example context (json):
     {
+        "lead": "What Autograder decided for each student of this activity",
         "filter_action_url": "/report/autograder/index.php",
         "statuses": [{"key": "pending", "label": "Pending"}],
         "shows_course_filter": false,
@@ -52,6 +54,12 @@
     data-dp-week="{{#str}}datepicker_week, report_autograder{{/str}}"
     data-search-empty="{{#str}}search:nomatches, report_autograder{{/str}}"
     data-search-loading="{{#str}}search:loading, report_autograder{{/str}}">
+    <div class="autograder-head">
+        <span class="autograder-tile" aria-hidden="true"><i class="fa fa-bar-chart"></i></span>
+        <p class="autograder-lead">{{lead}}</p>
+    </div>
+    <div class="autograder-statuses" id="autograder-status-chips" role="group"
+        aria-label="{{#str}}filter_status, report_autograder{{/str}}" data-all="{{#str}}status_all, report_autograder{{/str}}" hidden></div>
     <div class="autograder-top-filters">
         <div class="autograder-quick-search-wrapper">
             <i class="fa fa-search autograder-quick-search-icon" aria-hidden="true"></i>

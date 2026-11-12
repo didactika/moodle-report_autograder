@@ -26,8 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'report_autograder';
-$plugin->release = '1.1.0-m400';
-$plugin->version = 2026101401;
+$plugin->release = '1.2.0-m400';
+$plugin->version = 2026101402;
 $plugin->requires = 2022041900;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->supported = [400, 502];
@@ -36,5 +36,5 @@ $plugin->supported = [400, 502];
 // grader selection, so it cannot work without it, and needs the version it
 // was released alongside.
 $plugin->dependencies = [
-    'local_autograder' => 2026101401,
+    'local_autograder' => 2026101402,
 ];

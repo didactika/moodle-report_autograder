@@ -21,6 +21,20 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+## [1.2.0-m400] - 2026-11-12
+
+The report follows the Didactika design system, and its statuses show how many students each has.
+
+### Added
+
+- The statuses of the report are chips with the number of students in each, counted inside every other filter. One press narrows the report to a status and another lifts it. The numbers come with the total, so turning a page does not count them again.
+- A head with what each report is about, as the other screens of Didactika have.
+
+### Changed
+
+- The status filter of the bar is replaced by those chips.
+- It needs Autograder 1.2.0, which offers Autograder only for the activities that take the work of students.
+
 ## [1.1.0-m400] - 2026-10-19
 
 First release of the Moodle 4.0 to 5.2 line, on `MOODLE_400_STABLE`. The Moodle 5.3 line is on `main` (1.1.0-m503).

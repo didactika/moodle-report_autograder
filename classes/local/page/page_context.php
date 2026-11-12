@@ -60,6 +60,7 @@ final class page_context {
         }
 
         return [
+            'lead' => get_string('lead_' . $scope->level(), 'report_autograder'),
             'filter_action_url' => $scope->url()->out(false),
             'statuses' => $statuses,
             'filters' => self::chosen_values($filters),

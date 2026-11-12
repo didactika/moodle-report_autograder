@@ -165,6 +165,18 @@ final class filters {
     }
 
     /**
+     * The same filters without the statuses, to count the students of each status inside everything else that narrows the report.
+     *
+     * @return self
+     */
+    public function without_statuses(): self {
+        $copy = clone $this;
+        $copy->statuses = [];
+
+        return $copy;
+    }
+
+    /**
      * The statuses to show, in the report's own words.
      *
      * @return string[]

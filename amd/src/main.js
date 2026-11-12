@@ -46,6 +46,7 @@ import {showLoading, renderTable} from './ui/report';
 import {renderPagination} from './ui/pagination';
 import {attachFilterListeners, collectFilters} from './ui/form';
 import {init as initFiltersUi} from './ui/filters';
+import {init as initStatusChips, render as renderStatusChips} from './ui/status_chips';
 import {updateSortHeaderUI} from './ui/table_sort';
 
 let requestId = 0;
@@ -125,6 +126,11 @@ const fetchAndRenderReport = (page) => {
             }
 
             setRecordsPerPage(limit);
+
+            // The students of each status come with the count of the rows, so they are there only for the first page.
+            if (response.statuscounts && response.statuscounts.length) {
+                renderStatusChips(response.statuscounts);
+            }
 
             // -1 is the server saying it did not count, because nothing that
             // could change the count has happened since it last did.
@@ -209,6 +215,7 @@ export const init = (scope, presetStatus) => {
     }
 
     initFiltersUi(presetStatus);
+    initStatusChips();
 
     // The bar can arrive with something already chosen — a status from a
     // summary tile, or the group the viewer was last looking at, which in an

@@ -66,6 +66,33 @@ final class report_query {
     }
 
     /**
+     * How many rows each decision status has, inside every filter but the status.
+     *
+     * One grouped query, so that the chips of the statuses cost one pass over the same rows as the count.
+     *
+     * @param scope $scope
+     * @param filters $filters
+     * @return int[] Rows by decision status, with the empty string for the students who have no decision.
+     */
+    public static function status_counts(scope $scope, filters $filters): array {
+        global $DB;
+
+        [$from, $where, $params] = self::build($scope, $filters->without_statuses(), false);
+
+        $counts = [];
+        $records = $DB->get_recordset_sql(
+            "SELECT d.status AS decisionstatus, COUNT(1) AS total {$from} WHERE {$where} GROUP BY d.status",
+            $params
+        );
+        foreach ($records as $record) {
+            $counts[(string) $record->decisionstatus] = (int) $record->total;
+        }
+        $records->close();
+
+        return $counts;
+    }
+
+    /**
      * One page of rows.
      *
      * @param scope $scope
