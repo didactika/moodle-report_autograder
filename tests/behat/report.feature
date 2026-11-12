@@ -51,8 +51,7 @@ Feature: The autograder report
 
   Scenario: A state can be chosen in the filter and cleared again
     When I wait for the report rows
-    And I click on "Status" "button" in the ".arp-toolbar" "css_element"
-    And I click on "Pending" "button" in the ".arp-floating" "css_element"
+    And I click on "Pending" "button" in the ".arp-statuses" "css_element"
     And I wait for the report rows
     Then the report should show 1 row
     And I click on "Clear every filter" "button"

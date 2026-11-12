@@ -62,8 +62,7 @@ Feature: The screenshots of the user manual
   Scenario: The status filter and the report of a course
     When I open the autograder report of "essay"
     And I wait for the report rows
-    And I click on "Status" "button" in the ".arp-toolbar" "css_element"
-    And I click on "Pending" "button" in the ".arp-floating" "css_element"
+    And I click on "Pending" "button" in the ".arp-statuses" "css_element"
     And I wait for the report rows
     And I wait "1" seconds
     Then I capture the report as "report-status-filter"
