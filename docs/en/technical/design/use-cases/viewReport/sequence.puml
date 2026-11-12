@@ -1,0 +1,24 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+skinparam responseMessageBelowArrow true
+
+actor "Teacher" as actor
+participant "report.js" as js
+participant "get_report" as service
+participant "scope" as scope
+participant "group_access" as groups
+participant "report_query" as query
+database "local_autograder_decision" as table
+
+actor -> js : filters, page, sort
+js -> service : cmid, courseid, filters, page
+service -> scope : require_capability()
+service -> groups : for_scope(scope)
+service -> query : rows(scope, filters, groups)
+query -> table : read decisions and the students not yet engaged
+query --> service : rows
+service --> js : formatted rows (status, date, grade, grader)
+js --> actor : the table
+
+@enduml
