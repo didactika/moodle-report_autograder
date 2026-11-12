@@ -1,0 +1,23 @@
+---
+title: Course report
+summary: Review every autograded activity of a course, with the count of students in each status.
+order: 40
+---
+
+Open the course and select **Autograder report** in its **Reports** menu. You need the capability `report/autograder:viewcourse` in the course.
+
+<Screenshot src="asset:rp-course.webp" alt="The Autograder report of a course, with one row per student and activity" caption="The report of a course, with the activity in each row." url="/report/autograder/index.php" />
+
+The table shows one row per student and activity, so a student who is in two autograded activities appears twice.
+
+## Filters
+
+Every report can be filtered by activity, group, status and grading date, and searched by student. The activity filter offers only the activities of the course where Autograder is enabled.
+
+## Failures
+
+When you have `report/autograder:viewfailed`, the status filter offers **Failed**, and the failed rows show the reason: for example that no teacher could grade the student.
+
+<Screenshot src="asset:rp-failed.webp" alt="The Autograder report of a course filtered by failed students, with the reason of each failure" caption="The students whose grading failed, with the reason." url="/report/autograder/index.php" />
+
+The report appears in the **Reports** menu only when Autograder is enabled in at least one activity of the course.

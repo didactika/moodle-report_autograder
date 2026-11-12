@@ -1,0 +1,20 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+skinparam responseMessageBelowArrow true
+
+actor "Administrator" as actor
+participant "graders.php" as page
+participant "grader_list" as list
+participant "grader_picker" as picker
+
+actor -> page : opens Graders by course and chooses a course
+page -> page : require viewsite and viewcourse
+page -> list : graders_of(courseid)
+list -> picker : candidates, fallback
+page --> actor : the teachers and the counts
+actor -> page : asks for the students
+page -> list : students_of(courseid, page)
+page --> actor : a page of students with their grader
+
+@enduml

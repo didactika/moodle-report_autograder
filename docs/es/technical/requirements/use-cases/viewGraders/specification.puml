@@ -1,0 +1,23 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+hide empty description
+
+state "viewGraders" as viewGraders {
+  state " " as Choosing
+  state " " as Teachers
+  state " " as Students
+
+  [*] --> Choosing : Administrator opens Graders by course
+  Choosing --> Teachers : Administrator chooses a course
+  Teachers --> Students : Administrator asks which grader each student would get
+  Students --> Teachers : Administrator goes back to the teachers
+  Teachers --> [*] : Administrator leaves the page
+
+  note on link
+    Administrator: chooses a course
+    System: lists the teachers who could grade there
+  end note
+}
+
+@enduml

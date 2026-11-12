@@ -1,0 +1,26 @@
+@startuml
+!theme plain
+hide empty members
+skinparam linetype polyline
+top to bottom direction
+
+class "Report page" as report <<boundary>>
+class "Graders page" as graders <<boundary>>
+class "Scope" as scope <<control>>
+class "Filters" as filters <<control>>
+class "Report query" as query <<control>>
+class "Group access" as groups <<control>>
+class "Row formatter" as formatter <<control>>
+class "Grader list" as list <<control>>
+class "Decision" as decision <<entity>>
+
+report --> scope
+report --> filters
+report --> query
+report --> groups
+query --> decision
+query --> formatter
+graders --> list
+list --> decision
+
+@enduml

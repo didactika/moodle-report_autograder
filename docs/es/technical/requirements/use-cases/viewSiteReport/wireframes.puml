@@ -1,0 +1,10 @@
+@startsalt
+{
+  {* Reports | Autograder report | Grading report }
+  ==
+  Autograder across the site
+  --
+  { "Search..." | ^Course^ | ^Activity^ | ^Status^ | ^Grading date^ }
+  Choose a course, an activity or another filter to run this report.
+}
+@endsalt

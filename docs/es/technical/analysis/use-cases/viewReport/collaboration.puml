@@ -1,0 +1,22 @@
+@startuml
+!theme plain
+hide empty members
+skinparam linetype polyline
+top to bottom direction
+
+class "Teacher" as user <<actor>>
+class "Report page" as screen <<boundary>>
+class "Scope" as scope <<control>>
+class "Group access" as groups <<control>>
+class "Report query" as query <<control>>
+class "Row formatter" as formatter <<control>>
+class "Decision" as decision <<entity>>
+
+user --> screen : 1: opens the report, sets filters
+screen --> scope : 2: which level, which capability
+screen --> groups : 3: which groups can this teacher see
+screen --> query : 4: the rows of the page
+query --> decision : 5: reads decisions and the gradebook
+query --> formatter : 6: status, date, grade and grader
+
+@enduml

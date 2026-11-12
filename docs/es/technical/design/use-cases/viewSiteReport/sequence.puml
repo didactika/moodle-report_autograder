@@ -1,0 +1,27 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+skinparam responseMessageBelowArrow true
+
+actor "Administrator" as actor
+participant "index.php" as page
+participant "scope" as scope
+participant "report.js" as js
+participant "get_report" as service
+participant "report_query" as query
+
+actor -> page : opens the report of the site
+page -> scope : site level, require_capability(viewsite)
+page --> js : the filters, with no rows
+alt no filter chosen
+  js --> actor : asks for a course, an activity or another filter
+else
+  actor -> js : chooses a filter
+  js -> service : filters, page
+  service -> query : rows(scope, filters)
+  query --> service : rows
+  service --> js : formatted rows
+  js --> actor : the table
+end
+
+@enduml
