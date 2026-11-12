@@ -19,9 +19,10 @@ Analysis: [README](../../../analysis/use-cases/viewReport/README.md)
 
 | Design element | Kind | Code target |
 | --- | --- | --- |
-| `get_report::execute` | service | `classes/external/get_report.php:96` |
+| `get_report::execute` | service | `classes/external/get_report.php:97` |
 | `scope::require_capability` | service | `classes/local/query/scope.php:160` |
-| `report_query::rows` | service | `classes/local/query/report_query.php:79` |
+| `report_query::rows` | service | `classes/local/query/report_query.php:106` |
+| `report_query::status_counts` | service | `classes/local/query/report_query.php:77` |
 | `group_access::for_scope` | service | `classes/local/groups/group_access.php:100` |
 | `status::from_decision` | service | `classes/local/format/status.php:64` |
 
@@ -33,7 +34,7 @@ Analysis: [README](../../../analysis/use-cases/viewReport/README.md)
 
 | Operation | Input | Output | Errors |
 | --- | --- | --- | --- |
-| `report_autograder_get_report(cmid, courseid, page, limit, filters, sortcolumn, sortdir, withtotal)` | the level, the filters, the page and the sort | one page of formatted rows and the total | no capability, invalid filter |
+| `report_autograder_get_report(cmid, courseid, page, limit, filters, sortcolumn, sortdir, withtotal)` | the level, the filters, the page and the sort | one page of formatted rows, the total and the students of each status | no capability, invalid filter |
 
 ## Data touched
 

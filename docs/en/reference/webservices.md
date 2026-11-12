@@ -13,6 +13,8 @@ The pages of the report read their data through two web-service functions. They 
 
 The page **Graders by course** is drawn by the server and needs no web service.
 
+The function also returns, once for each set of filters and with the total, the number of students in each status: the key, the name and the count of each status, counted inside every other filter but the status itself. A page turn returns no counts.
+
 ## Filters
 
 The filters of `report_autograder_get_report` are pairs of a name and a value. They narrow the table to a search text, a period of grading dates, one or more statuses, a course, an activity or a group.

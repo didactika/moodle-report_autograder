@@ -21,13 +21,14 @@ Design: [README](../../../design/use-cases/viewReport/README.md)
 | --- | --- | --- | --- |
 | `get_report` | web service | `classes/external/get_report.php` | yes |
 | Page of the report | page | `index.php` | yes |
+| Status chips | AMD module | `amd/src/ui/status_chips.js` | yes |
 | Report screen | AMD module | `amd/src/ui/report.js` | yes |
 
 ## Tests
 
 | Test | Covers | Location |
 | --- | --- | --- |
-| One page of rows, filters and sort | main flow | `tests/external/get_report_test.php` |
+| One page of rows, filters, sort and the counts of the statuses | main flow | `tests/external/get_report_test.php` |
 | The query of the rows | main flow, RN-001 | `tests/local/report_query_test.php` |
 | Groups of the reader | RN-004 | `tests/local/group_access_test.php` |
 | Provisional grade and grader | RN-005 | `tests/local/provisional_grade_test.php` |

@@ -51,7 +51,7 @@ Un docente necesita ver, para cada estudiante, lo que Autograder decidió: el es
 | 1 | Abre **Informe de Autograder** en el menú de la actividad o del curso. | Comprueba la capacidad del nivel. |
 | 2 |  | Lee la primera página de filas, limitada a los grupos que el docente puede ver. |
 | 3 | Busca, filtra u ordena. | Vuelve a leer la página con los nuevos filtros. |
-| 4 |  | Muestra cada fila con su estado, fecha, calificación y calificador; una fila pendiente muestra la calificación y el docente que tendría ahora. |
+| 4 |  | Muestra cada fila con su estado, fecha, calificación y calificador; una fila pendiente muestra la calificación y el docente que tendría ahora; sobre las filas, un chip de cada estado indica cuántos estudiantes hay en él, contados dentro de los demás filtros. |
 
 ## Flujos alternativos
 

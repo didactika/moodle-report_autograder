@@ -19,9 +19,10 @@ Análisis: [README](../../../analysis/use-cases/viewReport/README.md)
 
 | Elemento de diseño | Tipo | Código |
 | --- | --- | --- |
-| `get_report::execute` | servicio | `classes/external/get_report.php:96` |
+| `get_report::execute` | servicio | `classes/external/get_report.php:97` |
 | `scope::require_capability` | servicio | `classes/local/query/scope.php:160` |
-| `report_query::rows` | servicio | `classes/local/query/report_query.php:79` |
+| `report_query::rows` | servicio | `classes/local/query/report_query.php:106` |
+| `report_query::status_counts` | servicio | `classes/local/query/report_query.php:77` |
 | `group_access::for_scope` | servicio | `classes/local/groups/group_access.php:100` |
 | `status::from_decision` | servicio | `classes/local/format/status.php:64` |
 
@@ -33,7 +34,7 @@ Análisis: [README](../../../analysis/use-cases/viewReport/README.md)
 
 | Operación | Entrada | Salida | Errores |
 | --- | --- | --- | --- |
-| `report_autograder_get_report(cmid, courseid, page, limit, filters, sortcolumn, sortdir, withtotal)` | el nivel, los filtros, la página y el orden | una página de filas formateadas y el total | sin capacidad, filtro no válido |
+| `report_autograder_get_report(cmid, courseid, page, limit, filters, sortcolumn, sortdir, withtotal)` | el nivel, los filtros, la página y el orden | una página de filas formateadas, el total y los estudiantes de cada estado | sin capacidad, filtro no válido |
 
 ## Datos que toca
 

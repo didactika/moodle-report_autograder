@@ -51,7 +51,7 @@ A teacher needs to see, for each student, what Autograder decided: the status, t
 | 1 | Opens **Autograder report** in the menu of the activity or of the course. | Checks the capability of the level. |
 | 2 |  | Reads the first page of rows, limited to the groups the teacher can see. |
 | 3 | Searches, filters or sorts. | Reads the page again with the new filters. |
-| 4 |  | Shows each row with its status, date, grade and grader; a pending row shows the grade and the teacher it would have now. |
+| 4 |  | Shows each row with its status, date, grade and grader; a pending row shows the grade and the teacher it would have now; above the rows, a chip of each status shows how many students are in it, counted inside the other filters. |
 
 ## Alternative flows
 
