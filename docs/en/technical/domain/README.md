@@ -50,6 +50,8 @@ The vertical position of an entity expresses its importance to the project objec
 | RN-004 | A teacher sees only the students of the groups they can see in the activity. | GroupAccess | `group_access::for_scope` |
 | RN-005 | A pending row shows the grade the student would receive and the teacher who would sign it if it were given now. | ReportRow, GraderCandidate | `provisional_grade::for_row` |
 | RN-006 | The report only reads: it never grades, cancels or changes a decision. | all | read-only web services |
+| RN-007 | A student that the access restrictions of the activity leave out is not listed as not submitted: they cannot open the activity, so the report says nothing about them. | ReportRow, Scope | `availability_access::for_scope` |
+| RN-008 | The count of each status is computed inside every other filter except the status, so that choosing a status does not hide the numbers of the others. | Filter, Status | `report_query::status_counts` |
 
 ## Lifecycles
 

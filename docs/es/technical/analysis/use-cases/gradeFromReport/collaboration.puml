@@ -1,0 +1,16 @@
+@startuml
+!theme plain
+hide empty members
+skinparam linetype polyline
+top to bottom direction
+
+class "Teacher" as user <<actor>>
+class "Report row" as row <<boundary>>
+class "Grader screen" as ui <<control>>
+class "Activity grader" as grader <<boundary>>
+
+user --> row : 1: chooses to grade a student
+row --> ui : 2: can_use_assign_grader(cm)
+ui --> grader : 3: opens it for the student
+
+@enduml

@@ -15,6 +15,8 @@ sourceOfTruth: code
 | RF-002 | An administrator can read the report of the site, which runs only with a filter. | Must | `classes/local/query/filters.php` | UC-002 |
 | RF-003 | An administrator can see, for a course, which teachers could grade and which one each student would get. | Should | `graders.php`, `classes/local/page/grader_list.php` | UC-003 |
 | RF-004 | Failed gradings and their reasons are shown only to readers with the capability to see failures. | Must | `classes/local/format/status.php` | UC-001, UC-002 |
+| RF-005 | A reader can narrow the report by name, status, group, grading date, activity and course, and see how many students are in each status. | Must | `classes/local/query/filters.php`, `classes/external/search_filter_options.php` | UC-004 |
+| RF-006 | A teacher can go from a row of the report to the grading screen of the activity. | Should | `classes/local/page/grader_ui.php` | UC-005 |
 
 ## Non-functional
 

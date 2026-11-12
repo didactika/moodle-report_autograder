@@ -12,11 +12,16 @@ rectangle "report_autograder" {
     usecase "View the report of an activity or a course" as UC_viewReport
     usecase "View the report of the site" as UC_viewSiteReport
     usecase "See who would grade each course" as UC_viewGraders
+    usecase "Narrow the report" as UC_narrowReport
+    usecase "Grade a student from the report" as UC_gradeFromReport
   }
 }
 
 A_Teacher --> UC_viewReport
 A_Administrator --> UC_viewSiteReport
 A_Administrator --> UC_viewGraders
+A_Teacher --> UC_narrowReport
+A_Administrator --> UC_narrowReport
+A_Teacher --> UC_gradeFromReport
 
 @enduml

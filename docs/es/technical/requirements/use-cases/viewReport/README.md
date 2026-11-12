@@ -69,6 +69,7 @@ Un docente necesita ver, para cada estudiante, lo que Autograder decidió: el es
 | RN-003 | Los fallos se muestran solo a los lectores que pueden verlos. |
 | RN-004 | Un docente ve solo los grupos que puede ver. |
 | RN-005 | Una fila pendiente muestra la calificación y el calificador provisionales. |
+| RN-007 | Un estudiante al que las restricciones de acceso de la actividad dejan fuera no se enumera como sin entregar: no puede abrir la actividad, de modo que el informe no dice nada de él. |
 
 ## Especificación
 

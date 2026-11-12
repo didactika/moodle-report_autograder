@@ -50,6 +50,8 @@ La posición vertical de una entidad expresa su importancia para el objetivo del
 | RN-004 | Un docente ve solo a los estudiantes de los grupos que puede ver en la actividad. | GroupAccess | `group_access::for_scope` |
 | RN-005 | Una fila pendiente muestra la calificación que recibiría el estudiante y el docente que la firmaría si se diera ahora. | ReportRow, GraderCandidate | `provisional_grade::for_row` |
 | RN-006 | El informe solo lee: nunca califica, cancela ni cambia una decisión. | todas | servicios web de solo lectura |
+| RN-007 | Un estudiante al que las restricciones de acceso de la actividad dejan fuera no se enumera como sin entregar: no puede abrir la actividad, de modo que el informe no dice nada de él. | ReportRow, Scope | `availability_access::for_scope` |
+| RN-008 | El recuento de cada estado se calcula dentro de todos los demás filtros salvo el propio estado, de modo que elegir un estado no oculte los números de los demás. | Filter, Status | `report_query::status_counts` |
 
 ## Ciclos de vida
 

@@ -69,6 +69,7 @@ A teacher needs to see, for each student, what Autograder decided: the status, t
 | RN-003 | Failures are shown only to readers who can see them. |
 | RN-004 | A teacher sees only the groups they can see. |
 | RN-005 | A pending row shows the provisional grade and grader. |
+| RN-007 | A student that the access restrictions of the activity leave out is not listed as not submitted: they cannot open the activity, so the report says nothing about them. |
 
 ## Specification
 

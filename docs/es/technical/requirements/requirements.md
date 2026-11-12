@@ -15,6 +15,8 @@ sourceOfTruth: code
 | RF-002 | Un administrador puede leer el informe del sitio, que solo se ejecuta con un filtro. | Debe | `classes/local/query/filters.php` | UC-002 |
 | RF-003 | Un administrador puede ver, para un curso, qué docentes podrían calificar y cuál recibiría cada estudiante. | Debería | `graders.php`, `classes/local/page/grader_list.php` | UC-003 |
 | RF-004 | Las calificaciones fallidas y sus motivos solo se muestran a los lectores con la capacidad de ver los fallos. | Debe | `classes/local/format/status.php` | UC-001, UC-002 |
+| RF-005 | Un lector puede acotar el informe por nombre, estado, grupo, fecha de calificación, actividad y curso, y ver cuántos estudiantes hay en cada estado. | Debe | `classes/local/query/filters.php`, `classes/external/search_filter_options.php` | UC-004 |
+| RF-006 | Un docente puede pasar de una fila del informe a la pantalla de calificación de la actividad. | Debería | `classes/local/page/grader_ui.php` | UC-005 |
 
 ## No funcionales
 

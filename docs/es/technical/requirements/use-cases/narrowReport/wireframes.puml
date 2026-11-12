@@ -1,0 +1,12 @@
+@startsalt
+{
+  {* Autograder report | Activity }
+  ==
+  Autograder report
+  --
+  {
+    [All 24] | [Pending 11] | [Autograded 9] | [Graded by a teacher 1] | [Failed 1] | [Not submitted 2]
+    "Search..." | [Activity v] | [Group v] | [Grading date v] | [Clear every filter]
+  }
+}
+@endsalt
