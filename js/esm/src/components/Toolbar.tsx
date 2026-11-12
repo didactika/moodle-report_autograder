@@ -13,7 +13,6 @@ import {useEffect, useState} from 'react';
 import DateFilter from './DateFilter';
 import GroupFilter from './GroupFilter';
 import PickerFilter from './PickerFilter';
-import StatusFilter from './StatusFilter';
 import {IconActivity, IconCourse, IconReset, IconSearch} from './common/Icons';
 import {useDebounced} from '../hooks/useDebounced';
 import {isNarrowed} from '../lib/filters';
@@ -92,12 +91,6 @@ export default function Toolbar({props, filters, course, activity, text, onFilte
                 text={text}
                 onChange={(groupid) => onFilters({groupid})}
             />}
-            <StatusFilter
-                options={props.statuses}
-                chosen={filters.status}
-                text={text}
-                onChange={(status) => onFilters({status})}
-            />
             <DateFilter
                 from={filters.datefrom}
                 to={filters.dateto}

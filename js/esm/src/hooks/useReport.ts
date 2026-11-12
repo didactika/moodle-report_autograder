@@ -12,7 +12,7 @@
  */
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {describeError, getReport, type Scope} from '../services/api';
-import type {Filters, Row, Sort} from '../types';
+import type {Filters, Row, Sort, StatusCount} from '../types';
 
 /** What the table shows. */
 export interface ReportState {
@@ -22,6 +22,8 @@ export interface ReportState {
     limit: number;
     loading: boolean;
     needsfilter: boolean;
+    /** The students of each status, counted with the total. */
+    counts: StatusCount[];
     failed: string;
 }
 
@@ -33,7 +35,7 @@ export interface ReportQuery {
     limit: number;
 }
 
-const FIRST: ReportState = {rows: [], total: 0, page: 0, limit: 0, loading: true, needsfilter: false, failed: ''};
+const FIRST: ReportState = {rows: [], total: 0, page: 0, limit: 0, loading: true, needsfilter: false, counts: [], failed: ''};
 
 /**
  * Read the report for the filters, the sort and the page size, going back to the first page whenever one of them changes.
@@ -45,6 +47,7 @@ export const useReport = (query: ReportQuery): [ReportState, (page: number) => v
     const [state, setState] = useState<ReportState>({...FIRST, limit: query.limit});
     const asked = useRef(0);
     const known = useRef(0);
+    const knownCounts = useRef<StatusCount[]>([]);
     const latest = useRef(query);
     latest.current = query;
 
@@ -67,6 +70,9 @@ export const useReport = (query: ReportQuery): [ReportState, (page: number) => v
             if (response.totalrecords >= 0) {
                 known.current = response.totalrecords;
             }
+            if (response.statuscounts && response.statuscounts.length > 0) {
+                knownCounts.current = response.statuscounts;
+            }
             setState({
                 rows: response.needsfilter ? [] : response.data,
                 total: response.needsfilter ? 0 : known.current,
@@ -74,6 +80,7 @@ export const useReport = (query: ReportQuery): [ReportState, (page: number) => v
                 limit: response.limit || current.limit,
                 loading: false,
                 needsfilter: Boolean(response.needsfilter),
+                counts: response.needsfilter ? [] : knownCounts.current,
                 failed: '',
             });
         }).catch((error: unknown) => {

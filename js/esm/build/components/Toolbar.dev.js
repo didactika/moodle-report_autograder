@@ -16,7 +16,6 @@ import { useEffect, useState } from "react";
 import DateFilter from "./DateFilter";
 import GroupFilter from "./GroupFilter";
 import PickerFilter from "./PickerFilter";
-import StatusFilter from "./StatusFilter";
 import { IconActivity, IconCourse, IconReset, IconSearch } from "./common/Icons";
 import { useDebounced } from "../hooks/useDebounced";
 import { isNarrowed } from "../lib/filters";
@@ -35,11 +34,11 @@ function Toolbar({ props, filters, course, activity, text, onFilters, onCourse, 
     /* @__PURE__ */ jsxDEV("div", { className: `arp-search${typed !== "" ? " arp-search-on" : ""}`, children: [
       /* @__PURE__ */ jsxDEV("span", { className: "arp-search-icon", children: /* @__PURE__ */ jsxDEV(IconSearch, {}, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 57,
+        lineNumber: 56,
         columnNumber: 47
       }, this) }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 57,
+        lineNumber: 56,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -56,14 +55,14 @@ function Toolbar({ props, filters, course, activity, text, onFilters, onCourse, 
         false,
         {
           fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 58,
+          lineNumber: 57,
           columnNumber: 13
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-      lineNumber: 56,
+      lineNumber: 55,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "arp-filters", children: [
@@ -73,7 +72,7 @@ function Toolbar({ props, filters, course, activity, text, onFilters, onCourse, 
           type: "course",
           icon: /* @__PURE__ */ jsxDEV(IconCourse, {}, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 70,
+            lineNumber: 69,
             columnNumber: 23
           }, this),
           label: text("filter_course"),
@@ -87,7 +86,7 @@ function Toolbar({ props, filters, course, activity, text, onFilters, onCourse, 
         false,
         {
           fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 68,
+          lineNumber: 67,
           columnNumber: 41
         },
         this
@@ -98,7 +97,7 @@ function Toolbar({ props, filters, course, activity, text, onFilters, onCourse, 
           type: "activity",
           icon: /* @__PURE__ */ jsxDEV(IconActivity, {}, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 80,
+            lineNumber: 79,
             columnNumber: 23
           }, this),
           label: text("filter_activity"),
@@ -112,7 +111,7 @@ function Toolbar({ props, filters, course, activity, text, onFilters, onCourse, 
         false,
         {
           fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 78,
+          lineNumber: 77,
           columnNumber: 43
         },
         this
@@ -130,25 +129,8 @@ function Toolbar({ props, filters, course, activity, text, onFilters, onCourse, 
         false,
         {
           fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 88,
+          lineNumber: 87,
           columnNumber: 40
-        },
-        this
-      ),
-      /* @__PURE__ */ jsxDEV(
-        StatusFilter,
-        {
-          options: props.statuses,
-          chosen: filters.status,
-          text,
-          onChange: (status) => onFilters({ status })
-        },
-        void 0,
-        false,
-        {
-          fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 95,
-          columnNumber: 13
         },
         this
       ),
@@ -164,7 +146,7 @@ function Toolbar({ props, filters, course, activity, text, onFilters, onCourse, 
         false,
         {
           fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 101,
+          lineNumber: 94,
           columnNumber: 13
         },
         this
@@ -172,27 +154,27 @@ function Toolbar({ props, filters, course, activity, text, onFilters, onCourse, 
       isNarrowed(filters) && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "arp-reset", onClick: onReset, "aria-label": text("filters_reset"), children: [
         /* @__PURE__ */ jsxDEV(IconReset, {}, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 108,
+          lineNumber: 101,
           columnNumber: 17
         }, this),
         /* @__PURE__ */ jsxDEV("span", { className: "arp-reset-text", children: text("filters_reset") }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 109,
+          lineNumber: 102,
           columnNumber: 17
         }, this)
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 107,
+        lineNumber: 100,
         columnNumber: 37
       }, this)
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-      lineNumber: 67,
+      lineNumber: 66,
       columnNumber: 9
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/Toolbar.tsx",
-    lineNumber: 55,
+    lineNumber: 54,
     columnNumber: 12
   }, this);
 }

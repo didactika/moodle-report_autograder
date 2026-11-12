@@ -100,6 +100,38 @@ final class get_report_test extends \advanced_testcase {
     }
 
     /**
+     * The students of each status come with the total, add up to it and leave out the status filter.
+     */
+    public function test_it_counts_the_students_of_each_status(): void {
+        $result = $this->call(['cmid' => (int) $this->cm->id]);
+
+        $counts = array_column($result['statuscounts'], 'count', 'key');
+        $this->assertSame(3, array_sum($counts), 'Every student is in one status.');
+        $this->assertSame(
+            ['pending', 'graded', 'manual', 'failed', 'notautograded', 'notengaged'],
+            array_column($result['statuscounts'], 'key')
+        );
+
+        // Choosing a status narrows the rows and not the numbers: they say what each chip would show.
+        $narrowed = $this->call([
+            'cmid' => (int) $this->cm->id,
+            'filters' => [['name' => 'status', 'value' => 'notengaged']],
+        ]);
+        $this->assertSame($counts, array_column($narrowed['statuscounts'], 'count', 'key'));
+    }
+
+    /**
+     * Turning a page does not count again.
+     */
+    public function test_a_page_turn_does_not_count_the_statuses(): void {
+        $result = get_report::execute((int) $this->cm->id, 0, 1, 2, [], 'user_name', 'asc', false);
+        $result = external_api::clean_returnvalue(get_report::execute_returns(), $result);
+
+        $this->assertSame(-1, $result['totalrecords']);
+        $this->assertSame([], $result['statuscounts']);
+    }
+
+    /**
      * Paging is the server's job, so it has to be the server that limits.
      */
     public function test_it_pages_on_the_server(): void {

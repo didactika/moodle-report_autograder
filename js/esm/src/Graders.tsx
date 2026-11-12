@@ -97,6 +97,12 @@ export default function Graders(props: GradersProps) {
     };
 
     return <div className="arp arp-graders">
+        <div className="arp-head">
+            <span className="arp-tile" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M16 11a3 3 0 1 0-3-3 3 3 0 0 0 3 3zm-8 0a3 3 0 1 0-3-3 3 3 0 0 0 3 3zm0 2c-2.3 0-7 1.2-7 3.5V19h14v-2.5C15 14.2 10.3 13 8 13zm8 0c-.3 0-.6 0-1 .1 1.2.9 2 2 2 3.4V19h6v-2.5c0-2.3-4.7-3.5-7-3.5z" /></svg>
+            </span>
+            <p className="arp-lead">{text('lead_graders')}</p>
+        </div>
         <div className="arp-toolbar">
             <div className="arp-filters">
                 <PickerFilter

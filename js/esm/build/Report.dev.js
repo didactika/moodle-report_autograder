@@ -17,6 +17,7 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  */
 import { useMemo, useState } from "react";
 import Pagination from "./components/Pagination";
+import StatusTabs from "./components/StatusTabs";
 import ReportTable from "./components/ReportTable";
 import Toolbar from "./components/Toolbar";
 import { createText } from "./engine/text";
@@ -68,6 +69,49 @@ function Report(props) {
       onClickCapture: remember,
       ...forumAttributes(props),
       children: [
+        /* @__PURE__ */ jsxDEV("div", { className: "arp-head", children: [
+          /* @__PURE__ */ jsxDEV("span", { className: "arp-tile", "aria-hidden": "true", children: /* @__PURE__ */ jsxDEV("svg", { viewBox: "0 0 24 24", width: "22", height: "22", fill: "currentColor", children: /* @__PURE__ */ jsxDEV("path", { d: "M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z" }, void 0, false, {
+            fileName: "public/report/autograder/js/esm/src/Report.tsx",
+            lineNumber: 88,
+            columnNumber: 85
+          }, this) }, void 0, false, {
+            fileName: "public/report/autograder/js/esm/src/Report.tsx",
+            lineNumber: 88,
+            columnNumber: 17
+          }, this) }, void 0, false, {
+            fileName: "public/report/autograder/js/esm/src/Report.tsx",
+            lineNumber: 87,
+            columnNumber: 13
+          }, this),
+          /* @__PURE__ */ jsxDEV("p", { className: "arp-lead", children: text(`lead_${props.level}`) }, void 0, false, {
+            fileName: "public/report/autograder/js/esm/src/Report.tsx",
+            lineNumber: 90,
+            columnNumber: 13
+          }, this)
+        ] }, void 0, true, {
+          fileName: "public/report/autograder/js/esm/src/Report.tsx",
+          lineNumber: 86,
+          columnNumber: 9
+        }, this),
+        /* @__PURE__ */ jsxDEV(
+          StatusTabs,
+          {
+            options: props.statuses,
+            counts: state.counts,
+            chosen: filters.status,
+            total: state.total,
+            text,
+            onChange: (status) => change({ status })
+          },
+          void 0,
+          false,
+          {
+            fileName: "public/report/autograder/js/esm/src/Report.tsx",
+            lineNumber: 92,
+            columnNumber: 9
+          },
+          this
+        ),
         /* @__PURE__ */ jsxDEV(
           Toolbar,
           {
@@ -97,7 +141,7 @@ function Report(props) {
           false,
           {
             fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 85,
+            lineNumber: 100,
             columnNumber: 9
           },
           this
@@ -117,7 +161,7 @@ function Report(props) {
           false,
           {
             fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 109,
+            lineNumber: 124,
             columnNumber: 9
           },
           this
@@ -139,7 +183,7 @@ function Report(props) {
           false,
           {
             fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 118,
+            lineNumber: 133,
             columnNumber: 9
           },
           this
@@ -150,7 +194,7 @@ function Report(props) {
     true,
     {
       fileName: "public/report/autograder/js/esm/src/Report.tsx",
-      lineNumber: 79,
+      lineNumber: 80,
       columnNumber: 12
     },
     this

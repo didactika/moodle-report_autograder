@@ -14,6 +14,7 @@
  */
 import {useMemo, useState} from 'react';
 import Pagination from './components/Pagination';
+import StatusTabs from './components/StatusTabs';
 import ReportTable from './components/ReportTable';
 import Toolbar from './components/Toolbar';
 import {createText} from './engine/text';
@@ -82,6 +83,20 @@ export default function Report(props: ReportProps) {
         onClickCapture={remember}
         {...forumAttributes(props)}
     >
+        <div className="arp-head">
+            <span className="arp-tile" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z" /></svg>
+            </span>
+            <p className="arp-lead">{text(`lead_${props.level}`)}</p>
+        </div>
+        <StatusTabs
+            options={props.statuses}
+            counts={state.counts}
+            chosen={filters.status}
+            total={state.total}
+            text={text}
+            onChange={(status) => change({status})}
+        />
         <Toolbar
             props={props}
             filters={filters}

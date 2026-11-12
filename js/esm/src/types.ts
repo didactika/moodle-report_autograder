@@ -26,6 +26,11 @@ export interface StatusOption {
     label: string;
 }
 
+/** The students of one status, inside the other filters of the report. */
+export interface StatusCount extends StatusOption {
+    count: number;
+}
+
 /** What the report is narrowed to. */
 export interface Filters {
     searchname: string;
@@ -111,6 +116,8 @@ export interface ReportResponse {
     limit: number;
     page: number;
     needsfilter?: boolean;
+    /** Counted with the total, so it is empty when the page is not the first. */
+    statuscounts?: StatusCount[];
     data: Row[];
 }
 

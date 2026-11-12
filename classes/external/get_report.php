@@ -24,6 +24,7 @@ use core_external\external_value;
 use report_autograder\local\query\filters;
 use report_autograder\local\query\report_query;
 use report_autograder\local\format\row_formatter;
+use report_autograder\local\format\status;
 use report_autograder\local\query\scope;
 
 /**
@@ -158,7 +159,33 @@ class get_report extends external_api {
             'page' => $page,
             'data' => row_formatter::format_all($rows, $scope),
             'needsfilter' => false,
+            // Like the total, counted once per set of filters: turning a page cannot change it.
+            'statuscounts' => $params['withtotal'] ? self::status_counts($scope, $filters) : [],
         ];
+    }
+
+    /**
+     * The students of each status, in the order that the status filter lists them.
+     *
+     * @param scope $scope
+     * @param filters $filters
+     * @return array[] The key, the label and the count of each status.
+     */
+    private static function status_counts(scope $scope, filters $filters): array {
+        $canseefailures = $scope->can_see_failures();
+        $totals = [];
+
+        foreach (report_query::status_counts($scope, $filters) as $decisionstatus => $count) {
+            $key = status::from_decision($decisionstatus, $canseefailures);
+            $totals[$key] = ($totals[$key] ?? 0) + $count;
+        }
+
+        $counts = [];
+        foreach (status::filterable($canseefailures) as $key) {
+            $counts[] = ['key' => $key, 'label' => status::label($key), 'count' => $totals[$key] ?? 0];
+        }
+
+        return $counts;
     }
 
     /**
@@ -220,6 +247,15 @@ class get_report extends external_api {
             'needsfilter' => new external_value(
                 PARAM_BOOL,
                 'The report is waiting for a filter before it will run',
+                VALUE_OPTIONAL
+            ),
+            'statuscounts' => new external_multiple_structure(
+                new external_single_structure([
+                    'key' => new external_value(PARAM_ALPHANUMEXT, 'The status'),
+                    'label' => new external_value(PARAM_TEXT, 'What the status is called'),
+                    'count' => new external_value(PARAM_INT, 'Students in it, inside the other filters'),
+                ]),
+                'The students of each status, counted with the total and left out when turning a page',
                 VALUE_OPTIONAL
             ),
             'data' => new external_multiple_structure(

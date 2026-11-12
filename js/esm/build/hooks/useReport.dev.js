@@ -14,11 +14,12 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { describeError, getReport } from "../services/api";
-const FIRST = { rows: [], total: 0, page: 0, limit: 0, loading: true, needsfilter: false, failed: "" };
+const FIRST = { rows: [], total: 0, page: 0, limit: 0, loading: true, needsfilter: false, counts: [], failed: "" };
 const useReport = /* @__PURE__ */ __name((query) => {
   const [state, setState] = useState({ ...FIRST, limit: query.limit });
   const asked = useRef(0);
   const known = useRef(0);
+  const knownCounts = useRef([]);
   const latest = useRef(query);
   latest.current = query;
   const load = useCallback((page) => {
@@ -40,6 +41,9 @@ const useReport = /* @__PURE__ */ __name((query) => {
       if (response.totalrecords >= 0) {
         known.current = response.totalrecords;
       }
+      if (response.statuscounts && response.statuscounts.length > 0) {
+        knownCounts.current = response.statuscounts;
+      }
       setState({
         rows: response.needsfilter ? [] : response.data,
         total: response.needsfilter ? 0 : known.current,
@@ -47,6 +51,7 @@ const useReport = /* @__PURE__ */ __name((query) => {
         limit: response.limit || current.limit,
         loading: false,
         needsfilter: Boolean(response.needsfilter),
+        counts: response.needsfilter ? [] : knownCounts.current,
         failed: ""
       });
     }).catch((error) => {
