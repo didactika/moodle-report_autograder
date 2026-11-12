@@ -47,6 +47,7 @@ $string['filter_grading_date'] = 'Grading date';
 $string['filter_group'] = 'Group';
 $string['filter_group_placeholder'] = 'All groups';
 $string['filter_search'] = 'Search';
+$string['filter_status'] = 'Status';
 $string['filter_status_placeholder'] = 'Status...';
 $string['grade_provisional_help'] = 'The indicated grade is provisional and will not be saved until the date shown in the \'Grading date\' column.';
 $string['gradedby_prospective'] = 'Will be graded as';
