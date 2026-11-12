@@ -1,0 +1,37 @@
+@startuml
+!theme plain
+hide empty members
+skinparam linetype polyline
+top to bottom direction
+
+package "Entry points" {
+  class "index.php" as index
+  class "graders.php" as gpage
+  class get_report
+  class get_graders
+  class search_filter_options
+}
+package "Services" {
+  class scope
+  class filters
+  class report_query
+  class group_access
+  class availability_access
+  class row_formatter
+  class status
+  class provisional_grade
+  class grader_list
+}
+
+index --> scope
+get_report --> scope
+get_report --> filters
+get_report --> report_query
+get_report --> group_access
+report_query --> row_formatter
+row_formatter --> status
+row_formatter --> provisional_grade
+get_graders --> grader_list
+search_filter_options --> availability_access
+
+@enduml

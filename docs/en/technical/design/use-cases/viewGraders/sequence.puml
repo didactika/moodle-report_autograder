@@ -1,0 +1,25 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+skinparam responseMessageBelowArrow true
+
+actor "Administrator" as actor
+participant "graders.php" as page
+participant "Graders.tsx" as js
+participant "get_graders" as service
+participant "grader_list" as list
+participant "grader_picker" as picker
+
+actor -> page : opens Graders by course
+actor -> js : chooses a course
+js -> service : courseid
+service -> service : require viewsite and viewcourse
+service -> list : graders_of(courseid)
+list -> picker : candidates, fallback
+service --> js : the teachers and the counts
+actor -> js : asks for the students
+js -> service : courseid, students, page
+service -> list : students_of(courseid, page)
+service --> js : a page of students with their grader
+
+@enduml

@@ -14,3 +14,5 @@ amd/build/** linguist-generated=true
 /.gitignore     export-ignore
 /.gitattributes export-ignore
 .mustachelintignore export-ignore
+/docs           export-ignore
+/rup.config.json export-ignore

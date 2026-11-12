@@ -1,0 +1,11 @@
+{
+  "kind": "plugin",
+  "slug": "report-autograder",
+  "title": { "en": "Autograder report", "es": "Informe del autocalificador" },
+  "summary": {
+    "en": "Shows what Autograder decided for every student, per activity, course and site.",
+    "es": "Muestra lo que Autograder decidió para cada estudiante, por actividad, curso y sitio."
+  },
+  "directory": { "published": "auto", "url": null },
+  "translations": { "source": "l10n" }
+}
