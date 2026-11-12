@@ -1,0 +1,20 @@
+---
+title: Inicio rápido
+summary: Abra el informe de una actividad y lea lo que decidió Autograder.
+order: 20
+---
+
+Esta tarea lleva unos cinco minutos. Necesita una actividad donde Autograder ya esté activado.
+
+<Steps>
+1. Abra la actividad y seleccione **Informe de Autograder** en su menú.
+2. Lea la tabla: cada fila es un estudiante, con el estado, la fecha de calificación, la calificación y el docente a cuyo nombre se registra.
+3. Use el cuadro de búsqueda y los filtros que hay sobre la tabla para acotarla, por ejemplo a los estudiantes que siguen pendientes.
+</Steps>
+
+<Screenshot src="asset:rp-activity.webp" alt="El informe de Autograder de una tarea, con una fila por estudiante" caption="El informe de una actividad, con una fila por estudiante." url="/report/autograder/index.php" />
+
+El informe aparece en el menú de una actividad solo cuando Autograder está activado en ella, y se necesita la capacidad `report/autograder:view` en la actividad. Los docentes con permiso de edición y los gestores la tienen de forma predeterminada.
+
+> [!TIP]
+> Un estudiante pendiente con **nadie** como calificador no llegará a calificarse cuando llegue la fecha, porque ningún docente puede calificarlo en este momento. Consulte [Calificadores por curso](page:guides/graders-by-course) para corregirlo con antelación.

@@ -1,0 +1,23 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+hide empty description
+
+state "viewSiteReport" as viewSiteReport {
+  state " " as Asking
+  state " " as Running
+  state " " as Table
+
+  [*] --> Asking : Administrator opens the report of the site
+  Asking --> Running : Administrator chooses a course, an activity or another filter
+  Running --> Table : System reads the first page of the matching students
+  Table --> Asking : Administrator clears the filters
+  Table --> [*] : Administrator leaves the report
+
+  note on link
+    Administrator: chooses a filter
+    System: refuses to run without one
+  end note
+}
+
+@enduml

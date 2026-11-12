@@ -1,0 +1,25 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+hide empty description
+
+[*] --> NotSubmitted : the student has not done the activity
+NotSubmitted --> Pending : the student did it
+[*] --> Pending : decision planned
+Pending --> Autograded : Autograder gave the grade
+Pending --> GradedByTeacher : a teacher graded first
+Pending --> Failed : the grading failed
+Pending --> NotAutograded : the grading was cancelled
+Failed --> NotAutograded : the reader cannot see failures
+Autograded --> [*]
+GradedByTeacher --> [*]
+Failed --> [*]
+NotAutograded --> [*]
+
+note right of Failed
+  The report only reads the status
+  that Autograder recorded; it never
+  changes it.
+end note
+
+@enduml

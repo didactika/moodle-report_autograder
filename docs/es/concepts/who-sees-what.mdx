@@ -1,0 +1,29 @@
+---
+title: Quién ve qué
+summary: Los niveles del informe, las capacidades de cada nivel, los grupos y los fallos.
+order: 20
+---
+
+El informe tiene tres niveles, y cada uno tiene su propia capacidad y su propio lugar en Moodle.
+
+| Informe | Dónde encontrarlo | Capacidad | Uso habitual |
+|---|---|---|---|
+| Actividad | El menú de la actividad | `report/autograder:view` | Un docente que sigue a los estudiantes de una actividad |
+| Curso | El menú **Informes** del curso | `report/autograder:viewcourse` | Un docente o un gestor del curso que revisa todas las actividades de un curso |
+| Sitio | **Administración del sitio > Informes > Informe de Autograder > Informe de calificación** | `report/autograder:viewsite` | Un administrador que comprueba que nada está bloqueado |
+
+Los informes de actividad y de curso solo aparecen donde Autograder está activado en la actividad, o en al menos una actividad del curso.
+
+## Grupos
+
+En una actividad con grupos separados, los docentes ven solo a los estudiantes de sus propios grupos, exactamente como los verían en la propia actividad.
+
+## Fallos
+
+Las calificaciones fallidas, y el motivo de cada una, solo se muestran a los usuarios que tienen `report/autograder:viewfailed`, que de forma predeterminada solo tienen los gestores. Los demás usuarios ven a esos estudiantes como **No autocalificado**.
+
+La página **Calificadores por curso** necesita `report/autograder:viewsite` y, en el curso que muestra, `report/autograder:viewcourse`.
+
+## Qué no hace el informe
+
+El informe solo lee. No califica, no cancela ni cambia una decisión, y no almacena datos personales propios.

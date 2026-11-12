@@ -1,0 +1,41 @@
+@startuml
+!theme plain
+hide empty members
+hide circle
+skinparam linetype polyline
+skinparam nodesep 60
+skinparam ranksep 70
+top to bottom direction
+
+package "Level 1 - Core" <<level1>> {
+  class ReportRow {
+    status
+    gradingdate
+    grade
+    grader
+  }
+}
+
+package "Level 2 - Structural" <<level2>> {
+  class Scope
+  class Status
+}
+
+package "Level 3 - Detail" <<level3>> {
+  class Filter
+  class GroupAccess
+  class GraderCandidate
+}
+
+package "Level 4 - Support" <<level4>> {
+  class Capability
+}
+
+Scope "1" -down- "0..*" ReportRow : contains
+Status "1" -down- "0..*" ReportRow : classifies
+Scope "1" o-down- "0..*" Filter : is narrowed by
+Scope "1" o-down- "0..1" GroupAccess : is restricted by
+ReportRow "0..1" o-down- "0..*" GraderCandidate : names
+Capability ..> Scope : opens
+
+@enduml

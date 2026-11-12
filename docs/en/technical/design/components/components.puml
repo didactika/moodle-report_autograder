@@ -1,0 +1,33 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+left to right direction
+
+package "Moodle" {
+  [Reports menu and navigation]
+  [Capabilities]
+  [Groups]
+  [Gradebook]
+  [Web services (AJAX)]
+}
+package "report_autograder" {
+  [Pages]
+  [React components]
+  [Report services]
+}
+package "local_autograder" {
+  [Decisions]
+  [Grader picker]
+}
+
+[Reports menu and navigation] --> [Pages]
+[Pages] --> [React components]
+[React components] --> [Web services (AJAX)]
+[Web services (AJAX)] --> [Report services]
+[Report services] --> [Capabilities]
+[Report services] --> [Groups]
+[Report services] --> [Gradebook]
+[Report services] --> [Decisions]
+[Report services] --> [Grader picker]
+
+@enduml
