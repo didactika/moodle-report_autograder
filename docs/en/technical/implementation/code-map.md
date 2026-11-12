@@ -11,7 +11,8 @@ sourceOfTruth: code
 | --- | --- | --- | --- |
 | Scope | class | `classes/local/query/scope.php:77` | yes |
 | Filters | class | `classes/local/query/filters.php` | yes |
-| Rows of the report | method | `classes/local/query/report_query.php:79` | yes |
+| Rows of the report | method | `classes/local/query/report_query.php:106` | yes |
+| Students of each status | method | `classes/local/query/report_query.php:77` | yes |
 | Status | class | `classes/local/format/status.php:64` | yes |
 | Provisional grade | method | `classes/local/format/provisional_grade.php:46` | yes |
 | Group access | method | `classes/local/groups/group_access.php:100` | yes |

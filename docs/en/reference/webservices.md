@@ -12,6 +12,8 @@ The pages of the report read their data through three web-service functions. The
 | `report_autograder_search_filter_options` | The options of the course and activity pickers of the filter bar | `type` (course or activity), `query`, `cmid`, `courseid`, `filtercourseid` |
 | `report_autograder_get_graders` | Who Autograder would grade as in a course, and for which students | `courseid`, `students`, `page`, `perpage` |
 
+The function also returns, once for each set of filters and with the total, the number of students in each status: the key, the name and the count of each status, counted inside every other filter but the status itself. A page turn returns no counts.
+
 ## Filters
 
 The filters of `report_autograder_get_report` are pairs of a name and a value. They narrow the table to a search text, a period of grading dates, one or more statuses, a course, an activity or a group.
