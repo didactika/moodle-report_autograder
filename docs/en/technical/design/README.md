@@ -38,3 +38,5 @@ The report adds no table: the model shows what it reads.
 | UC-001 | [View the report of an activity or a course](./use-cases/viewReport/README.md) | [sequence](./use-cases/viewReport/sequence.svg) |
 | UC-002 | [View the report of the site](./use-cases/viewSiteReport/README.md) | [sequence](./use-cases/viewSiteReport/sequence.svg) |
 | UC-003 | [See who would grade each course](./use-cases/viewGraders/README.md) | [sequence](./use-cases/viewGraders/sequence.svg) |
+| UC-004 | [Narrow the report](./use-cases/narrowReport/README.md) | [sequence](./use-cases/narrowReport/sequence.svg) |
+| UC-005 | [Grade a student from the report](./use-cases/gradeFromReport/README.md) | [sequence](./use-cases/gradeFromReport/sequence.svg) |
