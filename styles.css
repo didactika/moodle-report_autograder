@@ -295,8 +295,6 @@
     block-size: var(--dd-table-h);
     overflow-y: auto;
     overscroll-behavior: contain;
-    /* stylelint-disable-next-line csstree/validator */
-    scrollbar-gutter: stable;
 }
 
 .arp .table-responsive[data-region=tablewrap] thead th {
@@ -345,8 +343,13 @@
     background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
 }
 
+.arp .table tbody tr:last-child > * {
+    border-bottom: 1px solid var(--dd-hairline);
+}
+
 .arp .table tbody tr.table-active > * {
     background-color: var(--dd-primary-soft);
+    box-shadow: none;
 }
 
 .arp .table .table-select {
@@ -627,6 +630,15 @@
 .report-autograder-page .modal .dd-select.dd-select-set {
     padding-right: 2.5rem;
     background-image: none;
+}
+
+.arp .dd-select:is(button),
+.report-autograder-page .modal .dd-select:is(button) {
+    display: block;
+    overflow: hidden;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .arp .dd-select-filter,
@@ -1035,8 +1047,7 @@
 }
 
 .arp button.dd-select {
-    display: inline-flex;
-    align-items: center;
+    display: block;
     min-width: 0;
     max-width: 18rem;
     overflow: hidden;
@@ -1149,6 +1160,13 @@
     min-width: 10rem;
 }
 
+@media (max-width: 400px) {
+
+    .arp [data-region=filters] > .table-toolbar-start > .dd-searchbox {
+        min-width: 7rem;
+    }
+}
+
 .arp [data-region=filter-menus] {
     display: flex;
     flex: none;
@@ -1161,6 +1179,10 @@
     max-width: 14rem;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.arp [data-menu=filters] > button.dd-select {
+    min-width: 0;
 }
 
 .arp [data-menu=filters] > .dd-select-menu {

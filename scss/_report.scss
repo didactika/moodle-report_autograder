@@ -28,9 +28,9 @@
         display: inline-flex;
     }
 
+    // A block, not a flex box: only a block cuts its text with an ellipsis where the text ends, before the cross of a set filter.
     & button.dd-select {
-        display: inline-flex;
-        align-items: center;
+        display: block;
         min-width: 0;
         max-width: 18rem;
         overflow: hidden;
@@ -149,6 +149,13 @@
             flex: 1 1 10rem;
             min-width: 10rem;
         }
+
+        // On a phone the search gives up room down to 7rem, so the grouped filters and the button that clears them fit beside it.
+        @media (max-width: 400px) {
+            & > .dd-searchbox {
+                min-width: 7rem;
+            }
+        }
     }
 
     & [data-region="filter-menus"] {
@@ -163,6 +170,11 @@
             white-space: nowrap;
             text-overflow: ellipsis;
         }
+    }
+
+    // The button that groups the filters is as wide as what it says (the funnel, Filters and the count), so it fits a phone.
+    & [data-menu="filters"] > button.dd-select {
+        min-width: 0;
     }
 
     // The menu that groups the filters holds them one under the other, each as wide as the menu, and lets their own lists show.

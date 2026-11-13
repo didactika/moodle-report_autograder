@@ -339,10 +339,43 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
   }, this);
 }
 __name(Pager, "Pager");
+const TABLE_MIN = 288;
+const TABLE_ROOM = 24;
+function useFitHeight(box) {
+  useLayoutEffect(() => {
+    const fit = /* @__PURE__ */ __name(() => {
+      const element = box.current;
+      if (!element) {
+        return;
+      }
+      const rect = element.getBoundingClientRect();
+      const top = rect.top + window.scrollY;
+      const card2 = element.closest(".card")?.getBoundingClientRect();
+      const below = card2 ? Math.max(0, card2.bottom - rect.bottom) : 0;
+      const height = Math.max(TABLE_MIN, window.innerHeight - top - below - TABLE_ROOM);
+      (element.closest(".card") ?? element).style.setProperty("--dd-table-h", height + "px");
+    }, "fit");
+    fit();
+    const observer = new ResizeObserver(() => fit());
+    observer.observe(document.body);
+    const card = box.current?.closest(".card");
+    if (card) {
+      observer.observe(card);
+    }
+    window.addEventListener("resize", fit);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", fit);
+    };
+  }, []);
+}
+__name(useFitHeight, "useFitHeight");
 function TableBox({ busy, empty, children }) {
-  return /* @__PURE__ */ jsxDEV("div", { className: "table-responsive", "data-region": "tablewrap", "aria-busy": busy, children: empty || children }, void 0, false, {
+  const box = useRef(null);
+  useFitHeight(box);
+  return /* @__PURE__ */ jsxDEV("div", { ref: box, className: "table-responsive", "data-region": "tablewrap", "aria-busy": busy, children: empty || children }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 274,
+    lineNumber: 321,
     columnNumber: 12
   }, this);
 }
@@ -351,26 +384,26 @@ function Empty({ icon, message, action, onAction, text }) {
   return /* @__PURE__ */ jsxDEV("div", { className: "dd-empty", "data-region": "empty", role: "status", children: [
     /* @__PURE__ */ jsxDEV("span", { className: "dd-tile dd-tile-lg", children: /* @__PURE__ */ jsxDEV(Icon, { name: icon, text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 294,
+      lineNumber: 341,
       columnNumber: 46
     }, this) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 294,
+      lineNumber: 341,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("p", { className: "dd-empty-text", children: message }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 295,
+      lineNumber: 342,
       columnNumber: 9
     }, this),
     action && onAction && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-outline-secondary btn-sm", onClick: onAction, children: action }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 296,
+      lineNumber: 343,
       columnNumber: 32
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 293,
+    lineNumber: 340,
     columnNumber: 12
   }, this);
 }
@@ -403,40 +436,40 @@ function Dialog({ title, children, onClose, text }) {
           /* @__PURE__ */ jsxDEV("div", { className: "modal-header", children: [
             /* @__PURE__ */ jsxDEV("h5", { className: "modal-title", id: titleId, children: title }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-              lineNumber: 333,
+              lineNumber: 380,
               columnNumber: 25
             }, this),
             /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn-close", "aria-label": text("details:close"), onClick: onClose }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-              lineNumber: 334,
+              lineNumber: 381,
               columnNumber: 25
             }, this)
           ] }, void 0, true, {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 332,
+            lineNumber: 379,
             columnNumber: 21
           }, this),
           /* @__PURE__ */ jsxDEV("div", { className: "modal-body", children }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 336,
+            lineNumber: 383,
             columnNumber: 21
           }, this),
           /* @__PURE__ */ jsxDEV("div", { className: "modal-footer", children: /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-secondary", onClick: onClose, children: text("details:close") }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 338,
+            lineNumber: 385,
             columnNumber: 25
           }, this) }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 337,
+            lineNumber: 384,
             columnNumber: 21
           }, this)
         ] }, void 0, true, {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 331,
+          lineNumber: 378,
           columnNumber: 17
         }, this) }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 330,
+          lineNumber: 377,
           columnNumber: 13
         }, this)
       },
@@ -444,19 +477,19 @@ function Dialog({ title, children, onClose, text }) {
       false,
       {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 320,
+        lineNumber: 367,
         columnNumber: 9
       },
       this
     ),
     /* @__PURE__ */ jsxDEV("div", { className: "modal-backdrop show" }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 343,
+      lineNumber: 390,
       columnNumber: 9
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 319,
+    lineNumber: 366,
     columnNumber: 25
   }, this), document.body);
 }
@@ -503,6 +536,7 @@ export {
   SelectMenu,
   SortHeader,
   TableBox,
+  useFitHeight,
   useStableColumns
 };
 //# sourceMappingURL=ui.dev.js.map
