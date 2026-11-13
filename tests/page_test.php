@@ -88,7 +88,7 @@ final class page_test extends \advanced_testcase {
         $this->assertSame('', $props->opening->searchname);
         $this->assertSame([], $props->opening->status);
         $this->assertNotEmpty($props->strings['pluginname']);
-        $this->assertSame([12, 25, 50, 100], $props->pagesizes);
+        $this->assertSame([12, 24, 48, 96, 0], $props->pagesizes);
         $this->assert_no_complaints(report_page::placeholder() . graders_page::placeholder());
     }
 

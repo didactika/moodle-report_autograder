@@ -50,6 +50,7 @@ Feature: The screenshots of the user manual
       | lab      | bruno | graded      | -1   | submission |
       | limits   | ana   | graded      | -5   | submission |
       | limits   | bruno | pending     | 2    | duedate    |
+    And the guided tour of the autograder report is off
     And I log in as "admin"
     And I change viewport size to "1400x1000"
 

@@ -31,6 +31,7 @@ Feature: The autograder report
       | essay    | bruno | graded  | -2   |
       | essay    | carla | failed  | -1   |
       | essay    | diego | manual  | -4   |
+    And the guided tour of the autograder report is off
     And I log in as "admin"
     And I open the autograder report of "essay"
 

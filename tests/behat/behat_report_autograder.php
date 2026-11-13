@@ -81,6 +81,18 @@ class behat_report_autograder extends behat_base {
     }
 
     /**
+     * Leave the guided tour of the report out of the way of a scenario, which would otherwise open over the report the first time.
+     *
+     * @Given /^the guided tour of the autograder report is off$/
+     */
+    public function the_guided_tour_is_off(): void {
+        global $DB;
+
+        $DB->set_field('tool_usertours_tours', 'enabled', 0, ['name' => 'tour_report_name,report_autograder']);
+        \tool_usertours\cache::notify_tour_change();
+    }
+
+    /**
      * Open the page of the graders.
      *
      * @Given /^I open the graders page of the autograder report$/
