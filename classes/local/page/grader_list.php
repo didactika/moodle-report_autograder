@@ -43,7 +43,7 @@ use local_autograder\local\grading\teacher_source;
  */
 final class grader_list {
     /** @var int Students shown per page until somebody asks for more. */
-    public const PER_PAGE = 24;
+    public const PER_PAGE = 12;
 
     /**
      * The page sizes on offer, the same ones the report's own table offers.
