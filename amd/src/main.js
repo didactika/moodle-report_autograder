@@ -44,9 +44,7 @@ import {
 import {getReportData} from './service/repository';
 import {showLoading, renderTable} from './ui/report';
 import {renderPagination} from './ui/pagination';
-import {attachFilterListeners, collectFilters} from './ui/form';
-import {init as initFiltersUi} from './ui/filters';
-import {init as initStatusChips, render as renderStatusChips} from './ui/status_chips';
+import {collectFilters, init as initToolbar, renderApplied, renderCounts} from './ui/toolbar';
 import {updateSortHeaderUI} from './ui/table_sort';
 
 let requestId = 0;
@@ -129,7 +127,7 @@ const fetchAndRenderReport = (page) => {
 
             // The students of each status come with the count of the rows, so they are there only for the first page.
             if (response.statuscounts && response.statuscounts.length) {
-                renderStatusChips(response.statuscounts);
+                renderCounts(response.statuscounts);
             }
 
             // -1 is the server saying it did not count, because nothing that
@@ -137,6 +135,8 @@ const fetchAndRenderReport = (page) => {
             if (response.totalrecords >= 0) {
                 knownTotal = response.totalrecords;
             }
+
+            renderApplied(knownTotal);
 
             const $reportRoot = $('#autograder-report-container');
 
@@ -189,7 +189,6 @@ export const init = (scope, presetStatus) => {
 
     if (presetStatus) {
         $('#status').val(presetStatus);
-        setFilters([{name: 'status', value: presetStatus}]);
     }
 
     const container = $('#autograder-report-container');
@@ -214,27 +213,23 @@ export const init = (scope, presetStatus) => {
         }, true);
     }
 
-    initFiltersUi(presetStatus);
-    initStatusChips();
-
-    // The bar can arrive with something already chosen — a status from a
-    // summary tile, or the group the viewer was last looking at, which in an
-    // activity that separates groups is not optional. So the first page is
-    // asked for with whatever the bar says, not with nothing.
-    setFilters(collectFilters());
-
-    attachFilterListeners(
+    initToolbar(
         (filters) => {
             setFilters(filters);
             resetSort();
             fetchAndRenderReport(0);
         },
         () => {
-            setFilters([]);
+            // A group that cannot be left (an activity that separates groups) stays, so the filters are read again.
+            setFilters(collectFilters());
             resetSort();
             fetchAndRenderReport(0);
         },
     );
+
+    // The bar can arrive with something already chosen, a status from a link or the group the viewer was last looking at, which
+    // in an activity that separates groups is not optional. So the first page is asked for with whatever the bar says.
+    setFilters(collectFilters());
 
     container.on('click', '[data-autograder-sort]', function(e) {
         e.preventDefault();

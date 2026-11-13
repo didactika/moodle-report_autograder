@@ -52,7 +52,7 @@
     }
 }}
 <tr data-record-id="{{rowkey}}">
-    <td class="autograder-student-cell">
+    <td>
         {{{user_col}}}
     </td>
 
@@ -108,7 +108,7 @@
         {{/date_reason}}
     </td>
 
-    <td class="text-center">
+    <td>
         {{#grade}}
             {{.}}
         {{/grade}}
@@ -151,7 +151,7 @@
         {{/graded_by}}
         {{^graded_by}}
             {{#will_grade}}
-            <span class="autograder-prospective">{{.}}</span>
+            <span class="text-muted">{{.}}</span>
             <a class="btn btn-link p-0 ml-1 icon-no-margin"
                role="button"
                data-container="body" data-bs-container="body"
@@ -184,12 +184,12 @@
 
     <td>
         {{#grade_user_url}}
-        <a class="btn btn-secondary" href="{{grade_user_url}}">{{#str}}gradeuser, report_autograder{{/str}}</a>
+        <a class="btn btn-outline-secondary btn-sm" href="{{grade_user_url}}">{{#str}}gradeuser, report_autograder{{/str}}</a>
         {{/grade_user_url}}
 
         {{^grade_user_url}}
             {{#show_forum_grader}}
-                <button class="btn btn-secondary autograder-row-grade-btn"
+                <button class="btn btn-outline-secondary btn-sm"
                     type="button"
                     data-grade-action="launch"
                     data-grading-component="core_grades"

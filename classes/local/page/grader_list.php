@@ -54,6 +54,27 @@ final class grader_list {
      */
     public const PER_PAGE_OPTIONS = [12, 24, 48, 96];
 
+    /** @var string Every student. */
+    public const FILTER_ALL = 'all';
+
+    /** @var string The students that would be graded by the fallback grader of the site. */
+    public const FILTER_FALLBACK = 'fallback';
+
+    /** @var string The students that nobody would grade. */
+    public const FILTER_NOBODY = 'nobody';
+
+    /** @var int The most students a filter by who would grade them looks at: it is answered one student at a time. */
+    private const FILTERED_CEILING = 2000;
+
+    /** @var string A course where a teacher could grade. */
+    public const STATE_READY = 'ready';
+
+    /** @var string A course where only the fallback grader could grade. */
+    public const STATE_FALLBACK = 'fallback';
+
+    /** @var string A course where nobody could grade, so every grade would fail. */
+    public const STATE_NOBODY = 'nobody';
+
     /**
      * Everybody who could grade in this course at all.
      *
@@ -100,40 +121,31 @@ final class grader_list {
      * @param int $perpage How many to show; anything not on offer is ignored.
      * @return array The template context.
      */
-    public static function students_of(int $courseid, int $page, int $perpage = self::PER_PAGE): array {
+    public static function students_of(
+        int $courseid,
+        int $page,
+        int $perpage = self::PER_PAGE,
+        string $search = '',
+        string $filter = self::FILTER_ALL
+    ): array {
         $perpage = in_array($perpage, self::PER_PAGE_OPTIONS, true) ? $perpage : self::PER_PAGE;
-        $total = self::count_students($courseid);
-        $page = min(max(0, $page), max(0, (int) ceil($total / $perpage) - 1));
-        $students = self::students_page($courseid, $page, $perpage);
-        $fallback = grader_picker::fallback_for();
-        teacher_source::prime_groups($courseid, array_merge(
-            array_keys($students),
-            teacher_source::possible_graders_in($courseid)
-        ));
-        $picked = [];
-        $fellback = [];
+        $search = trim($search);
+        $filter = in_array($filter, [self::FILTER_FALLBACK, self::FILTER_NOBODY], true) ? $filter : self::FILTER_ALL;
 
-        foreach (array_keys($students) as $studentid) {
-            $graderid = grader_picker::pick_for_course($courseid, (int) $studentid);
-            $fellback[(int) $studentid] = $graderid === null && $fallback !== null;
-            $picked[(int) $studentid] = $graderid ?? $fallback;
-        }
-
-        // Named in one query for the whole page rather than one per row: the
-        // graders of a course repeat across its students, so a page of
-        // twenty-five students is usually a handful of distinct names.
-        $names = self::named(array_filter($picked));
-        $rows = [];
-
-        foreach ($students as $studentid => $student) {
-            $graderid = $picked[(int) $studentid];
-
-            $rows[] = [
-                'name' => fullname($student),
-                'grader' => $graderid === null ? null : ($names[$graderid] ?? (string) $graderid),
-                'hasgrader' => $graderid !== null,
-                'viafallback' => $fellback[(int) $studentid],
-            ];
+        if ($filter === self::FILTER_ALL) {
+            $total = self::count_students($courseid, $search);
+            $page = min(max(0, $page), max(0, (int) ceil($total / $perpage) - 1));
+            $rows = self::rows_for($courseid, self::students_page($courseid, $page * $perpage, $perpage, $search));
+        } else {
+            // Who would grade a student is only known by asking, so these filters ask for every student that matches,
+            // up to a ceiling, and keep the ones that answer the filter.
+            $rows = array_values(array_filter(
+                self::rows_for($courseid, self::students_page($courseid, 0, self::FILTERED_CEILING, $search)),
+                static fn(array $row): bool => $filter === self::FILTER_NOBODY ? !$row['hasgrader'] : $row['viafallback']
+            ));
+            $total = count($rows);
+            $page = min(max(0, $page), max(0, (int) ceil($total / $perpage) - 1));
+            $rows = array_slice($rows, $page * $perpage, $perpage);
         }
 
         $pages = max(1, (int) ceil($total / $perpage));
@@ -148,9 +160,8 @@ final class grader_list {
             'total' => $total,
             'page' => $page,
             'perpage' => $perpage,
-            'peroptions' => $peroptions,
-            // The range this page covers, counted from one, and empty when the
-            // course has no students rather than reading "1 - 0 of 0".
+            // The range this page covers, counted from one, and empty when the course has no students rather than reading
+            // "1 - 0 of 0".
             'from' => $total === 0 ? 0 : ($page * $perpage) + 1,
             'to' => min($total, ($page + 1) * $perpage),
             'pageshown' => $page + 1,
@@ -159,6 +170,128 @@ final class grader_list {
             'hasnext' => $page + 1 < $pages,
             'prevpage' => $page - 1,
             'nextpage' => $page + 1,
+            'peroptions' => $peroptions,
+            'search' => $search,
+            'filter' => $filter,
+        ];
+    }
+
+    /**
+     * Who would grade each of some students.
+     *
+     * @param int $courseid
+     * @param \stdClass[] $students Keyed by user id.
+     * @return array[] One row for each student.
+     */
+    private static function rows_for(int $courseid, array $students): array {
+        $fallback = grader_picker::fallback_for();
+        teacher_source::prime_groups($courseid, array_merge(
+            array_keys($students),
+            teacher_source::possible_graders_in($courseid)
+        ));
+        $picked = [];
+        $fellback = [];
+
+        foreach (array_keys($students) as $studentid) {
+            $graderid = grader_picker::pick_for_course($courseid, (int) $studentid);
+            $fellback[(int) $studentid] = $graderid === null && $fallback !== null;
+            $picked[(int) $studentid] = $graderid ?? $fallback;
+        }
+
+        // Named in one query for the whole page rather than one per row: the graders of a course repeat across its students, so
+        // a page of twenty-five students is usually a handful of distinct names.
+        $names = self::named(array_filter($picked));
+        $rows = [];
+
+        foreach ($students as $studentid => $student) {
+            $graderid = $picked[(int) $studentid];
+
+            $rows[] = [
+                'name' => fullname($student),
+                'grader' => $graderid === null ? null : ($names[$graderid] ?? (string) $graderid),
+                'hasgrader' => $graderid !== null,
+                'viafallback' => $fellback[(int) $studentid],
+            ];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * One page of the courses where Autograder is switched on, and what grading would be like in each.
+     *
+     * The answer for a course is the cheap one, who could grade there, so the overview can show it for a whole page of courses at
+     * once; who would grade each student stays in the page of one course.
+     *
+     * @param string $search Text of the short name or the full name of the course.
+     * @param int $page Zero-based.
+     * @param int $perpage How many to show; anything not on offer is ignored.
+     * @return array The courses and the data of the pager.
+     */
+    public static function overview(string $search, int $page, int $perpage = self::PER_PAGE): array {
+        global $DB;
+
+        $perpage = in_array($perpage, self::PER_PAGE_OPTIONS, true) ? $perpage : self::PER_PAGE;
+        $search = trim($search);
+        $params = [];
+        $where = 'cfg.enabled = 1';
+
+        if ($search !== '') {
+            $like = '%' . $DB->sql_like_escape($search) . '%';
+            $where .= ' AND (' . $DB->sql_like('c.shortname', ':short', false, false)
+                . ' OR ' . $DB->sql_like('c.fullname', ':full', false, false) . ')';
+            $params['short'] = $like;
+            $params['full'] = $like;
+        }
+
+        $from = "FROM {local_autograder_config} cfg JOIN {course} c ON c.id = cfg.courseid WHERE {$where}";
+        $total = (int) $DB->count_records_sql("SELECT COUNT(DISTINCT c.id) {$from}", $params);
+        $page = min(max(0, $page), max(0, (int) ceil($total / $perpage) - 1));
+        $records = $DB->get_records_sql(
+            "SELECT c.id, c.shortname, c.fullname, COUNT(cfg.id) AS activities {$from}
+           GROUP BY c.id, c.shortname, c.fullname
+           ORDER BY c.shortname, c.id",
+            $params,
+            $page * $perpage,
+            $perpage
+        );
+        $courses = [];
+
+        foreach ($records as $record) {
+            $graders = self::graders_of((int) $record->id);
+            $teachers = array_values(array_filter($graders['graders'], static fn(array $grader): bool => !$grader['isfallback']));
+
+            if ($graders['hasgraders']) {
+                $state = $teachers === [] ? self::STATE_FALLBACK : self::STATE_READY;
+            } else {
+                $state = self::STATE_NOBODY;
+            }
+
+            $courses[] = [
+                'id' => (int) $record->id,
+                'name' => format_string($record->shortname),
+                'fullname' => format_string($record->fullname),
+                'activities' => (int) $record->activities,
+                'gradercount' => $graders['gradercount'],
+                'studentcount' => $graders['studentcount'],
+                'state' => $state,
+                'graders' => array_map(static fn(array $grader): string => $grader['name'], array_slice($graders['graders'], 0, 3)),
+                'moregraders' => max(0, $graders['gradercount'] - 3),
+                'reporturl' => (new \moodle_url('/report/autograder/index.php', ['courseid' => (int) $record->id]))->out(false),
+                'studentsurl' => (new \moodle_url('/report/autograder/graders.php', [
+                    'courseid' => (int) $record->id,
+                    'students' => 1,
+                ]))->out(false),
+            ];
+        }
+
+        return [
+            'courses' => $courses,
+            'total' => $total,
+            'page' => $page,
+            'perpage' => $perpage,
+            'from' => $total === 0 ? 0 : ($page * $perpage) + 1,
+            'to' => min($total, ($page + 1) * $perpage),
         ];
     }
 
@@ -166,12 +299,13 @@ final class grader_list {
      * How many gradable students the course has.
      *
      * @param int $courseid
+     * @param string $search Text of the name of the student.
      * @return int
      */
-    public static function count_students(int $courseid): int {
+    public static function count_students(int $courseid, string $search = ''): int {
         global $DB;
 
-        [$sql, $params] = self::students_sql($courseid, 'COUNT(DISTINCT u.id)');
+        [$sql, $params] = self::students_sql($courseid, 'COUNT(DISTINCT u.id)', $search);
 
         return $sql === '' ? 0 : (int) $DB->count_records_sql($sql, $params);
     }
@@ -180,15 +314,16 @@ final class grader_list {
      * One page of the course's gradable students.
      *
      * @param int $courseid
-     * @param int $page
-     * @param int $perpage
+     * @param int $offset Rows to skip.
+     * @param int $limit Rows to read.
+     * @param string $search Text of the name of the student.
      * @return \stdClass[] Keyed by user id.
      */
-    private static function students_page(int $courseid, int $page, int $perpage): array {
+    private static function students_page(int $courseid, int $offset, int $limit, string $search = ''): array {
         global $DB;
 
         $namefields = \core_user\fields::for_name()->get_sql('u', false, '', '', true)->selects;
-        [$sql, $params] = self::students_sql($courseid, "DISTINCT u.id {$namefields}");
+        [$sql, $params] = self::students_sql($courseid, "DISTINCT u.id {$namefields}", $search);
 
         if ($sql === '') {
             return [];
@@ -197,8 +332,8 @@ final class grader_list {
         return $DB->get_records_sql(
             $sql . ' ORDER BY u.lastname, u.firstname, u.id',
             $params,
-            $page * $perpage,
-            $perpage
+            $offset,
+            $limit
         );
     }
 
@@ -212,9 +347,10 @@ final class grader_list {
      *
      * @param int $courseid
      * @param string $select What to select.
+     * @param string $search Text of the name of the student; every student when it is empty.
      * @return array{0: string, 1: array} An empty string when the course is gone.
      */
-    private static function students_sql(int $courseid, string $select): array {
+    private static function students_sql(int $courseid, string $select, string $search = ''): array {
         global $CFG, $DB;
 
         $context = \context_course::instance($courseid, IGNORE_MISSING);
@@ -256,6 +392,11 @@ final class grader_list {
                                 WHERE ra.userid = u.id
                                   AND ra.roleid {$rolesql}
                                   AND ra.contextid {$ctxsql})";
+
+        if (trim($search) !== '') {
+            $sql .= ' AND ' . $DB->sql_like($DB->sql_fullname('u.firstname', 'u.lastname'), ':search', false, false);
+            $params['search'] = '%' . $DB->sql_like_escape(trim($search)) . '%';
+        }
 
         return [$sql, $params];
     }

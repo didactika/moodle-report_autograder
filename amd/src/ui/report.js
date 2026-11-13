@@ -105,16 +105,8 @@ export const renderTable = (records, onRenderComplete, isCurrent = () => true) =
 export const showLoading = () => {
     $(ROOT).attr('aria-busy', 'true');
     const container = $(`${ROOT} tbody`);
-    const cell = (w) => `<td class="border-0"><div class="autograder-skeleton" style="width:${w}px;"></div></td>`;
-    const middle = new Array(Math.max(1, columnCount() - 2)).fill(cell(90)).join('');
-    const row = `<tr aria-hidden="true">
-        <td class="autograder-student-cell border-0">
-            <div class="autograder-skeleton avatar mr-2"></div>
-            <div class="autograder-skeleton" style="width:150px;"></div>
-        </td>
-        ${middle}
-        <td class="border-0"><div class="autograder-skeleton button"></div></td>
-    </tr>`;
+    const cell = (width) => `<td><span class="placeholder-glow"><span class="placeholder col-${width}"></span></span></td>`;
+    const row = `<tr aria-hidden="true">${new Array(columnCount()).fill(cell(8)).join('')}</tr>`;
 
-    container.html(row + row + row + row);
+    container.html(row.repeat(4));
 };
