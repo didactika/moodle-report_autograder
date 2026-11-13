@@ -347,6 +347,7 @@
 
 .arp .table tbody tr.table-active > * {
     background-color: var(--dd-primary-soft);
+    box-shadow: none;
 }
 
 .arp .table .table-select {

@@ -257,6 +257,8 @@
 
         & tbody tr.table-active > * {
             background-color: var(--dd-primary-soft);
+            // Bootstrap 5 paints an active row with a grey inset shadow over its background; the tint is the one colour.
+            box-shadow: none;
         }
 
         & .table-select {
