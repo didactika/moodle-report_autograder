@@ -36,10 +36,14 @@ const searchOptions = /* @__PURE__ */ __name((type, query, scope, filtercourseid
     filtercourseid: type === "activity" ? filtercourseid : 0
   }
 }), "searchOptions");
-const getGraders = /* @__PURE__ */ __name((courseid, students, page, perpage) => fetchOne({
+const getGraders = /* @__PURE__ */ __name((courseid, students, page, perpage, search, filter) => fetchOne({
   methodname: "report_autograder_get_graders",
-  args: { courseid, students, page, perpage }
+  args: { courseid, students, page, perpage, search, filter }
 }), "getGraders");
+const getGradersOverview = /* @__PURE__ */ __name((search, page, perpage) => fetchOne({
+  methodname: "report_autograder_get_graders_overview",
+  args: { search, page, perpage }
+}), "getGradersOverview");
 const describeError = /* @__PURE__ */ __name((error) => {
   if (error instanceof Error) {
     return error.message;
@@ -52,6 +56,7 @@ const describeError = /* @__PURE__ */ __name((error) => {
 export {
   describeError,
   getGraders,
+  getGradersOverview,
   getReport,
   searchOptions
 };

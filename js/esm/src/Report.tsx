@@ -12,14 +12,15 @@
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {useMemo, useState} from 'react';
-import Pagination from './components/Pagination';
-import StatusTabs from './components/StatusTabs';
+import {useEffect, useMemo, useState} from 'react';
+import AppliedFilters from './components/AppliedFilters';
+import FiltersPanel from './components/FiltersPanel';
 import ReportTable from './components/ReportTable';
-import Toolbar from './components/Toolbar';
+import {FiltersMenu, Pager, SearchBox} from './components/ui';
+import {useDebounced} from './hooks/useDebounced';
 import {createText} from './engine/text';
 import {useReport} from './hooks/useReport';
-import {NO_FILTERS, nextSort} from './lib/filters';
+import {NO_FILTERS, countApplied, nextSort} from './lib/filters';
 import type {Filters, Option, ReportProps, Sort, SortColumn} from './types';
 
 /**
@@ -63,6 +64,20 @@ export default function Report(props: ReportProps) {
     const [sort, setSort] = useState<Sort>({column: '', direction: 'asc'});
     const [limit, setLimit] = useState(props.pagesizes[0] ?? 12);
     const [state, goto] = useReport({scope: props.scope, filters, sort, limit});
+    const [searchText, setSearchText] = useState(props.opening.searchname);
+    const settled = useDebounced(searchText, 300);
+
+    useEffect(() => {
+        if (settled !== filters.searchname) {
+            setFilters((before) => ({...before, searchname: settled}));
+            setSort({column: '', direction: 'asc'});
+        }
+    }, [settled]);
+
+    // A reset puts the search box right too.
+    useEffect(() => {
+        setSearchText(filters.searchname);
+    }, [filters.searchname]);
 
     // The forum grader opens on the student whose button was pressed, which it learns from the element that holds the report.
     const remember = (event: React.MouseEvent<HTMLDivElement>): void => {
@@ -77,69 +92,91 @@ export default function Report(props: ReportProps) {
         setSort({column: '', direction: 'asc'});
     };
 
+    const applied = countApplied(filters, {course: props.showscoursefilter, activity: props.showsactivityfilter, group: props.showsgroupfilter});
+    const narrowed = applied > 0 || filters.searchname.trim() !== '';
+    const reset = (): void => {
+        setCourse(null);
+        setActivity(null);
+        setFilters({...NO_FILTERS, groupid: props.offersallgroups ? 0 : filters.groupid});
+        setSort({column: '', direction: 'asc'});
+    };
+    const onCourse = (option: Option | null): void => {
+        setCourse(option);
+        // The activity that was chosen may not belong to the new course.
+        setActivity(null);
+        change({courseid: option?.id ?? 0, cmid: 0});
+    };
+    const onActivity = (option: Option | null): void => {
+        setActivity(option);
+        change({cmid: option?.id ?? 0});
+    };
+
     return <div
         id="autograder-report-container"
         className="arp"
         onClickCapture={remember}
         {...forumAttributes(props)}
     >
-        <div className="arp-head">
-            <span className="arp-tile" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z" /></svg>
-            </span>
-            <p className="arp-lead">{text(`lead_${props.level}`)}</p>
+        <p className="text-muted mb-3">{text(`lead_${props.level}`)}</p>
+        <div className="card">
+            <div className="table-toolbar">
+                <div className="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+                    <SearchBox value={searchText} onChange={setSearchText} label={text('filter_search')} text={text} />
+                    <FiltersMenu label={text('filters')} applied={applied} text={text}>
+                        <FiltersPanel
+                            props={props}
+                            filters={filters}
+                            counts={state.counts}
+                            course={course}
+                            activity={activity}
+                            text={text}
+                            onFilters={change}
+                            onCourse={onCourse}
+                            onActivity={onActivity}
+                            onReset={reset}
+                            canReset={narrowed}
+                        />
+                    </FiltersMenu>
+                </div>
+            </div>
+            <AppliedFilters
+                props={props}
+                filters={filters}
+                course={course}
+                activity={activity}
+                total={state.total}
+                loading={state.loading}
+                text={text}
+                onFilters={change}
+                onCourse={onCourse}
+                onActivity={onActivity}
+            />
+            <ReportTable
+                state={state}
+                columns={props.columns}
+                forumgrade={props.forumgrade}
+                sort={sort}
+                narrowed={narrowed}
+                text={text}
+                onSort={(column: SortColumn) => setSort(nextSort(sort, column))}
+                onRetry={() => goto(state.page)}
+                onClear={reset}
+            />
+            <Pager
+                page={state.page}
+                perpage={state.limit || limit}
+                total={state.total}
+                sizes={props.pagesizes}
+                disabled={state.loading}
+                text={text}
+                onChange={({page, perpage}) => {
+                    if (perpage !== undefined) {
+                        setLimit(perpage);
+                    } else if (page !== undefined) {
+                        goto(page);
+                    }
+                }}
+            />
         </div>
-        <StatusTabs
-            options={props.statuses}
-            counts={state.counts}
-            chosen={filters.status}
-            total={state.total}
-            text={text}
-            onChange={(status) => change({status})}
-        />
-        <Toolbar
-            props={props}
-            filters={filters}
-            course={course}
-            activity={activity}
-            text={text}
-            onFilters={change}
-            onCourse={(option) => {
-                setCourse(option);
-                // The activity that was chosen may not belong to the new course.
-                setActivity(null);
-                change({courseid: option?.id ?? 0, cmid: 0});
-            }}
-            onActivity={(option) => {
-                setActivity(option);
-                change({cmid: option?.id ?? 0});
-            }}
-            onReset={() => {
-                setCourse(null);
-                setActivity(null);
-                setFilters({...NO_FILTERS, groupid: props.offersallgroups ? 0 : filters.groupid});
-                setSort({column: '', direction: 'asc'});
-            }}
-        />
-        <ReportTable
-            state={state}
-            columns={props.columns}
-            forumgrade={props.forumgrade}
-            sort={sort}
-            text={text}
-            onSort={(column: SortColumn) => setSort(nextSort(sort, column))}
-            onRetry={() => goto(state.page)}
-        />
-        <Pagination
-            page={state.page}
-            limit={state.limit || limit}
-            total={state.total}
-            sizes={props.pagesizes}
-            showing=""
-            disabled={state.loading}
-            text={text}
-            onPage={goto}
-            onSize={setLimit}
-        />
     </div>;
 }

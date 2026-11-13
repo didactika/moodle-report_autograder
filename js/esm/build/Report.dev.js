@@ -15,14 +15,15 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import { useMemo, useState } from "react";
-import Pagination from "./components/Pagination";
-import StatusTabs from "./components/StatusTabs";
+import { useEffect, useMemo, useState } from "react";
+import AppliedFilters from "./components/AppliedFilters";
+import FiltersPanel from "./components/FiltersPanel";
 import ReportTable from "./components/ReportTable";
-import Toolbar from "./components/Toolbar";
+import { FiltersMenu, Pager, SearchBox } from "./components/ui";
+import { useDebounced } from "./hooks/useDebounced";
 import { createText } from "./engine/text";
 import { useReport } from "./hooks/useReport";
-import { NO_FILTERS, nextSort } from "./lib/filters";
+import { NO_FILTERS, countApplied, nextSort } from "./lib/filters";
 const forumAttributes = /* @__PURE__ */ __name((props) => {
   const forum = props.forumgrade;
   if (!forum) {
@@ -51,6 +52,17 @@ function Report(props) {
   const [sort, setSort] = useState({ column: "", direction: "asc" });
   const [limit, setLimit] = useState(props.pagesizes[0] ?? 12);
   const [state, goto] = useReport({ scope: props.scope, filters, sort, limit });
+  const [searchText, setSearchText] = useState(props.opening.searchname);
+  const settled = useDebounced(searchText, 300);
+  useEffect(() => {
+    if (settled !== filters.searchname) {
+      setFilters((before) => ({ ...before, searchname: settled }));
+      setSort({ column: "", direction: "asc" });
+    }
+  }, [settled]);
+  useEffect(() => {
+    setSearchText(filters.searchname);
+  }, [filters.searchname]);
   const remember = /* @__PURE__ */ __name((event) => {
     const button = event.target.closest('[data-grade-action="launch"][data-initialuserid]');
     if (button && props.forumgrade) {
@@ -61,6 +73,23 @@ function Report(props) {
     setFilters((before) => ({ ...before, ...changes }));
     setSort({ column: "", direction: "asc" });
   }, "change");
+  const applied = countApplied(filters, { course: props.showscoursefilter, activity: props.showsactivityfilter, group: props.showsgroupfilter });
+  const narrowed = applied > 0 || filters.searchname.trim() !== "";
+  const reset = /* @__PURE__ */ __name(() => {
+    setCourse(null);
+    setActivity(null);
+    setFilters({ ...NO_FILTERS, groupid: props.offersallgroups ? 0 : filters.groupid });
+    setSort({ column: "", direction: "asc" });
+  }, "reset");
+  const onCourse = /* @__PURE__ */ __name((option) => {
+    setCourse(option);
+    setActivity(null);
+    change({ courseid: option?.id ?? 0, cmid: 0 });
+  }, "onCourse");
+  const onActivity = /* @__PURE__ */ __name((option) => {
+    setActivity(option);
+    change({ cmid: option?.id ?? 0 });
+  }, "onActivity");
   return /* @__PURE__ */ jsxDEV(
     "div",
     {
@@ -69,132 +98,138 @@ function Report(props) {
       onClickCapture: remember,
       ...forumAttributes(props),
       children: [
-        /* @__PURE__ */ jsxDEV("div", { className: "arp-head", children: [
-          /* @__PURE__ */ jsxDEV("span", { className: "arp-tile", "aria-hidden": "true", children: /* @__PURE__ */ jsxDEV("svg", { viewBox: "0 0 24 24", width: "22", height: "22", fill: "currentColor", children: /* @__PURE__ */ jsxDEV("path", { d: "M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z" }, void 0, false, {
+        /* @__PURE__ */ jsxDEV("p", { className: "text-muted mb-3", children: text(`lead_${props.level}`) }, void 0, false, {
+          fileName: "public/report/autograder/js/esm/src/Report.tsx",
+          lineNumber: 120,
+          columnNumber: 9
+        }, this),
+        /* @__PURE__ */ jsxDEV("div", { className: "card", children: [
+          /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar", children: /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-wrap align-items-center gap-2 flex-grow-1", children: [
+            /* @__PURE__ */ jsxDEV(SearchBox, { value: searchText, onChange: setSearchText, label: text("filter_search"), text }, void 0, false, {
+              fileName: "public/report/autograder/js/esm/src/Report.tsx",
+              lineNumber: 124,
+              columnNumber: 21
+            }, this),
+            /* @__PURE__ */ jsxDEV(FiltersMenu, { label: text("filters"), applied, text, children: /* @__PURE__ */ jsxDEV(
+              FiltersPanel,
+              {
+                props,
+                filters,
+                counts: state.counts,
+                course,
+                activity,
+                text,
+                onFilters: change,
+                onCourse,
+                onActivity,
+                onReset: reset,
+                canReset: narrowed
+              },
+              void 0,
+              false,
+              {
+                fileName: "public/report/autograder/js/esm/src/Report.tsx",
+                lineNumber: 126,
+                columnNumber: 25
+              },
+              this
+            ) }, void 0, false, {
+              fileName: "public/report/autograder/js/esm/src/Report.tsx",
+              lineNumber: 125,
+              columnNumber: 21
+            }, this)
+          ] }, void 0, true, {
             fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 88,
-            columnNumber: 85
-          }, this) }, void 0, false, {
-            fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 88,
+            lineNumber: 123,
             columnNumber: 17
           }, this) }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 87,
+            lineNumber: 122,
             columnNumber: 13
           }, this),
-          /* @__PURE__ */ jsxDEV("p", { className: "arp-lead", children: text(`lead_${props.level}`) }, void 0, false, {
-            fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 90,
-            columnNumber: 13
-          }, this)
+          /* @__PURE__ */ jsxDEV(
+            AppliedFilters,
+            {
+              props,
+              filters,
+              course,
+              activity,
+              total: state.total,
+              loading: state.loading,
+              text,
+              onFilters: change,
+              onCourse,
+              onActivity
+            },
+            void 0,
+            false,
+            {
+              fileName: "public/report/autograder/js/esm/src/Report.tsx",
+              lineNumber: 142,
+              columnNumber: 13
+            },
+            this
+          ),
+          /* @__PURE__ */ jsxDEV(
+            ReportTable,
+            {
+              state,
+              columns: props.columns,
+              forumgrade: props.forumgrade,
+              sort,
+              narrowed,
+              text,
+              onSort: (column) => setSort(nextSort(sort, column)),
+              onRetry: () => goto(state.page),
+              onClear: reset
+            },
+            void 0,
+            false,
+            {
+              fileName: "public/report/autograder/js/esm/src/Report.tsx",
+              lineNumber: 154,
+              columnNumber: 13
+            },
+            this
+          ),
+          /* @__PURE__ */ jsxDEV(
+            Pager,
+            {
+              page: state.page,
+              perpage: state.limit || limit,
+              total: state.total,
+              sizes: props.pagesizes,
+              disabled: state.loading,
+              text,
+              onChange: ({ page, perpage }) => {
+                if (perpage !== void 0) {
+                  setLimit(perpage);
+                } else if (page !== void 0) {
+                  goto(page);
+                }
+              }
+            },
+            void 0,
+            false,
+            {
+              fileName: "public/report/autograder/js/esm/src/Report.tsx",
+              lineNumber: 165,
+              columnNumber: 13
+            },
+            this
+          )
         ] }, void 0, true, {
           fileName: "public/report/autograder/js/esm/src/Report.tsx",
-          lineNumber: 86,
+          lineNumber: 121,
           columnNumber: 9
-        }, this),
-        /* @__PURE__ */ jsxDEV(
-          StatusTabs,
-          {
-            options: props.statuses,
-            counts: state.counts,
-            chosen: filters.status,
-            total: state.total,
-            text,
-            onChange: (status) => change({ status })
-          },
-          void 0,
-          false,
-          {
-            fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 92,
-            columnNumber: 9
-          },
-          this
-        ),
-        /* @__PURE__ */ jsxDEV(
-          Toolbar,
-          {
-            props,
-            filters,
-            course,
-            activity,
-            text,
-            onFilters: change,
-            onCourse: (option) => {
-              setCourse(option);
-              setActivity(null);
-              change({ courseid: option?.id ?? 0, cmid: 0 });
-            },
-            onActivity: (option) => {
-              setActivity(option);
-              change({ cmid: option?.id ?? 0 });
-            },
-            onReset: () => {
-              setCourse(null);
-              setActivity(null);
-              setFilters({ ...NO_FILTERS, groupid: props.offersallgroups ? 0 : filters.groupid });
-              setSort({ column: "", direction: "asc" });
-            }
-          },
-          void 0,
-          false,
-          {
-            fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 100,
-            columnNumber: 9
-          },
-          this
-        ),
-        /* @__PURE__ */ jsxDEV(
-          ReportTable,
-          {
-            state,
-            columns: props.columns,
-            forumgrade: props.forumgrade,
-            sort,
-            text,
-            onSort: (column) => setSort(nextSort(sort, column)),
-            onRetry: () => goto(state.page)
-          },
-          void 0,
-          false,
-          {
-            fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 124,
-            columnNumber: 9
-          },
-          this
-        ),
-        /* @__PURE__ */ jsxDEV(
-          Pagination,
-          {
-            page: state.page,
-            limit: state.limit || limit,
-            total: state.total,
-            sizes: props.pagesizes,
-            showing: "",
-            disabled: state.loading,
-            text,
-            onPage: goto,
-            onSize: setLimit
-          },
-          void 0,
-          false,
-          {
-            fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 133,
-            columnNumber: 9
-          },
-          this
-        )
+        }, this)
       ]
     },
     void 0,
     true,
     {
       fileName: "public/report/autograder/js/esm/src/Report.tsx",
-      lineNumber: 80,
+      lineNumber: 114,
       columnNumber: 12
     },
     this

@@ -5,53 +5,53 @@ import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
  * This file is part of Moodle - https://moodle.org/
  * Moodle is free software under the GNU General Public License, version 3 or later.
  *
- * One student of one activity: who, where, in which state, when, with which grade, graded as whom, and the way to grade.
+ * One row of the report: the student, where it applies the course, the activity and the groups, the status, the date, the grade, the
+ * teacher it is graded as and the button that opens the grading screen of the activity.
  *
  * @module     report_autograder/components/ReportRow
  * @copyright  2026 Didactika.org
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import Hint from "./common/Hint";
-import { IconInfo, IconWarning } from "./common/Icons";
-import StatusBadge from "./StatusBadge";
+import { Hint } from "./ui";
+const TONES = {
+  graded: "success",
+  pending: "primary",
+  manual: "info",
+  failed: "danger",
+  notautograded: "warning",
+  notengaged: "secondary"
+};
 const Grade = /* @__PURE__ */ __name(({ row, text }) => {
   if (row.grade) {
-    return /* @__PURE__ */ jsxDEV("span", { className: "arp-grade", children: row.grade }, void 0, false, {
+    return /* @__PURE__ */ jsxDEV("strong", { children: row.grade }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 32,
+      lineNumber: 41,
       columnNumber: 16
     });
   }
   return /* @__PURE__ */ jsxDEV(Fragment, { children: [
-    row.provisional_grade && /* @__PURE__ */ jsxDEV("span", { className: "arp-grade arp-grade-provisional", children: [
+    row.provisional_grade && /* @__PURE__ */ jsxDEV("span", { className: "fst-italic text-muted", children: [
       row.provisional_grade,
-      /* @__PURE__ */ jsxDEV(Hint, { text: text("grade_provisional_help"), label: text("info:grade"), icon: /* @__PURE__ */ jsxDEV(IconInfo, {}, void 0, false, {
+      " ",
+      /* @__PURE__ */ jsxDEV(Hint, { message: text("grade_provisional_help"), label: text("info:grade"), icon: "i/info", text }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-        lineNumber: 37,
-        columnNumber: 90
-      }) }, void 0, false, {
-        fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-        lineNumber: 37,
-        columnNumber: 13
+        lineNumber: 45,
+        columnNumber: 37
       })
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 35,
+      lineNumber: 44,
       columnNumber: 35
     }),
-    row.grade_problem && /* @__PURE__ */ jsxDEV(Hint, { text: row.grade_problem, label: text("info:problem"), icon: /* @__PURE__ */ jsxDEV(IconWarning, {}, void 0, false, {
+    row.grade_problem && /* @__PURE__ */ jsxDEV(Hint, { message: row.grade_problem, label: text("info:problem"), icon: "i/warning", text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 39,
-      columnNumber: 97
-    }) }, void 0, false, {
-      fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 39,
+      lineNumber: 47,
       columnNumber: 31
     })
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-    lineNumber: 34,
+    lineNumber: 43,
     columnNumber: 12
   });
 }, "Grade");
@@ -59,141 +59,152 @@ const Grader = /* @__PURE__ */ __name(({ row, text }) => {
   if (row.graded_by) {
     return /* @__PURE__ */ jsxDEV(Fragment, { children: row.graded_by }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 51,
+      lineNumber: 59,
       columnNumber: 16
     });
   }
   return /* @__PURE__ */ jsxDEV(Fragment, { children: [
-    row.will_grade && /* @__PURE__ */ jsxDEV("span", { className: "arp-prospective", children: [
+    row.will_grade && /* @__PURE__ */ jsxDEV("span", { className: "text-muted", children: [
       row.will_grade,
-      /* @__PURE__ */ jsxDEV(Hint, { text: text("gradedby_prospective_help"), label: text("gradedby_prospective"), icon: /* @__PURE__ */ jsxDEV(IconInfo, {}, void 0, false, {
+      " ",
+      /* @__PURE__ */ jsxDEV(Hint, { message: text("gradedby_prospective_help"), label: text("gradedby_prospective"), icon: "i/info", text }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-        lineNumber: 56,
-        columnNumber: 103
-      }) }, void 0, false, {
-        fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-        lineNumber: 56,
-        columnNumber: 13
+        lineNumber: 63,
+        columnNumber: 30
       })
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 54,
+      lineNumber: 62,
       columnNumber: 28
     }),
-    row.will_grade_problem && /* @__PURE__ */ jsxDEV(Hint, { text: row.will_grade_problem, label: text("info:problem"), icon: /* @__PURE__ */ jsxDEV(IconWarning, {}, void 0, false, {
+    row.will_grade_problem && /* @__PURE__ */ jsxDEV(Hint, { message: row.will_grade_problem, label: text("info:problem"), icon: "i/warning", text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 58,
-      columnNumber: 107
-    }) }, void 0, false, {
-      fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 58,
+      lineNumber: 65,
       columnNumber: 36
     })
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-    lineNumber: 53,
+    lineNumber: 61,
     columnNumber: 12
   });
 }, "Grader");
 function ReportRow({ row, columns, forumgrade, text }) {
+  const tone = TONES[row.status_key] ?? "secondary";
   return /* @__PURE__ */ jsxDEV("tr", { "data-record-id": row.rowkey, children: [
-    /* @__PURE__ */ jsxDEV("td", { className: "arp-cell-student", "data-label": text("header:student"), children: /* @__PURE__ */ jsxDEV("a", { className: "arp-student", href: row.user_profile_url, children: [
-      /* @__PURE__ */ jsxDEV("img", { className: "arp-avatar", src: row.user_picture_url, alt: "", width: 36, height: 36, loading: "lazy" }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("a", { className: "d-inline-flex align-items-center gap-2 text-decoration-none", href: row.user_profile_url, children: [
+      /* @__PURE__ */ jsxDEV("img", { className: "userpicture", src: row.user_picture_url, alt: "", width: 36, height: 36, loading: "lazy" }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-        lineNumber: 72,
+        lineNumber: 80,
         columnNumber: 17
       }, this),
-      /* @__PURE__ */ jsxDEV("span", { className: "arp-student-name", children: row.user_name }, void 0, false, {
+      /* @__PURE__ */ jsxDEV("span", { className: "fw-bold", children: row.user_name }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-        lineNumber: 73,
+        lineNumber: 81,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 71,
+      lineNumber: 79,
       columnNumber: 13
     }, this) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 70,
+      lineNumber: 78,
       columnNumber: 9
     }, this),
-    columns.course && /* @__PURE__ */ jsxDEV("td", { "data-label": text("header:course"), children: row.course_name && /* @__PURE__ */ jsxDEV("a", { href: row.course_url, children: row.course_name }, void 0, false, {
+    columns.course && /* @__PURE__ */ jsxDEV("td", { children: row.course_name && /* @__PURE__ */ jsxDEV("a", { href: row.course_url, children: row.course_name }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 77,
-      columnNumber: 33
+      lineNumber: 84,
+      columnNumber: 52
     }, this) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 76,
+      lineNumber: 84,
       columnNumber: 28
     }, this),
-    columns.activity && /* @__PURE__ */ jsxDEV("td", { "data-label": text("header:activity"), children: row.activity_name && /* @__PURE__ */ jsxDEV("a", { href: row.activity_url, children: row.activity_name }, void 0, false, {
+    columns.activity && /* @__PURE__ */ jsxDEV("td", { children: row.activity_name && /* @__PURE__ */ jsxDEV("a", { href: row.activity_url, children: row.activity_name }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 80,
-      columnNumber: 35
+      lineNumber: 85,
+      columnNumber: 56
     }, this) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 79,
+      lineNumber: 85,
       columnNumber: 30
     }, this),
-    columns.group && /* @__PURE__ */ jsxDEV("td", { "data-label": text("header:groups"), children: row.groups }, void 0, false, {
+    columns.group && /* @__PURE__ */ jsxDEV("td", { children: row.groups }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 82,
+      lineNumber: 86,
       columnNumber: 27
     }, this),
-    /* @__PURE__ */ jsxDEV("td", { "data-label": text("header:external_status"), children: /* @__PURE__ */ jsxDEV(StatusBadge, { row, text }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("td", { children: [
+      /* @__PURE__ */ jsxDEV("span", { className: `badge bg-${tone} badge-${tone}`, children: row.status }, void 0, false, {
+        fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
+        lineNumber: 88,
+        columnNumber: 13
+      }, this),
+      row.failure_reason && /* @__PURE__ */ jsxDEV(Fragment, { children: [
+        " ",
+        /* @__PURE__ */ jsxDEV(Hint, { message: row.failure_reason, label: text("info:failure"), icon: "i/warning", text }, void 0, false, {
+          fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
+          lineNumber: 89,
+          columnNumber: 39
+        }, this)
+      ] }, void 0, true, {
+        fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
+        lineNumber: 89,
+        columnNumber: 36
+      }, this)
+    ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 83,
-      columnNumber: 57
-    }, this) }, void 0, false, {
-      fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 83,
+      lineNumber: 87,
       columnNumber: 9
     }, this),
-    /* @__PURE__ */ jsxDEV("td", { "data-label": text("header:completed_at"), "data-sort-value": row.completed_at_sort, children: [
+    /* @__PURE__ */ jsxDEV("td", { "data-sort-value": row.completed_at_sort, children: [
       row.completed_at,
-      row.date_reason && /* @__PURE__ */ jsxDEV(Hint, { text: row.date_reason, label: text("info:date"), icon: /* @__PURE__ */ jsxDEV(IconInfo, {}, void 0, false, {
+      row.date_reason && /* @__PURE__ */ jsxDEV(Fragment, { children: [
+        " ",
+        /* @__PURE__ */ jsxDEV(Hint, { message: row.date_reason, label: text("info:date"), icon: "i/info", text }, void 0, false, {
+          fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
+          lineNumber: 93,
+          columnNumber: 36
+        }, this)
+      ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-        lineNumber: 86,
-        columnNumber: 94
-      }, this) }, void 0, false, {
-        fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-        lineNumber: 86,
+        lineNumber: 93,
         columnNumber: 33
       }, this)
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 84,
+      lineNumber: 91,
       columnNumber: 9
     }, this),
-    /* @__PURE__ */ jsxDEV("td", { className: "arp-cell-grade", "data-label": text("header:grade"), children: /* @__PURE__ */ jsxDEV(Grade, { row, text }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV(Grade, { row, text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 88,
-      columnNumber: 74
+      lineNumber: 95,
+      columnNumber: 13
     }, this) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 88,
+      lineNumber: 95,
       columnNumber: 9
     }, this),
-    /* @__PURE__ */ jsxDEV("td", { "data-label": text("header:gradedby"), children: /* @__PURE__ */ jsxDEV(Grader, { row, text }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV(Grader, { row, text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 89,
-      columnNumber: 50
+      lineNumber: 96,
+      columnNumber: 13
     }, this) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 89,
+      lineNumber: 96,
       columnNumber: 9
     }, this),
-    /* @__PURE__ */ jsxDEV("td", { className: "arp-cell-action", children: [
-      row.grade_user_url && /* @__PURE__ */ jsxDEV("a", { className: "arp-action", href: row.grade_user_url, children: text("gradeuser") }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("td", { className: "text-end", children: [
+      row.grade_user_url && /* @__PURE__ */ jsxDEV("a", { className: "btn btn-outline-secondary btn-sm", href: row.grade_user_url, children: text("gradeuser") }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-        lineNumber: 91,
+        lineNumber: 98,
         columnNumber: 36
       }, this),
       !row.grade_user_url && row.show_forum_grader && forumgrade && /* @__PURE__ */ jsxDEV(
         "button",
         {
           type: "button",
-          className: "arp-action",
+          className: "btn btn-outline-secondary btn-sm",
           "data-grade-action": "launch",
           "data-grading-component": forumgrade.gradingcomponent,
           "data-grading-component-subtype": forumgrade.gradingcomponentsubtype,
@@ -205,19 +216,19 @@ function ReportRow({ row, columns, forumgrade, text }) {
         false,
         {
           fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-          lineNumber: 92,
+          lineNumber: 99,
           columnNumber: 76
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-      lineNumber: 90,
+      lineNumber: 97,
       columnNumber: 9
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-    lineNumber: 69,
+    lineNumber: 77,
     columnNumber: 12
   }, this);
 }

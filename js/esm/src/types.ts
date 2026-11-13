@@ -166,10 +166,38 @@ export interface GradersResponse {
     };
 }
 
+export type GradingState = 'ready' | 'fallback' | 'nobody';
+
+export interface CourseGraders {
+    id: number;
+    name: string;
+    fullname: string;
+    activities: number;
+    gradercount: number;
+    studentcount: number;
+    state: GradingState;
+    graders: string[];
+    moregraders: number;
+    reporturl: string;
+    studentsurl: string;
+}
+
+export interface GradersOverview {
+    courses: CourseGraders[];
+    total: number;
+    page: number;
+    perpage: number;
+    from: number;
+    to: number;
+}
+
+export type StudentFilter = 'all' | 'fallback' | 'nobody';
+
 export interface GradersProps {
     courseid: number;
     students: boolean;
     pagesizes: number[];
     perpage: number;
+    overviewurl: string;
     strings: Record<string, string>;
 }

@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'report_autograder';
 $plugin->release = '1.2.0-m503';
-$plugin->version = 2026101901;
+$plugin->version = 2026101902;
 $plugin->requires = 2026100500; // Moodle 5.3.
 $plugin->maturity = MATURITY_STABLE;
 $plugin->supported = [503, 503];

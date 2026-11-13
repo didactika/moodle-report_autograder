@@ -11,7 +11,7 @@
  */
 import {fetchOne} from '@moodle/lms/core/ajax';
 import {toRequest} from '../lib/filters';
-import type {Filters, GradersResponse, OptionsResponse, ReportProps, ReportResponse, Sort} from '../types';
+import type {Filters, GradersOverview, GradersResponse, OptionsResponse, ReportProps, ReportResponse, Sort, StudentFilter} from '../types';
 
 /** Which report is asked for. */
 export type Scope = ReportProps['scope'];
@@ -81,10 +81,22 @@ export const searchOptions = (type: PickerType, query: string, scope: Scope, fil
  * @param perpage Students on a page.
  * @returns The graders and the students.
  */
-export const getGraders = (courseid: number, students: boolean, page: number, perpage: number): Promise<GradersResponse> =>
-    fetchOne<GradersResponse>({
-        methodname: 'report_autograder_get_graders',
-        args: {courseid, students, page, perpage},
+export const getGraders = (
+    courseid: number,
+    students: boolean,
+    page: number,
+    perpage: number,
+    search: string,
+    filter: StudentFilter
+): Promise<GradersResponse> => fetchOne<GradersResponse>({
+    methodname: 'report_autograder_get_graders',
+    args: {courseid, students, page, perpage, search, filter},
+});
+
+export const getGradersOverview = (search: string, page: number, perpage: number): Promise<GradersOverview> =>
+    fetchOne<GradersOverview>({
+        methodname: 'report_autograder_get_graders_overview',
+        args: {search, page, perpage},
     });
 
 /**

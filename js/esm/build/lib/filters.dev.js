@@ -40,6 +40,13 @@ const countFilters = /* @__PURE__ */ __name((filters) => [
   filters.cmid > 0,
   filters.groupid > 0
 ].filter(Boolean).length, "countFilters");
+const countApplied = /* @__PURE__ */ __name((filters, offered) => [
+  filters.status.length > 0,
+  filters.datefrom !== "" || filters.dateto !== "",
+  offered.course && filters.courseid > 0,
+  offered.activity && filters.cmid > 0,
+  offered.group && filters.groupid > 0
+].filter(Boolean).length, "countApplied");
 const isNarrowed = /* @__PURE__ */ __name((filters) => filters.searchname.trim() !== "" || countFilters(filters) > 0, "isNarrowed");
 const nextSort = /* @__PURE__ */ __name((current, column) => {
   if (current.column === column) {
@@ -79,6 +86,7 @@ const datePresets = /* @__PURE__ */ __name((today) => {
 }, "datePresets");
 export {
   NO_FILTERS,
+  countApplied,
   countFilters,
   datePresets,
   isNarrowed,

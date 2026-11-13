@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "sources": ["../../src/lib/paging.ts"],
+  "sourceRoot": "../../../../../../sources/public/report/autograder/js/esm/build",
+  "sourcesContent": ["/**\n * This file is part of Moodle - https://moodle.org/\n * Moodle is free software under the GNU General Public License, version 3 or later.\n *\n * The arithmetic of a paged list.\n *\n * @module     report_autograder/lib/paging\n * @copyright  2026 Didactika.org\n * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>\n * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later\n */\n\n/**\n * The rows a page covers, counted from one, and none when the list is empty.\n *\n * @param page The page, counted from zero.\n * @param perpage Rows on a page.\n * @param total Rows in the list.\n * @returns The first and the last row of the page.\n */\nexport const pageRange = (page: number, perpage: number, total: number): {from: number; to: number} => ({\n    from: total === 0 ? 0 : (page * perpage) + 1,\n    to: Math.min(total, (page + 1) * perpage),\n});\n"],
+  "mappings": ";;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAoBO,MAAM,YAAY,wBAAC,MAAc,SAAiB,WAA+C;AAAA,EACpG,MAAM,UAAU,IAAI,IAAK,OAAO,UAAW;AAAA,EAC3C,IAAI,KAAK,IAAI,QAAQ,OAAO,KAAK,OAAO;AAC5C,IAHyB;",
+  "names": []
+}

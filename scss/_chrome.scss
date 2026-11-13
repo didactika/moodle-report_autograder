@@ -1,0 +1,341 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// The look of the screens of the report, as the design system draws its lists (the same one as the plugin Delegate account), written
+// as overrides of the Bootstrap classes the markup uses (card, table, badge, btn, input-group, dropdown-menu, list-group, popover),
+// always inside .arp so nothing reaches the rest of Moodle. A theme restyles the report by restyling those classes.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+.arp {
+    min-width: 0;
+    color: var(--arp-text);
+
+    // A list is a card: a thin line and the radius of the system, no shadow, with its toolbar, table and foot.
+    & .card {
+        overflow: visible;
+        border: 1px solid var(--arp-border);
+        border-radius: var(--arp-radius);
+        background: var(--arp-surface);
+        box-shadow: none;
+    }
+
+    & .card > .table-responsive {
+        border-radius: 0;
+    }
+
+    & .card-body {
+        padding: 1.25rem;
+    }
+
+    & .table-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem 1rem;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--arp-border);
+    }
+
+    // The search: the magnifier inside the field.
+    & .input-group {
+        flex: 1 1 14rem;
+        width: auto;
+        max-width: 24rem;
+        flex-wrap: nowrap;
+
+        & .input-group-text {
+            padding-right: 0.25rem;
+            border-color: var(--arp-border-strong);
+            border-right: 0;
+            background: var(--arp-surface);
+            color: var(--arp-muted);
+        }
+
+        & .form-control {
+            border-color: var(--arp-border-strong);
+            border-left: 0;
+            background: var(--arp-surface);
+            color: var(--arp-text);
+            box-shadow: none;
+
+            &:focus {
+                border-color: var(--arp-accent);
+                box-shadow: 0 0 0 0.2rem var(--arp-accent-ring);
+            }
+        }
+
+        &:focus-within .input-group-text {
+            border-color: var(--arp-accent);
+        }
+    }
+
+    // The Filters button, and the panel it opens: a menu of Bootstrap that holds a form.
+    & .dropdown {
+        position: relative;
+    }
+
+    & .dropdown-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        &.active {
+            border-color: var(--arp-accent);
+            background: var(--arp-accent-soft);
+            color: var(--arp-accent-text);
+        }
+
+        & .badge {
+            --bs-badge-padding-x: 0.5em;
+
+            color: var(--arp-on-accent);
+        }
+    }
+
+    & .dropdown-menu {
+        inset: 100% auto auto 0;
+        z-index: 1020;
+        min-width: 22rem;
+        max-width: 92vw;
+        max-height: 70vh;
+        margin-top: 0.25rem;
+        padding: 0;
+        overflow-y: auto;
+        border: 1px solid var(--arp-border);
+        border-radius: var(--arp-radius);
+        background: var(--arp-surface);
+        box-shadow: var(--arp-shadow);
+    }
+
+    & .dropdown-menu fieldset {
+        min-width: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    & .dropdown-menu .form-check {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+    }
+
+    & .dropdown-menu .form-check .form-check-label {
+        width: 100%;
+    }
+
+    // Tables: quiet lines, a small header in capitals, and room to breathe.
+    & .table-responsive {
+        margin: 0;
+        transition: opacity 140ms;
+
+        &[aria-busy="true"] {
+            opacity: 0.6;
+        }
+    }
+
+    & .table {
+        --bs-table-bg: transparent;
+
+        margin-bottom: 0;
+        color: var(--arp-text);
+        font-size: 0.9375rem;
+
+        & th,
+        & td {
+            padding: 0.75rem 1rem;
+            border-color: var(--arp-border);
+            vertical-align: middle;
+        }
+
+        & thead th {
+            border-top: 0;
+            border-bottom: 1px solid var(--arp-border-strong);
+            color: var(--arp-muted);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        & tbody tr:last-child > * {
+            border-bottom: 0;
+        }
+
+        & tbody tr:hover > * {
+            background-color: color-mix(in srgb, var(--arp-accent) 5%, var(--arp-surface));
+        }
+
+        & .userpicture {
+            flex: none;
+            border-radius: 50%;
+        }
+
+        & .text-truncate {
+            max-width: 18rem;
+        }
+    }
+
+    & .table-sort {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        letter-spacing: inherit;
+        text-transform: inherit;
+        cursor: pointer;
+
+        &::after {
+            content: "";
+            flex: none;
+            width: 0.4375rem;
+            height: 0.4375rem;
+            border: solid currentcolor;
+            border-width: 0 2px 2px 0;
+            opacity: 0.35;
+            transform: translateY(-2px) rotate(45deg);
+            transition: transform 200ms cubic-bezier(0.2, 0, 0, 1), opacity 150ms;
+        }
+
+        &:hover {
+            color: var(--arp-text);
+
+            &::after {
+                opacity: 0.8;
+            }
+        }
+
+        &:focus-visible {
+            outline: 0;
+            border-radius: 0.25rem;
+            box-shadow: 0 0 0 3px var(--arp-accent-ring);
+        }
+    }
+
+    & th[aria-sort] {
+        color: var(--arp-text);
+
+        & .table-sort {
+            color: var(--arp-accent-text);
+
+            &::after {
+                opacity: 1;
+                color: var(--arp-accent);
+            }
+        }
+    }
+
+    & th[aria-sort="ascending"] .table-sort::after {
+        transform: translateY(2px) rotate(-135deg);
+    }
+
+    // The foot of a list: how many rows, which ones, and the arrows.
+    & .table-foot {
+        padding: 0.75rem 1rem;
+        border-top: 1px solid var(--arp-border);
+
+        & select {
+            min-width: 4.5rem;
+        }
+    }
+
+    // Statuses and states are badges tinted with the colour of their role, from the variables of Bootstrap, so the colour mode and
+    // the theme change them. Bootstrap fills a badge with the colour and writes its text in white; here the fill is a tenth of it.
+    & .badge {
+        --bs-bg-opacity: 0.14;
+        --bs-badge-padding-x: 0.65em;
+        --bs-badge-padding-y: 0.4em;
+        --bs-badge-font-size: 0.8125em;
+
+        font-weight: 600;
+
+        &.bg-success {
+            color: var(--bs-success-text-emphasis, var(--arp-success));
+        }
+
+        &.bg-primary {
+            color: var(--bs-primary-text-emphasis, var(--arp-accent-text));
+        }
+
+        &.bg-info {
+            color: var(--bs-info-text-emphasis, var(--arp-info));
+        }
+
+        &.bg-danger {
+            color: var(--bs-danger-text-emphasis, var(--arp-danger));
+        }
+
+        &.bg-warning {
+            color: var(--bs-warning-text-emphasis, var(--arp-text));
+        }
+
+        &.bg-secondary {
+            color: var(--bs-secondary-text-emphasis, var(--arp-muted));
+        }
+    }
+
+    // The filters that are applied, and the button that lifts each one.
+    & .badge .btn-link {
+        display: inline-flex;
+        color: inherit;
+        line-height: 1;
+        opacity: 0.7;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    // A short explanation that opens on a button: a popover of Bootstrap, placed under it.
+    & .popover {
+        inset: calc(100% + 0.25rem) auto auto 0;
+        z-index: 1030;
+        width: 18rem;
+        max-width: 80vw;
+        transform: none;
+        text-align: start;
+        white-space: normal;
+        border-radius: var(--arp-radius);
+        box-shadow: var(--arp-shadow);
+    }
+
+    & .btn-link {
+        text-decoration: none;
+    }
+
+    // The courses and activities found while the reader types, under their field.
+    & .list-group {
+        z-index: 1040;
+        max-height: 14rem;
+        overflow-y: auto;
+        border-radius: var(--arp-radius);
+    }
+
+    & .alert {
+        border-radius: var(--arp-radius);
+    }
+}
+
+@media (max-width: 576px) {
+    .arp {
+        & .table-toolbar {
+            padding: 0.75rem;
+        }
+
+        & .input-group {
+            max-width: none;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .arp .table-sort::after {
+        transition: none;
+    }
+}

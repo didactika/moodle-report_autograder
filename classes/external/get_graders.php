@@ -48,6 +48,8 @@ class get_graders extends external_api {
             'students' => new external_value(PARAM_BOOL, 'Whether to list one page of the students', VALUE_DEFAULT, false),
             'page' => new external_value(PARAM_INT, 'Zero-based page of the students', VALUE_DEFAULT, 0),
             'perpage' => new external_value(PARAM_INT, 'Students on a page', VALUE_DEFAULT, 0),
+            'search' => new external_value(PARAM_TEXT, 'Text of the name of the student', VALUE_DEFAULT, ''),
+            'filter' => new external_value(PARAM_ALPHA, 'all, fallback or nobody', VALUE_DEFAULT, 'all'),
         ]);
     }
 
@@ -58,11 +60,21 @@ class get_graders extends external_api {
      * @param bool $students Whether to list one page of the students.
      * @param int $page Zero-based page of the students.
      * @param int $perpage Students on a page.
+     * @param string $search Text of the name of the student.
+     * @param string $filter All the students, the ones that would use the fallback grader or the ones nobody would grade.
      * @return array The graders, the counts and the students.
      */
-    public static function execute(int $courseid, bool $students = false, int $page = 0, int $perpage = 0): array {
+    public static function execute(
+        int $courseid,
+        bool $students = false,
+        int $page = 0,
+        int $perpage = 0,
+        string $search = '',
+        string $filter = 'all'
+    ): array {
         $params = self::validate_parameters(self::execute_parameters(), [
             'courseid' => $courseid, 'students' => $students, 'page' => $page, 'perpage' => $perpage,
+            'search' => $search, 'filter' => $filter,
         ]);
         $course = get_course($params['courseid']);
         $context = \context_course::instance($course->id);
@@ -78,7 +90,13 @@ class get_graders extends external_api {
             'studentlist' => self::no_students(),
         ];
         if ($params['students']) {
-            $list = grader_list::students_of($course->id, $params['page'], $params['perpage'] ?: grader_list::PER_PAGE);
+            $list = grader_list::students_of(
+                $course->id,
+                $params['page'],
+                $params['perpage'] ?: grader_list::PER_PAGE,
+                $params['search'],
+                $params['filter']
+            );
             $result['hasstudents'] = true;
             $result['studentlist'] = array_intersect_key($list, self::no_students());
             // A student that nobody would grade has no grader key, so the declared structure holds.
