@@ -28,9 +28,9 @@
         display: inline-flex;
     }
 
+    // A block, not a flex box: only a block cuts its text with an ellipsis where the text ends, before the cross of a set filter.
     & button.dd-select {
-        display: inline-flex;
-        align-items: center;
+        display: block;
         min-width: 0;
         max-width: 18rem;
         overflow: hidden;

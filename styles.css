@@ -629,6 +629,15 @@
     background-image: none;
 }
 
+.arp .dd-select:is(button),
+.report-autograder-page .modal .dd-select:is(button) {
+    display: block;
+    overflow: hidden;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .arp .dd-select-filter,
 .report-autograder-page .modal .dd-select-filter {
     position: relative;
@@ -1035,8 +1044,7 @@
 }
 
 .arp button.dd-select {
-    display: inline-flex;
-    align-items: center;
+    display: block;
     min-width: 0;
     max-width: 18rem;
     overflow: hidden;

@@ -15,7 +15,7 @@
  */
 import {useEffect, useId, useLayoutEffect, useRef, useState} from 'react';
 import type {ReactNode} from 'react';
-import {Menu} from './ui';
+import {Icon, Menu} from './ui';
 import {useDebounced} from '../hooks/useDebounced';
 import {datePresets} from '../lib/filters';
 import {searchOptions, type PickerType, type Scope} from '../services/api';
@@ -270,7 +270,7 @@ export function FilterGroup({count, text, children}: {count: number; text: Text;
 
     return <div ref={box} data-region="filter-menus">
         {grouped ? <Menu
-            button={count > 0 ? `${text('filters')} (${count})` : text('filters')}
+            button={<><Icon name="i/filter" text={text} /> {count > 0 ? `${text('filters')} (${count})` : text('filters')}</>}
             label={text('filters')}
             name="filters"
             active={count > 0}

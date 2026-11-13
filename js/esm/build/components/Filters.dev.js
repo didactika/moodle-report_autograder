@@ -17,7 +17,7 @@ import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { Menu } from "./ui";
+import { Icon, Menu } from "./ui";
 import { useDebounced } from "../hooks/useDebounced";
 import { datePresets } from "../lib/filters";
 import { searchOptions } from "../services/api";
@@ -351,7 +351,19 @@ function FilterGroup({ count, text, children }) {
   return /* @__PURE__ */ jsxDEV("div", { ref: box, "data-region": "filter-menus", children: grouped ? /* @__PURE__ */ jsxDEV(
     Menu,
     {
-      button: count > 0 ? `${text("filters")} (${count})` : text("filters"),
+      button: /* @__PURE__ */ jsxDEV(Fragment, { children: [
+        /* @__PURE__ */ jsxDEV(Icon, { name: "i/filter", text }, void 0, false, {
+          fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
+          lineNumber: 273,
+          columnNumber: 23
+        }, this),
+        " ",
+        count > 0 ? `${text("filters")} (${count})` : text("filters")
+      ] }, void 0, true, {
+        fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
+        lineNumber: 273,
+        columnNumber: 21
+      }, this),
       label: text("filters"),
       name: "filters",
       active: count > 0,
