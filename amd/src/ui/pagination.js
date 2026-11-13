@@ -26,73 +26,32 @@ import templates from "core/templates";
 
 /** Default page size (must match initial {@link ../state} requestedLimit). */
 export const BASE_ITEMS_PER_PAGE = 12;
-const STEP_ITEMS_PER_PAGE = [24, 48, 96];
 
-// The largest page this report will ever ask for. 'All' is deliberately not
-// on offer: site-wide there can be tens of thousands of rows.
-const MAX_ITEMS_PER_PAGE = 96;
+/** The sizes a page may have, besides all of it. */
+const PAGE_SIZES = [12, 24, 48, 96];
+
+/** What the service is sent to ask for every row at once; it caps the answer. */
+export const ALL_ROWS = -1;
 
 /**
- * Values shown in the per-page dropdown (mirrors course-finder: no 24+ when total ≤ 12).
+ * The sizes the pager offers: the ones smaller than the list, and All. A list of up to 12 rows offers All only; one of 13 to 24
+ * offers 12 and All; and so on up to 12, 24, 48, 96 and All.
  *
  * @param {number} totalRecords
  * @returns {number[]}
  */
-const buildPerPageValues = (totalRecords) => {
-    if (totalRecords <= BASE_ITEMS_PER_PAGE) {
-        return [totalRecords];
-    }
-
-    const values = [BASE_ITEMS_PER_PAGE];
-
-    STEP_ITEMS_PER_PAGE.forEach((step) => {
-        if (step < totalRecords && step <= MAX_ITEMS_PER_PAGE) {
-            values.push(step);
-        }
-    });
-
-    // No "all". A site-wide report can have tens of thousands of rows, and
-    // asking for them in one page is a request no server should be given the
-    // chance to accept — so the largest page is the largest step, and the
-    // total is only offered when it is smaller than that.
-    if (totalRecords <= MAX_ITEMS_PER_PAGE) {
-        values.push(totalRecords);
-    } else if (values.indexOf(MAX_ITEMS_PER_PAGE) === -1) {
-        values.push(MAX_ITEMS_PER_PAGE);
-    }
-
-    return values;
-};
+const buildPerPageValues = (totalRecords) => [...PAGE_SIZES.filter((size) => size < totalRecords), ALL_ROWS];
 
 /**
- * Which option should appear selected when the API limit does not match the list (e.g. limit 96, total 2).
+ * The size the select shows: the one in use when it is offered, and All when every row fits on the page.
  *
  * @param {number[]} optionValues
  * @param {number} recordsPerPage
  * @param {number} totalRecords
  * @returns {number}
  */
-const resolveSelectedLimit = (optionValues, recordsPerPage, totalRecords) => {
-    const target = Math.min(recordsPerPage, totalRecords);
-    if (optionValues.includes(target)) {
-        return target;
-    }
-    if (optionValues.includes(recordsPerPage)) {
-        return recordsPerPage;
-    }
-    if (totalRecords <= BASE_ITEMS_PER_PAGE) {
-        return totalRecords;
-    }
-    if (recordsPerPage >= totalRecords) {
-        return totalRecords;
-    }
-    const notAll = optionValues.filter((v) => v < totalRecords);
-    const fitting = notAll.filter((v) => v <= recordsPerPage);
-    if (fitting.length) {
-        return Math.max(...fitting);
-    }
-    return optionValues[0];
-};
+const resolveSelectedLimit = (optionValues, recordsPerPage, totalRecords) =>
+    (recordsPerPage > 0 && recordsPerPage < totalRecords && optionValues.includes(recordsPerPage) ? recordsPerPage : ALL_ROWS);
 
 /**
  * Renders the pagination controls.
@@ -137,15 +96,7 @@ export const renderPagination = (
     const hasnext =
         currentRecords.length >= recordsPerPage && currentPage + 1 < totalPages;
 
-    let optionValues = buildPerPageValues(totalRecords);
-    // Include the active slice size so the dropdown can match (e.g. 12) when BASE/STEPS omit it.
-    if (
-        recordsPerPage > 0 &&
-        recordsPerPage < totalRecords &&
-        !optionValues.includes(recordsPerPage)
-    ) {
-        optionValues = [...optionValues, recordsPerPage].sort((a, b) => a - b);
-    }
+    const optionValues = buildPerPageValues(totalRecords);
     const selectedLimit = resolveSelectedLimit(
         optionValues,
         recordsPerPage,
@@ -158,13 +109,9 @@ export const renderPagination = (
             : null;
 
     const peroptions = optionValues.map((val) => {
-        const isAllOption =
-            val === totalRecords && totalRecords > BASE_ITEMS_PER_PAGE;
-        const onlyAllMode = totalRecords <= BASE_ITEMS_PER_PAGE;
-        const isAll = isAllOption || onlyAllMode;
         return {
             value: val,
-            'is_all': isAll,
+            'is_all': val === ALL_ROWS,
             selected: val === selectedLimit,
             'all_results_label': override,
         };

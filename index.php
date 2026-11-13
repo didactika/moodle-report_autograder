@@ -66,6 +66,11 @@ $PAGE->set_url($scope->url());
 // prefixes the page type with "admin-", so the id differs between the three
 // levels and scoping by it would leave one of them unstyled.
 $PAGE->add_body_class('report-autograder-page');
+
+// The guided tour cannot be skipped when the site asks for it: the styles hide its skip button on this page.
+if (get_config('report_autograder', 'tourrequired')) {
+    $PAGE->add_body_class('report-autograder-tour-required');
+}
 $PAGE->set_title(get_string('pluginname', 'report_autograder'));
 $PAGE->set_heading($scope->heading());
 
@@ -74,11 +79,6 @@ if ($scope->level() !== scope::LEVEL_SITE) {
 }
 
 $scope->require_capability();
-
-// The date filter's calendar, from the copy that ships with this plugin. Asked
-// for here rather than injected by the module that uses it, because a
-// stylesheet has to be in the page before the header goes out.
-$PAGE->requires->css(new moodle_url('/report/autograder/lib/daterangepicker/daterangepicker.css'));
 
 // The forum grader is launched from the activity's own report, where the page
 // has been set up to carry its data attributes.
@@ -121,14 +121,18 @@ $openingfilters = filters::from_request(
     $scope->can_see_failures()
 );
 
-echo $OUTPUT->render_from_template(
-    'report_autograder/partials/filters',
-    page_context::filters($scope, $openingfilters)
-);
+// The lead of the report, then one card with the filters on top and the table under them.
+$filterscontext = page_context::filters($scope, $openingfilters);
+echo html_writer::start_div('arp');
+echo html_writer::tag('p', $filterscontext['lead'], ['class' => 'text-muted mb-0']);
+echo html_writer::start_div('card');
+echo $OUTPUT->render_from_template('report_autograder/partials/filters', $filterscontext);
 echo $OUTPUT->render_from_template(
     'report_autograder/report_table',
     page_context::table($scope, $forumgrade)
 );
+echo html_writer::end_div();
+echo html_writer::end_div();
 
 // A link can still arrive with a state in it (a bookmark, or a link from
 // elsewhere), so the table opens on that rather than on everything.

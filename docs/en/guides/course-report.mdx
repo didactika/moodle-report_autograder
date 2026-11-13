@@ -12,12 +12,12 @@ The table shows one row per student and activity, so a student who is in two aut
 
 ## Filters
 
-Every report can be filtered by activity, group, status and grading date, and searched by student. The activity filter offers only the activities of the course where Autograder is enabled.
+The report of a course has the same row of filters as the report of an activity, with one more menu: **Activity**, which offers only the activities of the course where Autograder is enabled and searches them as you type. The **Status** menu shows how many students are in each status, counted inside the other filters. A menu that narrows the list is highlighted, and the cross that replaces its arrow removes that filter; the button with the reload icon at the end of the row removes every filter. See [Activity report](page:guides/activity-report) for the search, the pages and the guided tour, which the report of a course also has.
 
 ## Failures
 
-When you have `report/autograder:viewfailed`, the status filter offers **Failed**, and the failed rows show the reason: for example that no teacher could grade the student.
+When you have `report/autograder:viewfailed`, the **Status** menu offers **Failed**, and the button at the end of a failed row is red: it opens the details of the row, which start with the reason, for example that no teacher could grade the student.
 
-<Screenshot src="asset:rp-failed.webp" alt="The Autograder report of a course filtered by failed students, with the reason of each failure" caption="The students whose grading failed, with the reason." url="/report/autograder/index.php" />
+<Screenshot src="asset:rp-failed.webp" alt="The Autograder report of a course filtered by failed students, with the button that opens the details of each failure" caption="The students whose grading failed." url="/report/autograder/index.php" />
 
 The report appears in the **Reports** menu only when Autograder is enabled in at least one activity of the course.

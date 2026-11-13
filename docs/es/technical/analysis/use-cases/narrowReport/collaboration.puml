@@ -1,0 +1,20 @@
+@startuml
+!theme plain
+hide empty members
+skinparam linetype polyline
+top to bottom direction
+
+class "Teacher" as user <<actor>>
+class "Toolbar" as toolbar <<boundary>>
+class "Option search" as search <<control>>
+class "Report query" as query <<control>>
+class "Filter" as filter <<entity>>
+class "Status" as status <<entity>>
+
+user --> toolbar : 1: types or chooses a value in a filter menu
+toolbar --> search : 2: search_filter_options(type, query)
+toolbar --> filter : 3: sends the filters
+toolbar --> query : 4: rows, count and status_counts
+query --> status : 5: counts each status inside the other filters
+
+@enduml

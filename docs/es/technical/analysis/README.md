@@ -31,3 +31,5 @@ Estereotipos: `<<boundary>>` interfaz, `<<control>>` coordinación, `<<entity>>`
 | UC-001 | [Ver el informe de una actividad o de un curso](./use-cases/viewReport/README.md) | [colaboración](./use-cases/viewReport/collaboration.svg) |
 | UC-002 | [Ver el informe del sitio](./use-cases/viewSiteReport/README.md) | [colaboración](./use-cases/viewSiteReport/collaboration.svg) |
 | UC-003 | [Ver quién calificaría cada curso](./use-cases/viewGraders/README.md) | [colaboración](./use-cases/viewGraders/collaboration.svg) |
+| UC-004 | [Acotar el informe](./use-cases/narrowReport/README.md) | [colaboración](./use-cases/narrowReport/collaboration.svg) |
+| UC-005 | [Calificar a un estudiante desde el informe](./use-cases/gradeFromReport/README.md) | [colaboración](./use-cases/gradeFromReport/collaboration.svg) |

@@ -42,11 +42,11 @@ import {
     resetSort,
 } from './state';
 import {getReportData} from './service/repository';
-import {showLoading, renderTable} from './ui/report';
+import {showLoading, renderTable, showEmpty, showDetails} from './ui/report';
 import {renderPagination} from './ui/pagination';
-import {attachFilterListeners, collectFilters} from './ui/form';
-import {init as initFiltersUi} from './ui/filters';
+import {collectFilters, init as initToolbar, renderCounts} from './ui/toolbar';
 import {updateSortHeaderUI} from './ui/table_sort';
+import {init as fitTables} from 'report_autograder/fit_tables';
 
 let requestId = 0;
 
@@ -75,11 +75,8 @@ const showNeedsFilter = async() => {
     const message = await getString('needsfilter', 'report_autograder');
 
     $('#autograder-pagination-container').empty();
-    $('#autograder-table-body').html(
-        $('<tr>').append(
-            $('<td>').attr('colspan', 99).addClass('text-center text-muted py-5').text(message)
-        )
-    );
+    $('#autograder-table-body').empty();
+    showEmpty('filter', message);
 };
 
 /**
@@ -126,11 +123,17 @@ const fetchAndRenderReport = (page) => {
 
             setRecordsPerPage(limit);
 
+            // The students of each status come with the count of the rows, so they are there only for the first page.
+            if (response.statuscounts && response.statuscounts.length) {
+                renderCounts(response.statuscounts);
+            }
+
             // -1 is the server saying it did not count, because nothing that
             // could change the count has happened since it last did.
             if (response.totalrecords >= 0) {
                 knownTotal = response.totalrecords;
             }
+
 
             const $reportRoot = $('#autograder-report-container');
 
@@ -179,11 +182,12 @@ const fetchAndRenderReport = (page) => {
  *        was reached from one of the summary tiles.
  */
 export const init = (scope, presetStatus) => {
+    // The box of the table takes the height the window leaves it.
+    fitTables();
     initState(scope);
 
     if (presetStatus) {
         $('#status').val(presetStatus);
-        setFilters([{name: 'status', value: presetStatus}]);
     }
 
     const container = $('#autograder-report-container');
@@ -208,26 +212,29 @@ export const init = (scope, presetStatus) => {
         }, true);
     }
 
-    initFiltersUi(presetStatus);
-
-    // The bar can arrive with something already chosen — a status from a
-    // summary tile, or the group the viewer was last looking at, which in an
-    // activity that separates groups is not optional. So the first page is
-    // asked for with whatever the bar says, not with nothing.
-    setFilters(collectFilters());
-
-    attachFilterListeners(
+    initToolbar(
         (filters) => {
             setFilters(filters);
             resetSort();
             fetchAndRenderReport(0);
         },
         () => {
-            setFilters([]);
+            // A group that cannot be left (an activity that separates groups) stays, so the filters are read again.
+            setFilters(collectFilters());
             resetSort();
             fetchAndRenderReport(0);
         },
     );
+
+    // The bar can arrive with something already chosen, a status from a link or the group the viewer was last looking at, which
+    // in an activity that separates groups is not optional. So the first page is asked for with whatever the bar says.
+    setFilters(collectFilters());
+
+    // The button at the end of a row opens its details.
+    container.on('click', '[data-action="row-details"]', function(e) {
+        e.preventDefault();
+        showDetails(this.dataset.rowkey);
+    });
 
     container.on('click', '[data-autograder-sort]', function(e) {
         e.preventDefault();

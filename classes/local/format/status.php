@@ -156,21 +156,27 @@ final class status {
     }
 
     /**
-     * The badge's class.
+     * The classes of a status badge: a badge of Bootstrap with the colour of the role that the state plays.
      *
-     * One class per state, painted from this plugin's own CSS rather than from
-     * Bootstrap's colour names. That is not only so each state can carry its
-     * own tone: Bootstrap 4 and Bootstrap 5 do not name their badge colours the
-     * same way (`badge-success` against `text-bg-success`), and this report is
-     * drawn on Moodle branches that ship both, so a colour class picked from
-     * either would simply do nothing on the other. The state modifier is a
-     * hook for this plugin's stylesheet, not a colour.
+     * The name of a colour is the one of Bootstrap 4 on every version of Moodle: Bootstrap 5 does not use it, so the plugin
+     * paints it, as the design system draws a badge (a tint of the colour with its text), and a theme can restyle it like any
+     * other badge.
      *
      * @param string $status One of this class's constants.
      * @return string
      */
     public static function badge_class(string $status): string {
-        return 'autograder-badge autograder-badge-' . $status;
+        $tones = [
+            self::PENDING => 'primary',
+            self::GRADED => 'success',
+            self::MANUAL => 'info',
+            self::FAILED => 'danger',
+            self::NOT_AUTOGRADED => 'warning',
+            self::NOT_ENGAGED => 'secondary',
+        ];
+        $tone = $tones[$status] ?? 'secondary';
+
+        return "badge badge-soft badge-dot rounded-pill text-bg-{$tone}";
     }
 
     /**

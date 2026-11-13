@@ -8,12 +8,14 @@ actor "Administrator" as A_Administrator
 
 rectangle "report_autograder" {
   package "Reading" {
-    usecase "View the report of the site" as UC_viewSiteReport
-    usecase "See who would grade each course" as UC_viewGraders
+    usecase "Ver el informe del sitio" as UC_viewSiteReport
+    usecase "Ver quién calificaría cada curso" as UC_viewGraders
+    usecase "Acotar el informe" as UC_narrowReport
   }
 }
 
 A_Administrator --> UC_viewSiteReport
 A_Administrator --> UC_viewGraders
+A_Administrator --> UC_narrowReport
 
 @enduml

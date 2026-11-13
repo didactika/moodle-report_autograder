@@ -6,9 +6,25 @@ order: 60
 
 Go to **Site administration > Reports > Autograder report > Graders by course**. You need the capability `report/autograder:viewsite`, and `report/autograder:viewcourse` in the course you choose.
 
-<Screenshot src="asset:rp-graders.webp" alt="The Graders by course page, with the teachers who could grade a course and the fallback grader" caption="The teachers who could grade a course." url="/report/autograder/graders.php" />
+<Screenshot src="asset:rp-graders.webp" alt="The Graders by course page, with the courses where Autograder is enabled and the state of each" caption="The courses where Autograder is enabled, with who could grade in each." url="/report/autograder/graders.php" />
 
-Choose a course. The page shows how many teachers could grade there and how many students could be graded, and lists the teachers; the fallback grader of the site appears with a label. Select **See which grader each student would get** to list the students with the teacher each would be graded as.
+## The courses
+
+The page lists the courses where Autograder is enabled in at least one activity. For each course it shows the number of autograded activities, the teachers who could grade, the number of students and a state:
+
+- **Ready**: at least one teacher can grade there;
+- **Fallback grader only**: only the fallback grader of the site can grade there;
+- **Nobody can grade**: nobody can grade there, and every grade would fail.
+
+Search a course by its short or full name. At the end of each row, the round buttons open the grader of each student of that course and the report of the course.
+
+## One course
+
+<Screenshot src="asset:rp-graders-course.webp" alt="The graders of one course, with the teachers who could grade and the grader of each student" caption="The teachers of a course and the grader each student would get." url="/report/autograder/graders.php" />
+
+The page of a course shows how many teachers could grade there and how many students could be graded, and lists the teachers; the fallback grader of the site appears with a label. Under them, each student appears with the teacher they would be graded as.
+
+Search a student by name, and use the **Show** menu to see only the students that the fallback grader would grade or the ones that nobody would grade. When that menu narrows the list, the cross that replaces its arrow shows every student again.
 
 It is useful to check a course before any grade is due. A course where nobody can grade is flagged, since every grade in it would fail unless a fallback grader is configured in Autograder.
 

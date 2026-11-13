@@ -8,10 +8,14 @@ actor "Teacher" as A_Teacher
 
 rectangle "report_autograder" {
   package "Reading" {
-    usecase "View the report of an activity or a course" as UC_viewReport
+    usecase "Ver el informe de una actividad o de un curso" as UC_viewReport
+    usecase "Acotar el informe" as UC_narrowReport
+    usecase "Calificar a un estudiante desde el informe" as UC_gradeFromReport
   }
 }
 
 A_Teacher --> UC_viewReport
+A_Teacher --> UC_narrowReport
+A_Teacher --> UC_gradeFromReport
 
 @enduml
