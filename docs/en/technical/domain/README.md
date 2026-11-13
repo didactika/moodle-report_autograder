@@ -58,6 +58,8 @@ The vertical position of an entity expresses its importance to the project objec
 | RN-012 | The button that opens the details of a row takes the colour of the most serious thing in them: information, a problem that can still be solved, or a failed grading. A grade that is not in the gradebook yet carries the label Provisional, and a row without a grade shows a dash. | ReportRow | `templates/table/_row.mustache`, `templates/table/row_details.mustache`, `amd/src/ui/report.js` |
 | RN-013 | The columns of the table keep the width they had the first time the table had rows; a filter, a sort or another page never moves them. They are measured again only when the box of the table changes width. | ReportRow | `amd/src/ui/report.js` |
 | RN-014 | The row of filters is never split in two lines: when the menus do not fit beside the search (10 rem), they are gathered in one menu, Filters, with the funnel icon and the number of filters in use, and they come apart again when there is room. A long value is cut with an ellipsis before the cross of its menu. | Filter | `amd/src/ui/toolbar.js` |
+| RN-015 | A period of grading dates never goes the wrong way round: a first day chosen after the last one moves the last one to it, and a last day chosen before the first one moves the first one to it. | Filter | `amd/src/ui/toolbar.js` |
+| RN-016 | The box of the table takes the height the window leaves it under the filters, less the pager, and at least 18rem, so on a computer the filters, the table and the pager fit the window. The lines of the rows reach the end of the box and the last row keeps its line. | ReportRow | `amd/src/fit_tables.js` |
 
 ## Lifecycles
 

@@ -17,7 +17,7 @@ La fila situada sobre la tabla contiene la búsqueda y un menú para cada filtro
 - el **campo de búsqueda** localiza a un estudiante por su nombre a medida que escribe;
 - **Estado** muestra cada estado con el número de estudiantes que tiene; marque uno o varios para ver solo a esos estudiantes;
 - el menú de grupos, que indica **Todos los grupos** mientras no se elige ninguno, acota la lista a un grupo, y solo aparece cuando la actividad usa grupos;
-- **Fecha de calificación** limita la lista a un periodo: hoy, los últimos siete días, el mes en curso, los últimos treinta días o dos fechas a su elección.
+- **Fecha de calificación** limita la lista a un periodo: hoy, los últimos siete días, el mes en curso, los últimos treinta días o dos fechas a su elección. La primera fecha nunca es posterior a la última: una fecha que pasa a la otra mueve la otra hasta ella.
 
 Un menú que acota la lista aparece resaltado y muestra solo a qué está acotada: por ejemplo **Pendiente**, o **Estado: 2** cuando hay dos estados marcados. La cruz que sustituye a su flecha quita ese filtro. El botón con el icono de recargar, al final de la fila, quita a la vez la búsqueda y todos los filtros.
 
@@ -27,7 +27,7 @@ La fila de filtros nunca se divide en dos líneas. Cuando los menús no caben ju
 
 ## Leer la lista y desplazarse por ella
 
-Seleccione el encabezado de una columna ordenable para ordenar por ella, y selecciónelo de nuevo para invertir el orden. La tabla conserva la misma altura sea cual sea su contenido: cuando tiene más filas de las que caben, se desplaza dentro de su caja y los encabezados permanecen a la vista.
+Seleccione el encabezado de una columna ordenable para ordenar por ella, y selecciónelo de nuevo para invertir el orden. La tabla conserva una sola altura sea cual sea su contenido, el espacio que le deja la ventana, de modo que en un ordenador los filtros, la tabla y el paginador caben en la pantalla: cuando tiene más filas de las que caben, se desplaza dentro de su caja y los encabezados permanecen a la vista.
 
 Bajo la tabla, **Resultados por página** ofrece los tamaños menores que la lista, y **Todos**: una lista de hasta 12 estudiantes los muestra a todos; una de 13 a 24 ofrece 12 o todos; y así sucesivamente hasta 12, 24, 48 y 96. Las flechas llevan a la página anterior y a la siguiente.
 

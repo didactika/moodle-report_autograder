@@ -46,6 +46,7 @@ import {showLoading, renderTable, showEmpty, showDetails} from './ui/report';
 import {renderPagination} from './ui/pagination';
 import {collectFilters, init as initToolbar, renderCounts} from './ui/toolbar';
 import {updateSortHeaderUI} from './ui/table_sort';
+import {init as fitTables} from 'report_autograder/fit_tables';
 
 let requestId = 0;
 
@@ -181,6 +182,8 @@ const fetchAndRenderReport = (page) => {
  *        was reached from one of the summary tiles.
  */
 export const init = (scope, presetStatus) => {
+    // The box of the table takes the height the window leaves it.
+    fitTables();
     initState(scope);
 
     if (presetStatus) {

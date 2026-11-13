@@ -76,6 +76,7 @@ A teacher needs to see, for each student, what Autograder decided: the status, t
 | RN-011 | The first time a person opens the report of an activity or of a course, a guided tour presents it; when the site requires it, the tour cannot be skipped before its last step. |
 | RN-012 | The button that opens the details of a row takes the colour of the most serious thing in them: information, a problem that can still be solved, or a failed grading. A grade that is not in the gradebook yet carries the label Provisional, and a row without a grade shows a dash. |
 | RN-013 | The columns of the table keep the width they had the first time the table had rows; a filter, a sort or another page never moves them. They are measured again only when the box of the table changes width. |
+| RN-016 | The box of the table takes the height the window leaves it under the filters, less the pager, and at least 18rem, so on a computer the filters, the table and the pager fit the window. The lines of the rows reach the end of the box and the last row keeps its line. |
 
 ## Specification
 

@@ -156,6 +156,7 @@ if ($courseid > 0) {
 }
 
 $PAGE->requires->js_call_amd('report_autograder/ui/submit_on_change', 'init');
+$PAGE->requires->js_call_amd('report_autograder/fit_tables', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('report_autograder/graders', $context);

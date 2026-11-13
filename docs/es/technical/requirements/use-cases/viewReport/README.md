@@ -76,6 +76,7 @@ Un docente necesita ver, para cada estudiante, lo que Autograder decidió: el es
 | RN-011 | La primera vez que una persona abre el informe de una actividad o de un curso, un recorrido guiado lo presenta; cuando el sitio lo exige, el recorrido no puede omitirse antes de su último paso. |
 | RN-012 | El botón que abre el detalle de una fila toma el color de lo más grave que contiene: información, un problema que aún puede resolverse o una calificación con error. Una calificación que aún no está en el libro de calificaciones lleva la etiqueta Provisional, y una fila sin calificación muestra un guion. |
 | RN-013 | Las columnas de la tabla conservan el ancho que tenían la primera vez que la tabla tuvo filas; un filtro, una ordenación u otra página nunca las mueven. Se miden de nuevo solo cuando cambia el ancho del recuadro de la tabla. |
+| RN-016 | La caja de la tabla toma la altura que le deja la ventana bajo los filtros, menos el paginador, y al menos 18rem, de modo que en un ordenador los filtros, la tabla y el paginador caben en la ventana. Las líneas de las filas llegan al final de la caja y la última fila conserva su línea. |
 
 ## Especificación
 

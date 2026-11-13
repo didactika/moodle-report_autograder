@@ -403,7 +403,19 @@ export const init = (onChange, onClear) => {
     });
 
     menu('status').on('change', 'input[type="checkbox"]', changed);
-    form.on('change', '#autograder-filter-group, #grading_date_from, #grading_date_to', changed);
+    form.on('change', '#autograder-filter-group', changed);
+    // The two days of a period never go the wrong way round: when the day just chosen passes the other one, the other one moves
+    // to it, however the day was written.
+    form.on('change', '#grading_date_from, #grading_date_to', function() {
+        const from = $('#grading_date_from');
+        const to = $('#grading_date_to');
+        if (from.val() && to.val() && from.val() > to.val()) {
+            (this.id === 'grading_date_from' ? to : from).val(this.value);
+        }
+        from.attr('max', to.val() || null);
+        to.attr('min', from.val() || null);
+        changed();
+    });
 
     menu('date').on('click', '[data-preset]', function() {
         const [from, to] = presets()[this.getAttribute('data-preset')];
