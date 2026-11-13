@@ -1114,7 +1114,28 @@
     border-radius: 50%;
 }
 
-.arp .btn-hint .icon {
+.arp .table-actions .btn-hint {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.875rem;
+}
+
+.arp .table-actions .btn-hint:focus-visible {
+    box-shadow: inset 0 0 0 2px currentcolor;
+}
+
+.arp .btn-hint + .popover .icon,
+.arp .table td:not(.table-actions) .icon {
+    width: 1em;
+    height: 1em;
+    margin: 0;
+    font-size: 0.875em;
+}
+
+.arp .btn-hint .icon,
+.arp .btn-hint + .popover .text-info .icon,
+.arp .btn-hint + .popover .text-warning .icon,
+.arp .btn-hint + .popover .text-danger .icon {
     /* stylelint-disable-next-line declaration-no-important */
     color: inherit !important;
 }

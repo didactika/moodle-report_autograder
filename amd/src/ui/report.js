@@ -59,6 +59,12 @@ export const showEmpty = (icon, message = '') => {
 /** The texts of the explanations of a row, read once. */
 let noteStrings = null;
 
+/** The icons of the kinds of explanation, drawn once with the icon map of the theme. */
+let noteIcons = null;
+
+/** The icon of each kind of explanation. */
+const NOTE_ICONS = ['i/invalid', 'i/warning', 'i/calendar', 'i/duration', 'i/user'];
+
 /**
  * Adds to each row what it explains, from the most serious: why it failed, why there is no grade or no grader, then why the date,
  * what the provisional grade is and whose name the grade will carry.
@@ -73,27 +79,31 @@ const withNotes = async(records) => {
         const texts = await getStrings(keys.map((key) => ({key, component: 'report_autograder'})));
         noteStrings = Object.fromEntries(keys.map((key, index) => [key, texts[index]]));
     }
+    if (!noteIcons) {
+        const icons = await Promise.all(NOTE_ICONS.map((icon) => templates.renderPix(icon, 'core')));
+        noteIcons = Object.fromEntries(NOTE_ICONS.map((icon, index) => [icon, icons[index]]));
+    }
     const t = noteStrings;
     return records.map((row) => {
         const notes = [];
-        const add = (title, message, tone) => notes.push({title, message, tone});
+        const add = (title, message, tone, icon) => notes.push({title, message, tone, icon: noteIcons[icon]});
         if (row.failure_reason) {
-            add(t['info:failure'], row.failure_reason, 'danger');
+            add(t['info:failure'], row.failure_reason, 'danger', 'i/invalid');
         }
         if (!row.grade && row.grade_problem) {
-            add(t['info:problem'], row.grade_problem, 'warning');
+            add(t['info:problem'], row.grade_problem, 'warning', 'i/warning');
         }
         if (!row.graded_by && row.will_grade_problem) {
-            add(t['info:grader'], row.will_grade_problem, 'warning');
+            add(t['info:grader'], row.will_grade_problem, 'warning', 'i/warning');
         }
         if (row.date_reason) {
-            add(t['info:date'], row.date_reason, 'info');
+            add(t['info:date'], row.date_reason, 'info', 'i/calendar');
         }
         if (!row.grade && row.provisional_grade) {
-            add(t['info:grade'], t.grade_provisional_help, 'info');
+            add(t['info:grade'], t.grade_provisional_help, 'info', 'i/duration');
         }
         if (!row.graded_by && row.will_grade) {
-            add(t.gradedby_prospective, t.gradedby_prospective_help, 'info');
+            add(t.gradedby_prospective, t.gradedby_prospective_help, 'info', 'i/user');
         }
         const tone = notes.length ? notes[0].tone : 'info';
         return {...row, notes, hasnotes: notes.length > 0, notestone: tone, notesinfo: tone === 'info'};

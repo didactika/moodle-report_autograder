@@ -55,7 +55,7 @@
         "hasnotes": true,
         "notestone": "info",
         "notesinfo": true,
-        "notes": [{"title": "Why this date", "message": "Counted from the close date of the activity.", "tone": "info"}]
+        "notes": [{"title": "Why this date", "message": "Counted from the close date of the activity.", "tone": "info", "icon": ""}]
     }
 }}
 <tr data-record-id="{{rowkey}}">
@@ -86,7 +86,7 @@
     <td>
         {{#grade}}<strong>{{.}}</strong>{{/grade}}
         {{^grade}}
-            {{#provisional_grade}}<span class="font-italic fst-italic text-muted">{{.}}</span>{{/provisional_grade}}
+            {{#provisional_grade}}<span class="text-muted text-nowrap" title="{{#str}}info:grade, report_autograder{{/str}}">{{#pix}}i/duration, core{{/pix}} <span class="font-italic fst-italic">{{.}}</span></span>{{/provisional_grade}}
             {{^provisional_grade}}<span class="text-muted">—</span>{{/provisional_grade}}
         {{/grade}}
     </td>
@@ -106,8 +106,8 @@
            data-container="body" data-bs-container="body"
            data-toggle="popover" data-bs-toggle="popover"
            data-placement="left" data-bs-placement="left"
-           data-content="<ul class='list-unstyled mb-0'>{{#notes}}<li class='border-left border-start border-{{tone}} pl-2 ps-2 mb-2'><strong class='d-block text-{{tone}}'>{{title}}</strong>{{message}}</li>{{/notes}}</ul>"
-           data-bs-content="<ul class='list-unstyled mb-0'>{{#notes}}<li class='border-left border-start border-{{tone}} pl-2 ps-2 mb-2'><strong class='d-block text-{{tone}}'>{{title}}</strong>{{message}}</li>{{/notes}}</ul>"
+           data-content="<ul class='list-unstyled mb-0'>{{#notes}}<li class='d-flex mb-3'><span class='flex-shrink-0 mr-2 me-2 text-{{tone}}'>{{icon}}</span><span><strong class='d-block text-{{tone}}'>{{title}}</strong>{{message}}</span></li>{{/notes}}</ul>"
+           data-bs-content="<ul class='list-unstyled mb-0'>{{#notes}}<li class='d-flex mb-3'><span class='flex-shrink-0 mr-2 me-2 text-{{tone}}'>{{icon}}</span><span><strong class='d-block text-{{tone}}'>{{title}}</strong>{{message}}</span></li>{{/notes}}</ul>"
            data-html="true" data-bs-html="true"
            tabindex="0"
            data-trigger="focus" data-bs-trigger="focus"
