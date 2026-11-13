@@ -80,7 +80,10 @@ $pager = static function (array $data, array $keep) use ($courseid, $pageurl, $p
     // so on up to 12, 24, 48, 96 and All. The select shows All when every row fits on the page.
     $fitting = array_values(array_filter(grader_list::PER_PAGE_OPTIONS, static fn(int $size): bool => $size < $data['total']));
     $shown = in_array($perpage, $fitting, true) ? $perpage : grader_list::ALL;
-    $sizes = array_map(static fn(int $size): array => ['value' => $size, 'label' => $size, 'selected' => $size === $shown], $fitting);
+    $sizes = array_map(
+        static fn(int $size): array => ['value' => $size, 'label' => $size, 'selected' => $size === $shown],
+        $fitting
+    );
     $sizes[] = ['value' => grader_list::ALL, 'label' => get_string('pagination:all', 'report_autograder'),
         'selected' => $shown === grader_list::ALL];
 
@@ -135,8 +138,11 @@ if ($courseid > 0) {
     $context['filterset'] = $students['filter'] !== grader_list::FILTER_ALL;
     $context['filterclearurl'] = (new moodle_url('/report/autograder/graders.php', array_filter(['courseid' => $courseid,
         'search' => $search, 'perpage' => $perpage === grader_list::PER_PAGE ? 0 : $perpage])))->out(false);
-    $context['pager'] = $pager($students, array_filter(['search' => $search, 'filter' => $students['filter'] === 'all' ? '' : $students['filter'],
-        'perpage' => $perpage]));
+    $context['pager'] = $pager($students, array_filter([
+        'search' => $search,
+        'filter' => $students['filter'] === grader_list::FILTER_ALL ? '' : $students['filter'],
+        'perpage' => $perpage,
+    ]));
 } else {
     $overview = grader_list::overview($search, $page, $perpage);
     $context['courses'] = array_map(static function (array $course): array {
