@@ -1,0 +1,83 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template report_autograder/table/row_details
+
+    The details of a row, as a record: what went wrong first, then each value with what explains it.
+
+    Context variables required for this template:
+    * failure_reason, grade_problem, will_grade_problem - What went wrong, when something did
+    * activity_name - The activity, in the reports of a course and of the site
+    * status, status_class - The status and its badge
+    * completed_at, date_reason - The grading date and what it is based on
+    * grade, provisional_grade - The grade in the gradebook, or the one that is expected
+    * graded_by, will_grade - The teacher the grade is recorded in the name of, or will be
+
+    Example context (json):
+    {
+        "status": "Pending",
+        "status_class": "badge badge-soft badge-dot rounded-pill text-bg-primary",
+        "completed_at": "15/11/26, 12:22",
+        "date_reason": "Counted from the close date of the activity.",
+        "provisional_grade": "100",
+        "will_grade": "Maria Ortega"
+    }
+}}
+{{#failure_reason}}
+<div class="alert alert-danger" role="alert"><strong class="d-block">{{#str}}info:failure, report_autograder{{/str}}</strong>{{.}}</div>
+{{/failure_reason}}
+{{^grade}}{{#grade_problem}}
+<div class="alert alert-warning" role="alert"><strong class="d-block">{{#str}}info:problem, report_autograder{{/str}}</strong>{{.}}</div>
+{{/grade_problem}}{{/grade}}
+{{^graded_by}}{{#will_grade_problem}}
+<div class="alert alert-warning" role="alert"><strong class="d-block">{{#str}}info:grader, report_autograder{{/str}}</strong>{{.}}</div>
+{{/will_grade_problem}}{{/graded_by}}
+<dl class="row mb-0">
+    {{#activity_name}}
+    <dt class="col-sm-4">{{#str}}header:activity, report_autograder{{/str}}</dt>
+    <dd class="col-sm-8">{{.}}</dd>
+    {{/activity_name}}
+    <dt class="col-sm-4">{{#str}}header:external_status, report_autograder{{/str}}</dt>
+    <dd class="col-sm-8"><span class="{{status_class}}">{{status}}</span></dd>
+    <dt class="col-sm-4">{{#str}}header:completed_at, report_autograder{{/str}}</dt>
+    <dd class="col-sm-8">
+        {{completed_at}}
+        {{#date_reason}}<div class="small text-muted">{{.}}</div>{{/date_reason}}
+    </dd>
+    <dt class="col-sm-4">{{#str}}header:grade, report_autograder{{/str}}</dt>
+    <dd class="col-sm-8">
+        {{#grade}}<strong>{{.}}</strong>{{/grade}}
+        {{^grade}}
+            {{#provisional_grade}}
+            <span class="text-muted">{{.}}</span> <span class="badge badge-soft rounded-pill text-bg-secondary">{{#str}}grade_expected, report_autograder{{/str}}</span>
+            <div class="small text-muted">{{#str}}details:grade_expected, report_autograder, {{completed_at}}{{/str}}</div>
+            {{/provisional_grade}}
+            {{^provisional_grade}}<span class="text-muted">—</span>{{/provisional_grade}}
+        {{/grade}}
+    </dd>
+    <dt class="col-sm-4">{{#str}}header:gradedby, report_autograder{{/str}}</dt>
+    <dd class="col-sm-8 mb-0">
+        {{#graded_by}}{{.}}{{/graded_by}}
+        {{^graded_by}}
+            {{#will_grade}}
+            <span class="text-muted">{{.}}</span>
+            <div class="small text-muted">{{#str}}gradedby_prospective_help, report_autograder{{/str}}</div>
+            {{/will_grade}}
+            {{^will_grade}}<span class="text-muted">—</span>{{/will_grade}}
+        {{/graded_by}}
+    </dd>
+</dl>

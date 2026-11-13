@@ -42,7 +42,7 @@ import {
     resetSort,
 } from './state';
 import {getReportData} from './service/repository';
-import {showLoading, renderTable, showEmpty} from './ui/report';
+import {showLoading, renderTable, showEmpty, showDetails} from './ui/report';
 import {renderPagination} from './ui/pagination';
 import {collectFilters, init as initToolbar, renderCounts} from './ui/toolbar';
 import {updateSortHeaderUI} from './ui/table_sort';
@@ -226,6 +226,12 @@ export const init = (scope, presetStatus) => {
     // The bar can arrive with something already chosen, a status from a link or the group the viewer was last looking at, which
     // in an activity that separates groups is not optional. So the first page is asked for with whatever the bar says.
     setFilters(collectFilters());
+
+    // The button at the end of a row opens its details.
+    container.on('click', '[data-action="row-details"]', function(e) {
+        e.preventDefault();
+        showDetails(this.dataset.rowkey);
+    });
 
     container.on('click', '[data-autograder-sort]', function(e) {
         e.preventDefault();

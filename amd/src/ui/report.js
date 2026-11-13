@@ -23,7 +23,9 @@
 
 import $ from 'jquery';
 import templates from 'core/templates';
-import {get_string as getString, get_strings as getStrings} from 'core/str';
+import {get_string as getString} from 'core/str';
+import ModalFactory from 'core/modal_factory';
+import ModalEvents from 'core/modal_events';
 import notification from 'core/notification';
 
 /** The table's own root, which every helper here works inside. */
@@ -56,58 +58,46 @@ export const showEmpty = (icon, message = '') => {
     empty.find('[data-empty-text]').text(message);
 };
 
-/** The texts of the explanations of a row, read once. */
-let noteStrings = null;
-
-/** The icons of the kinds of explanation, drawn once with the icon map of the theme. */
-let noteIcons = null;
-
-/** The icon of each kind of explanation. */
-const NOTE_ICONS = ['i/invalid', 'i/warning', 'i/calendar', 'i/duration', 'i/user'];
+/** The rows of the page that is shown, by their key, for their details. */
+const shown = new Map();
 
 /**
- * Adds to each row what it explains, from the most serious: why it failed, why there is no grade or no grader, then why the date,
- * what the provisional grade is and whose name the grade will carry.
+ * Adds to each row whether it has something to explain and the colour of the most serious thing: red when the grading failed,
+ * amber when there is no grade or no grader, blue when it only informs.
  *
  * @param {Array} records The rows.
- * @returns {Promise<Array>} The rows with their explanations.
+ * @returns {Array} The rows.
  */
-const withNotes = async(records) => {
-    if (!noteStrings) {
-        const keys = ['info:failure', 'info:problem', 'info:grader', 'info:date', 'info:grade', 'gradedby_prospective',
-            'grade_provisional_help', 'gradedby_prospective_help'];
-        const texts = await getStrings(keys.map((key) => ({key, component: 'report_autograder'})));
-        noteStrings = Object.fromEntries(keys.map((key, index) => [key, texts[index]]));
+const withDetails = (records) => records.map((row) => {
+    let tone = 'info';
+    if (row.failure_reason) {
+        tone = 'danger';
+    } else if ((!row.grade && row.grade_problem) || (!row.graded_by && row.will_grade_problem)) {
+        tone = 'warning';
     }
-    if (!noteIcons) {
-        const icons = await Promise.all(NOTE_ICONS.map((icon) => templates.renderPix(icon, 'core')));
-        noteIcons = Object.fromEntries(NOTE_ICONS.map((icon, index) => [icon, icons[index]]));
+    const hasdetails = Boolean(row.failure_reason || row.grade_problem || row.will_grade_problem || row.date_reason
+        || (!row.grade && row.provisional_grade) || (!row.graded_by && row.will_grade));
+    shown.set(String(row.rowkey), row);
+    return {...row, hasdetails, detailstone: tone, detailsinfo: tone === 'info'};
+});
+
+/**
+ * Opens the details of a row in a dialog of Moodle.
+ *
+ * @param {string} rowkey The key of the row.
+ */
+export const showDetails = async(rowkey) => {
+    const row = shown.get(String(rowkey));
+    if (!row) {
+        return;
     }
-    const t = noteStrings;
-    return records.map((row) => {
-        const notes = [];
-        const add = (title, message, tone, icon) => notes.push({title, message, tone, icon: noteIcons[icon]});
-        if (row.failure_reason) {
-            add(t['info:failure'], row.failure_reason, 'danger', 'i/invalid');
-        }
-        if (!row.grade && row.grade_problem) {
-            add(t['info:problem'], row.grade_problem, 'warning', 'i/warning');
-        }
-        if (!row.graded_by && row.will_grade_problem) {
-            add(t['info:grader'], row.will_grade_problem, 'warning', 'i/warning');
-        }
-        if (row.date_reason) {
-            add(t['info:date'], row.date_reason, 'info', 'i/calendar');
-        }
-        if (!row.grade && row.provisional_grade) {
-            add(t['info:grade'], t.grade_provisional_help, 'info', 'i/duration');
-        }
-        if (!row.graded_by && row.will_grade) {
-            add(t.gradedby_prospective, t.gradedby_prospective_help, 'info', 'i/user');
-        }
-        const tone = notes.length ? notes[0].tone : 'info';
-        return {...row, notes, hasnotes: notes.length > 0, notestone: tone, notesinfo: tone === 'info'};
+    const modal = await ModalFactory.create({
+        title: row.user_name || '',
+        body: templates.render('report_autograder/table/row_details', row),
+        large: false,
     });
+    modal.getRoot().on(ModalEvents.hidden, () => modal.destroy());
+    modal.show();
 };
 
 /**
@@ -154,8 +144,8 @@ export const renderTable = (records, onRenderComplete, isCurrent = () => true) =
         return;
     }
 
-    withNotes(records)
-        .then((rows) => templates.render('report_autograder/table_rows', {records: rows}))
+    shown.clear();
+    templates.render('report_autograder/table_rows', {records: withDetails(records)})
         .then(html => {
             if (!isCurrent()) {
                 return null;
