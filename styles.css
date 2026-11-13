@@ -1149,3 +1149,54 @@
 .report-autograder-tour-required [data-role=flexitour-step] [data-role=end].btn-secondary {
     display: none;
 }
+
+@media (max-width: 767.98px) {
+
+    .arp {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .arp .table-responsive .table th,
+    .arp .table-responsive .table td {
+        white-space: nowrap;
+    }
+
+    .arp .table-responsive .table th:first-child,
+    .arp .table-responsive .table td:first-child {
+        position: sticky;
+        inset-inline-start: 0;
+        z-index: 1;
+        background-color: var(--dd-surface);
+        box-shadow: inset -1px 0 0 var(--dd-hairline, rgba(0, 0, 0, 0.08));
+    }
+
+    .arp .table-responsive .table thead th:first-child {
+        z-index: 2;
+    }
+
+    .arp .nav-tabs,
+    .arp .dd-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    .arp .nav-tabs .nav-link,
+    .arp .dd-chip {
+        flex: none;
+        white-space: nowrap;
+    }
+
+    .arp .table-toolbar[data-region=filters] {
+        position: relative;
+    }
+
+    .arp .table-toolbar[data-region=filters] > .table-toolbar-start {
+        padding-inline-end: 3rem;
+    }
+
+    .arp .table-toolbar[data-region=filters] > .table-toolbar-end {
+        position: absolute;
+        inset-block-start: 0.75rem;
+        inset-inline-end: 0.75rem;
+    }
+}
