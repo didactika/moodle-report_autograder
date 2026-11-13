@@ -44,7 +44,7 @@ import {
 import {getReportData} from './service/repository';
 import {showLoading, renderTable} from './ui/report';
 import {renderPagination} from './ui/pagination';
-import {collectFilters, init as initToolbar, renderApplied, renderCounts} from './ui/toolbar';
+import {collectFilters, init as initToolbar, renderCounts} from './ui/toolbar';
 import {updateSortHeaderUI} from './ui/table_sort';
 
 let requestId = 0;
@@ -136,7 +136,6 @@ const fetchAndRenderReport = (page) => {
                 knownTotal = response.totalrecords;
             }
 
-            renderApplied(knownTotal);
 
             const $reportRoot = $('#autograder-report-container');
 

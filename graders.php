@@ -134,6 +134,8 @@ if ($courseid > 0) {
     $context['pager'] = $pager($overview, array_filter(['search' => $search, 'perpage' => $overview['perpage']]));
 }
 
+$PAGE->requires->js_call_amd('report_autograder/ui/submit_on_change', 'init');
+
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('report_autograder/graders', $context);
 echo $OUTPUT->footer();

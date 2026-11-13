@@ -42,7 +42,7 @@
         "rowkey": "12-3",
         "user_col": "Ana Lopez",
         "status": "Pending",
-        "status_class": "autograder-badge autograder-badge-pending",
+        "status_class": "badge badge-soft badge-dot rounded-pill text-bg-primary",
         "completed_at": "5 Mar 2030, 10:00",
         "completed_at_sort": 1898236800,
         "provisional_grade": "70",
@@ -182,22 +182,22 @@
         {{/graded_by}}
     </td>
 
-    <td>
+    <td class="table-actions">
         {{#grade_user_url}}
-        <a class="btn btn-outline-secondary btn-sm" href="{{grade_user_url}}">{{#str}}gradeuser, report_autograder{{/str}}</a>
+        <a class="btn btn-link btn-icon btn-sm text-primary" href="{{grade_user_url}}" title="{{#str}}gradeuser, report_autograder{{/str}}"
+            aria-label="{{#str}}gradeuser, report_autograder{{/str}}">{{#pix}}i/grades, core{{/pix}}</a>
         {{/grade_user_url}}
 
         {{^grade_user_url}}
             {{#show_forum_grader}}
-                <button class="btn btn-outline-secondary btn-sm"
+                <button class="btn btn-link btn-icon btn-sm text-primary"
+                    title="{{#str}}gradeuser, report_autograder{{/str}}" aria-label="{{#str}}gradeuser, report_autograder{{/str}}"
                     type="button"
                     data-grade-action="launch"
                     data-grading-component="core_grades"
                     data-grading-component-subtype="point"
                     data-experimental-display-mode="0"
-                    data-initialuserid="{{moodle_userid}}">
-                    {{#str}}gradeuser, report_autograder{{/str}}
-                </button>
+                    data-initialuserid="{{moodle_userid}}">{{#pix}}i/grades, core{{/pix}}</button>
             {{/show_forum_grader}}
         {{/grade_user_url}}
     </td>

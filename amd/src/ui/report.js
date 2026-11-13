@@ -105,8 +105,7 @@ export const renderTable = (records, onRenderComplete, isCurrent = () => true) =
 export const showLoading = () => {
     $(ROOT).attr('aria-busy', 'true');
     const container = $(`${ROOT} tbody`);
-    const cell = (width) => `<td><span class="placeholder-glow"><span class="placeholder col-${width}"></span></span></td>`;
-    const row = `<tr aria-hidden="true">${new Array(columnCount()).fill(cell(8)).join('')}</tr>`;
+    const row = `<tr aria-hidden="true">${'<td><span class="dd-skeleton"></span></td>'.repeat(columnCount())}</tr>`;
 
     container.html(row.repeat(4));
 };

@@ -17,10 +17,10 @@
 {{!
     @template report_autograder/partials/filters
 
-    The bar above the table: the search, the Filters button with its panel, and the filters that are applied.
+    The bar above the table: the search, one menu for each filter and the button that clears them all.
 
-    It is written with the classes of Bootstrap and Moodle, which carry both names where Bootstrap 4 and Bootstrap 5 differ, and it
-    is the top of the card that the table closes: this template opens it and report_table closes it.
+    It is written with the classes of Bootstrap, Moodle and the Didactika design system, which carry both names where Bootstrap 4
+    and Bootstrap 5 differ, and it is the top of the card that the table closes: this template opens it and report_table closes it.
 
     Context variables required for this template:
     * lead - What this report is about, in a line
@@ -46,117 +46,110 @@
         "groups": [{"id": 4, "name": "Group A", "selected": false}]
     }
 }}
-<p class="text-muted mb-3">{{lead}}</p>
+<p class="text-muted mb-0">{{lead}}</p>
 <div class="card">
-<form method="get" action="{{filter_action_url}}" id="autograder-filter-form" role="search"
-    data-remove="{{#str}}filter_remove, report_autograder, __a__{{/str}}"
+<form method="get" action="{{filter_action_url}}" id="autograder-filter-form" class="table-toolbar" role="search" data-region="filters"
     data-label-status="{{#str}}filter_status, report_autograder{{/str}}"
     data-label-course="{{#str}}filter_course, report_autograder{{/str}}"
     data-label-activity="{{#str}}filter_activity, report_autograder{{/str}}"
-    data-label-group="{{#str}}filter_group, report_autograder{{/str}}"
     data-label-date="{{#str}}filter_grading_date, report_autograder{{/str}}"
     data-since="{{#str}}filter_date_since, report_autograder, __a__{{/str}}"
     data-until="{{#str}}filter_date_until, report_autograder, __a__{{/str}}"
     data-range="{{#str}}filter_date_range, report_autograder, {"from": "__from__", "to": "__to__"}{{/str}}"
-    data-results="{{#str}}results_count, report_autograder, __a__{{/str}}"
     data-nomatches="{{#str}}search:nomatches, report_autograder{{/str}}"
     data-loading="{{#str}}search:loading, report_autograder{{/str}}"
     data-clear="{{#str}}filter_clear, report_autograder{{/str}}">
-    <div class="table-toolbar">
-        <div class="table-toolbar-start">
-            <div class="input-group">
-                <span class="input-group-text input-group-prepend">{{#pix}}a/search, core{{/pix}}</span>
-                <label class="sr-only visually-hidden" for="searchname">{{#str}}filter_search, report_autograder{{/str}}</label>
-                <input type="search" class="form-control" name="searchname" id="searchname" value="{{filters.searchname}}"
-                    autocomplete="off" placeholder="{{#str}}filter_search, report_autograder{{/str}}…">
+    <div class="table-toolbar-start">
+        <div class="dd-searchbox">
+            {{#pix}}a/search, core{{/pix}}
+            <label class="sr-only visually-hidden" for="searchname">{{#str}}filter_search, report_autograder{{/str}}</label>
+            <input type="search" class="form-control" name="searchname" id="searchname" value="{{filters.searchname}}"
+                autocomplete="off" placeholder="{{#str}}filter_search, report_autograder{{/str}}">
+        </div>
+        <span class="dd-menu" data-menu="status">
+            <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
+                aria-label="{{#str}}filter_status, report_autograder{{/str}}">{{#str}}filter_status, report_autograder{{/str}}</button>
+            <div class="dd-select-menu" role="group" aria-label="{{#str}}filter_status, report_autograder{{/str}}" hidden>
+                {{#statuses}}
+                <label class="dropdown-item" for="status-{{key}}">
+                    <input type="checkbox" class="form-check-input" id="status-{{key}}" value="{{key}}" data-label="{{label}}">
+                    <span>{{label}}</span>
+                    <span class="dd-chip-count" data-status-count="{{key}}"></span>
+                </label>
+                {{/statuses}}
             </div>
-            <div class="dropdown" id="autograder-filters">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle" id="autograder-filters-toggle"
-                    aria-expanded="false" aria-controls="autograder-filters-panel">
-                    {{#pix}}i/filter, core{{/pix}}
-                    <span>{{#str}}filters, report_autograder{{/str}}</span>
-                    <span class="badge badge-primary badge-pill rounded-pill d-none" id="autograder-filters-count"></span>
-                </button>
-                <div class="dropdown-menu" id="autograder-filters-panel" role="group"
-                    aria-label="{{#str}}filters, report_autograder{{/str}}">
-                    <div class="autograder-panel-body">
-                        <fieldset class="mb-3">
-                            <legend class="h6 mb-2">{{#str}}filter_status, report_autograder{{/str}}</legend>
-                            {{#statuses}}
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="status-{{key}}" value="{{key}}" data-label="{{label}}">
-                                <label class="form-check-label" for="status-{{key}}">
-                                    <span>{{label}}</span>
-                                    <span class="badge badge-secondary badge-pill rounded-pill" data-status-count="{{key}}">0</span>
-                                </label>
-                            </div>
-                            {{/statuses}}
-                            <input type="hidden" name="status" id="status" value="{{filters.status}}">
-                        </fieldset>
-                        {{#shows_course_filter}}
-                        <div class="form-group mb-3 position-relative" data-picker="course" data-optiontype="course"
-                            data-scopecmid="{{scope_cmid}}" data-scopecourseid="{{scope_courseid}}">
-                            <label for="autograder-filter-course-text">{{#str}}filter_course, report_autograder{{/str}}</label>
-                            <input type="search" class="form-control" id="autograder-filter-course-text" autocomplete="off"
-                                value="{{selected_course.name}}"
-                                placeholder="{{#str}}search:typetosearch, report_autograder{{/str}}">
-                            <input type="hidden" name="courseid" id="autograder-filter-course" value="{{selected_course.id}}">
-                            <div class="list-group" hidden></div>
+            <input type="hidden" name="status" id="status" value="{{filters.status}}">
+        </span>
+        {{#shows_course_filter}}
+        <span class="dd-menu" data-menu="course" data-picker="course" data-optiontype="course"
+            data-scopecmid="{{scope_cmid}}" data-scopecourseid="{{scope_courseid}}">
+            <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
+                aria-label="{{#str}}filter_course, report_autograder{{/str}}">{{#str}}filter_course, report_autograder{{/str}}</button>
+            <div class="dd-select-menu" role="group" aria-label="{{#str}}filter_course, report_autograder{{/str}}" hidden>
+                <div class="dd-menu-form">
+                    <input type="search" class="form-control form-control-sm" autocomplete="off" data-picker-search
+                        aria-label="{{#str}}filter_course, report_autograder{{/str}}"
+                        placeholder="{{#str}}search:typetosearch, report_autograder{{/str}}">
+                </div>
+                <div data-picker-options></div>
+            </div>
+            <input type="hidden" name="courseid" id="autograder-filter-course" value="{{selected_course.id}}" data-name="{{selected_course.name}}">
+        </span>
+        {{/shows_course_filter}}
+        {{#shows_activity_filter}}
+        <span class="dd-menu" data-menu="activity" data-picker="activity" data-optiontype="activity"
+            data-scopecmid="{{scope_cmid}}" data-scopecourseid="{{scope_courseid}}">
+            <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
+                aria-label="{{#str}}filter_activity, report_autograder{{/str}}">{{#str}}filter_activity, report_autograder{{/str}}</button>
+            <div class="dd-select-menu" role="group" aria-label="{{#str}}filter_activity, report_autograder{{/str}}" hidden>
+                <div class="dd-menu-form">
+                    <input type="search" class="form-control form-control-sm" autocomplete="off" data-picker-search
+                        aria-label="{{#str}}filter_activity, report_autograder{{/str}}"
+                        placeholder="{{#str}}search:typetosearch, report_autograder{{/str}}">
+                </div>
+                <div data-picker-options></div>
+            </div>
+            <input type="hidden" name="cmid" id="autograder-filter-activity" value="{{selected_activity.id}}" data-name="{{selected_activity.name}}">
+        </span>
+        {{/shows_activity_filter}}
+        {{#shows_group_filter}}
+        <label class="sr-only visually-hidden" for="autograder-filter-group">{{#str}}filter_group, report_autograder{{/str}}</label>
+        <select class="custom-select form-select dd-select" id="autograder-filter-group" name="groupid">
+            {{#offers_all_groups}}
+            <option value="">{{#str}}filter_group_placeholder, report_autograder{{/str}}</option>
+            {{/offers_all_groups}}
+            {{#groups}}
+            <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+            {{/groups}}
+        </select>
+        {{/shows_group_filter}}
+        <span class="dd-menu" data-menu="date">
+            <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
+                aria-label="{{#str}}filter_grading_date, report_autograder{{/str}}">{{#str}}filter_grading_date, report_autograder{{/str}}</button>
+            <div class="dd-select-menu" role="group" aria-label="{{#str}}filter_grading_date, report_autograder{{/str}}" hidden>
+                <button type="button" class="dropdown-item" data-preset="today">{{#str}}filter_date_today, report_autograder{{/str}}</button>
+                <button type="button" class="dropdown-item" data-preset="week">{{#str}}filter_date_week, report_autograder{{/str}}</button>
+                <button type="button" class="dropdown-item" data-preset="month">{{#str}}filter_date_month, report_autograder{{/str}}</button>
+                <button type="button" class="dropdown-item" data-preset="last30">{{#str}}filter_date_last30, report_autograder{{/str}}</button>
+                <hr>
+                <div class="dd-menu-form">
+                    <div class="dd-menu-dates">
+                        <div>
+                            <label class="small mb-1" for="grading_date_from">{{#str}}datepicker_from, report_autograder{{/str}}</label>
+                            <input type="date" class="form-control form-control-sm" name="grading_date_from" id="grading_date_from" value="{{filters.grading_date_from}}">
                         </div>
-                        {{/shows_course_filter}}
-                        {{#shows_activity_filter}}
-                        <div class="form-group mb-3 position-relative" data-picker="activity" data-optiontype="activity"
-                            data-scopecmid="{{scope_cmid}}" data-scopecourseid="{{scope_courseid}}">
-                            <label for="autograder-filter-activity-text">{{#str}}filter_activity, report_autograder{{/str}}</label>
-                            <input type="search" class="form-control" id="autograder-filter-activity-text" autocomplete="off"
-                                value="{{selected_activity.name}}"
-                                placeholder="{{#str}}search:typetosearch, report_autograder{{/str}}">
-                            <input type="hidden" name="cmid" id="autograder-filter-activity" value="{{selected_activity.id}}">
-                            <div class="list-group" hidden></div>
-                        </div>
-                        {{/shows_activity_filter}}
-                        {{#shows_group_filter}}
-                        <div class="form-group mb-3">
-                            <label for="autograder-filter-group">{{#str}}filter_group, report_autograder{{/str}}</label>
-                            <select class="form-control form-select custom-select" id="autograder-filter-group" name="groupid">
-                                {{#offers_all_groups}}
-                                <option value="">{{#str}}filter_group_placeholder, report_autograder{{/str}}</option>
-                                {{/offers_all_groups}}
-                                {{#groups}}
-                                <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-                                {{/groups}}
-                            </select>
-                        </div>
-                        {{/shows_group_filter}}
-                        <fieldset class="mb-3">
-                            <legend class="h6 mb-2">{{#str}}filter_grading_date, report_autograder{{/str}}</legend>
-                            <div class="autograder-presets mb-2">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" data-preset="today">{{#str}}filter_date_today, report_autograder{{/str}}</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" data-preset="week">{{#str}}filter_date_week, report_autograder{{/str}}</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" data-preset="month">{{#str}}filter_date_month, report_autograder{{/str}}</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" data-preset="last30">{{#str}}filter_date_last30, report_autograder{{/str}}</button>
-                            </div>
-                            <div class="autograder-dates">
-                                <div>
-                                    <label class="small" for="grading_date_from">{{#str}}datepicker_from, report_autograder{{/str}}</label>
-                                    <input type="date" class="form-control" name="grading_date_from" id="grading_date_from" value="{{filters.grading_date_from}}">
-                                </div>
-                                <div>
-                                    <label class="small" for="grading_date_to">{{#str}}datepicker_to, report_autograder{{/str}}</label>
-                                    <input type="date" class="form-control" name="grading_date_to" id="grading_date_to" value="{{filters.grading_date_to}}">
-                                </div>
-                            </div>
-                        </fieldset>
-                        <div class="text-right text-end">
-                            <button type="button" class="btn btn-link" id="autograder-filter-clear">{{#str}}filters_reset, report_autograder{{/str}}</button>
+                        <div>
+                            <label class="small mb-1" for="grading_date_to">{{#str}}datepicker_to, report_autograder{{/str}}</label>
+                            <input type="date" class="form-control form-control-sm" name="grading_date_to" id="grading_date_to" value="{{filters.grading_date_to}}">
                         </div>
                     </div>
                 </div>
+                <button type="button" class="dropdown-item text-muted" data-date-clear>{{#str}}filter_clear, report_autograder{{/str}}</button>
             </div>
-        </div>
+        </span>
     </div>
-    <div class="autograder-applied d-none" id="autograder-applied">
-        <ul class="list-unstyled mb-0" id="autograder-applied-list"></ul>
-        <span class="text-muted small" id="autograder-results" role="status"></span>
+    <div class="table-toolbar-end">
+        <button type="button" class="btn btn-link btn-icon" id="autograder-filter-clear" disabled
+            title="{{#str}}filters_reset, report_autograder{{/str}}" aria-label="{{#str}}filters_reset, report_autograder{{/str}}">{{#pix}}i/reload, core{{/pix}}</button>
     </div>
 </form>

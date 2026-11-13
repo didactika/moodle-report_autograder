@@ -14,11 +14,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * The bar above the table: the search, the Filters button and its panel, and the filters that are applied.
+ * The bar above the table: the search, one menu for each filter and the button that clears them all.
  *
- * Every filter answers at once, so there is no button to apply them: the report is asked again as each one changes. The numbers
- * beside the statuses are the ones that the server counts inside every other filter, and the applied filters are shown as badges
- * with a button that lifts each one, with the number of results.
+ * Each filter is a menu with the shape of a select. A menu that narrows the report is tinted and says what it is narrowed to, and
+ * every filter answers at once: the report is asked again as each one changes. The numbers beside the statuses are the ones that
+ * the server counts inside every other filter.
  *
  * @module     report_autograder/ui/toolbar
  * @copyright  2026 Didactika.org
@@ -30,7 +30,6 @@ import $ from 'jquery';
 import ajax from 'core/ajax';
 
 const FORM = '#autograder-filter-form';
-const PANEL = '#autograder-filters-panel';
 
 /** How long to wait after the last key before asking again, in milliseconds. */
 const TYPING_DELAY = 300;
@@ -65,29 +64,19 @@ const presets = () => {
 };
 
 /**
- * The statuses that are ticked, from the boxes of the panel.
+ * The menu of a filter.
+ *
+ * @param {string} name The filter.
+ * @returns {jQuery} Its element.
+ */
+const menu = (name) => $(`${FORM} [data-menu="${name}"]`);
+
+/**
+ * The statuses that are ticked.
  *
  * @returns {string[]} Their keys.
  */
-const chosenStatuses = () => $(`${PANEL} input[type="checkbox"]:checked`).map((i, box) => box.value).get();
-
-/**
- * Writes the ticked statuses in the field that the filter reads.
- */
-const syncStatus = () => {
-    $('#status').val(chosenStatuses().join(','));
-};
-
-/**
- * Ticks the boxes of the statuses that the field says, as a link that arrives already narrowed asks.
- */
-const readStatus = () => {
-    const keys = String($('#status').val() || '').split(',').filter(Boolean);
-
-    $(`${PANEL} input[type="checkbox"]`).each((i, box) => {
-        box.checked = keys.includes(box.value);
-    });
-};
+const chosenStatuses = () => menu('status').find('input[type="checkbox"]:checked').map((i, box) => box.value).get();
 
 /**
  * What the report is narrowed to, as the filters of the web service.
@@ -114,111 +103,64 @@ export const collectFilters = () => {
 };
 
 /**
- * The filters that are applied, among the ones that the report offers, as a list of labels with the way to lift each one.
- *
- * @returns {Array<{key: string, label: string, lift: Function}>} The applied filters.
+ * Says on each menu what the report is narrowed to, tints the ones that narrow it and lets the button that clears them be pressed.
  */
-const applied = () => {
+export const paint = () => {
     const form = $(FORM);
-    const label = (name) => form.data(name);
-    const list = [];
+    const set = (name, label, active) => {
+        menu(name).find('[data-menu-toggle]').text(label).toggleClass('border-primary', active);
+    };
 
-    chosenStatuses().forEach((key) => {
-        const box = $(`#status-${key}`);
+    const statuses = chosenStatuses();
+    let status = form.data('labelStatus');
 
-        list.push({
-            key: `status-${key}`,
-            label: `${label('labelStatus')}: ${box.data('label')}`,
-            lift: () => {
-                box.prop('checked', false);
-                syncStatus();
-            },
-        });
-    });
+    if (statuses.length === 1) {
+        status += `: ${$(`#status-${statuses[0]}`).data('label')}`;
+    } else if (statuses.length > 1) {
+        status += `: ${statuses.length}`;
+    }
+
+    set('status', status, statuses.length > 0);
 
     [['course', 'labelCourse'], ['activity', 'labelActivity']].forEach(([name, text]) => {
         const field = $(`#autograder-filter-${name}`);
 
-        if (field.length && field.val()) {
-            list.push({
-                key: name,
-                label: `${label(text)}: ${$(`#autograder-filter-${name}-text`).val()}`,
-                lift: () => {
-                    field.val('');
-                    $(`#autograder-filter-${name}-text`).val('');
-
-                    if (name === 'course') {
-                        $('#autograder-filter-activity, #autograder-filter-activity-text').val('');
-                    }
-                },
-            });
+        if (field.length) {
+            set(name, field.val() ? `${form.data(text)}: ${field.data('name')}` : form.data(text), Boolean(field.val()));
         }
     });
-
-    const group = $('#autograder-filter-group');
-
-    if (group.length && group.val()) {
-        list.push({
-            key: 'group',
-            label: `${label('labelGroup')}: ${group.find('option:selected').text()}`,
-            lift: () => group.val(''),
-        });
-    }
 
     const from = $('#grading_date_from').val();
     const to = $('#grading_date_to').val();
+    let date = form.data('labelDate');
+    const preset = Object.entries(presets()).find(([, range]) => range[0] === from && range[1] === to);
 
-    if (from || to) {
-        let range = label('range').replace('__from__', from).replace('__to__', to);
-
-        if (!to) {
-            range = label('since').replace('__a__', from);
-        } else if (!from) {
-            range = label('until').replace('__a__', to);
-        }
-
-        list.push({
-            key: 'date',
-            label: `${label('labelDate')}: ${range}`,
-            lift: () => $('#grading_date_from, #grading_date_to').val(''),
-        });
+    if (preset) {
+        date += `: ${menu('date').find(`[data-preset="${preset[0]}"]`).text()}`;
+    } else if (from && to) {
+        date += `: ${form.data('range').replace('__from__', from).replace('__to__', to)}`;
+    } else if (from) {
+        date += `: ${form.data('since').replace('__a__', from)}`;
+    } else if (to) {
+        date += `: ${form.data('until').replace('__a__', to)}`;
     }
 
-    return list;
-};
-
-/**
- * Draws the applied filters, the number on the Filters button and the number of results.
- *
- * @param {number} total The rows that the report has with these filters.
- */
-export const renderApplied = (total) => {
-    const list = applied();
-    const row = $('#autograder-applied');
-    const items = $('#autograder-applied-list').empty();
-    const count = $('#autograder-filters-count');
-    const form = $(FORM);
-
-    count.text(list.length).toggleClass('d-none', list.length === 0);
-    $('#autograder-filters-toggle').toggleClass('active', list.length > 0);
-
-    list.forEach((item) => {
-        const remove = form.data('remove').replace('__a__', item.label);
-        const button = $('<button type="button" class="btn btn-link btn-sm p-0">')
-            .attr({'aria-label': remove, title: remove})
-            .html('&times;')
-            .on('click', () => {
-                item.lift();
-                form.trigger('autograder:filters');
-            });
-
-        items.append($('<li>').append(
-            $('<span class="badge badge-secondary badge-pill rounded-pill">').text(item.label + ' ').append(button)
-        ));
+    set('date', date, Boolean(from || to));
+    menu('date').find('[data-preset]').each(function() {
+        this.setAttribute('aria-selected', preset && preset[0] === this.getAttribute('data-preset') ? 'true' : 'false');
     });
+    menu('date').find('[data-date-clear]').prop('hidden', !(from || to));
 
-    $('#autograder-results').text(form.data('results').replace('__a__', total));
-    row.toggleClass('d-none', list.length === 0);
+    const group = $('#autograder-filter-group');
+    const groupNarrows = group.length > 0 && group.find('option[value=""]').length > 0 && Boolean(group.val());
+
+    group.toggleClass('border-primary', groupNarrows);
+
+    const narrowed = statuses.length > 0 || Boolean(from || to) || groupNarrows || Boolean($('#autograder-filter-course').val())
+        || (menu('activity').length > 0 && Boolean($('#autograder-filter-activity').val()))
+        || String($('#searchname').val() || '').trim() !== '';
+
+    $('#autograder-filter-clear').prop('disabled', !narrowed);
 };
 
 /**
@@ -233,39 +175,56 @@ export const renderCounts = (counts) => {
 };
 
 /**
- * Whether anything narrows the report, the search included.
+ * Opens or closes a menu, and closes the others.
  *
- * @returns {boolean} True when a filter or a search is applied.
+ * @param {jQuery} which The menu.
+ * @param {boolean} show Whether to open it.
  */
-export const isNarrowed = () => collectFilters().length > 0;
+const open = (which, show) => {
+    $(`${FORM} [data-menu]`).each(function() {
+        const mine = $(this);
+        const shown = show && this === which.get(0);
+
+        mine.find('.dd-select-menu').prop('hidden', !shown);
+        mine.find('[data-menu-toggle]').attr('aria-expanded', shown ? 'true' : 'false');
+    });
+};
 
 /**
- * Makes a picker search the server as the reader types and list what it finds under its field.
+ * Makes a picker search the server as the reader types and list what it finds.
  *
- * @param {jQuery} picker The element of the picker.
+ * @param {jQuery} picker The menu of the picker.
  * @param {Function} changed What to do when a choice is made.
  */
 const initPicker = (picker, changed) => {
-    const text = picker.find('input[type="search"]');
+    const search = picker.find('[data-picker-search]');
     const value = picker.find('input[type="hidden"]');
-    const results = picker.find('.list-group');
+    const results = picker.find('[data-picker-options]');
     const form = $(FORM);
+    const type = picker.data('optiontype');
     let timer = null;
     let ticket = 0;
 
-    const item = (label, onPick, muted) => $('<button type="button" class="list-group-item list-group-item-action">')
-        .toggleClass('text-muted', Boolean(muted))
+    const pick = (id, name) => {
+        value.val(id).data('name', name);
+
+        if (type === 'course') {
+            $('#autograder-filter-activity').val('').data('name', '');
+        }
+
+        open(picker, false);
+        changed();
+    };
+
+    const item = (label, onPick, selected) => $('<button type="button" class="dropdown-item" role="option">')
+        .attr('aria-selected', selected ? 'true' : 'false')
         .text(label)
         .on('click', onPick);
 
-    const close = () => results.prop('hidden', true);
-
-    const search = (query) => {
+    const find = (query) => {
         const mine = ++ticket;
-        const type = picker.data('optiontype');
-        const filterCourse = parseInt($('#autograder-filter-course').val() || 0, 10);
 
-        results.empty().append($('<span class="list-group-item text-muted">').text(form.data('loading'))).prop('hidden', false);
+        results.empty().append($('<span class="dropdown-item disabled">').text(form.data('loading')));
 
         ajax.call([{
             methodname: 'report_autograder_search_filter_options',
@@ -274,7 +233,7 @@ const initPicker = (picker, changed) => {
                 query,
                 cmid: parseInt(picker.data('scopecmid') || 0, 10),
                 courseid: parseInt(picker.data('scopecourseid') || 0, 10),
-                filtercourseid: type === 'activity' ? filterCourse : 0,
+                filtercourseid: type === 'activity' ? parseInt($('#autograder-filter-course').val() || 0, 10) : 0,
             },
         }])[0].then((response) => {
             if (mine !== ticket) {
@@ -284,61 +243,34 @@ const initPicker = (picker, changed) => {
             results.empty();
 
             if (value.val()) {
-                results.append(item(form.data('clear'), () => {
-                    value.val('');
-                    text.val('');
-                    close();
-
-                    if (type === 'course') {
-                        $('#autograder-filter-activity, #autograder-filter-activity-text').val('');
-                    }
-
-                    changed();
-                }, true));
+                results.append(item(form.data('clear'), () => pick('', ''), false).addClass('text-muted'));
             }
 
             response.options.forEach((option) => {
-                results.append(item(option.name, () => {
-                    value.val(option.id);
-                    text.val(option.name);
-                    close();
-
-                    if (type === 'course') {
-                        $('#autograder-filter-activity, #autograder-filter-activity-text').val('');
-                    }
-
-                    changed();
-                }));
+                results.append(item(option.name, () => pick(option.id, option.name), String(option.id) === String(value.val())));
             });
 
             if (response.options.length === 0) {
-                results.append($('<span class="list-group-item text-muted">').text(form.data('nomatches')));
+                results.append($('<span class="dropdown-item disabled">').text(form.data('nomatches')));
             }
 
             return null;
         }).catch(() => {
             if (mine === ticket) {
-                close();
+                results.empty();
             }
         });
     };
 
-    text.on('focus', () => {
-        text.select();
-        search('');
+    picker.find('[data-menu-toggle]').on('click', () => {
+        search.val('');
+        find('');
+        window.setTimeout(() => search.trigger('focus'), 0);
     });
 
-    text.on('input', () => {
+    search.on('input', () => {
         window.clearTimeout(timer);
-        timer = window.setTimeout(() => search(String(text.val()).trim()), TYPING_DELAY);
-    });
-
-    $(document).on('pointerdown', (event) => {
-        if (!picker.get(0).contains(event.target)) {
-            close();
-            // What was typed and not chosen goes back to what is chosen.
-            text.val(value.val() ? text.val() : '');
-        }
+        timer = window.setTimeout(() => find(String(search.val()).trim()), TYPING_DELAY);
     });
 };
 
@@ -350,39 +282,45 @@ const initPicker = (picker, changed) => {
  */
 export const init = (onChange, onClear) => {
     const form = $(FORM);
-    const panel = $(PANEL);
-    const toggle = $('#autograder-filters-toggle');
     let timer = null;
 
-    readStatus();
+    // A link that arrives already narrowed ticks the boxes of its statuses.
+    const keys = String($('#status').val() || '').split(',').filter(Boolean);
+
+    menu('status').find('input[type="checkbox"]').each((i, box) => {
+        box.checked = keys.includes(box.value);
+    });
 
     const changed = () => {
-        syncStatus();
+        $('#status').val(chosenStatuses().join(','));
+        paint();
         onChange(collectFilters());
     };
 
     form.on('submit', (event) => {
         event.preventDefault();
     });
-    form.on('autograder:filters', changed);
 
-    const open = (show) => {
-        panel.toggleClass('show', show);
-        toggle.attr('aria-expanded', show ? 'true' : 'false');
-    };
+    form.on('click', '[data-menu-toggle]', function() {
+        const which = $(this).closest('[data-menu]');
 
-    toggle.on('click', () => open(!panel.hasClass('show')));
+        open(which, which.find('.dd-select-menu').prop('hidden'));
+    });
 
     $(document).on('pointerdown', (event) => {
-        if (panel.hasClass('show') && !$('#autograder-filters').get(0).contains(event.target)) {
-            open(false);
+        if (!$(event.target).closest(`${FORM} [data-menu]`).length) {
+            open($(), false);
         }
     });
 
     $(document).on('keydown', (event) => {
-        if (event.key === 'Escape' && panel.hasClass('show')) {
-            open(false);
-            toggle.trigger('focus');
+        if (event.key === 'Escape') {
+            const shown = $(`${FORM} .dd-select-menu:not([hidden])`).closest('[data-menu]');
+
+            if (shown.length) {
+                open(shown, false);
+                shown.find('[data-menu-toggle]').trigger('focus');
+            }
         }
     });
 
@@ -391,27 +329,36 @@ export const init = (onChange, onClear) => {
         timer = window.setTimeout(changed, TYPING_DELAY);
     });
 
-    panel.on('change', 'input[type="checkbox"], select, input[type="date"]', changed);
+    menu('status').on('change', 'input[type="checkbox"]', changed);
+    form.on('change', '#autograder-filter-group, #grading_date_from, #grading_date_to', changed);
 
-    panel.on('click', '[data-preset]', function() {
+    menu('date').on('click', '[data-preset]', function() {
         const [from, to] = presets()[this.getAttribute('data-preset')];
 
         $('#grading_date_from').val(from);
         $('#grading_date_to').val(to);
+        open(menu('date'), false);
         changed();
     });
 
-    panel.find('[data-picker]').each(function() {
+    menu('date').on('click', '[data-date-clear]', () => {
+        $('#grading_date_from, #grading_date_to').val('');
+        open(menu('date'), false);
+        changed();
+    });
+
+    form.find('[data-picker]').each(function() {
         initPicker($(this), changed);
     });
 
     $('#autograder-filter-clear').on('click', () => {
         $('#searchname, #grading_date_from, #grading_date_to, #status').val('');
-        panel.find('input[type="checkbox"]').prop('checked', false);
-        $('#autograder-filter-course, #autograder-filter-activity').val('');
-        $('#autograder-filter-course-text, #autograder-filter-activity-text').val('');
+        menu('status').find('input[type="checkbox"]').prop('checked', false);
+        $('#autograder-filter-course, #autograder-filter-activity').val('').data('name', '');
         $('#autograder-filter-group').prop('selectedIndex', 0);
-        renderApplied(0);
+        paint();
         onClear();
     });
+
+    paint();
 };
