@@ -4,13 +4,14 @@ summary: Las funciones que alimentan las páginas del informe y qué lee cada un
 order: 41
 ---
 
-Las páginas del informe leen sus datos mediante tres funciones de servicio web. Solo leen, están disponibles para las páginas de Moodle (AJAX) y exigen un usuario con sesión iniciada que tenga la capacidad del nivel que piden.
+Las páginas del informe leen sus datos mediante cuatro funciones de servicio web. Solo leen, están disponibles para las páginas de Moodle (AJAX) y exigen un usuario con sesión iniciada que tenga la capacidad del nivel que piden.
 
 | Función | Lee | Parámetros |
 |---|---|---|
-| `report_autograder_get_report` | Una página del informe de una actividad, un curso o el sitio | `cmid`, `courseid`, `page`, `limit`, `filters` (una lista de nombre y valor), `sortcolumn`, `sortdir`, `withtotal` |
+| `report_autograder_get_report` | Una página del informe de una actividad, un curso o el sitio | `cmid`, `courseid`, `page`, `limit` (0 para 12 filas, -1 para todas las filas hasta 1000), `filters` (una lista de nombre y valor), `sortcolumn`, `sortdir`, `withtotal` |
 | `report_autograder_search_filter_options` | Las opciones de los selectores de curso y de actividad de la barra de filtros | `type` (curso o actividad), `query`, `cmid`, `courseid`, `filtercourseid` |
-| `report_autograder_get_graders` | Con quién calificaría Autograder en un curso, y para qué estudiantes | `courseid`, `students`, `page`, `perpage` |
+| `report_autograder_get_graders_overview` | Los cursos en los que Autograder está activado, con quién podría calificar en cada uno | `search`, `page`, `perpage` (0 para 12 filas, -1 para todas) |
+| `report_autograder_get_graders` | Con quién calificaría Autograder en un curso, y para qué estudiantes | `courseid`, `students`, `page`, `perpage` (0 para 12 filas, -1 para todas), `search`, `filter` (all, fallback o nobody) |
 
 La función devuelve además, una vez por cada conjunto de filtros y junto con el total, el número de estudiantes de cada estado: la clave, el nombre y el recuento de cada estado, contado dentro de todos los demás filtros salvo el propio estado. Un cambio de página no devuelve recuentos.
 

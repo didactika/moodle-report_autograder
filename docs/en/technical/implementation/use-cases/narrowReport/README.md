@@ -22,7 +22,8 @@ Design: [README](../../../design/use-cases/narrowReport/README.md)
 | `filters` | class | `classes/local/query/filters.php` | yes |
 | `report_query` | class | `classes/local/query/report_query.php` | yes |
 | `search_filter_options` | web service | `classes/external/search_filter_options.php` | yes |
-| `StatusTabs` and the toolbar | file | `js/esm/src/components/StatusTabs.tsx`, `js/esm/src/components/Toolbar.tsx` | yes |
+| Filter menus and the button that clears them | React component | `js/esm/src/components/Filters.tsx`, `js/esm/src/components/ui.tsx` (`Menu`, `SelectMenu`), `js/esm/src/Report.tsx` | yes |
+| Pager | React component | `js/esm/src/components/ui.tsx` (`Pager`), `js/esm/src/lib/paging.ts` | yes |
 
 ## Tests
 

@@ -22,7 +22,8 @@ Diseño: [README](../../../design/use-cases/narrowReport/README.md)
 | `filters` | clase | `classes/local/query/filters.php` | sí |
 | `report_query` | clase | `classes/local/query/report_query.php` | sí |
 | `search_filter_options` | servicio web | `classes/external/search_filter_options.php` | sí |
-| `StatusTabs` and the toolbar | archivo | `js/esm/src/components/StatusTabs.tsx`, `js/esm/src/components/Toolbar.tsx` | sí |
+| Menús de filtro y el botón que los quita | componente React | `js/esm/src/components/Filters.tsx`, `js/esm/src/components/ui.tsx` (`Menu`, `SelectMenu`), `js/esm/src/Report.tsx` | sí |
+| Paginador | componente React | `js/esm/src/components/ui.tsx` (`Pager`), `js/esm/src/lib/paging.ts` | sí |
 
 ## Pruebas
 

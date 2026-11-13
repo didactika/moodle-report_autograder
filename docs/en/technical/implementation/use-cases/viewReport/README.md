@@ -21,7 +21,9 @@ Design: [README](../../../design/use-cases/viewReport/README.md)
 | --- | --- | --- | --- |
 | `get_report` | web service | `classes/external/get_report.php` | yes |
 | Page of the report | page | `index.php` | yes |
-| Status chips | React component | `js/esm/src/components/StatusTabs.tsx` | yes |
+| Table in a box of one height | React component | `js/esm/src/components/ReportTable.tsx`, `js/esm/src/components/ui.tsx` (`TableBox`, `Empty`) | yes |
+| Guided tour | user tour | `tours/report.json`, `lib.php` (`report_autograder_import_tours`), `db/install.php`, `db/upgrade.php` | yes |
+| Setting that makes the tour required | setting | `settings.php` (`report_autograder/tourrequired`), `index.php` | yes |
 | Report screen | React component | `js/esm/src/Report.tsx` | yes |
 
 ## Tests
