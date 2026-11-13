@@ -1,0 +1,139 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// What the report adds to the sheets of the design system that it shares with Delegate account: the row of filters, the menus that
+// hold a form, the explanations that open on a button and the pieces of the page of the graders.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+.arp {
+    // The card of a list holds menus, so it does not cut them.
+    & .card {
+        overflow: visible;
+    }
+
+    & .card > .table-responsive:last-child,
+    & .card > .table-foot:last-child {
+        border-radius: 0 0 var(--dd-radius-lg) var(--dd-radius-lg);
+    }
+
+    // Every filter is a menu with the shape of a select, in one row beside the search.
+    & .table-toolbar-start {
+        gap: 0.5rem;
+    }
+
+    & .dd-menu {
+        position: relative;
+        display: inline-flex;
+    }
+
+    & button.dd-select {
+        display: inline-flex;
+        align-items: center;
+        min-width: 0;
+        max-width: 18rem;
+        overflow: hidden;
+        text-align: left;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    & button.dd-select .dd-chip-count {
+        margin-left: 0.5rem;
+    }
+
+    & .dd-menu > .dd-select-menu {
+        position: absolute;
+        inset: calc(100% + 2px) auto auto 0;
+        width: max-content;
+        min-width: 100%;
+        max-width: 22rem;
+        max-height: 20rem;
+    }
+
+    & .dd-menu-end > .dd-select-menu {
+        inset: calc(100% + 2px) 0 auto auto;
+    }
+
+    & .dd-menu-up > .dd-select-menu {
+        inset: auto auto calc(100% + 2px) 0;
+    }
+
+    & .dd-select-menu label.dropdown-item {
+        margin: 0;
+        font-weight: 400;
+    }
+
+    & .dd-select-menu .dropdown-item .form-check-input {
+        position: static;
+        flex: none;
+        margin: 0;
+    }
+
+    & .dd-select-menu .dropdown-item > span:first-of-type {
+        flex: 1 1 auto;
+    }
+
+    & .dd-select-menu .dd-menu-form {
+        display: grid;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem 0.75rem;
+    }
+
+    & .dd-select-menu .dd-menu-dates {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+    & .dd-select-menu hr {
+        margin: 0.375rem 0;
+        border-color: var(--dd-hairline);
+    }
+
+    & .dd-chip-count {
+        padding: 0 0.4rem;
+        border-radius: 999px;
+        background: var(--dd-surface-3);
+        color: var(--dd-muted);
+        font-size: 0.75rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+
+    // A person in a row.
+    & .table .userpicture {
+        margin: 0 0.75rem 0 0;
+        border-radius: 50%;
+    }
+
+    // A short explanation that opens on a button: a popover of Bootstrap, placed under it.
+    & .popover {
+        inset: calc(100% + 0.25rem) auto auto 0;
+        z-index: 1030;
+        width: 18rem;
+        max-width: 80vw;
+        transform: none;
+        text-align: start;
+        white-space: normal;
+        border-radius: var(--dd-radius);
+        box-shadow: var(--dd-shadow-md);
+    }
+
+    & .btn-link.btn-icon.btn-hint {
+        width: 1.5rem;
+        height: 1.5rem;
+        vertical-align: middle;
+    }
+
+    & .alert {
+        border-radius: var(--dd-radius);
+    }
+}
+
+@media (max-width: 576px) {
+    .arp .table-toolbar-start {
+        flex: 1 1 100%;
+    }
+}

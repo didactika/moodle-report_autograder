@@ -14,8 +14,8 @@
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {useEffect, useId, useMemo, useState} from 'react';
-import {Empty, FiltersMenu, Icon, Pager, SearchBox} from './components/ui';
+import {useEffect, useMemo, useState} from 'react';
+import {Empty, Icon, Pager, SearchBox, SelectMenu} from './components/ui';
 import {createText} from './engine/text';
 import {useDebounced} from './hooks/useDebounced';
 import {describeError, getGraders, getGradersOverview} from './services/api';
@@ -30,7 +30,7 @@ const TONES: Record<GradingState, string> = {ready: 'success', fallback: 'warnin
  * @param props The state and the texts.
  * @returns The badge.
  */
-const State = ({state, text}: {state: GradingState; text: Text}) => <span className={`badge bg-${TONES[state]} badge-${TONES[state]}`}>
+const State = ({state, text}: {state: GradingState; text: Text}) => <span className={`badge badge-soft badge-dot rounded-pill text-bg-${TONES[state]}`}>
     {text(`graders:state_${state}`)}
 </span>;
 
@@ -42,7 +42,7 @@ const State = ({state, text}: {state: GradingState; text: Text}) => <span classN
  */
 const Skeleton = ({columns}: {columns: number}) => <>
     {Array.from({length: 6}, (_, row) => <tr key={row} aria-hidden="true">
-        {Array.from({length: columns}, (__, cell) => <td key={cell}><span className="placeholder-glow"><span className="placeholder col-8" /></span></td>)}
+        {Array.from({length: columns}, (__, cell) => <td key={cell}><span className="dd-skeleton" /></td>)}
     </tr>)}
 </>;
 
@@ -89,7 +89,7 @@ const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
 
     return <div className="card">
         <div className="table-toolbar">
-            <div className="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+            <div className="table-toolbar-start">
                 <SearchBox value={typed} onChange={setTyped} label={text('graders:search')} text={text} />
             </div>
         </div>
@@ -103,14 +103,14 @@ const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
                         <th scope="col">{text('graders:graders')}</th>
                         <th scope="col">{text('graders:students')}</th>
                         <th scope="col">{text('graders:state')}</th>
-                        <th scope="col"><span className="visually-hidden sr-only">{text('graders:openreport')}</span></th>
+                        <th scope="col" className="table-actions"><span className="visually-hidden">{text('graders:openreport')}</span></th>
                     </tr>
                 </thead>
                 <tbody>
                     {loading && data === null && <Skeleton columns={6} />}
                     {courses.map((course) => <tr key={course.id}>
                         <td>
-                            <a className="fw-bold text-decoration-none" href={course.studentsurl}>{course.name}</a>
+                            <a className="fw-bold" href={course.studentsurl}>{course.name}</a>
                             <div className="small text-muted text-truncate">{course.fullname}</div>
                         </td>
                         <td>{course.activities}</td>
@@ -121,10 +121,19 @@ const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
                         </td>
                         <td>{course.studentcount}</td>
                         <td><State state={course.state} text={text} /></td>
-                        <td className="text-end text-nowrap">
-                            <a className="btn btn-outline-secondary btn-sm" href={course.studentsurl}>{text('graders:seestudents')}</a>
-                            {' '}
-                            <a className="btn btn-outline-secondary btn-sm" href={course.reporturl}>{text('graders:openreport')}</a>
+                        <td className="table-actions">
+                            <a
+                                className="btn btn-link btn-icon btn-sm text-primary"
+                                href={course.studentsurl}
+                                title={text('graders:seestudents')}
+                                aria-label={text('graders:seestudents')}
+                            ><Icon name="i/users" text={text} /></a>
+                            <a
+                                className="btn btn-link btn-icon btn-sm text-info"
+                                href={course.reporturl}
+                                title={text('graders:openreport')}
+                                aria-label={text('graders:openreport')}
+                            ><Icon name="i/report" text={text} /></a>
                         </td>
                     </tr>)}
                 </tbody>
@@ -165,7 +174,6 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
     const [data, setData] = useState<GradersResponse | null>(null);
     const [failed, setFailed] = useState('');
     const [loading, setLoading] = useState(true);
-    const groupId = useId();
 
     useEffect(() => {
         setPage(0);
@@ -200,12 +208,17 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
         alert = text('graders:onlyfallback');
     }
 
-    return <div className="d-grid gap-3">
+    return <>
         <div className="d-flex flex-wrap align-items-center justify-content-between gap-2">
             <a className="btn btn-link px-0" href={props.overviewurl}>
                 <Icon name="i/previous" text={text} /> {text('graders:back')}
             </a>
-            {data && <a className="btn btn-outline-secondary" href={data.reporturl}>{text('graders:openreport')}</a>}
+            {data && <a
+                className="btn btn-link btn-icon text-info"
+                href={data.reporturl}
+                title={text('graders:openreport')}
+                aria-label={text('graders:openreport')}
+            ><Icon name="i/report" text={text} /></a>}
         </div>
         {data && <div className="d-flex flex-wrap align-items-baseline gap-3">
             <h3 className="h4 mb-0">{data.course}</h3>
@@ -221,7 +234,7 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
                 <h4 className="h6 mb-2">{text('graders:possible')}</h4>
                 <ul className="list-unstyled d-flex flex-wrap gap-2 mb-2">
                     {data.graders.map((grader) => <li key={grader.id}>
-                        <span className={`badge ${grader.isfallback ? 'bg-secondary badge-secondary' : 'bg-primary badge-primary'}`}>
+                        <span className={`badge badge-soft rounded-pill ${grader.isfallback ? 'text-bg-secondary' : 'text-bg-primary'}`}>
                             {grader.name}{grader.isfallback && <> · {text('graders:viafallback')}</>}
                         </span>
                     </li>)}
@@ -231,24 +244,18 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
         </div>}
         <div className="card">
             <div className="table-toolbar">
-                <div className="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+                <div className="table-toolbar-start">
                     <SearchBox value={typed} onChange={setTyped} label={text('graders:search_students')} text={text} />
-                    <FiltersMenu label={text('filters')} applied={filter === 'all' ? 0 : 1} text={text}>
-                        <fieldset className="p-3 mb-0">
-                            <legend className="h6 mb-2">{text('graders:show')}</legend>
-                            {(['all', 'fallback', 'nobody'] as StudentFilter[]).map((option) => <div className="form-check" key={option}>
-                                <input
-                                    type="radio"
-                                    className="form-check-input"
-                                    name={groupId}
-                                    id={`${groupId}-${option}`}
-                                    checked={filter === option}
-                                    onChange={() => setFilter(option)}
-                                />
-                                <label className="form-check-label" htmlFor={`${groupId}-${option}`}>{text(`graders:filter_${option}`)}</label>
-                            </div>)}
-                        </fieldset>
-                    </FiltersMenu>
+                    <SelectMenu
+                        label={text('graders:show')}
+                        value={filter}
+                        active={filter !== 'all'}
+                        options={(['all', 'fallback', 'nobody'] as StudentFilter[]).map((option) => ({
+                            value: option,
+                            label: text(`graders:filter_${option}`),
+                        }))}
+                        onChange={(option) => setFilter(option as StudentFilter)}
+                    />
                 </div>
             </div>
             <div className="table-responsive" aria-busy={loading}>
@@ -267,8 +274,8 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
                             <td className="fw-bold">{student.name}</td>
                             <td>{student.hasgrader ? student.grader : <span className="text-muted">—</span>}</td>
                             <td>
-                                {!student.hasgrader && <span className="badge bg-danger badge-danger">{text('graders:nobodyfor')}</span>}
-                                {student.viafallback && student.hasgrader && <span className="badge bg-secondary badge-secondary">{text('graders:viafallback')}</span>}
+                                {!student.hasgrader && <span className="badge badge-soft badge-dot rounded-pill text-bg-danger">{text('graders:nobodyfor')}</span>}
+                                {student.viafallback && student.hasgrader && <span className="badge badge-soft rounded-pill text-bg-secondary">{text('graders:viafallback')}</span>}
                             </td>
                         </tr>)}
                     </tbody>
@@ -292,7 +299,7 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
                 }}
             />
         </div>
-    </div>;
+    </>;
 };
 
 /**
@@ -305,7 +312,7 @@ export default function Graders(props: GradersProps) {
     const text = useMemo(() => createText(props.strings), [props.strings]);
 
     return <div id="autograder-report-container" className="arp arp-graders">
-        <p className="text-muted mb-3">{text('lead_graders')}</p>
+        <p className="text-muted mb-0">{text('lead_graders')}</p>
         {props.courseid > 0 ? <Course props={props} text={text} /> : <Overview props={props} text={text} />}
     </div>;
 }

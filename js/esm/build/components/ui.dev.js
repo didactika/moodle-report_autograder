@@ -5,9 +5,9 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * This file is part of Moodle - https://moodle.org/
  * Moodle is free software under the GNU General Public License, version 3 or later.
  *
- * The pieces the screens of the report are made of, written with the classes of Bootstrap and Moodle: the icon, the search, the
- * Filters button with its panel, the sortable header, the pager and the hint. What makes them look as the design system draws them
- * is in the styles, as overrides of those classes inside the report; a theme restyles them by restyling Bootstrap.
+ * The pieces the screens of the report are made of, drawn with the classes of Bootstrap, Moodle and the Didactika design system, as
+ * the plugin Delegate account draws its lists: the icon, the search, the menu with the shape of a select, the sortable header, the
+ * pager, the explanation that opens on a button and what a list says when it has nothing.
  *
  * @module     report_autograder/components/ui
  * @copyright  2026 Didactika.org
@@ -26,17 +26,13 @@ function Icon({ name, text }) {
 __name(Icon, "Icon");
 function SearchBox({ value, onChange, label, text }) {
   const id = useId();
-  return /* @__PURE__ */ jsxDEV("div", { className: "input-group", role: "search", children: [
-    /* @__PURE__ */ jsxDEV("span", { className: "input-group-text", children: /* @__PURE__ */ jsxDEV(Icon, { name: "a/search", text }, void 0, false, {
-      fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 38,
-      columnNumber: 44
-    }, this) }, void 0, false, {
+  return /* @__PURE__ */ jsxDEV("div", { className: "dd-searchbox", role: "search", children: [
+    /* @__PURE__ */ jsxDEV(Icon, { name: "a/search", text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
       lineNumber: 38,
       columnNumber: 9
     }, this),
-    /* @__PURE__ */ jsxDEV("label", { className: "visually-hidden sr-only", htmlFor: id, children: label }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("label", { className: "visually-hidden", htmlFor: id, children: label }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
       lineNumber: 39,
       columnNumber: 9
@@ -48,7 +44,7 @@ function SearchBox({ value, onChange, label, text }) {
         type: "search",
         id,
         value,
-        placeholder: `${label}\u2026`,
+        placeholder: label,
         autoComplete: "off",
         onChange: (event) => onChange(event.target.value),
         onKeyDown: (event) => event.key === "Enter" && event.preventDefault()
@@ -69,9 +65,10 @@ function SearchBox({ value, onChange, label, text }) {
   }, this);
 }
 __name(SearchBox, "SearchBox");
-function FiltersMenu({ label, applied, text, children }) {
+function Menu({ button, label, active = false, small = false, place = "", children }) {
   const [open, setOpen] = useState(false);
   const root = useRef(null);
+  const toggle = useRef(null);
   const id = useId();
   useEffect(() => {
     if (!open) {
@@ -85,6 +82,7 @@ function FiltersMenu({ label, applied, text, children }) {
     const keys = /* @__PURE__ */ __name((event) => {
       if (event.key === "Escape") {
         setOpen(false);
+        toggle.current?.focus();
       }
     }, "keys");
     document.addEventListener("pointerdown", outside, true);
@@ -94,126 +92,144 @@ function FiltersMenu({ label, applied, text, children }) {
       document.removeEventListener("keydown", keys, true);
     };
   }, [open]);
-  return /* @__PURE__ */ jsxDEV("div", { className: "dropdown", ref: root, children: [
+  return /* @__PURE__ */ jsxDEV("span", { className: `dd-menu${place ? ` dd-menu-${place}` : ""}`, ref: root, children: [
     /* @__PURE__ */ jsxDEV(
       "button",
       {
+        ref: toggle,
         type: "button",
-        className: `btn btn-outline-secondary dropdown-toggle${applied > 0 ? " active" : ""}`,
+        className: `form-select dd-select${small ? " form-select-sm" : ""}${active ? " border-primary" : ""}`,
+        "aria-label": label,
+        "aria-haspopup": "true",
         "aria-expanded": open,
-        "aria-controls": id,
+        "aria-controls": open ? id : void 0,
         onClick: () => setOpen(!open),
-        children: [
-          /* @__PURE__ */ jsxDEV(Icon, { name: "i/filter", text }, void 0, false, {
-            fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 94,
-            columnNumber: 13
-          }, this),
-          /* @__PURE__ */ jsxDEV("span", { children: label }, void 0, false, {
-            fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 95,
-            columnNumber: 13
-          }, this),
-          applied > 0 && /* @__PURE__ */ jsxDEV("span", { className: "badge badge-primary bg-primary rounded-pill", children: applied }, void 0, false, {
-            fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 96,
-            columnNumber: 29
-          }, this)
-        ]
+        children: button
       },
       void 0,
-      true,
+      false,
       {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 87,
+        lineNumber: 96,
         columnNumber: 9
       },
       this
     ),
-    /* @__PURE__ */ jsxDEV("div", { id, className: `dropdown-menu${open ? " show" : ""}`, role: "group", "aria-label": label, children }, void 0, false, {
+    open && /* @__PURE__ */ jsxDEV("div", { id, className: "dd-select-menu", role: "group", "aria-label": label, children: children(() => {
+      setOpen(false);
+      toggle.current?.focus();
+    }) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 98,
-      columnNumber: 9
+      lineNumber: 106,
+      columnNumber: 18
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 86,
+    lineNumber: 95,
     columnNumber: 12
   }, this);
 }
-__name(FiltersMenu, "FiltersMenu");
+__name(Menu, "Menu");
+function SelectMenu({ options, value, label, small = false, place = "", active = false, onChange }) {
+  const chosen = options.find((option) => option.value === value);
+  return /* @__PURE__ */ jsxDEV(Menu, { button: chosen?.label ?? label, label, small, place, active, children: (close) => options.map((option) => /* @__PURE__ */ jsxDEV(
+    "button",
+    {
+      type: "button",
+      role: "option",
+      className: "dropdown-item",
+      "aria-selected": option.value === value,
+      onClick: () => {
+        close();
+        if (option.value !== value) {
+          onChange(option.value);
+        }
+      },
+      children: option.label
+    },
+    option.value,
+    false,
+    {
+      fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+      lineNumber: 132,
+      columnNumber: 45
+    },
+    this
+  )) }, void 0, false, {
+    fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+    lineNumber: 131,
+    columnNumber: 12
+  }, this);
+}
+__name(SelectMenu, "SelectMenu");
 function SortHeader({ label, help, active, direction, onSort }) {
   let ariaSort;
   if (active) {
     ariaSort = direction === "asc" ? "ascending" : "descending";
   }
-  return /* @__PURE__ */ jsxDEV("th", { scope: "col", "aria-sort": ariaSort, children: /* @__PURE__ */ jsxDEV("button", { type: "button", className: "table-sort", "aria-label": help, onClick: onSort, children: label }, void 0, false, {
+  return /* @__PURE__ */ jsxDEV("th", { scope: "col", "aria-sort": ariaSort, children: /* @__PURE__ */ jsxDEV("button", { type: "button", className: "table-sort", title: help, onClick: onSort, children: label }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 122,
+    lineNumber: 166,
     columnNumber: 9
   }, this) }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 121,
+    lineNumber: 165,
     columnNumber: 12
   }, this);
 }
 __name(SortHeader, "SortHeader");
 function Pager({ page, perpage, total, sizes, disabled, text, onChange }) {
   const { from, to } = pageRange(page, perpage, total);
-  const id = useId();
-  return /* @__PURE__ */ jsxDEV("div", { className: "table-foot", children: /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-wrap align-items-center justify-content-between gap-3 text-muted small", children: [
-    /* @__PURE__ */ jsxDEV("div", { className: "d-none d-sm-flex align-items-center gap-2", children: [
-      /* @__PURE__ */ jsxDEV("label", { htmlFor: id, children: text("pagination:results_per_page") }, void 0, false, {
+  return /* @__PURE__ */ jsxDEV("div", { className: "table-foot", children: /* @__PURE__ */ jsxDEV("div", { className: "dd-pager", children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "dd-pager-size", children: [
+      /* @__PURE__ */ jsxDEV("span", { children: text("pagination:results_per_page") }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 146,
+        lineNumber: 189,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV(
-        "select",
+        SelectMenu,
         {
-          id,
-          className: "form-select custom-select custom-select-sm form-select-sm w-auto",
-          value: perpage,
-          onChange: (event) => onChange({ perpage: Number(event.target.value), page: 0 }),
-          children: sizes.map((size) => /* @__PURE__ */ jsxDEV("option", { value: size, children: size }, size, false, {
-            fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 153,
-            columnNumber: 42
-          }, this))
+          small: true,
+          place: "up",
+          label: text("pagination:results_per_page"),
+          value: String(perpage),
+          options: sizes.map((size) => ({ value: String(size), label: String(size) })),
+          onChange: (size) => onChange({ perpage: Number(size), page: 0 })
         },
         void 0,
         false,
         {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 147,
+          lineNumber: 190,
           columnNumber: 17
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 145,
+      lineNumber: 188,
       columnNumber: 13
     }, this),
-    /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center gap-3", children: [
-      /* @__PURE__ */ jsxDEV("span", { className: "text-body", role: "status", children: text("pagination:showing", { from, to, total }) }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("div", { className: "dd-pager-end", children: [
+      /* @__PURE__ */ jsxDEV("span", { className: "dd-pager-range", role: "status", children: text("pagination:range", { from, to, total }) }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 157,
+        lineNumber: 200,
         columnNumber: 17
       }, this),
-      /* @__PURE__ */ jsxDEV("div", { className: "btn-group", role: "group", "aria-label": text("pagination:label"), children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "dd-pager-arrows", children: [
         /* @__PURE__ */ jsxDEV(
           "button",
           {
             type: "button",
-            className: "btn btn-outline-secondary btn-sm",
+            className: "btn btn-outline-secondary btn-sm btn-icon",
             disabled: disabled || page === 0,
             title: text("pagination:previous"),
             "aria-label": text("pagination:previous"),
             onClick: () => onChange({ page: page - 1 }),
             children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/previous", text }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-              lineNumber: 169,
+              lineNumber: 210,
               columnNumber: 25
             }, this)
           },
@@ -221,7 +237,7 @@ function Pager({ page, perpage, total, sizes, disabled, text, onChange }) {
           false,
           {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 161,
+            lineNumber: 202,
             columnNumber: 21
           },
           this
@@ -230,14 +246,14 @@ function Pager({ page, perpage, total, sizes, disabled, text, onChange }) {
           "button",
           {
             type: "button",
-            className: "btn btn-outline-secondary btn-sm",
+            className: "btn btn-outline-secondary btn-sm btn-icon",
             disabled: disabled || to >= total,
             title: text("pagination:next"),
             "aria-label": text("pagination:next"),
             onClick: () => onChange({ page: page + 1 }),
             children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/next", text }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-              lineNumber: 179,
+              lineNumber: 220,
               columnNumber: 25
             }, this)
           },
@@ -245,33 +261,33 @@ function Pager({ page, perpage, total, sizes, disabled, text, onChange }) {
           false,
           {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 171,
+            lineNumber: 212,
             columnNumber: 21
           },
           this
         )
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 160,
+        lineNumber: 201,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 156,
+      lineNumber: 199,
       columnNumber: 13
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 144,
+    lineNumber: 187,
     columnNumber: 9
   }, this) }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 143,
+    lineNumber: 186,
     columnNumber: 12
   }, this);
 }
 __name(Pager, "Pager");
-function Hint({ message, label, icon, text }) {
+function Hint({ message, label, icon, tone = "info", text }) {
   const [open, setOpen] = useState(false);
   const root = useRef(null);
   useEffect(() => {
@@ -287,57 +303,73 @@ function Hint({ message, label, icon, text }) {
     return () => document.removeEventListener("pointerdown", outside, true);
   }, [open]);
   return /* @__PURE__ */ jsxDEV("span", { className: "position-relative d-inline-block", ref: root, children: [
-    /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-link btn-sm p-0", "aria-label": label, "aria-expanded": open, onClick: () => setOpen(!open), children: /* @__PURE__ */ jsxDEV(Icon, { name: icon, text }, void 0, false, {
-      fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 212,
-      columnNumber: 13
-    }, this) }, void 0, false, {
-      fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 211,
-      columnNumber: 9
-    }, this),
+    /* @__PURE__ */ jsxDEV(
+      "button",
+      {
+        type: "button",
+        className: `btn btn-link btn-icon btn-sm btn-hint text-${tone}`,
+        title: label,
+        "aria-label": label,
+        "aria-expanded": open,
+        onClick: () => setOpen(!open),
+        children: /* @__PURE__ */ jsxDEV(Icon, { name: icon, text }, void 0, false, {
+          fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+          lineNumber: 260,
+          columnNumber: 13
+        }, this)
+      },
+      void 0,
+      false,
+      {
+        fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+        lineNumber: 252,
+        columnNumber: 9
+      },
+      this
+    ),
     open && /* @__PURE__ */ jsxDEV("div", { className: "popover show bs-popover-bottom", role: "dialog", "aria-label": label, children: /* @__PURE__ */ jsxDEV("div", { className: "popover-body", children: message }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 215,
+      lineNumber: 263,
       columnNumber: 13
     }, this) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 214,
+      lineNumber: 262,
       columnNumber: 18
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 210,
+    lineNumber: 251,
     columnNumber: 12
   }, this);
 }
 __name(Hint, "Hint");
 function Empty({ message, action, onAction }) {
-  return /* @__PURE__ */ jsxDEV("div", { className: "text-center text-muted p-5", role: "status", children: [
-    /* @__PURE__ */ jsxDEV("p", { children: message }, void 0, false, {
+  return /* @__PURE__ */ jsxDEV("div", { className: "dd-empty", role: "status", children: [
+    /* @__PURE__ */ jsxDEV("p", { className: "dd-empty-text", children: message }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 228,
+      lineNumber: 276,
       columnNumber: 9
     }, this),
     action && onAction && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-outline-secondary btn-sm", onClick: onAction, children: action }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 229,
+      lineNumber: 277,
       columnNumber: 32
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 227,
+    lineNumber: 275,
     columnNumber: 12
   }, this);
 }
 __name(Empty, "Empty");
 export {
   Empty,
-  FiltersMenu,
   Hint,
   Icon,
+  Menu,
   Pager,
   SearchBox,
+  SelectMenu,
   SortHeader
 };
 //# sourceMappingURL=ui.dev.js.map

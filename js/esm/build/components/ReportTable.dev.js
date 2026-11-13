@@ -67,10 +67,10 @@ function ReportTable({ state, columns, forumgrade, sort, narrowed, text, onSort,
           lineNumber: 53,
           columnNumber: 21
         }, this),
-        /* @__PURE__ */ jsxDEV("th", { scope: "col", children: /* @__PURE__ */ jsxDEV("span", { className: "visually-hidden sr-only", children: text("gradeuser") }, void 0, false, {
+        /* @__PURE__ */ jsxDEV("th", { scope: "col", className: "table-actions", children: /* @__PURE__ */ jsxDEV("span", { className: "visually-hidden", children: text("gradeuser") }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/ReportTable.tsx",
           lineNumber: 54,
-          columnNumber: 37
+          columnNumber: 63
         }, this) }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/ReportTable.tsx",
           lineNumber: 54,
@@ -91,11 +91,7 @@ function ReportTable({ state, columns, forumgrade, sort, narrowed, text, onSort,
           lineNumber: 58,
           columnNumber: 42
         }, this)),
-        state.loading && state.rows.length === 0 && Array.from({ length: 6 }, (_, index) => /* @__PURE__ */ jsxDEV("tr", { "aria-hidden": "true", children: Array.from({ length: count }, (__, cell) => /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("span", { className: "placeholder-glow", children: /* @__PURE__ */ jsxDEV("span", { className: "placeholder col-8" }, void 0, false, {
-          fileName: "public/report/autograder/js/esm/src/components/ReportTable.tsx",
-          lineNumber: 60,
-          columnNumber: 114
-        }, this) }, void 0, false, {
+        state.loading && state.rows.length === 0 && Array.from({ length: 6 }, (_, index) => /* @__PURE__ */ jsxDEV("tr", { "aria-hidden": "true", children: Array.from({ length: count }, (__, cell) => /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("span", { className: "dd-skeleton" }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/ReportTable.tsx",
           lineNumber: 60,
           columnNumber: 79

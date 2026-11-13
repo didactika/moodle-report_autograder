@@ -13,7 +13,7 @@ import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import { Hint } from "./ui";
+import { Hint, Icon } from "./ui";
 const TONES = {
   graded: "success",
   pending: "primary",
@@ -44,7 +44,7 @@ const Grade = /* @__PURE__ */ __name(({ row, text }) => {
       lineNumber: 44,
       columnNumber: 35
     }),
-    row.grade_problem && /* @__PURE__ */ jsxDEV(Hint, { message: row.grade_problem, label: text("info:problem"), icon: "i/warning", text }, void 0, false, {
+    row.grade_problem && /* @__PURE__ */ jsxDEV(Hint, { message: row.grade_problem, label: text("info:problem"), icon: "i/warning", tone: "warning", text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
       lineNumber: 47,
       columnNumber: 31
@@ -77,7 +77,7 @@ const Grader = /* @__PURE__ */ __name(({ row, text }) => {
       lineNumber: 62,
       columnNumber: 28
     }),
-    row.will_grade_problem && /* @__PURE__ */ jsxDEV(Hint, { message: row.will_grade_problem, label: text("info:problem"), icon: "i/warning", text }, void 0, false, {
+    row.will_grade_problem && /* @__PURE__ */ jsxDEV(Hint, { message: row.will_grade_problem, label: text("info:problem"), icon: "i/warning", tone: "warning", text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
       lineNumber: 65,
       columnNumber: 36
@@ -91,13 +91,13 @@ const Grader = /* @__PURE__ */ __name(({ row, text }) => {
 function ReportRow({ row, columns, forumgrade, text }) {
   const tone = TONES[row.status_key] ?? "secondary";
   return /* @__PURE__ */ jsxDEV("tr", { "data-record-id": row.rowkey, children: [
-    /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("a", { className: "d-inline-flex align-items-center gap-2 text-decoration-none", href: row.user_profile_url, children: [
-      /* @__PURE__ */ jsxDEV("img", { className: "userpicture", src: row.user_picture_url, alt: "", width: 36, height: 36, loading: "lazy" }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("span", { className: "d-flex align-items-center", children: [
+      /* @__PURE__ */ jsxDEV("img", { className: "userpicture", src: row.user_picture_url, alt: "", width: 35, height: 35, loading: "lazy" }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
         lineNumber: 80,
         columnNumber: 17
       }, this),
-      /* @__PURE__ */ jsxDEV("span", { className: "fw-bold", children: row.user_name }, void 0, false, {
+      /* @__PURE__ */ jsxDEV("a", { href: row.user_profile_url, children: row.user_name }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
         lineNumber: 81,
         columnNumber: 17
@@ -135,14 +135,14 @@ function ReportRow({ row, columns, forumgrade, text }) {
       columnNumber: 27
     }, this),
     /* @__PURE__ */ jsxDEV("td", { children: [
-      /* @__PURE__ */ jsxDEV("span", { className: `badge bg-${tone} badge-${tone}`, children: row.status }, void 0, false, {
+      /* @__PURE__ */ jsxDEV("span", { className: `badge badge-soft badge-dot rounded-pill text-bg-${tone}`, children: row.status }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
         lineNumber: 88,
         columnNumber: 13
       }, this),
       row.failure_reason && /* @__PURE__ */ jsxDEV(Fragment, { children: [
         " ",
-        /* @__PURE__ */ jsxDEV(Hint, { message: row.failure_reason, label: text("info:failure"), icon: "i/warning", text }, void 0, false, {
+        /* @__PURE__ */ jsxDEV(Hint, { message: row.failure_reason, label: text("info:failure"), icon: "i/warning", tone: "danger", text }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
           lineNumber: 89,
           columnNumber: 39
@@ -194,29 +194,52 @@ function ReportRow({ row, columns, forumgrade, text }) {
       lineNumber: 96,
       columnNumber: 9
     }, this),
-    /* @__PURE__ */ jsxDEV("td", { className: "text-end", children: [
-      row.grade_user_url && /* @__PURE__ */ jsxDEV("a", { className: "btn btn-outline-secondary btn-sm", href: row.grade_user_url, children: text("gradeuser") }, void 0, false, {
-        fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-        lineNumber: 98,
-        columnNumber: 36
-      }, this),
-      !row.grade_user_url && row.show_forum_grader && forumgrade && /* @__PURE__ */ jsxDEV(
-        "button",
+    /* @__PURE__ */ jsxDEV("td", { className: "table-actions", children: [
+      row.grade_user_url && /* @__PURE__ */ jsxDEV(
+        "a",
         {
-          type: "button",
-          className: "btn btn-outline-secondary btn-sm",
-          "data-grade-action": "launch",
-          "data-grading-component": forumgrade.gradingcomponent,
-          "data-grading-component-subtype": forumgrade.gradingcomponentsubtype,
-          "data-experimental-display-mode": forumgrade.experimentaldisplaymode,
-          "data-initialuserid": row.moodle_userid,
-          children: text("gradeuser")
+          className: "btn btn-link btn-icon btn-sm text-primary",
+          href: row.grade_user_url,
+          title: text("gradeuser"),
+          "aria-label": text("gradeuser"),
+          children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/grades", text }, void 0, false, {
+            fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
+            lineNumber: 103,
+            columnNumber: 14
+          }, this)
         },
         void 0,
         false,
         {
           fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
-          lineNumber: 99,
+          lineNumber: 98,
+          columnNumber: 36
+        },
+        this
+      ),
+      !row.grade_user_url && row.show_forum_grader && forumgrade && /* @__PURE__ */ jsxDEV(
+        "button",
+        {
+          type: "button",
+          className: "btn btn-link btn-icon btn-sm text-primary",
+          title: text("gradeuser"),
+          "aria-label": text("gradeuser"),
+          "data-grade-action": "launch",
+          "data-grading-component": forumgrade.gradingcomponent,
+          "data-grading-component-subtype": forumgrade.gradingcomponentsubtype,
+          "data-experimental-display-mode": forumgrade.experimentaldisplaymode,
+          "data-initialuserid": row.moodle_userid,
+          children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/grades", text }, void 0, false, {
+            fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
+            lineNumber: 114,
+            columnNumber: 14
+          }, this)
+        },
+        void 0,
+        false,
+        {
+          fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
+          lineNumber: 104,
           columnNumber: 76
         },
         this

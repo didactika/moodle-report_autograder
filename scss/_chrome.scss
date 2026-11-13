@@ -1,32 +1,169 @@
 // This file is part of Moodle - https://moodle.org/
 // Moodle is free software under the GNU General Public License, version 3 or later.
 
-// The look of the screens of the report, as the design system draws its lists (the same one as the plugin Delegate account), written
-// as overrides of the Bootstrap classes the markup uses (card, table, badge, btn, input-group, dropdown-menu, list-group, popover),
-// always inside .arp so nothing reaches the rest of Moodle. A theme restyles the report by restyling those classes.
+// The chrome of the lists of the plugin, as the design system draws it, written as overrides of the Bootstrap components the
+// markup uses (card, nav-tabs, table, list-group) and as the design system's own pieces (dd-*), always inside .arp so
+// nothing reaches the rest of Moodle. Buttons, fields, dialogs and alerts stay the ones of Moodle.
 // @copyright 2026 Didactika.org
-// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
 // @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
 .arp {
+    display: grid;
+    gap: 1.25rem;
     min-width: 0;
-    color: var(--arp-text);
 
-    // A list is a card: a thin line and the radius of the system, no shadow, with its toolbar, table and foot.
-    & .card {
-        overflow: visible;
-        border: 1px solid var(--arp-border);
-        border-radius: var(--arp-radius);
-        background: var(--arp-surface);
-        box-shadow: none;
+    // Page header: the context of the page and its actions; the title is the heading Moodle draws above it.
+    & .dd-page-header {
+        display: grid;
+        gap: 0.75rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--dd-hairline);
     }
 
-    & .card > .table-responsive {
-        border-radius: 0;
+    & .dd-page-header-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem 1.5rem;
+    }
+
+    & .dd-page-header-main {
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+        min-width: 0;
+    }
+
+    & .dd-page-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.25;
+        color: var(--dd-ink);
+    }
+
+    & .dd-page-subtitle {
+        margin: 0;
+        color: var(--dd-muted);
+        font-size: 0.9375rem;
+    }
+
+    & .dd-page-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    // Tabs of the sections of a page: an underline under the open one.
+    & .nav-tabs {
+        gap: 0.25rem;
+        border-bottom: 1px solid var(--dd-hairline);
+
+        & .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: -1px;
+            padding: 0.625rem 1rem;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            border-radius: var(--dd-radius-sm) var(--dd-radius-sm) 0 0;
+            background: none;
+            color: var(--dd-muted);
+            font-weight: 500;
+            transition: border-color var(--dd-ease), background-color var(--dd-ease), color var(--dd-ease);
+
+            &:hover {
+                border-bottom-color: var(--dd-line);
+                color: var(--dd-ink);
+            }
+
+            &.active {
+                border-bottom-color: var(--dd-primary);
+                background-color: var(--dd-primary-soft);
+                color: var(--dd-primary-ink);
+                font-weight: 600;
+            }
+        }
+    }
+
+    // Filter chips: the filters used all the time, with the rows each one leaves.
+    & .dd-chips {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    & .dd-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4375rem;
+        min-height: 2rem;
+        padding: 0.1875rem 0.75rem;
+        border: 1px solid var(--dd-line);
+        border-radius: 999px;
+        background: var(--dd-surface);
+        color: var(--dd-ink);
+        font-size: 0.875rem;
+        font-weight: 500;
+        line-height: 1.4;
+        cursor: pointer;
+        transition: background-color var(--dd-ease), border-color var(--dd-ease), color var(--dd-ease);
+
+        &:hover {
+            border-color: var(--dd-line-hover);
+            background: var(--dd-surface-2);
+        }
+
+        &:focus-visible {
+            outline: 0;
+            box-shadow: 0 0 0 3px var(--dd-ring);
+        }
+
+        &[aria-pressed="true"] {
+            border-color: var(--dd-primary);
+            background: var(--dd-primary-soft);
+            color: var(--dd-primary-ink);
+            font-weight: 600;
+
+            & .dd-chip-count {
+                background: var(--dd-primary);
+                color: #fff;
+            }
+        }
+    }
+
+    & .dd-chip-count {
+        padding: 0 0.4rem;
+        border-radius: 999px;
+        background: var(--dd-surface-3);
+        color: var(--dd-muted);
+        font-size: 0.75rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+
+    // Cards: a thin line and the radius of the system, no shadow. A list is a card with its toolbar, table and pager.
+    & .card {
+        overflow: hidden;
+        border: 1px solid var(--dd-hairline);
+        border-radius: var(--dd-radius-lg);
+        background: var(--dd-surface);
+        box-shadow: none;
     }
 
     & .card-body {
         padding: 1.25rem;
+    }
+
+    & .card-title {
+        margin-bottom: 0.75rem;
+        color: var(--dd-ink);
+        font-size: 1rem;
+        font-weight: 700;
     }
 
     & .table-toolbar {
@@ -36,123 +173,69 @@
         justify-content: space-between;
         gap: 0.75rem 1rem;
         padding: 0.75rem 1rem;
-        border-bottom: 1px solid var(--arp-border);
+        border-bottom: 1px solid var(--dd-hairline);
     }
 
-    // The search: the magnifier inside the field.
-    & .input-group {
-        flex: 1 1 14rem;
-        width: auto;
-        max-width: 24rem;
-        flex-wrap: nowrap;
-
-        & .input-group-text {
-            padding-right: 0.25rem;
-            border-color: var(--arp-border-strong);
-            border-right: 0;
-            background: var(--arp-surface);
-            color: var(--arp-muted);
-        }
-
-        & .form-control {
-            border-color: var(--arp-border-strong);
-            border-left: 0;
-            background: var(--arp-surface);
-            color: var(--arp-text);
-            box-shadow: none;
-
-            &:focus {
-                border-color: var(--arp-accent);
-                box-shadow: 0 0 0 0.2rem var(--arp-accent-ring);
-            }
-        }
-
-        &:focus-within .input-group-text {
-            border-color: var(--arp-accent);
-        }
-    }
-
-    // The Filters button, and the panel it opens: a menu of Bootstrap that holds a form.
-    & .dropdown {
-        position: relative;
-    }
-
-    & .dropdown-toggle {
-        display: inline-flex;
+    & .table-toolbar-start,
+    & .table-toolbar-end {
+        display: flex;
+        flex-wrap: wrap;
         align-items: center;
         gap: 0.5rem;
-
-        &.active {
-            border-color: var(--arp-accent);
-            background: var(--arp-accent-soft);
-            color: var(--arp-accent-text);
-        }
-
-        & .badge {
-            --bs-badge-padding-x: 0.5em;
-
-            color: var(--arp-on-accent);
-        }
     }
 
-    & .dropdown-menu {
-        inset: 100% auto auto 0;
-        z-index: 1020;
-        min-width: 22rem;
-        max-width: 92vw;
-        max-height: 70vh;
-        margin-top: 0.25rem;
-        padding: 0;
-        overflow-y: auto;
-        border: 1px solid var(--arp-border);
-        border-radius: var(--arp-radius);
-        background: var(--arp-surface);
-        box-shadow: var(--arp-shadow);
-    }
-
-    & .dropdown-menu fieldset {
-        min-width: 0;
-        padding: 0;
-        border: 0;
-    }
-
-    & .dropdown-menu .form-check {
-        padding-top: 0.25rem;
-        padding-bottom: 0.25rem;
-    }
-
-    & .dropdown-menu .form-check .form-check-label {
-        width: 100%;
+    & .table-toolbar-start {
+        flex: 1 1 18rem;
     }
 
     // Tables: quiet lines, a small header in capitals, and room to breathe.
     & .table-responsive {
         margin: 0;
-        transition: opacity 140ms;
+        transition: opacity var(--dd-ease);
 
         &[aria-busy="true"] {
             opacity: 0.6;
         }
+
+        // A list keeps the same height whatever it holds: with few rows there is empty space below them, with many it scrolls
+        // and the header stays in view.
+        &[data-region="tablewrap"] {
+            block-size: var(--dd-table-h);
+            overflow-y: auto;
+
+            & thead th {
+                position: sticky;
+                inset-block-start: 0;
+                z-index: 1;
+                background-color: var(--dd-surface);
+            }
+        }
+    }
+
+    // The empty and error states take the same height, so the page does not jump when a search finds nothing.
+    & [data-region="empty"]:not([hidden]),
+    & [data-region="error"]:not([hidden]) {
+        display: grid;
+        min-block-size: var(--dd-table-h);
+        place-content: center;
     }
 
     & .table {
-        --bs-table-bg: transparent;
-
         margin-bottom: 0;
-        color: var(--arp-text);
+        color: var(--dd-ink);
         font-size: 0.9375rem;
 
         & th,
         & td {
             padding: 0.75rem 1rem;
-            border-color: var(--arp-border);
+            border-color: var(--dd-hairline);
             vertical-align: middle;
         }
 
         & thead th {
             border-top: 0;
-            border-bottom: 1px solid var(--arp-border-strong);
-            color: var(--arp-muted);
+            border-bottom: 1px solid var(--dd-line);
+            color: var(--dd-muted);
             font-size: 0.75rem;
             font-weight: 600;
             letter-spacing: 0.05em;
@@ -160,21 +243,52 @@
             white-space: nowrap;
         }
 
+        & tbody th {
+            font-weight: 600;
+        }
+
         & tbody tr:last-child > * {
             border-bottom: 0;
         }
 
         & tbody tr:hover > * {
-            background-color: color-mix(in srgb, var(--arp-accent) 5%, var(--arp-surface));
+            background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
         }
 
-        & .userpicture {
+        & tbody tr.table-active > * {
+            background-color: var(--dd-primary-soft);
+        }
+
+        & .table-select {
+            width: 2.75rem;
+            padding-right: 0;
+
+            // Bootstrap 4 places a check absolutely, beside a label; in a cell it stands on its own.
+            & .form-check-input {
+                position: static;
+                display: block;
+                width: 1.125rem;
+                height: 1.125rem;
+                margin: 0;
+                cursor: pointer;
+            }
+        }
+
+        & .table-actions {
+            width: 1%;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        // A person in a row: the name and, under it, the email, cut when the column is narrow.
+        & .userpicture,
+        & .userinitials {
             flex: none;
-            border-radius: 50%;
+            margin: 0 0.75rem 0 0;
         }
 
         & .text-truncate {
-            max-width: 18rem;
+            max-width: 16rem;
         }
     }
 
@@ -196,7 +310,7 @@
             flex: none;
             width: 0.4375rem;
             height: 0.4375rem;
-            border: solid currentcolor;
+            border: solid currentColor;
             border-width: 0 2px 2px 0;
             opacity: 0.35;
             transform: translateY(-2px) rotate(45deg);
@@ -204,7 +318,7 @@
         }
 
         &:hover {
-            color: var(--arp-text);
+            color: var(--dd-ink);
 
             &::after {
                 opacity: 0.8;
@@ -214,19 +328,19 @@
         &:focus-visible {
             outline: 0;
             border-radius: 0.25rem;
-            box-shadow: 0 0 0 3px var(--arp-accent-ring);
+            box-shadow: 0 0 0 3px var(--dd-ring);
         }
     }
 
     & th[aria-sort] {
-        color: var(--arp-text);
+        color: var(--dd-ink);
 
         & .table-sort {
-            color: var(--arp-accent-text);
+            color: var(--dd-primary-ink);
 
             &::after {
                 opacity: 1;
-                color: var(--arp-accent);
+                color: var(--dd-primary);
             }
         }
     }
@@ -235,107 +349,125 @@
         transform: translateY(2px) rotate(-135deg);
     }
 
-    // The foot of a list: how many rows, which ones, and the arrows.
+    // Foot of a list: how many rows, which ones, and the arrows.
     & .table-foot {
         padding: 0.75rem 1rem;
-        border-top: 1px solid var(--arp-border);
+        border-top: 1px solid var(--dd-hairline);
+    }
+
+    & .dd-pager {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem 1.5rem;
+        color: var(--dd-muted);
+        font-size: 0.875rem;
+    }
+
+    & .dd-pager-size {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
 
         & select {
-            min-width: 4.5rem;
+            width: auto;
         }
     }
 
-    // Statuses and states are badges tinted with the colour of their role, from the variables of Bootstrap, so the colour mode and
-    // the theme change them. Bootstrap fills a badge with the colour and writes its text in white; here the fill is a tenth of it.
-    & .badge {
-        --bs-bg-opacity: 0.14;
-        --bs-badge-padding-x: 0.65em;
-        --bs-badge-padding-y: 0.4em;
-        --bs-badge-font-size: 0.8125em;
+    & .dd-pager-end {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem 1rem;
+    }
 
-        font-weight: 600;
+    & .dd-pager-range {
+        color: var(--dd-ink);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
 
-        &.bg-success {
-            color: var(--bs-success-text-emphasis, var(--arp-success));
+    & .dd-pager-arrows {
+        display: flex;
+        gap: 0.25rem;
+    }
+
+    // States of a list: skeleton rows while it loads, and an empty state when there is nothing to show.
+    & .dd-skeleton {
+        display: block;
+        height: 0.875rem;
+        border-radius: 0.375rem;
+        background: linear-gradient(90deg, var(--dd-hairline) 0%, var(--dd-surface-3) 50%, var(--dd-hairline) 100%);
+        background-size: 200% 100%;
+        animation: arp-shimmer 1.4s linear infinite;
+    }
+
+    & .dd-empty {
+        display: grid;
+        justify-items: center;
+        gap: 0.5rem;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+
+        & .dd-tile {
+            width: 3.5rem;
+            height: 3.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 1rem;
+            font-size: 1.5rem;
         }
 
-        &.bg-primary {
-            color: var(--bs-primary-text-emphasis, var(--arp-accent-text));
-        }
-
-        &.bg-info {
-            color: var(--bs-info-text-emphasis, var(--arp-info));
-        }
-
-        &.bg-danger {
-            color: var(--bs-danger-text-emphasis, var(--arp-danger));
-        }
-
-        &.bg-warning {
-            color: var(--bs-warning-text-emphasis, var(--arp-text));
-        }
-
-        &.bg-secondary {
-            color: var(--bs-secondary-text-emphasis, var(--arp-muted));
+        & .btn {
+            margin-top: 0.75rem;
         }
     }
 
-    // The filters that are applied, and the button that lifts each one.
-    & .badge .btn-link {
-        display: inline-flex;
-        color: inherit;
-        line-height: 1;
-        opacity: 0.7;
-
-        &:hover {
-            opacity: 1;
-        }
+    & .dd-empty-title {
+        margin: 0;
+        color: var(--dd-ink);
+        font-size: 1.0625rem;
+        font-weight: 700;
     }
 
-    // A short explanation that opens on a button: a popover of Bootstrap, placed under it.
-    & .popover {
-        inset: calc(100% + 0.25rem) auto auto 0;
-        z-index: 1030;
-        width: 18rem;
-        max-width: 80vw;
-        transform: none;
-        text-align: start;
-        white-space: normal;
-        border-radius: var(--arp-radius);
-        box-shadow: var(--arp-shadow);
+    & .dd-empty-text {
+        max-width: 28rem;
+        margin: 0;
+        color: var(--dd-muted);
+        font-size: 0.9375rem;
+        line-height: 1.5;
     }
 
-    & .btn-link {
-        text-decoration: none;
+    // The alert of a list that did not load sits where its rows were.
+    & .card > .alert {
+        margin: 1rem;
+    }
+}
+
+@keyframes arp-shimmer {
+    from {
+        background-position: 100% 0;
     }
 
-    // The courses and activities found while the reader types, under their field.
-    & .list-group {
-        z-index: 1040;
-        max-height: 14rem;
-        overflow-y: auto;
-        border-radius: var(--arp-radius);
+    to {
+        background-position: -100% 0;
     }
+}
 
-    & .alert {
-        border-radius: var(--arp-radius);
+@media (prefers-reduced-motion: reduce) {
+    .arp .dd-skeleton {
+        animation: none;
     }
 }
 
 @media (max-width: 576px) {
     .arp {
-        & .table-toolbar {
-            padding: 0.75rem;
-        }
-
-        & .input-group {
+        & .dd-searchbox {
             max-width: none;
         }
-    }
-}
 
-@media (prefers-reduced-motion: reduce) {
-    .arp .table-sort::after {
-        transition: none;
+        & .dd-pager-size {
+            display: none;
+        }
     }
 }

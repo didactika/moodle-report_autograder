@@ -2,7 +2,7 @@
  * This file is part of Moodle - https://moodle.org/
  * Moodle is free software under the GNU General Public License, version 3 or later.
  *
- * The autograder report: a bar of filters, one table and its pages, for an activity, a course or the whole site.
+ * The autograder report: a search and one menu for each filter, one table and its pages, for an activity, a course or the whole site.
  *
  * Mounted by core/react_autoinit from the data-react-component that the page writes. Filtering, sorting and paging are done by the
  * server, because the report of a site can have more rows than a browser should ever be sent.
@@ -13,10 +13,9 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import {useEffect, useMemo, useState} from 'react';
-import AppliedFilters from './components/AppliedFilters';
-import FiltersPanel from './components/FiltersPanel';
+import {DateMenu, PickerMenu, StatusMenu} from './components/Filters';
 import ReportTable from './components/ReportTable';
-import {FiltersMenu, Pager, SearchBox} from './components/ui';
+import {Icon, Pager, SearchBox, SelectMenu} from './components/ui';
 import {useDebounced} from './hooks/useDebounced';
 import {createText} from './engine/text';
 import {useReport} from './hooks/useReport';
@@ -100,16 +99,10 @@ export default function Report(props: ReportProps) {
         setFilters({...NO_FILTERS, groupid: props.offersallgroups ? 0 : filters.groupid});
         setSort({column: '', direction: 'asc'});
     };
-    const onCourse = (option: Option | null): void => {
-        setCourse(option);
-        // The activity that was chosen may not belong to the new course.
-        setActivity(null);
-        change({courseid: option?.id ?? 0, cmid: 0});
-    };
-    const onActivity = (option: Option | null): void => {
-        setActivity(option);
-        change({cmid: option?.id ?? 0});
-    };
+    const groups = [
+        ...(props.offersallgroups ? [{value: '0', label: text('filter_group_placeholder')}] : []),
+        ...props.groups.map((group) => ({value: String(group.id), label: group.name})),
+    ];
 
     return <div
         id="autograder-report-container"
@@ -117,40 +110,71 @@ export default function Report(props: ReportProps) {
         onClickCapture={remember}
         {...forumAttributes(props)}
     >
-        <p className="text-muted mb-3">{text(`lead_${props.level}`)}</p>
+        <p className="text-muted mb-0">{text(`lead_${props.level}`)}</p>
         <div className="card">
-            <div className="table-toolbar">
-                <div className="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+            <div className="table-toolbar" data-region="filters">
+                <div className="table-toolbar-start">
                     <SearchBox value={searchText} onChange={setSearchText} label={text('filter_search')} text={text} />
-                    <FiltersMenu label={text('filters')} applied={applied} text={text}>
-                        <FiltersPanel
-                            props={props}
-                            filters={filters}
-                            counts={state.counts}
-                            course={course}
-                            activity={activity}
-                            text={text}
-                            onFilters={change}
-                            onCourse={onCourse}
-                            onActivity={onActivity}
-                            onReset={reset}
-                            canReset={narrowed}
-                        />
-                    </FiltersMenu>
+                    <StatusMenu
+                        statuses={props.statuses}
+                        counts={state.counts}
+                        chosen={filters.status}
+                        text={text}
+                        onChange={(status) => change({status})}
+                    />
+                    {props.showscoursefilter && <PickerMenu
+                        type="course"
+                        label={text('filter_course')}
+                        chosen={course}
+                        scope={props.scope}
+                        courseid={0}
+                        text={text}
+                        onPick={(option) => {
+                            setCourse(option);
+                            // The activity that was chosen may not belong to the new course.
+                            setActivity(null);
+                            change({courseid: option?.id ?? 0, cmid: 0});
+                        }}
+                    />}
+                    {props.showsactivityfilter && <PickerMenu
+                        type="activity"
+                        label={text('filter_activity')}
+                        chosen={activity}
+                        scope={props.scope}
+                        courseid={filters.courseid}
+                        text={text}
+                        onPick={(option) => {
+                            setActivity(option);
+                            change({cmid: option?.id ?? 0});
+                        }}
+                    />}
+                    {props.showsgroupfilter && <SelectMenu
+                        label={text('filter_group')}
+                        options={groups}
+                        value={String(filters.groupid)}
+                        active={props.offersallgroups && filters.groupid > 0}
+                        onChange={(groupid) => change({groupid: Number(groupid)})}
+                    />}
+                    <DateMenu
+                        from={filters.datefrom}
+                        to={filters.dateto}
+                        text={text}
+                        onChange={(datefrom, dateto) => change({datefrom, dateto})}
+                    />
+                </div>
+                <div className="table-toolbar-end">
+                    <button
+                        type="button"
+                        className="btn btn-link btn-icon"
+                        disabled={!narrowed}
+                        title={text('filters_reset')}
+                        aria-label={text('filters_reset')}
+                        onClick={reset}
+                    >
+                        <Icon name="i/reload" text={text} />
+                    </button>
                 </div>
             </div>
-            <AppliedFilters
-                props={props}
-                filters={filters}
-                course={course}
-                activity={activity}
-                total={state.total}
-                loading={state.loading}
-                text={text}
-                onFilters={change}
-                onCourse={onCourse}
-                onActivity={onActivity}
-            />
             <ReportTable
                 state={state}
                 columns={props.columns}

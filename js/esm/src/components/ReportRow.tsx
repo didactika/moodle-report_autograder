@@ -10,7 +10,7 @@
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {Hint} from './ui';
+import {Hint, Icon} from './ui';
 import type {ForumGrade, ReportProps, Row, Text} from '../types';
 
 interface ReportRowProps {
@@ -44,7 +44,7 @@ const Grade = ({row, text}: {row: Row; text: Text}) => {
         {row.provisional_grade && <span className="fst-italic text-muted">
             {row.provisional_grade} <Hint message={text('grade_provisional_help')} label={text('info:grade')} icon="i/info" text={text} />
         </span>}
-        {row.grade_problem && <Hint message={row.grade_problem} label={text('info:problem')} icon="i/warning" text={text} />}
+        {row.grade_problem && <Hint message={row.grade_problem} label={text('info:problem')} icon="i/warning" tone="warning" text={text} />}
     </>;
 };
 
@@ -62,7 +62,7 @@ const Grader = ({row, text}: {row: Row; text: Text}) => {
         {row.will_grade && <span className="text-muted">
             {row.will_grade} <Hint message={text('gradedby_prospective_help')} label={text('gradedby_prospective')} icon="i/info" text={text} />
         </span>}
-        {row.will_grade_problem && <Hint message={row.will_grade_problem} label={text('info:problem')} icon="i/warning" text={text} />}
+        {row.will_grade_problem && <Hint message={row.will_grade_problem} label={text('info:problem')} icon="i/warning" tone="warning" text={text} />}
     </>;
 };
 
@@ -76,17 +76,17 @@ export default function ReportRow({row, columns, forumgrade, text}: ReportRowPro
     const tone = TONES[row.status_key] ?? 'secondary';
     return <tr data-record-id={row.rowkey}>
         <td>
-            <a className="d-inline-flex align-items-center gap-2 text-decoration-none" href={row.user_profile_url}>
-                <img className="userpicture" src={row.user_picture_url} alt="" width={36} height={36} loading="lazy" />
-                <span className="fw-bold">{row.user_name}</span>
-            </a>
+            <span className="d-flex align-items-center">
+                <img className="userpicture" src={row.user_picture_url} alt="" width={35} height={35} loading="lazy" />
+                <a href={row.user_profile_url}>{row.user_name}</a>
+            </span>
         </td>
         {columns.course && <td>{row.course_name && <a href={row.course_url}>{row.course_name}</a>}</td>}
         {columns.activity && <td>{row.activity_name && <a href={row.activity_url}>{row.activity_name}</a>}</td>}
         {columns.group && <td>{row.groups}</td>}
         <td>
-            <span className={`badge bg-${tone} badge-${tone}`}>{row.status}</span>
-            {row.failure_reason && <> <Hint message={row.failure_reason} label={text('info:failure')} icon="i/warning" text={text} /></>}
+            <span className={`badge badge-soft badge-dot rounded-pill text-bg-${tone}`}>{row.status}</span>
+            {row.failure_reason && <> <Hint message={row.failure_reason} label={text('info:failure')} icon="i/warning" tone="danger" text={text} /></>}
         </td>
         <td data-sort-value={row.completed_at_sort}>
             {row.completed_at}
@@ -94,17 +94,24 @@ export default function ReportRow({row, columns, forumgrade, text}: ReportRowPro
         </td>
         <td><Grade row={row} text={text} /></td>
         <td><Grader row={row} text={text} /></td>
-        <td className="text-end">
-            {row.grade_user_url && <a className="btn btn-outline-secondary btn-sm" href={row.grade_user_url}>{text('gradeuser')}</a>}
+        <td className="table-actions">
+            {row.grade_user_url && <a
+                className="btn btn-link btn-icon btn-sm text-primary"
+                href={row.grade_user_url}
+                title={text('gradeuser')}
+                aria-label={text('gradeuser')}
+            ><Icon name="i/grades" text={text} /></a>}
             {!row.grade_user_url && row.show_forum_grader && forumgrade && <button
                 type="button"
-                className="btn btn-outline-secondary btn-sm"
+                className="btn btn-link btn-icon btn-sm text-primary"
+                title={text('gradeuser')}
+                aria-label={text('gradeuser')}
                 data-grade-action="launch"
                 data-grading-component={forumgrade.gradingcomponent}
                 data-grading-component-subtype={forumgrade.gradingcomponentsubtype}
                 data-experimental-display-mode={forumgrade.experimentaldisplaymode}
                 data-initialuserid={row.moodle_userid}
-            >{text('gradeuser')}</button>}
+            ><Icon name="i/grades" text={text} /></button>}
         </td>
     </tr>;
 }
