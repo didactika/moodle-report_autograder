@@ -101,6 +101,14 @@ function report_autograder_import_tours(): int {
         return 0;
     }
 
+    // A new site installs the reports before the admin tools, so the tours of Moodle may not exist yet: the tour is then added by
+    // an ad-hoc task, after the installation.
+    if (!$DB->get_manager()->table_exists('tool_usertours_tours')) {
+        \core\task\manager::queue_adhoc_task(new \report_autograder\task\import_tours(), true);
+
+        return 0;
+    }
+
     $imported = 0;
 
     foreach (glob(__DIR__ . '/tours/*.json') as $file) {
