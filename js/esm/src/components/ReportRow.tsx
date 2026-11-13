@@ -3,7 +3,7 @@
  * Moodle is free software under the GNU General Public License, version 3 or later.
  *
  * One row of the report: the student, where it applies the course, the activity and the groups, the status, the date, the grade, the
- * teacher it is graded as and the button that opens the grading screen of the activity.
+ * teacher it is graded as, and at its end the explanations of the row and the button that opens the grading screen of the activity.
  *
  * @module     report_autograder/components/ReportRow
  * @copyright  2026 Didactika.org
@@ -20,6 +20,13 @@ interface ReportRowProps {
     text: Text;
 }
 
+/** One explanation of a row: what it is about, what it says and the colour of its meaning. */
+interface Note {
+    title: string;
+    message: string;
+    tone: 'info' | 'warning' | 'danger';
+}
+
 /** The colour of Bootstrap that each status takes. */
 const TONES: Record<string, string> = {
     graded: 'success',
@@ -31,39 +38,59 @@ const TONES: Record<string, string> = {
 };
 
 /**
- * The grade of a row: the one it has, or the one it will get with the reason that explains it.
+ * Everything a row has to explain, from the most serious: why it failed, why there is no grade, then why the date, what the
+ * provisional grade is and whose name the grade will carry.
  *
- * @param props The row and the texts.
- * @returns The grade.
+ * @param row The row.
+ * @param text The texts.
+ * @returns The explanations.
  */
-const Grade = ({row, text}: {row: Row; text: Text}) => {
-    if (row.grade) {
-        return <strong>{row.grade}</strong>;
+const notesOf = (row: Row, text: Text): Note[] => {
+    const notes: Note[] = [];
+    if (row.failure_reason) {
+        notes.push({title: text('info:failure'), message: row.failure_reason, tone: 'danger'});
     }
-    return <>
-        {row.provisional_grade && <span className="fst-italic text-muted">
-            {row.provisional_grade} <Hint message={text('grade_provisional_help')} label={text('info:grade')} icon="i/info" text={text} />
-        </span>}
-        {row.grade_problem && <Hint message={row.grade_problem} label={text('info:problem')} icon="i/warning" tone="warning" text={text} />}
-    </>;
+    if (!row.grade && row.grade_problem) {
+        notes.push({title: text('info:problem'), message: row.grade_problem, tone: 'warning'});
+    }
+    if (!row.graded_by && row.will_grade_problem) {
+        notes.push({title: text('info:grader'), message: row.will_grade_problem, tone: 'warning'});
+    }
+    if (row.date_reason) {
+        notes.push({title: text('info:date'), message: row.date_reason, tone: 'info'});
+    }
+    if (!row.grade && row.provisional_grade) {
+        notes.push({title: text('info:grade'), message: text('grade_provisional_help'), tone: 'info'});
+    }
+    if (!row.graded_by && row.will_grade) {
+        notes.push({title: text('gradedby_prospective'), message: text('gradedby_prospective_help'), tone: 'info'});
+    }
+    return notes;
 };
 
 /**
- * The teacher a row is graded as, or would be.
+ * The button at the end of a row that opens its explanations, in the colour of the most serious one.
  *
- * @param props The row and the texts.
- * @returns The teacher.
+ * @param props The explanations and the texts.
+ * @returns The button, or nothing when the row has nothing to explain.
  */
-const Grader = ({row, text}: {row: Row; text: Text}) => {
-    if (row.graded_by) {
-        return <>{row.graded_by}</>;
+const Notes = ({notes, text}: {notes: Note[]; text: Text}) => {
+    if (notes.length === 0) {
+        return null;
     }
-    return <>
-        {row.will_grade && <span className="text-muted">
-            {row.will_grade} <Hint message={text('gradedby_prospective_help')} label={text('gradedby_prospective')} icon="i/info" text={text} />
-        </span>}
-        {row.will_grade_problem && <Hint message={row.will_grade_problem} label={text('info:problem')} icon="i/warning" tone="warning" text={text} />}
-    </>;
+    const tone = notes[0].tone;
+    return <Hint
+        label={text('info:row')}
+        icon={tone === 'info' ? 'i/info' : 'i/warning'}
+        tone={tone}
+        text={text}
+        message={<ul className="list-unstyled d-grid gap-2 mb-0">
+            {notes.map((note) => <li key={note.title} className={`border-start border-3 border-${note.tone} ps-2`}>
+                <strong className={`d-block text-${note.tone}`}>{note.title}</strong>
+                <span className="text-body">{note.message}</span>
+            </li>)}
+        </ul>}
+    />;
 };
 
 /**
@@ -83,18 +110,21 @@ export default function ReportRow({row, columns, forumgrade, text}: ReportRowPro
         </td>
         {columns.course && <td>{row.course_name && <a href={row.course_url}>{row.course_name}</a>}</td>}
         {columns.activity && <td>{row.activity_name && <a href={row.activity_url}>{row.activity_name}</a>}</td>}
-        {columns.group && <td>{row.groups}</td>}
+        {columns.group && <td className="text-nowrap">{row.groups}</td>}
+        <td><span className={`badge badge-soft badge-dot rounded-pill text-bg-${tone}`}>{row.status}</span></td>
+        <td className="text-nowrap" data-sort-value={row.completed_at_sort}>{row.completed_at}</td>
         <td>
-            <span className={`badge badge-soft badge-dot rounded-pill text-bg-${tone}`}>{row.status}</span>
-            {row.failure_reason && <> <Hint message={row.failure_reason} label={text('info:failure')} icon="i/warning" tone="danger" text={text} /></>}
+            {row.grade && <strong>{row.grade}</strong>}
+            {!row.grade && row.provisional_grade && <span className="fst-italic text-muted">{row.provisional_grade}</span>}
+            {!row.grade && !row.provisional_grade && <span className="text-muted">—</span>}
         </td>
-        <td data-sort-value={row.completed_at_sort}>
-            {row.completed_at}
-            {row.date_reason && <> <Hint message={row.date_reason} label={text('info:date')} icon="i/info" text={text} /></>}
+        <td className="text-nowrap">
+            {row.graded_by}
+            {!row.graded_by && row.will_grade && <span className="fst-italic text-muted">{row.will_grade}</span>}
+            {!row.graded_by && !row.will_grade && <span className="text-muted">—</span>}
         </td>
-        <td><Grade row={row} text={text} /></td>
-        <td><Grader row={row} text={text} /></td>
         <td className="table-actions">
+            <Notes notes={notesOf(row, text)} text={text} />
             {row.grade_user_url && <a
                 className="btn btn-link btn-icon btn-sm text-primary"
                 href={row.grade_user_url}

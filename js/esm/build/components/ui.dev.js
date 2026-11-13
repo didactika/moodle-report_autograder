@@ -395,7 +395,7 @@ function Hint({ message, label, icon, tone = "info", text }) {
         onClick: () => open ? setPlace(null) : show(),
         children: /* @__PURE__ */ jsxDEV(Icon, { name: icon, text }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 329,
+          lineNumber: 335,
           columnNumber: 13
         }, this)
       },
@@ -403,7 +403,7 @@ function Hint({ message, label, icon, tone = "info", text }) {
       false,
       {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 320,
+        lineNumber: 326,
         columnNumber: 9
       },
       this
@@ -415,24 +415,31 @@ function Hint({ message, label, icon, tone = "info", text }) {
         role: "dialog",
         "aria-label": label,
         style: { top: place.top, left: place.left, transform: place.up ? "translateY(-100%)" : "none" },
-        children: /* @__PURE__ */ jsxDEV("div", { className: "popover-body", children: message }, void 0, false, {
-          fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 337,
-          columnNumber: 13
-        }, this)
+        children: [
+          /* @__PURE__ */ jsxDEV("div", { className: "popover-header", children: label }, void 0, false, {
+            fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+            lineNumber: 343,
+            columnNumber: 13
+          }, this),
+          /* @__PURE__ */ jsxDEV("div", { className: "popover-body", children: message }, void 0, false, {
+            fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+            lineNumber: 344,
+            columnNumber: 13
+          }, this)
+        ]
       },
       void 0,
-      false,
+      true,
       {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 331,
+        lineNumber: 337,
         columnNumber: 19
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 319,
+    lineNumber: 325,
     columnNumber: 12
   }, this);
 }
@@ -440,7 +447,7 @@ __name(Hint, "Hint");
 function TableBox({ busy, empty, children }) {
   return /* @__PURE__ */ jsxDEV("div", { className: "table-responsive", "data-region": "tablewrap", "aria-busy": busy, children: empty || children }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 350,
+    lineNumber: 357,
     columnNumber: 12
   }, this);
 }
@@ -449,26 +456,26 @@ function Empty({ icon, message, action, onAction, text }) {
   return /* @__PURE__ */ jsxDEV("div", { className: "dd-empty", "data-region": "empty", role: "status", children: [
     /* @__PURE__ */ jsxDEV("span", { className: "dd-tile dd-tile-lg", children: /* @__PURE__ */ jsxDEV(Icon, { name: icon, text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 370,
+      lineNumber: 377,
       columnNumber: 46
     }, this) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 370,
+      lineNumber: 377,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("p", { className: "dd-empty-text", children: message }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 371,
+      lineNumber: 378,
       columnNumber: 9
     }, this),
     action && onAction && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-outline-secondary btn-sm", onClick: onAction, children: action }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 372,
+      lineNumber: 379,
       columnNumber: 32
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 369,
+    lineNumber: 376,
     columnNumber: 12
   }, this);
 }

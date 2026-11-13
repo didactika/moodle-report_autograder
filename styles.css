@@ -341,10 +341,6 @@
     font-weight: 600;
 }
 
-.arp .table tbody tr:last-child > * {
-    border-bottom: 0;
-}
-
 .arp .table tbody tr:hover > * {
     background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
 }
@@ -1117,6 +1113,11 @@
     border-radius: 50%;
 }
 
+.arp .btn-hint .icon {
+    /* stylelint-disable-next-line declaration-no-important */
+    color: inherit !important;
+}
+
 .arp .btn-hint + .popover {
     position: fixed;
     z-index: 1030;
@@ -1126,12 +1127,6 @@
     white-space: normal;
     border-radius: var(--dd-radius);
     box-shadow: var(--dd-shadow-md);
-}
-
-.arp .btn-link.btn-icon.btn-hint {
-    width: 1.5rem;
-    height: 1.5rem;
-    vertical-align: middle;
 }
 
 .arp .alert {

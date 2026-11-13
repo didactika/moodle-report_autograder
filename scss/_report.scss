@@ -110,6 +110,13 @@
 
     // A short explanation that opens on a button: a popover of Bootstrap that floats over the page next to it (the component
     // places it), so it never takes room in the cell and the columns do not move.
+    // The icon of the button of a row takes the colour of the button, the one of its most serious explanation; Moodle paints
+    // some icons with a colour of their own, with the weight of a utility of Bootstrap.
+    & .btn-hint .icon {
+        /* stylelint-disable-next-line declaration-no-important */
+        color: inherit !important;
+    }
+
     & .btn-hint + .popover {
         position: fixed;
         z-index: 1030;
@@ -121,11 +128,6 @@
         box-shadow: var(--dd-shadow-md);
     }
 
-    & .btn-link.btn-icon.btn-hint {
-        width: 1.5rem;
-        height: 1.5rem;
-        vertical-align: middle;
-    }
 
     & .alert {
         border-radius: var(--dd-radius);

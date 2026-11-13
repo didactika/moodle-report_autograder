@@ -267,7 +267,13 @@ export function Pager({page, perpage, total, disabled, text, onChange}: {
  * @param props The explanation, the label of the button, its icon and its colour.
  * @returns The button and, once pressed, the explanation.
  */
-export function Hint({message, label, icon, tone = 'info', text}: {message: string; label: string; icon: string; tone?: string; text: Text}) {
+export function Hint({message, label, icon, tone = 'info', text}: {
+    message: ReactNode;
+    label: string;
+    icon: string;
+    tone?: string;
+    text: Text;
+}) {
     const [place, setPlace] = useState<{top: number; left: number; up: boolean} | null>(null);
     const root = useRef<HTMLSpanElement>(null);
     const button = useRef<HTMLButtonElement>(null);
@@ -334,6 +340,7 @@ export function Hint({message, label, icon, tone = 'info', text}: {message: stri
             aria-label={label}
             style={{top: place.top, left: place.left, transform: place.up ? 'translateY(-100%)' : 'none'}}
         >
+            <div className="popover-header">{label}</div>
             <div className="popover-body">{message}</div>
         </div>}
     </span>;
