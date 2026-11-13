@@ -1,0 +1,76 @@
+{
+  "name": "tour_report_name,report_autograder",
+  "description": "tour_report_description,report_autograder",
+  "pathmatch": "/report/autograder/index.php%",
+  "enabled": "1",
+  "sortorder": "0",
+  "endtourlabel": "",
+  "configdata": "{\"placement\":\"bottom\",\"orphan\":\"0\",\"backdrop\":\"1\",\"reflex\":\"0\",\"showtourwhen\":1,\"filtervalues\":{\"accessdate\":{\"filter_accessdate\":\"tool_usertours_accountcreation\",\"filter_accessdate_range\":0,\"filter_accessdate_enabled\":\"0\"},\"category\":[],\"course\":[],\"courseformat\":[],\"role\":[],\"theme\":[],\"cssselector\":[]}}",
+  "displaystepnumbers": true,
+  "version": "2024100700",
+  "steps": [
+    {
+      "title": "tour_report_step1_title,report_autograder",
+      "content": "tour_report_step1_content,report_autograder",
+      "contentformat": "1",
+      "targettype": "2",
+      "targetvalue": "",
+      "configdata": "{\"placement\":\"bottom\"}",
+      "sortorder": "0"
+    },
+    {
+      "title": "tour_report_step2_title,report_autograder",
+      "content": "tour_report_step2_content,report_autograder",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "[data-region=\"filters\"] .dd-searchbox",
+      "configdata": "{\"placement\":\"bottom\"}",
+      "sortorder": "1"
+    },
+    {
+      "title": "tour_report_step3_title,report_autograder",
+      "content": "tour_report_step3_content,report_autograder",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "[data-menu=\"status\"]",
+      "configdata": "{\"placement\":\"bottom\"}",
+      "sortorder": "2"
+    },
+    {
+      "title": "tour_report_step4_title,report_autograder",
+      "content": "tour_report_step4_content,report_autograder",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "[data-menu=\"date\"]",
+      "configdata": "{\"placement\":\"bottom\"}",
+      "sortorder": "3"
+    },
+    {
+      "title": "tour_report_step5_title,report_autograder",
+      "content": "tour_report_step5_content,report_autograder",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#autograder-filter-clear",
+      "configdata": "{\"placement\":\"left\"}",
+      "sortorder": "4"
+    },
+    {
+      "title": "tour_report_step6_title,report_autograder",
+      "content": "tour_report_step6_content,report_autograder",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#autograder-report-container table thead",
+      "configdata": "{\"placement\":\"bottom\"}",
+      "sortorder": "5"
+    },
+    {
+      "title": "tour_report_step7_title,report_autograder",
+      "content": "tour_report_step7_content,report_autograder",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "#autograder-report-container .table-foot",
+      "configdata": "{\"placement\":\"top\"}",
+      "sortorder": "6"
+    }
+  ]
+}

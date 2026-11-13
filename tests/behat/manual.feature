@@ -62,7 +62,8 @@ Feature: The screenshots of the user manual
   Scenario: The status filter and the report of a course
     When I open the autograder report of "essay"
     And I wait for the report rows
-    And I click on "Pending" "button" in the ".arp-statuses" "css_element"
+    And I click on "Status" "button" in the "[data-menu='status']" "css_element"
+    And I click on "Pending" "text" in the "[data-menu='status'] .dd-select-menu" "css_element"
     And I wait for the report rows
     And I wait "1" seconds
     Then I capture the report as "report-status-filter"
@@ -75,10 +76,6 @@ Feature: The screenshots of the user manual
     Then I capture the report as "report-mobile"
 
   Scenario: The graders of a course
-    When I open the graders page of the autograder report
-    And I click on "Course" "button" in the ".arp-toolbar" "css_element"
-    And I set the field with xpath "//input[contains(@class, 'arp-picker-field')]" to "STAT"
-    And I click on "Introduction to statistics" "button" in the ".arp-floating" "css_element"
-    And I click on "See which grader each student would get" "button"
+    When I open the graders page of the autograder report for "STAT101"
     And I wait "2" seconds
     Then I capture the report as "graders"

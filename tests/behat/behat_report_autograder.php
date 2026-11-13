@@ -90,6 +90,19 @@ class behat_report_autograder extends behat_base {
     }
 
     /**
+     * Open the graders page of one course, with the grader of each student.
+     *
+     * @Given /^I open the graders page of the autograder report for "([^"]+)"$/
+     * @param string $shortname Short name of the course.
+     */
+    public function i_open_the_graders_page_for(string $shortname): void {
+        global $DB;
+
+        $courseid = $DB->get_field('course', 'id', ['shortname' => $shortname], MUST_EXIST);
+        $this->getSession()->visit($this->locate_path('/report/autograder/graders.php?courseid=' . $courseid . '&students=1'));
+    }
+
+    /**
      * Save a screenshot of the whole page, for looking at it.
      *
      * @Then /^I capture the report as "([^"]+)"$/
@@ -109,8 +122,8 @@ class behat_report_autograder extends behat_base {
     public function i_wait_for_the_report_rows(): void {
         $this->getSession()->wait(
             15000,
-            "document.querySelectorAll('.arp-table tbody tr[data-record-id]').length > 0"
-            . " || document.querySelector('.arp-empty') !== null"
+            "document.querySelectorAll('#autograder-report-container tbody tr[data-record-id]').length > 0"
+            . " || document.querySelector('#autograder-report-container .dd-empty') !== null"
         );
     }
 
@@ -122,7 +135,7 @@ class behat_report_autograder extends behat_base {
      */
     public function the_report_should_show_rows(string $count): void {
         $shown = (int) $this->getSession()->evaluateScript(
-            "document.querySelectorAll('.arp-table tbody tr[data-record-id]').length"
+            "document.querySelectorAll('#autograder-report-container tbody tr[data-record-id]').length"
         );
         if ($shown !== (int) $count) {
             throw new \Behat\Mink\Exception\ExpectationException(

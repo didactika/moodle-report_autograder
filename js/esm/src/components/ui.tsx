@@ -13,7 +13,7 @@
  */
 import {useEffect, useId, useRef, useState} from 'react';
 import type {ReactNode} from 'react';
-import {pageRange} from '../lib/paging';
+import {fitPageSizes, pageRange} from '../lib/paging';
 import type {Text} from '../types';
 
 /**
@@ -53,17 +53,25 @@ export function SearchBox({value, onChange, label, text}: {value: string; onChan
 /**
  * A menu with the shape of a select: a button that says what is chosen and, under it, whatever the menu holds.
  *
- * @param props What the button says, whether something is chosen, how the menu lines up and what it holds.
+ * A menu that filters the list does not offer its base state as one more choice: the button says it while nothing is chosen, and
+ * once something is, the arrow of the button becomes a cross (onClear) that takes the filter back to it.
+ *
+ * @param props What the button says, whether something is chosen, how to clear it, how the menu lines up and what it holds.
  * @returns The button and, while it is open, the menu.
  */
-export function Menu({button, label, active = false, small = false, place = '', children}: {
+export function Menu({button, label, name, active = false, small = false, place = '', onClear, text, children}: {
     button: ReactNode;
+    name?: string;
     label: string;
     active?: boolean;
     small?: boolean;
     place?: '' | 'end' | 'up';
+    onClear?: () => void;
+    text?: Text;
     children: (close: () => void) => ReactNode;
 }) {
+    const clearable = active && onClear !== undefined;
+    const clear = text ? `${text('filter_clear')}: ${label}` : label;
     const [open, setOpen] = useState(false);
     const root = useRef<HTMLSpanElement>(null);
     const toggle = useRef<HTMLButtonElement>(null);
@@ -92,17 +100,28 @@ export function Menu({button, label, active = false, small = false, place = '', 
         };
     }, [open]);
 
-    return <span className={`dd-menu${place ? ` dd-menu-${place}` : ''}`} ref={root}>
+    return <span className={`dd-menu${place ? ` dd-menu-${place}` : ''}${onClear ? ' dd-select-filter' : ''}`} data-menu={name} ref={root}>
         <button
             ref={toggle}
             type="button"
-            className={`form-select dd-select${small ? ' form-select-sm' : ''}${active ? ' border-primary' : ''}`}
+            className={`form-select dd-select${small ? ' form-select-sm' : ''}${active ? ' border-primary' : ''}${clearable ? ' dd-select-set' : ''}`}
             aria-label={label}
             aria-haspopup="true"
             aria-expanded={open}
             aria-controls={open ? id : undefined}
             onClick={() => setOpen(!open)}
         >{button}</button>
+        {clearable && <button
+            type="button"
+            className="dd-select-clear"
+            title={clear}
+            aria-label={clear}
+            onClick={() => {
+                setOpen(false);
+                onClear();
+                toggle.current?.focus();
+            }}
+        >{text && <Icon name="e/cancel" text={text} />}</button>}
         {open && <div id={id} className="dd-select-menu" role="group" aria-label={label}>
             {children(() => {
                 setOpen(false);
@@ -113,22 +132,34 @@ export function Menu({button, label, active = false, small = false, place = '', 
 }
 
 /**
- * A menu that chooses one option among a few.
+ * A menu that chooses one option among a few. When it filters a list, its base option (base) is not offered: the button says it
+ * while it is chosen, and the cross of the button goes back to it.
  *
- * @param props The options, the one chosen and what to do when another is.
+ * @param props The options, the one chosen, the base one and what to do when another is.
  * @returns The menu.
  */
-export function SelectMenu({options, value, label, small = false, place = '', active = false, onChange}: {
+export function SelectMenu({options: all, value, label, small = false, place = '', base, text, onChange}: {
     options: {value: string; label: string}[];
     value: string;
     label: string;
     small?: boolean;
     place?: '' | 'end' | 'up';
-    active?: boolean;
+    base?: string;
+    text?: Text;
     onChange: (value: string) => void;
 }) {
-    const chosen = options.find((option) => option.value === value);
-    return <Menu button={chosen?.label ?? label} label={label} small={small} place={place} active={active}>
+    const chosen = all.find((option) => option.value === value);
+    const options = base === undefined ? all : all.filter((option) => option.value !== base);
+    const set = base !== undefined && value !== base;
+    return <Menu
+        button={chosen?.label ?? label}
+        label={label}
+        small={small}
+        place={place}
+        active={set}
+        text={text}
+        onClear={base === undefined ? undefined : () => onChange(base)}
+    >
         {(close) => options.map((option) => <button
             key={option.value}
             type="button"
@@ -173,16 +204,21 @@ export function SortHeader({label, help, active, direction, onSort}: {
  * @param props The page, how many per page, the total and what to do.
  * @returns The foot.
  */
-export function Pager({page, perpage, total, sizes, disabled, text, onChange}: {
+export function Pager({page, perpage, total, disabled, text, onChange}: {
     page: number;
     perpage: number;
     total: number;
-    sizes: number[];
     disabled?: boolean;
     text: Text;
     onChange: (changes: {page?: number; perpage?: number}) => void;
 }) {
+    if (total === 0) {
+        // An empty list has no pages: its empty state says so.
+        return null;
+    }
     const {from, to} = pageRange(page, perpage, total);
+    // Only the sizes smaller than the list are offered, besides all of it, and the select always shows one of them.
+    const {sizes, shown} = fitPageSizes(perpage, total);
     return <div className="table-foot">
         <div className="dd-pager">
             <div className="dd-pager-size">
@@ -191,8 +227,8 @@ export function Pager({page, perpage, total, sizes, disabled, text, onChange}: {
                     small
                     place="up"
                     label={text('pagination:results_per_page')}
-                    value={String(perpage)}
-                    options={sizes.map((size) => ({value: String(size), label: String(size)}))}
+                    value={String(shown)}
+                    options={sizes.map((size) => ({value: String(size), label: size ? String(size) : text('pagination:all')}))}
                     onChange={(size) => onChange({perpage: Number(size), page: 0})}
                 />
             </div>
@@ -266,13 +302,34 @@ export function Hint({message, label, icon, tone = 'info', text}: {message: stri
 }
 
 /**
- * What a list says when it has nothing to show or could not load.
+ * The box a table lives in: it keeps one height whatever the table holds and scrolls inside it, and with nothing to show it holds
+ * the empty state instead of the table.
  *
- * @param props The message and, when something can be done, its button.
+ * @param props Whether it is loading, the empty state when there is nothing to show, and the table.
+ * @returns The box.
+ */
+export function TableBox({busy, empty, children}: {busy: boolean; empty: ReactNode; children: ReactNode}) {
+    return <div className="table-responsive" data-region="tablewrap" aria-busy={busy}>
+        {empty || children}
+    </div>;
+}
+
+/**
+ * What a list says when it has nothing to show or could not load: its icon, the message and, when something can be done, its
+ * button.
+ *
+ * @param props The icon, the message and the action.
  * @returns The state.
  */
-export function Empty({message, action, onAction}: {message: string; action?: string; onAction?: () => void}) {
-    return <div className="dd-empty" role="status">
+export function Empty({icon, message, action, onAction, text}: {
+    icon: string;
+    message: string;
+    action?: string;
+    onAction?: () => void;
+    text: Text;
+}) {
+    return <div className="dd-empty" data-region="empty" role="status">
+        <span className="dd-tile dd-tile-lg"><Icon name={icon} text={text} /></span>
         <p className="dd-empty-text">{message}</p>
         {action && onAction && <button type="button" className="btn btn-outline-secondary btn-sm" onClick={onAction}>{action}</button>}
     </div>;

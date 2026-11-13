@@ -260,7 +260,7 @@ final class page_test extends \advanced_testcase {
         $strings = report_page::strings();
 
         $this->assertStringContainsString('{n}', $strings['error:apirequest']);
-        $this->assertStringContainsString('{from}', $strings['pagination:showing']);
+        $this->assertStringContainsString('{from}', $strings['pagination:range']);
         $this->assertStringNotContainsString('$a', implode('', $strings));
     }
 

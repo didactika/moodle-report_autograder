@@ -66,6 +66,9 @@ final class grader_list {
     /** @var int The most students a filter by who would grade them looks at: it is answered one student at a time. */
     private const FILTERED_CEILING = 2000;
 
+    /** @var int The size of page that asks for every row at once (All), up to the ceiling. */
+    public const ALL = -1;
+
     /** @var string A course where a teacher could grade. */
     public const STATE_READY = 'ready';
 
@@ -119,6 +122,8 @@ final class grader_list {
      * @param int $courseid
      * @param int $page Zero-based.
      * @param int $perpage How many to show; anything not on offer is ignored.
+     * @param string $search Text of the name of the student.
+     * @param string $filter Which students: all of them, the ones the fallback grader would grade, or the ones nobody would.
      * @return array The template context.
      */
     public static function students_of(
@@ -128,7 +133,7 @@ final class grader_list {
         string $search = '',
         string $filter = self::FILTER_ALL
     ): array {
-        $perpage = in_array($perpage, self::PER_PAGE_OPTIONS, true) ? $perpage : self::PER_PAGE;
+        $perpage = self::page_size($perpage);
         $search = trim($search);
         $filter = in_array($filter, [self::FILTER_FALLBACK, self::FILTER_NOBODY], true) ? $filter : self::FILTER_ALL;
 
@@ -218,6 +223,21 @@ final class grader_list {
     }
 
     /**
+     * The size of a page that is on offer: All asks for every row up to the ceiling, and anything else not on offer gives the
+     * default.
+     *
+     * @param int $perpage The size asked for.
+     * @return int The size used.
+     */
+    public static function page_size(int $perpage): int {
+        if ($perpage === self::ALL) {
+            return self::FILTERED_CEILING;
+        }
+
+        return in_array($perpage, self::PER_PAGE_OPTIONS, true) ? $perpage : self::PER_PAGE;
+    }
+
+    /**
      * One page of the courses where Autograder is switched on, and what grading would be like in each.
      *
      * The answer for a course is the cheap one, who could grade there, so the overview can show it for a whole page of courses at
@@ -231,7 +251,7 @@ final class grader_list {
     public static function overview(string $search, int $page, int $perpage = self::PER_PAGE): array {
         global $DB;
 
-        $perpage = in_array($perpage, self::PER_PAGE_OPTIONS, true) ? $perpage : self::PER_PAGE;
+        $perpage = self::page_size($perpage);
         $search = trim($search);
         $params = [];
         $where = 'cfg.enabled = 1';

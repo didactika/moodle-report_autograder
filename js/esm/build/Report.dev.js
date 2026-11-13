@@ -23,6 +23,7 @@ import { useDebounced } from "./hooks/useDebounced";
 import { createText } from "./engine/text";
 import { useReport } from "./hooks/useReport";
 import { NO_FILTERS, countApplied, nextSort } from "./lib/filters";
+import { DEFAULT_PAGE_SIZE } from "./lib/paging";
 const forumAttributes = /* @__PURE__ */ __name((props) => {
   const forum = props.forumgrade;
   if (!forum) {
@@ -49,7 +50,7 @@ function Report(props) {
   const [course, setCourse] = useState(props.selectedcourse);
   const [activity, setActivity] = useState(props.selectedactivity);
   const [sort, setSort] = useState({ column: "", direction: "asc" });
-  const [limit, setLimit] = useState(props.pagesizes[0] ?? 12);
+  const [limit, setLimit] = useState(DEFAULT_PAGE_SIZE);
   const [state, goto] = useReport({ scope: props.scope, filters, sort, limit });
   const [searchText, setSearchText] = useState(props.opening.searchname);
   const settled = useDebounced(searchText, 300);
@@ -94,7 +95,7 @@ function Report(props) {
       children: [
         /* @__PURE__ */ jsxDEV("p", { className: "text-muted mb-0", children: text(`lead_${props.level}`) }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Report.tsx",
-          lineNumber: 113,
+          lineNumber: 114,
           columnNumber: 9
         }, this),
         /* @__PURE__ */ jsxDEV("div", { className: "card", children: [
@@ -102,7 +103,7 @@ function Report(props) {
             /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-start", children: [
               /* @__PURE__ */ jsxDEV(SearchBox, { value: searchText, onChange: setSearchText, label: text("filter_search"), text }, void 0, false, {
                 fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                lineNumber: 117,
+                lineNumber: 118,
                 columnNumber: 21
               }, this),
               /* @__PURE__ */ jsxDEV(
@@ -118,7 +119,7 @@ function Report(props) {
                 false,
                 {
                   fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 118,
+                  lineNumber: 119,
                   columnNumber: 21
                 },
                 this
@@ -142,7 +143,7 @@ function Report(props) {
                 false,
                 {
                   fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 125,
+                  lineNumber: 126,
                   columnNumber: 49
                 },
                 this
@@ -165,7 +166,7 @@ function Report(props) {
                 false,
                 {
                   fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 139,
+                  lineNumber: 140,
                   columnNumber: 51
                 },
                 this
@@ -176,14 +177,15 @@ function Report(props) {
                   label: text("filter_group"),
                   options: groups,
                   value: String(filters.groupid),
-                  active: props.offersallgroups && filters.groupid > 0,
+                  base: props.offersallgroups ? "0" : void 0,
+                  text,
                   onChange: (groupid) => change({ groupid: Number(groupid) })
                 },
                 void 0,
                 false,
                 {
                   fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 151,
+                  lineNumber: 152,
                   columnNumber: 48
                 },
                 this
@@ -200,20 +202,21 @@ function Report(props) {
                 false,
                 {
                   fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 158,
+                  lineNumber: 160,
                   columnNumber: 21
                 },
                 this
               )
             ] }, void 0, true, {
               fileName: "public/report/autograder/js/esm/src/Report.tsx",
-              lineNumber: 116,
+              lineNumber: 117,
               columnNumber: 17
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-end", children: /* @__PURE__ */ jsxDEV(
               "button",
               {
                 type: "button",
+                id: "autograder-filter-clear",
                 className: "btn btn-link btn-icon",
                 disabled: !narrowed,
                 title: text("filters_reset"),
@@ -221,7 +224,7 @@ function Report(props) {
                 onClick: reset,
                 children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/reload", text }, void 0, false, {
                   fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 174,
+                  lineNumber: 177,
                   columnNumber: 25
                 }, this)
               },
@@ -229,18 +232,18 @@ function Report(props) {
               false,
               {
                 fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                lineNumber: 166,
+                lineNumber: 168,
                 columnNumber: 21
               },
               this
             ) }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/Report.tsx",
-              lineNumber: 165,
+              lineNumber: 167,
               columnNumber: 17
             }, this)
           ] }, void 0, true, {
             fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 115,
+            lineNumber: 116,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV(
@@ -260,7 +263,7 @@ function Report(props) {
             false,
             {
               fileName: "public/report/autograder/js/esm/src/Report.tsx",
-              lineNumber: 178,
+              lineNumber: 181,
               columnNumber: 13
             },
             this
@@ -269,9 +272,8 @@ function Report(props) {
             Pager,
             {
               page: state.page,
-              perpage: state.limit || limit,
+              perpage: limit,
               total: state.total,
-              sizes: props.pagesizes,
               disabled: state.loading,
               text,
               onChange: ({ page, perpage }) => {
@@ -286,14 +288,14 @@ function Report(props) {
             false,
             {
               fileName: "public/report/autograder/js/esm/src/Report.tsx",
-              lineNumber: 189,
+              lineNumber: 192,
               columnNumber: 13
             },
             this
           )
         ] }, void 0, true, {
           fileName: "public/report/autograder/js/esm/src/Report.tsx",
-          lineNumber: 114,
+          lineNumber: 115,
           columnNumber: 9
         }, this)
       ]
@@ -302,7 +304,7 @@ function Report(props) {
     true,
     {
       fileName: "public/report/autograder/js/esm/src/Report.tsx",
-      lineNumber: 107,
+      lineNumber: 108,
       columnNumber: 12
     },
     this

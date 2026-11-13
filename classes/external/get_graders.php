@@ -47,7 +47,7 @@ class get_graders extends external_api {
             'courseid' => new external_value(PARAM_INT, 'The course'),
             'students' => new external_value(PARAM_BOOL, 'Whether to list one page of the students', VALUE_DEFAULT, false),
             'page' => new external_value(PARAM_INT, 'Zero-based page of the students', VALUE_DEFAULT, 0),
-            'perpage' => new external_value(PARAM_INT, 'Students on a page', VALUE_DEFAULT, 0),
+            'perpage' => new external_value(PARAM_INT, 'Students on a page (0 = default, -1 = all)', VALUE_DEFAULT, 0),
             'search' => new external_value(PARAM_TEXT, 'Text of the name of the student', VALUE_DEFAULT, ''),
             'filter' => new external_value(PARAM_ALPHA, 'all, fallback or nobody', VALUE_DEFAULT, 'all'),
         ]);

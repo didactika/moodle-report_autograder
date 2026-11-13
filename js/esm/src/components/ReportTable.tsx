@@ -9,8 +9,9 @@
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+import type {ReactNode} from 'react';
 import ReportRow from './ReportRow';
-import {Empty, SortHeader} from './ui';
+import {Empty, SortHeader, TableBox} from './ui';
 import type {ReportState} from '../hooks/useReport';
 import type {ForumGrade, ReportProps, Sort, SortColumn, Text} from '../types';
 
@@ -38,7 +39,23 @@ export default function ReportTable({state, columns, forumgrade, sort, narrowed,
     const failed = state.failed !== '';
     const empty = !failed && !state.needsfilter && !state.loading && state.rows.length === 0;
 
-    return <div className="table-responsive" aria-busy={state.loading}>
+    let blank: ReactNode = null;
+    if (failed) {
+        blank = <Empty icon="i/warning" message={text('error:apirequest', state.failed)} action={text('error:retry')} onAction={onRetry}
+            text={text} />;
+    } else if (state.needsfilter) {
+        blank = <Empty icon="i/filter" message={text('needsfilter')} text={text} />;
+    } else if (empty) {
+        blank = <Empty
+            icon={narrowed ? 'a/search' : 'i/grades'}
+            message={narrowed ? text('table:empty') : text('feedback:nothing_to_show')}
+            action={narrowed ? text('filters_reset') : undefined}
+            onAction={narrowed ? onClear : undefined}
+            text={text}
+        />;
+    }
+
+    return <TableBox busy={state.loading} empty={blank}>
         <table className="table">
             <caption className="visually-hidden sr-only">{text('pluginname')}</caption>
             <thead>
@@ -61,12 +78,5 @@ export default function ReportTable({state, columns, forumgrade, sort, narrowed,
                 </tr>)}
             </tbody>
         </table>
-        {failed && <Empty message={text('error:apirequest', state.failed)} action={text('error:retry')} onAction={onRetry} />}
-        {state.needsfilter && <Empty message={text('needsfilter')} />}
-        {empty && <Empty
-            message={narrowed ? text('table:empty') : text('feedback:nothing_to_show')}
-            action={narrowed ? text('filters_reset') : undefined}
-            onAction={narrowed ? onClear : undefined}
-        />}
-    </div>;
+    </TableBox>;
 }

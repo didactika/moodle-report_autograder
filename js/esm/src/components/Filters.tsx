@@ -43,7 +43,7 @@ export function StatusMenu({statuses, counts, chosen, text, onChange}: {
         button = `${label}: ${chosen.length}`;
     }
 
-    return <Menu button={button} label={label} active={chosen.length > 0}>
+    return <Menu button={button} label={label} name="status" active={chosen.length > 0} text={text} onClear={() => onChange([])}>
         {() => options.map((option) => <label key={option.key} className="dropdown-item" htmlFor={`${id}-${option.key}`}>
             <input
                 type="checkbox"
@@ -80,7 +80,14 @@ export function PickerMenu({type, label, chosen, scope, courseid, text, onPick}:
     text: Text;
     onPick: (option: Option | null) => void;
 }) {
-    return <Menu button={chosen ? `${label}: ${chosen.name}` : label} label={label} active={chosen !== null}>
+    return <Menu
+        button={chosen ? `${label}: ${chosen.name}` : label}
+        label={label}
+        name={type}
+        active={chosen !== null}
+        text={text}
+        onClear={() => onPick(null)}
+    >
         {(close) => <PickerList
             type={type}
             label={label}
@@ -150,7 +157,6 @@ const PickerList = ({type, label, chosen, scope, courseid, text, onPick}: {
                 onChange={(event) => setQuery(event.target.value)}
             />
         </div>
-        {chosen && <button type="button" className="dropdown-item text-muted" onClick={() => onPick(null)}>{text('filter_clear')}</button>}
         {found.options.map((option) => <button
             key={option.id}
             type="button"
@@ -188,7 +194,7 @@ export function DateMenu({from, to, text, onChange}: {from: string; to: string; 
         button = `${label}: ${text('filter_date_until', to)}`;
     }
 
-    return <Menu button={button} label={label} active={from !== '' || to !== ''}>
+    return <Menu button={button} label={label} name="date" active={from !== '' || to !== ''} text={text} onClear={() => onChange('', '')}>
         {(close) => <>
             {presets.map((item) => <button
                 key={item.key}
@@ -216,10 +222,6 @@ export function DateMenu({from, to, text, onChange}: {from: string; to: string; 
                     </div>
                 </div>
             </div>
-            {(from !== '' || to !== '') && <button type="button" className="dropdown-item text-muted" onClick={() => {
-                close();
-                onChange('', '');
-            }}>{text('filter_clear')}</button>}
         </>}
     </Menu>;
 }

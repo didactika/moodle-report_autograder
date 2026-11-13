@@ -137,3 +137,8 @@
         flex: 1 1 100%;
     }
 }
+
+// When the site requires the guided tour, its steps have no button that skips it; the last step still ends it.
+.report-autograder-tour-required [data-role="flexitour-step"] [data-role="end"].btn-secondary {
+    display: none;
+}

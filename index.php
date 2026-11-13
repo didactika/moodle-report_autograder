@@ -61,6 +61,11 @@ $PAGE->set_url($scope->url());
 // This report's stylesheet hangs off this class rather than off the page id: the site-level report goes through
 // admin_externalpage_setup(), which prefixes the page type with "admin-", so the id differs between the three levels.
 $PAGE->add_body_class('report-autograder-page');
+
+// The guided tour cannot be skipped when the site asks for it: the styles hide its skip button on this page.
+if (get_config('report_autograder', 'tourrequired')) {
+    $PAGE->add_body_class('report-autograder-tour-required');
+}
 $PAGE->set_title(get_string('pluginname', 'report_autograder'));
 $PAGE->set_heading($scope->heading());
 

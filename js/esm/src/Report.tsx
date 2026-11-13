@@ -20,6 +20,7 @@ import {useDebounced} from './hooks/useDebounced';
 import {createText} from './engine/text';
 import {useReport} from './hooks/useReport';
 import {NO_FILTERS, countApplied, nextSort} from './lib/filters';
+import {DEFAULT_PAGE_SIZE} from './lib/paging';
 import type {Filters, Option, ReportProps, Sort, SortColumn} from './types';
 
 /**
@@ -61,7 +62,7 @@ export default function Report(props: ReportProps) {
     const [course, setCourse] = useState<Option | null>(props.selectedcourse);
     const [activity, setActivity] = useState<Option | null>(props.selectedactivity);
     const [sort, setSort] = useState<Sort>({column: '', direction: 'asc'});
-    const [limit, setLimit] = useState(props.pagesizes[0] ?? 12);
+    const [limit, setLimit] = useState(DEFAULT_PAGE_SIZE);
     const [state, goto] = useReport({scope: props.scope, filters, sort, limit});
     const [searchText, setSearchText] = useState(props.opening.searchname);
     const settled = useDebounced(searchText, 300);
@@ -152,7 +153,8 @@ export default function Report(props: ReportProps) {
                         label={text('filter_group')}
                         options={groups}
                         value={String(filters.groupid)}
-                        active={props.offersallgroups && filters.groupid > 0}
+                        base={props.offersallgroups ? '0' : undefined}
+                        text={text}
                         onChange={(groupid) => change({groupid: Number(groupid)})}
                     />}
                     <DateMenu
@@ -165,6 +167,7 @@ export default function Report(props: ReportProps) {
                 <div className="table-toolbar-end">
                     <button
                         type="button"
+                        id="autograder-filter-clear"
                         className="btn btn-link btn-icon"
                         disabled={!narrowed}
                         title={text('filters_reset')}
@@ -188,9 +191,8 @@ export default function Report(props: ReportProps) {
             />
             <Pager
                 page={state.page}
-                perpage={state.limit || limit}
+                perpage={limit}
                 total={state.total}
-                sizes={props.pagesizes}
                 disabled={state.loading}
                 text={text}
                 onChange={({page, perpage}) => {

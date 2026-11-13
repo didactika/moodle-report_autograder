@@ -294,6 +294,8 @@
 .arp .table-responsive[data-region=tablewrap] {
     block-size: var(--dd-table-h);
     overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
 }
 
 .arp .table-responsive[data-region=tablewrap] thead th {
@@ -622,6 +624,57 @@
     background-color: var(--dd-primary-soft);
     color: var(--dd-primary-ink);
     font-weight: 600;
+}
+
+.arp .dd-select.dd-select-set,
+.arp-modal .dd-select.dd-select-set {
+    padding-right: 2.5rem;
+    background-image: none;
+}
+
+.arp .dd-select-filter,
+.arp-modal .dd-select-filter {
+    position: relative;
+    display: inline-flex;
+    max-width: 100%;
+}
+
+.arp .dd-select-clear,
+.arp-modal .dd-select-clear {
+    position: absolute;
+    top: 50%;
+    right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: transparent;
+    color: var(--dd-primary-ink);
+    transform: translateY(-50%);
+    transition: background-color var(--dd-ease);
+}
+
+.arp .dd-select-clear .icon,
+.arp-modal .dd-select-clear .icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.arp .dd-select-clear:hover,
+.arp-modal .dd-select-clear:hover {
+    background-color: color-mix(in srgb, var(--dd-primary) 14%, transparent);
+}
+
+.arp .dd-select-clear:focus-visible,
+.arp-modal .dd-select-clear:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
 }
 
 .arp .btn-icon,
@@ -1090,4 +1143,8 @@
     .arp .table-toolbar-start {
         flex: 1 1 100%;
     }
+}
+
+.report-autograder-tour-required [data-role=flexitour-step] [data-role=end].btn-secondary {
+    display: none;
 }

@@ -37,21 +37,22 @@ Feature: The autograder report
   Scenario: The report lists every student with the state of their decision
     When I wait for the report rows
     Then the report should show 4 rows
-    And I should see "Ana Lopez" in the ".arp-table" "css_element"
-    And I should see "Pending" in the ".arp-table" "css_element"
-    And I should see "Autograded" in the ".arp-table" "css_element"
+    And I should see "Ana Lopez" in the "#autograder-report-container table" "css_element"
+    And I should see "Pending" in the "#autograder-report-container table" "css_element"
+    And I should see "Autograded" in the "#autograder-report-container table" "css_element"
 
   Scenario: The search box narrows the table as the name is typed
     When I wait for the report rows
-    And I set the field with xpath "//input[contains(@class, 'arp-search-field')]" to "Bruno"
+    And I set the field with xpath "//div[contains(@class, 'dd-searchbox')]//input" to "Bruno"
     And I wait "1" seconds
     And I wait for the report rows
     Then the report should show 1 row
-    And I should see "Bruno Marti" in the ".arp-table" "css_element"
+    And I should see "Bruno Marti" in the "#autograder-report-container table" "css_element"
 
   Scenario: A state can be chosen in the filter and cleared again
     When I wait for the report rows
-    And I click on "Pending" "button" in the ".arp-statuses" "css_element"
+    And I click on "Status" "button" in the "[data-menu='status']" "css_element"
+    And I click on "Pending" "text" in the "[data-menu='status'] .dd-select-menu" "css_element"
     And I wait for the report rows
     Then the report should show 1 row
     And I click on "Clear every filter" "button"
@@ -68,10 +69,6 @@ Feature: The autograder report
     And "Diego Ortega" "text" should appear before "Ana Lopez" "text"
 
   Scenario: The graders page names the people who could grade a course
-    When I open the graders page of the autograder report
-    And I click on "Course" "button" in the ".arp-toolbar" "css_element"
-    And I set the field with xpath "//input[contains(@class, 'arp-picker-field')]" to "STAT"
-    And I click on "Statistics 1" "button" in the ".arp-floating" "css_element"
+    When I open the graders page of the autograder report for "STAT1"
     Then I should see "Marina Castro"
-    And I click on "See which grader each student would get" "button"
     And I should see "Ana Lopez"

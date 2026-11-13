@@ -44,7 +44,7 @@ class get_graders_overview extends external_api {
         return new external_function_parameters([
             'search' => new external_value(PARAM_TEXT, 'Text of the name of the course', VALUE_DEFAULT, ''),
             'page' => new external_value(PARAM_INT, 'Zero-based page of the courses', VALUE_DEFAULT, 0),
-            'perpage' => new external_value(PARAM_INT, 'Courses on a page', VALUE_DEFAULT, 0),
+            'perpage' => new external_value(PARAM_INT, 'Courses on a page (0 = default, -1 = all)', VALUE_DEFAULT, 0),
         ]);
     }
 

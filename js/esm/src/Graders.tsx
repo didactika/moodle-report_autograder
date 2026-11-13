@@ -15,8 +15,10 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import {useEffect, useMemo, useState} from 'react';
-import {Empty, Icon, Pager, SearchBox, SelectMenu} from './components/ui';
+import type {ReactNode} from 'react';
+import {Empty, Icon, Pager, SearchBox, SelectMenu, TableBox} from './components/ui';
 import {createText} from './engine/text';
+import {DEFAULT_PAGE_SIZE} from './lib/paging';
 import {useDebounced} from './hooks/useDebounced';
 import {describeError, getGraders, getGradersOverview} from './services/api';
 import type {GradersOverview, GradersProps, GradersResponse, GradingState, StudentFilter, Text} from './types';
@@ -56,7 +58,7 @@ const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
     const [typed, setTyped] = useState('');
     const search = useDebounced(typed.trim(), 300);
     const [page, setPage] = useState(0);
-    const [perpage, setPerpage] = useState(props.perpage);
+    const [perpage, setPerpage] = useState(DEFAULT_PAGE_SIZE);
     const [data, setData] = useState<GradersOverview | null>(null);
     const [failed, setFailed] = useState('');
     const [loading, setLoading] = useState(true);
@@ -86,6 +88,14 @@ const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
     }, [search, page, perpage]);
 
     const courses = data?.courses ?? [];
+    let overviewEmpty: ReactNode = null;
+    if (failed !== '') {
+        overviewEmpty = <Empty icon="i/warning" message={text('error:apirequest', failed)} action={text('error:retry')}
+            onAction={() => setPage(page)} text={text} />;
+    } else if (!loading && courses.length === 0) {
+        overviewEmpty = <Empty icon={search === '' ? 'i/report' : 'a/search'}
+            message={search === '' ? text('graders:empty') : text('graders:emptysearch')} text={text} />;
+    }
 
     return <div className="card">
         <div className="table-toolbar">
@@ -93,7 +103,7 @@ const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
                 <SearchBox value={typed} onChange={setTyped} label={text('graders:search')} text={text} />
             </div>
         </div>
-        <div className="table-responsive" aria-busy={loading}>
+        <TableBox busy={loading} empty={overviewEmpty}>
             <table className="table">
                 <caption className="visually-hidden sr-only">{text('graders:heading')}</caption>
                 <thead>
@@ -138,14 +148,11 @@ const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
                     </tr>)}
                 </tbody>
             </table>
-            {failed !== '' && <Empty message={text('error:apirequest', failed)} action={text('error:retry')} onAction={() => setPage(page)} />}
-            {!loading && failed === '' && courses.length === 0 && <Empty message={search === '' ? text('graders:empty') : text('graders:emptysearch')} />}
-        </div>
+        </TableBox>
         <Pager
             page={data?.page ?? 0}
-            perpage={data?.perpage ?? perpage}
+            perpage={perpage}
             total={data?.total ?? 0}
-            sizes={props.pagesizes}
             disabled={loading}
             text={text}
             onChange={({page: next, perpage: size}) => {
@@ -170,7 +177,7 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
     const search = useDebounced(typed.trim(), 300);
     const [filter, setFilter] = useState<StudentFilter>('all');
     const [page, setPage] = useState(0);
-    const [perpage, setPerpage] = useState(props.perpage);
+    const [perpage, setPerpage] = useState(DEFAULT_PAGE_SIZE);
     const [data, setData] = useState<GradersResponse | null>(null);
     const [failed, setFailed] = useState('');
     const [loading, setLoading] = useState(true);
@@ -200,6 +207,14 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
     }, [props.courseid, search, filter, page, perpage]);
 
     const students = data?.studentlist.students ?? [];
+    let studentsEmpty: ReactNode = null;
+    if (failed !== '') {
+        studentsEmpty = <Empty icon="i/warning" message={text('error:apirequest', failed)} action={text('error:retry')}
+            onAction={() => setPage(page)} text={text} />;
+    } else if (!loading && students.length === 0) {
+        studentsEmpty = <Empty icon={search !== '' || filter !== 'all' ? 'a/search' : 'i/users'}
+            message={search !== '' || filter !== 'all' ? text('graders:emptysearch') : text('graders:none')} text={text} />;
+    }
     const teachers = data?.graders.filter((grader) => !grader.isfallback) ?? [];
     let alert = '';
     if (data && !data.hasgraders) {
@@ -249,7 +264,8 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
                     <SelectMenu
                         label={text('graders:show')}
                         value={filter}
-                        active={filter !== 'all'}
+                        base="all"
+                        text={text}
                         options={(['all', 'fallback', 'nobody'] as StudentFilter[]).map((option) => ({
                             value: option,
                             label: text(`graders:filter_${option}`),
@@ -258,7 +274,7 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
                     />
                 </div>
             </div>
-            <div className="table-responsive" aria-busy={loading}>
+            <TableBox busy={loading} empty={studentsEmpty}>
                 <table className="table">
                     <caption className="visually-hidden sr-only">{text('graders:students')}</caption>
                     <thead>
@@ -280,14 +296,11 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
                         </tr>)}
                     </tbody>
                 </table>
-                {failed !== '' && <Empty message={text('error:apirequest', failed)} action={text('error:retry')} onAction={() => setPage(page)} />}
-                {!loading && failed === '' && students.length === 0 && <Empty message={search !== '' || filter !== 'all' ? text('graders:emptysearch') : text('graders:none')} />}
-            </div>
+            </TableBox>
             <Pager
                 page={data?.studentlist.page ?? 0}
-                perpage={data?.studentlist.perpage ?? perpage}
+                perpage={perpage}
                 total={data?.studentlist.total ?? 0}
-                sizes={props.pagesizes}
                 disabled={loading}
                 text={text}
                 onChange={({page: next, perpage: size}) => {
