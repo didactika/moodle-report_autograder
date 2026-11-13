@@ -136,20 +136,9 @@ export const paint = () => {
 
     const from = $('#grading_date_from').val();
     const to = $('#grading_date_to').val();
-    let date = form.data('labelDate');
     const preset = Object.entries(presets()).find(([, range]) => range[0] === from && range[1] === to);
 
-    if (preset) {
-        date = menu('date').find(`[data-preset="${preset[0]}"]`).text();
-    } else if (from && to) {
-        date = form.data('range').replace('__from__', from).replace('__to__', to);
-    } else if (from) {
-        date = form.data('since').replace('__a__', from);
-    } else if (to) {
-        date = form.data('until').replace('__a__', to);
-    }
-
-    set('date', date, Boolean(from || to));
+    set('date', dateLabel(form, from, to, preset), Boolean(from || to));
     menu('date').find('[data-preset]').each(function() {
         this.setAttribute('aria-selected', preset && preset[0] === this.getAttribute('data-preset') ? 'true' : 'false');
     });
@@ -160,20 +149,57 @@ export const paint = () => {
     group.toggleClass('border-primary', groupNarrows).toggleClass('dd-select-set', groupNarrows);
     $('[data-group-clear]').prop('hidden', !groupNarrows);
 
-    const narrowed = statuses.length > 0 || Boolean(from || to) || groupNarrows || Boolean($('#autograder-filter-course').val())
-        || (menu('activity').length > 0 && Boolean($('#autograder-filter-activity').val()))
-        || String($('#searchname').val() || '').trim() !== '';
-
-    $('#autograder-filter-clear').prop('disabled', !narrowed);
+    const count = countApplied(statuses.length > 0, Boolean(from || to), groupNarrows);
+    const searched = String($('#searchname').val() || '').trim() !== '';
+    $('#autograder-filter-clear').prop('disabled', count === 0 && !searched);
 
     // The menu that groups the filters says how many narrow the report.
-    const count = [statuses.length > 0, Boolean(from || to), groupNarrows, Boolean($('#autograder-filter-course').val()),
-        menu('activity').length > 0 && Boolean($('#autograder-filter-activity').val())].filter(Boolean).length;
     const grouping = menu('filters').children('[data-menu-toggle]');
     grouping.text(count > 0 ? `${grouping.data('label')} (${count})` : grouping.data('label'))
         .toggleClass('border-primary', count > 0);
     fitFilters();
 };
+
+/**
+ * What the menu of the grading date says: the preset chosen, the two days, or one of them.
+ *
+ * @param {jQuery} form The form of the filters, which carries the texts.
+ * @param {string} from The first day, or empty.
+ * @param {string} to The last day, or empty.
+ * @param {Array|undefined} preset The preset the two days make, if they make one.
+ * @returns {string} The label.
+ */
+const dateLabel = (form, from, to, preset) => {
+    if (preset) {
+        return menu('date').find(`[data-preset="${preset[0]}"]`).text();
+    }
+    if (from && to) {
+        return form.data('range').replace('__from__', from).replace('__to__', to);
+    }
+    if (from) {
+        return form.data('since').replace('__a__', from);
+    }
+    if (to) {
+        return form.data('until').replace('__a__', to);
+    }
+    return form.data('labelDate');
+};
+
+/**
+ * How many filters narrow the report, the search left aside.
+ *
+ * @param {boolean} status Whether a status is chosen.
+ * @param {boolean} date Whether a period is chosen.
+ * @param {boolean} group Whether a group is chosen.
+ * @returns {number} The filters that narrow it.
+ */
+const countApplied = (status, date, group) => [
+    status,
+    date,
+    group,
+    Boolean($('#autograder-filter-course').val()),
+    menu('activity').length > 0 && Boolean($('#autograder-filter-activity').val()),
+].filter(Boolean).length;
 
 /** The width the search keeps beside the filters before they are grouped, in pixels (10rem). */
 const SEARCH_ROOM = 160;
