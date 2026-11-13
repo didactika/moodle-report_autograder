@@ -50,6 +50,12 @@ class get_report extends external_api {
     /** @var int The most rows one call will ever return. */
     private const MAX_LIMIT = 200;
 
+    /** @var int The limit that asks for every row at once (All). */
+    public const ALL = -1;
+
+    /** @var int The most rows All returns in one call; a longer report still has a next page. */
+    private const ALL_LIMIT = 1000;
+
     /**
      * What this service accepts.
      *
@@ -60,7 +66,7 @@ class get_report extends external_api {
             'cmid' => new external_value(PARAM_INT, 'One activity, or 0', VALUE_DEFAULT, 0),
             'courseid' => new external_value(PARAM_INT, 'One course, or 0', VALUE_DEFAULT, 0),
             'page' => new external_value(PARAM_INT, 'Zero-based page number', VALUE_DEFAULT, 0),
-            'limit' => new external_value(PARAM_INT, 'Rows per page (0 = default)', VALUE_DEFAULT, 0),
+            'limit' => new external_value(PARAM_INT, 'Rows per page (0 = default, -1 = all, up to 1000)', VALUE_DEFAULT, 0),
             'filters' => new external_multiple_structure(
                 new external_single_structure([
                     'name' => new external_value(PARAM_ALPHANUMEXT, 'Which filter'),
@@ -219,6 +225,10 @@ class get_report extends external_api {
      * @return int
      */
     private static function normalise_limit(int $limit): int {
+        if ($limit === self::ALL) {
+            return self::ALL_LIMIT;
+        }
+
         if ($limit <= 0) {
             return self::DEFAULT_LIMIT;
         }

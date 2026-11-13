@@ -62,12 +62,27 @@ $pageurl = static function (int $courseid, array $keep, int $page): string {
         ->out(false);
 };
 
-$pager = static function (array $data, array $keep) use ($courseid, $pageurl): array {
+$pager = static function (array $data, array $keep) use ($courseid, $pageurl, $perpage): ?array {
+    if ($data['total'] === 0) {
+        // An empty list has no pages: its empty state says so.
+        return null;
+    }
+
     $hidden = [];
 
     foreach (array_filter($keep + ['courseid' => $courseid]) as $name => $value) {
-        $hidden[] = ['name' => $name, 'value' => $value];
+        if ($name !== 'perpage') {
+            $hidden[] = ['name' => $name, 'value' => $value];
+        }
     }
+
+    // The sizes smaller than the list, and All: a list of up to 12 rows offers All only, one of 13 to 24 offers 12 and All, and
+    // so on up to 12, 24, 48, 96 and All. The select shows All when every row fits on the page.
+    $fitting = array_values(array_filter(grader_list::PER_PAGE_OPTIONS, static fn(int $size): bool => $size < $data['total']));
+    $shown = in_array($perpage, $fitting, true) ? $perpage : grader_list::ALL;
+    $sizes = array_map(static fn(int $size): array => ['value' => $size, 'label' => $size, 'selected' => $size === $shown], $fitting);
+    $sizes[] = ['value' => grader_list::ALL, 'label' => get_string('pagination:all', 'report_autograder'),
+        'selected' => $shown === grader_list::ALL];
 
     return [
         'from' => $data['from'],
@@ -78,10 +93,7 @@ $pager = static function (array $data, array $keep) use ($courseid, $pageurl): a
         'prevurl' => $pageurl($courseid, $keep, $data['page'] - 1),
         'nexturl' => $pageurl($courseid, $keep, $data['page'] + 1),
         'hiddenfields' => $hidden,
-        'peroptions' => array_map(
-            static fn(int $size): array => ['value' => $size, 'selected' => $size === $data['perpage']],
-            grader_list::PER_PAGE_OPTIONS
-        ),
+        'peroptions' => $sizes,
     ];
 };
 
@@ -110,15 +122,21 @@ if ($courseid > 0) {
             'value' => $option,
             'label' => get_string('graders:filter_' . $option, 'report_autograder'),
             'selected' => $option === $students['filter'],
+            'base' => $option === grader_list::FILTER_ALL,
         ],
         [grader_list::FILTER_ALL, grader_list::FILTER_FALLBACK, grader_list::FILTER_NOBODY]
     );
     $context['students'] = $students['students'];
     $context['hasstudents'] = $students['students'] !== [];
-    $context['emptymessage'] = get_string($search !== '' || $students['filter'] !== grader_list::FILTER_ALL
-        ? 'graders:emptysearch' : 'graders:none', 'report_autograder');
+    $narrowed = $search !== '' || $students['filter'] !== grader_list::FILTER_ALL;
+    $context['emptymessage'] = get_string($narrowed ? 'graders:emptysearch' : 'graders:none', 'report_autograder');
+    $context['emptyicon'] = $OUTPUT->pix_icon($narrowed ? 'a/search' : 'i/users', '');
+    // The filter has no base option: once it narrows the list, its cross goes back to every student.
+    $context['filterset'] = $students['filter'] !== grader_list::FILTER_ALL;
+    $context['filterclearurl'] = (new moodle_url('/report/autograder/graders.php', array_filter(['courseid' => $courseid,
+        'search' => $search, 'perpage' => $perpage === grader_list::PER_PAGE ? 0 : $perpage])))->out(false);
     $context['pager'] = $pager($students, array_filter(['search' => $search, 'filter' => $students['filter'] === 'all' ? '' : $students['filter'],
-        'perpage' => $students['perpage']]));
+        'perpage' => $perpage]));
 } else {
     $overview = grader_list::overview($search, $page, $perpage);
     $context['courses'] = array_map(static function (array $course): array {
@@ -131,7 +149,8 @@ if ($courseid > 0) {
     }, $overview['courses']);
     $context['hascourses'] = $overview['courses'] !== [];
     $context['emptymessage'] = get_string($search === '' ? 'graders:empty' : 'graders:emptysearch', 'report_autograder');
-    $context['pager'] = $pager($overview, array_filter(['search' => $search, 'perpage' => $overview['perpage']]));
+    $context['emptyicon'] = $OUTPUT->pix_icon($search === '' ? 'i/report' : 'a/search', '');
+    $context['pager'] = $pager($overview, array_filter(['search' => $search, 'perpage' => $perpage]));
 }
 
 $PAGE->requires->js_call_amd('report_autograder/ui/submit_on_change', 'init');

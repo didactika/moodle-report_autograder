@@ -16,7 +16,8 @@
 /**
  * The bar above the table: the search, one menu for each filter and the button that clears them all.
  *
- * Each filter is a menu with the shape of a select. A menu that narrows the report is tinted and says what it is narrowed to, and
+ * Each filter is a menu with the shape of a select. A menu that narrows the report is tinted, says what it is narrowed to and has a
+ * cross in place of its arrow that clears it: the base state of a filter is not one more option. And
  * every filter answers at once: the report is asked again as each one changes. The numbers beside the statuses are the ones that
  * the server counts inside every other filter.
  *
@@ -108,7 +109,10 @@ export const collectFilters = () => {
 export const paint = () => {
     const form = $(FORM);
     const set = (name, label, active) => {
-        menu(name).find('[data-menu-toggle]').text(label).toggleClass('border-primary', active);
+        menu(name).find('[data-menu-toggle]').text(label)
+            .toggleClass('border-primary', active)
+            .toggleClass('dd-select-set', active);
+        menu(name).find('[data-menu-clear]').prop('hidden', !active);
     };
 
     const statuses = chosenStatuses();
@@ -149,12 +153,12 @@ export const paint = () => {
     menu('date').find('[data-preset]').each(function() {
         this.setAttribute('aria-selected', preset && preset[0] === this.getAttribute('data-preset') ? 'true' : 'false');
     });
-    menu('date').find('[data-date-clear]').prop('hidden', !(from || to));
 
     const group = $('#autograder-filter-group');
     const groupNarrows = group.length > 0 && group.find('option[value=""]').length > 0 && Boolean(group.val());
 
-    group.toggleClass('border-primary', groupNarrows);
+    group.toggleClass('border-primary', groupNarrows).toggleClass('dd-select-set', groupNarrows);
+    $('[data-group-clear]').prop('hidden', !groupNarrows);
 
     const narrowed = statuses.length > 0 || Boolean(from || to) || groupNarrows || Boolean($('#autograder-filter-course').val())
         || (menu('activity').length > 0 && Boolean($('#autograder-filter-activity').val()))
@@ -241,10 +245,6 @@ const initPicker = (picker, changed) => {
             }
 
             results.empty();
-
-            if (value.val()) {
-                results.append(item(form.data('clear'), () => pick('', ''), false).addClass('text-muted'));
-            }
 
             response.options.forEach((option) => {
                 results.append(item(option.name, () => pick(option.id, option.name), String(option.id) === String(value.val())));
@@ -341,9 +341,30 @@ export const init = (onChange, onClear) => {
         changed();
     });
 
-    menu('date').on('click', '[data-date-clear]', () => {
-        $('#grading_date_from, #grading_date_to').val('');
-        open(menu('date'), false);
+    // The cross of a menu takes its filter back to the base state.
+    form.on('click', '[data-menu-clear]', function() {
+        const which = $(this).closest('[data-menu]');
+        const name = which.data('menu');
+
+        if (name === 'status') {
+            which.find('input[type="checkbox"]').prop('checked', false);
+        } else if (name === 'date') {
+            $('#grading_date_from, #grading_date_to').val('');
+        } else {
+            which.find('input[type="hidden"]').val('').data('name', '');
+
+            if (name === 'course') {
+                $('#autograder-filter-activity').val('').data('name', '');
+            }
+        }
+
+        open(which, false);
+        changed();
+        which.find('[data-menu-toggle]').trigger('focus');
+    });
+
+    form.on('click', '[data-group-clear]', () => {
+        $('#autograder-filter-group').val('').trigger('focus');
         changed();
     });
 

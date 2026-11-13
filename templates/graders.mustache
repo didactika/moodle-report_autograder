@@ -47,7 +47,7 @@
         }],
         "pager": {
             "from": 1, "to": 1, "total": 1, "hasprev": false, "hasnext": false, "prevurl": "#", "nexturl": "#",
-            "hiddenfields": [], "peroptions": [{"value": 24, "selected": true}]
+            "hiddenfields": [], "peroptions": [{"value": 12, "label": "12", "selected": true}, {"value": -1, "label": "All", "selected": false}]
         }
     }
 }}
@@ -96,16 +96,24 @@
                 </div>
                 {{#iscourse}}
                 <label class="sr-only visually-hidden" for="graders-filter">{{#str}}graders:show, report_autograder{{/str}}</label>
-                <select class="custom-select form-select dd-select" id="graders-filter" name="filter" data-submit-on-change>
-                    {{#filters}}
-                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>
-                    {{/filters}}
-                </select>
+                <span class="dd-select-filter">
+                    <select class="custom-select form-select dd-select{{#filterset}} dd-select-set border-primary{{/filterset}}" id="graders-filter" name="filter" data-submit-on-change>
+                        {{#filters}}
+                        <option value="{{value}}" {{#selected}}selected{{/selected}}{{#base}} hidden{{/base}}>{{label}}</option>
+                        {{/filters}}
+                    </select>
+                    {{#filterset}}
+                    <a class="dd-select-clear" href="{{filterclearurl}}"
+                        title="{{#str}}filter_clear, report_autograder{{/str}}: {{#str}}graders:show, report_autograder{{/str}}"
+                        aria-label="{{#str}}filter_clear, report_autograder{{/str}}: {{#str}}graders:show, report_autograder{{/str}}">{{#pix}}e/cancel, core{{/pix}}</a>
+                    {{/filterset}}
+                </span>
                 {{/iscourse}}
             </div>
         </form>
-        <div class="table-responsive">
+        <div class="table-responsive" data-region="tablewrap">
             {{#iscourse}}
+            {{#hasstudents}}
             <table class="table">
                 <caption class="sr-only visually-hidden">{{#str}}graders:students, report_autograder{{/str}}</caption>
                 <thead>
@@ -128,9 +136,11 @@
                     {{/students}}
                 </tbody>
             </table>
-            {{^hasstudents}}<div class="dd-empty" role="status"><p class="dd-empty-text">{{emptymessage}}</p></div>{{/hasstudents}}
+            {{/hasstudents}}
+            {{^hasstudents}}<div class="dd-empty" data-region="empty" role="status"><span class="dd-tile dd-tile-lg">{{{emptyicon}}}</span><p class="dd-empty-text">{{emptymessage}}</p></div>{{/hasstudents}}
             {{/iscourse}}
             {{^iscourse}}
+            {{#hascourses}}
             <table class="table">
                 <caption class="sr-only visually-hidden">{{#str}}graders:heading, report_autograder{{/str}}</caption>
                 <thead>
@@ -164,7 +174,8 @@
                     {{/courses}}
                 </tbody>
             </table>
-            {{^hascourses}}<div class="dd-empty" role="status"><p class="dd-empty-text">{{emptymessage}}</p></div>{{/hascourses}}
+            {{/hascourses}}
+            {{^hascourses}}<div class="dd-empty" data-region="empty" role="status"><span class="dd-tile dd-tile-lg">{{{emptyicon}}}</span><p class="dd-empty-text">{{emptymessage}}</p></div>{{/hascourses}}
             {{/iscourse}}
         </div>
         {{#pager}}
@@ -174,7 +185,7 @@
                     {{#hiddenfields}}<input type="hidden" name="{{name}}" value="{{value}}">{{/hiddenfields}}
                     <label for="graders-perpage" class="mb-0">{{#str}}pagination:results_per_page, report_autograder{{/str}}</label>
                     <select id="graders-perpage" name="perpage" class="custom-select form-select form-select-sm custom-select-sm dd-select" data-submit-on-change>
-                        {{#peroptions}}<option value="{{value}}" {{#selected}}selected{{/selected}}>{{value}}</option>{{/peroptions}}
+                        {{#peroptions}}<option value="{{value}}" {{#selected}}selected{{/selected}}>{{label}}</option>{{/peroptions}}
                     </select>
                 </form>
                 <div class="dd-pager-end">

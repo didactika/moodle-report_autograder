@@ -49,7 +49,13 @@
     {{#sendstudentnotifications}}data-send-student-notifications="1"{{/sendstudentnotifications}}
     {{/forum_grade}}
 >
-<div class="table-responsive" tabindex="0" role="region" aria-label="{{#str}}pluginname, report_autograder{{/str}}">
+<div class="table-responsive" data-region="tablewrap" tabindex="0" role="region" aria-label="{{#str}}pluginname, report_autograder{{/str}}">
+<div class="dd-empty" data-region="empty" role="status" hidden>
+    <span class="dd-tile dd-tile-lg" data-empty-icon="search" hidden>{{#pix}}a/search, core{{/pix}}</span>
+    <span class="dd-tile dd-tile-lg" data-empty-icon="filter" hidden>{{#pix}}i/filter, core{{/pix}}</span>
+    <span class="dd-tile dd-tile-lg" data-empty-icon="grades" hidden>{{#pix}}i/grades, core{{/pix}}</span>
+    <p class="dd-empty-text" data-empty-text></p>
+</div>
 <table class="table">
     <caption class="sr-only visually-hidden">{{#str}}pluginname, report_autograder{{/str}}</caption>
     <thead>

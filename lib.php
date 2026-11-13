@@ -85,3 +85,39 @@ function report_autograder_extend_navigation_course(
         new pix_icon('i/report', '')
     );
 }
+
+/**
+ * Adds the guided tour of the report to the site, once: a tour that is already there, edited or not, is left as it is.
+ *
+ * Its texts are language strings, so each person reads the tour in the language of the site, and a site can change them in the
+ * language customisation like any other string.
+ *
+ * @return int How many tours were added.
+ */
+function report_autograder_import_tours(): int {
+    global $DB;
+
+    if (!class_exists(\tool_usertours\manager::class)) {
+        return 0;
+    }
+
+    $imported = 0;
+
+    foreach (glob(__DIR__ . '/tours/*.json') as $file) {
+        $json = file_get_contents($file);
+        $tour = json_decode($json);
+
+        if (!is_object($tour) || empty($tour->name) || empty($tour->steps)) {
+            continue;
+        }
+
+        if ($DB->record_exists('tool_usertours_tours', ['name' => $tour->name])) {
+            continue;
+        }
+
+        \tool_usertours\manager::import_tour_from_json($json);
+        $imported++;
+    }
+
+    return $imported;
+}

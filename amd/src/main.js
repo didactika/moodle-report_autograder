@@ -42,7 +42,7 @@ import {
     resetSort,
 } from './state';
 import {getReportData} from './service/repository';
-import {showLoading, renderTable} from './ui/report';
+import {showLoading, renderTable, showEmpty} from './ui/report';
 import {renderPagination} from './ui/pagination';
 import {collectFilters, init as initToolbar, renderCounts} from './ui/toolbar';
 import {updateSortHeaderUI} from './ui/table_sort';
@@ -74,11 +74,8 @@ const showNeedsFilter = async() => {
     const message = await getString('needsfilter', 'report_autograder');
 
     $('#autograder-pagination-container').empty();
-    $('#autograder-table-body').html(
-        $('<tr>').append(
-            $('<td>').attr('colspan', 99).addClass('text-center text-muted py-5').text(message)
-        )
-    );
+    $('#autograder-table-body').empty();
+    showEmpty('filter', message);
 };
 
 /**

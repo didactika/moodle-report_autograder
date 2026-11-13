@@ -40,6 +40,23 @@ const ROOT = '#autograder-report-container';
 const columnCount = () => $(`${ROOT} thead th`).length || 5;
 
 /**
+ * Puts the empty state with its icon in the place of the table, which keeps its height, or brings the table back.
+ *
+ * @param {string|null} icon The icon of the state (search, filter or grades), or null to show the table.
+ * @param {string} message What the state says.
+ */
+export const showEmpty = (icon, message = '') => {
+    const empty = $(`${ROOT} [data-region="empty"]`);
+
+    $(`${ROOT} table`).prop('hidden', icon !== null);
+    empty.prop('hidden', icon === null);
+    empty.find('[data-empty-icon]').each(function() {
+        this.hidden = this.getAttribute('data-empty-icon') !== icon;
+    });
+    empty.find('[data-empty-text]').text(message);
+};
+
+/**
  * Draws one page of rows.
  *
  * @param {Array} records The rows the server returned.
@@ -67,13 +84,14 @@ export const renderTable = (records, onRenderComplete, isCurrent = () => true) =
     };
 
     if (!records || records.length === 0) {
-        getString('feedback:nothing_to_show', 'report_autograder').then(msg => {
+        const narrowed = $('#autograder-filter-clear').length > 0 && !$('#autograder-filter-clear').prop('disabled');
+
+        getString(narrowed ? 'table:empty' : 'feedback:nothing_to_show', 'report_autograder').then(msg => {
             if (!isCurrent()) {
                 return null;
             }
-            const cell = $('<td>').attr('colspan', columnCount()).addClass('text-center');
-            cell.append($('<p>').addClass('m-0 p-0').text(msg));
-            container.empty().append($('<tr>').append(cell));
+            container.empty();
+            showEmpty(narrowed ? 'search' : 'grades', msg);
             finishRendering();
 
             return null;
@@ -87,6 +105,7 @@ export const renderTable = (records, onRenderComplete, isCurrent = () => true) =
             if (!isCurrent()) {
                 return null;
             }
+            showEmpty(null);
             container.html(html);
             finishRendering();
 
@@ -104,6 +123,7 @@ export const renderTable = (records, onRenderComplete, isCurrent = () => true) =
  */
 export const showLoading = () => {
     $(ROOT).attr('aria-busy', 'true');
+    showEmpty(null);
     const container = $(`${ROOT} tbody`);
     const row = `<tr aria-hidden="true">${'<td><span class="dd-skeleton"></span></td>'.repeat(columnCount())}</tr>`;
 
