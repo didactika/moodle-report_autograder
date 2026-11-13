@@ -13,13 +13,15 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
  */
 import { fetchOne } from "@moodle/lms/core/ajax";
 import { toRequest } from "../lib/filters";
+import { ALL_ROWS } from "../lib/paging";
 const getReport = /* @__PURE__ */ __name((request) => fetchOne({
   methodname: "report_autograder_get_report",
   args: {
     cmid: request.scope.cmid ?? 0,
     courseid: request.scope.courseid ?? 0,
     page: request.page,
-    limit: request.limit,
+    // Every row at once is asked for with the size of All, which the service caps.
+    limit: request.limit || ALL_ROWS,
     filters: toRequest(request.filters),
     sortcolumn: request.sort.column,
     sortdir: request.sort.direction,
@@ -36,10 +38,14 @@ const searchOptions = /* @__PURE__ */ __name((type, query, scope, filtercourseid
     filtercourseid: type === "activity" ? filtercourseid : 0
   }
 }), "searchOptions");
-const getGraders = /* @__PURE__ */ __name((courseid, students, page, perpage) => fetchOne({
+const getGraders = /* @__PURE__ */ __name((courseid, students, page, perpage, search, filter) => fetchOne({
   methodname: "report_autograder_get_graders",
-  args: { courseid, students, page, perpage }
+  args: { courseid, students, page, perpage: perpage || ALL_ROWS, search, filter }
 }), "getGraders");
+const getGradersOverview = /* @__PURE__ */ __name((search, page, perpage) => fetchOne({
+  methodname: "report_autograder_get_graders_overview",
+  args: { search, page, perpage: perpage || ALL_ROWS }
+}), "getGradersOverview");
 const describeError = /* @__PURE__ */ __name((error) => {
   if (error instanceof Error) {
     return error.message;
@@ -52,6 +58,7 @@ const describeError = /* @__PURE__ */ __name((error) => {
 export {
   describeError,
   getGraders,
+  getGradersOverview,
   getReport,
   searchOptions
 };

@@ -1,0 +1,171 @@
+<?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * Spanish language strings.
+ *
+ * @package     report_autograder
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+$string['autograder:view'] = 'Ver el informe de Autograder de una actividad';
+$string['autograder:viewcourse'] = 'Ver el informe de Autograder de un curso completo';
+$string['autograder:viewfailed'] = 'Ver qué calificaciones de Autograder fallaron y por qué';
+$string['autograder:viewsite'] = 'Ver el informe de Autograder de todo el sitio';
+$string['datepicker_apply'] = 'Aplicar';
+$string['datepicker_from'] = 'Desde';
+$string['datepicker_to'] = 'Hasta';
+$string['details:close'] = 'Cerrar';
+$string['details:grade_expected'] = 'Aún no está en el libro de calificaciones: Autograder la registrará el {$a}.';
+$string['error:apirequest'] = 'No se pudo cargar el informe: {$a}';
+$string['error:retry'] = 'Intentar de nuevo';
+$string['failure:grade_write_failed'] = 'Moodle rechazó la calificación que Autograder intentó publicar.';
+$string['failure:no_grader'] = 'Ningún docente de este curso podía calificar en su nombre.';
+$string['feedback:nothing_to_show'] = 'No se encontraron registros';
+$string['filter_activity'] = 'Actividad';
+$string['filter_clear'] = 'Limpiar';
+$string['filter_course'] = 'Curso';
+$string['filter_date_last30'] = 'Últimos 30 días';
+$string['filter_date_month'] = 'Este mes';
+$string['filter_date_range'] = '{$a->from} a {$a->to}';
+$string['filter_date_since'] = 'Desde {$a}';
+$string['filter_date_today'] = 'Hoy';
+$string['filter_date_until'] = 'Hasta {$a}';
+$string['filter_date_week'] = 'Últimos 7 días';
+$string['filter_grading_date'] = 'Fecha de calificación';
+$string['filter_group'] = 'Grupo';
+$string['filter_group_placeholder'] = 'Todos los grupos';
+$string['filter_search'] = 'Buscar';
+$string['filter_status'] = 'Estado';
+$string['filters'] = 'Filtros';
+$string['filters_reset'] = 'Limpiar todos los filtros';
+$string['grade_expected'] = 'Provisional';
+$string['grade_provisional_help'] = 'La calificación indicada es provisional y no se guardará hasta la fecha que muestra la columna «Fecha de calificación».';
+$string['gradedby_prospective'] = 'Se calificará como';
+$string['gradedby_prospective_help'] = 'Autograder publicará esta calificación a nombre de este docente. El docente se elige en el momento de calificar, de modo que aún puede cambiar: si deja el curso o el grupo, se elegirá a otra persona.';
+$string['graders:activities'] = 'Actividades';
+$string['graders:associationnote'] = 'Asociación con el curso. El informe de la actividad comprueba los permisos de calificación y los grupos de esa actividad concreta antes de mostrar al calificador efectivo.';
+$string['graders:back'] = 'Todos los cursos';
+$string['graders:course'] = 'Curso';
+$string['graders:empty'] = 'Ningún curso tiene Autograder activado.';
+$string['graders:emptysearch'] = 'Nada coincide con la búsqueda y el filtro.';
+$string['graders:filter_all'] = 'Todos los estudiantes';
+$string['graders:filter_fallback'] = 'Calificados por el calificador de reserva';
+$string['graders:filter_nobody'] = 'Que nadie calificaría';
+$string['graders:grader'] = 'Calificaría como';
+$string['graders:gradercount'] = 'posibles calificadores';
+$string['graders:graders'] = 'Calificadores';
+$string['graders:heading'] = 'Calificadores por curso';
+$string['graders:more'] = '+{$a} más';
+$string['graders:nobodyfor'] = 'Nadie: esto fallaría';
+$string['graders:nograders'] = 'Nadie en este curso puede calificar. Todas las actividades con Autograder de aquí fallarán a menos que se configure un calificador de reserva.';
+$string['graders:none'] = 'No hay estudiantes calificables en este curso.';
+$string['graders:note'] = 'Nota';
+$string['graders:onlyfallback'] = 'Ningún docente de este curso podría calificar, de modo que cada calificación de aquí se registraría a nombre del calificador de reserva del sitio.';
+$string['graders:openreport'] = 'Abrir el informe de este curso';
+$string['graders:possible'] = 'Quién podría calificar aquí';
+$string['graders:search'] = 'Buscar cursos';
+$string['graders:search_students'] = 'Buscar estudiantes';
+$string['graders:seestudents'] = 'Quién califica a cada estudiante';
+$string['graders:show'] = 'Mostrar';
+$string['graders:state'] = 'Calificación';
+$string['graders:state_fallback'] = 'Solo el calificador de reserva';
+$string['graders:state_nobody'] = 'Nadie puede calificar';
+$string['graders:state_ready'] = 'Lista';
+$string['graders:student'] = 'Estudiante';
+$string['graders:studentcount'] = 'estudiantes calificables';
+$string['graders:students'] = 'Estudiantes';
+$string['graders:viafallback'] = 'Reserva';
+$string['gradeuser'] = 'Calificar al usuario';
+$string['header:activity'] = 'Actividad';
+$string['header:completed_at'] = 'Fecha de calificación';
+$string['header:course'] = 'Curso';
+$string['header:external_status'] = 'Estado';
+$string['header:grade'] = 'Calificación';
+$string['header:gradedby'] = 'Calificado como';
+$string['header:groups'] = 'Grupos';
+$string['header:student'] = 'Nombre';
+$string['heading:activity'] = 'Autograder: {$a}';
+$string['heading:course'] = 'Autograder: {$a}';
+$string['heading:site'] = 'Autograder en todo el sitio';
+$string['info:date'] = 'Por qué esta fecha';
+$string['info:failure'] = 'Por qué falló';
+$string['info:grade'] = 'Sobre esta calificación';
+$string['info:grader'] = 'Sobre este calificador';
+$string['info:problem'] = 'Por qué no hay calificación';
+$string['info:row'] = 'Sobre esta fila';
+$string['lead_activity'] = 'Lo que Autograder decidió para cada estudiante de esta actividad';
+$string['lead_course'] = 'Lo que Autograder decidió para los estudiantes de este curso, actividad por actividad';
+$string['lead_graders'] = 'A nombre de quién calificaría Autograder en cada curso, antes de que venza ninguna calificación';
+$string['lead_site'] = 'Lo que Autograder decidió en todo el sitio, acotado por curso, actividad, estado o fecha';
+$string['loading_report'] = 'Cargando el informe…';
+$string['menu:graders'] = 'Calificadores por curso';
+$string['menu:report'] = 'Informe de calificación';
+$string['needsfilter'] = 'Elija un curso, una actividad u otro filtro para ejecutar este informe. El informe de todo el sitio no se ejecuta sin filtro: consultaría a la base de datos todas las matriculaciones del sitio a la vez.';
+$string['pagination:all'] = 'Todos';
+$string['pagination:label'] = 'Paginación';
+$string['pagination:next'] = 'Página siguiente';
+$string['pagination:previous'] = 'Página anterior';
+$string['pagination:range'] = '{$a->from}–{$a->to} de {$a->total}';
+$string['pagination:results_per_page'] = 'Resultados por página';
+$string['pluginname'] = 'Informe de Autograder';
+$string['privacy:metadata'] = 'El informe de Autograder muestra lo que local_autograder registró y lo que ya está en el libro de calificaciones. No almacena nada propio.';
+$string['provisional:advancedstale'] = 'La rúbrica o la pauta de calificación cambió después de indicar a Autograder qué marcar, de modo que no hay una calificación que prometer. Abra los ajustes de Autograder de la actividad y elija de nuevo los niveles.';
+$string['provisional:noscale'] = 'Esta actividad ya no usa una escala.';
+$string['provisional:scalemismatch'] = 'El elemento que Autograder otorgaría no pertenece a la escala que usa ahora esta actividad.';
+$string['provisional:unknown'] = 'Autograder no puede calificar esta actividad tal como está configurada.';
+$string['provisional:unset'] = 'No se ha establecido ninguna calificación que Autograder otorgue.';
+$string['reason:completion'] = 'Contado desde que el estudiante completó la actividad.';
+$string['reason:duedate'] = 'Contado desde la fecha de cierre de la actividad.';
+$string['reason:groupoverride'] = 'Contado desde la fecha de cierre que una excepción de grupo concede a este estudiante.';
+$string['reason:submission'] = 'Contado desde que el estudiante realizó la entrega.';
+$string['reason:useroverride'] = 'Contado desde la fecha de cierre que una excepción concede a este estudiante.';
+$string['search:loading'] = 'Buscando…';
+$string['search:nomatches'] = 'Sin coincidencias';
+$string['search:typetosearch'] = 'Escriba para buscar';
+$string['setting:tourrequired'] = 'Hacer obligatorio el recorrido guiado';
+$string['setting:tourrequired_desc'] = 'Cuando está activado, el recorrido guiado del informe de una actividad y de un curso no puede omitirse: cada persona recorre sus pasos la primera vez que abre el informe. Cuando está desactivado, el recorrido puede omitirse en cualquier paso.';
+$string['settings'] = 'Ajustes del informe';
+$string['sortby_date'] = 'Ordenar por fecha de calificación';
+$string['sortby_name'] = 'Ordenar por nombre del estudiante';
+$string['status:failed'] = 'Con error';
+$string['status:graded'] = 'Autocalificado';
+$string['status:manual'] = 'Calificado por un docente';
+$string['status:notautograded'] = 'No autocalificado';
+$string['status:notengaged'] = 'Sin entregar';
+$string['status:pending'] = 'Pendiente';
+$string['table:empty'] = 'Ningún estudiante coincide con estos filtros.';
+$string['tour_report_description'] = 'Presenta a los docentes el informe de una actividad y de un curso: la búsqueda, los filtros, las columnas y las páginas de la lista.';
+$string['tour_report_name'] = 'Informe de Autograder';
+$string['tour_report_step1_content'] = '<p>Este informe muestra, para cada estudiante, la decisión de Autograder: si el estudiante está pendiente, ha sido calificado automáticamente, ha sido calificado por un docente o no pudo calificarse.</p><p>Los pasos siguientes explican cómo localizar a un estudiante y cómo interpretar cada columna.</p>';
+$string['tour_report_step1_title'] = 'El informe de Autograder';
+$string['tour_report_step2_content'] = '<p>Escriba parte del nombre de un estudiante para acotar la lista. La lista cambia a medida que escribe.</p>';
+$string['tour_report_step2_title'] = 'Búsqueda';
+$string['tour_report_step3_content'] = '<p>Elija uno o varios estados para ver solo a los estudiantes que se encuentran en ellos. El número junto a cada estado indica cuántos estudiantes hay en él dentro de los demás filtros.</p>';
+$string['tour_report_step3_title'] = 'Estado';
+$string['tour_report_step4_content'] = '<p>Limite la lista a un periodo: hoy, los últimos siete días, el mes en curso, los últimos treinta días o dos fechas a su elección.</p>';
+$string['tour_report_step4_title'] = 'Fecha de calificación';
+$string['tour_report_step5_content'] = '<p>Seleccione este botón para quitar a la vez todos los filtros y la búsqueda.</p>';
+$string['tour_report_step5_title'] = 'Limpiar los filtros';
+$string['tour_report_step6_content'] = '<p>Cada fila muestra el estado, la fecha de calificación, la calificación y el docente a cuyo nombre se registra la calificación.</p><p>Una calificación marcada como <strong>Provisional</strong> aún no está en el libro de calificaciones: es la que recibirá el estudiante en la fecha indicada, y el docente que la acompaña aparece en gris. El botón situado al final de una fila abre su detalle: en qué se basa su fecha, qué queda por suceder y, cuando algo falló, por qué. Su color es azul cuando solo informa, ámbar cuando hay una incidencia y rojo cuando la calificación falló.</p>';
+$string['tour_report_step6_title'] = 'Las columnas';
+$string['tour_report_step7_content'] = '<p>Elija cuántas filas muestra cada página y desplácese entre las páginas con las flechas.</p>';
+$string['tour_report_step7_title'] = 'Páginas';
+$string['willgrade:nobody'] = 'Este estudiante no tiene ningún docente en este curso y no hay un calificador de reserva configurado, de modo que esta calificación no puede publicarse. Compruebe los roles configurados como docentes y si algún docente comparte uno de los grupos del estudiante en el agrupamiento predeterminado del curso.';

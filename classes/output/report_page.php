@@ -102,7 +102,7 @@ class report_page implements react_component_renderable, \renderable {
                 'group' => $table['shows_group_column'],
             ],
             'forumgrade' => $this->forumgrade,
-            'pagesizes' => [12, 25, 50, 100],
+            'pagesizes' => [12, 24, 48, 96, 0],
             'gradersurl' => (new \moodle_url('/report/autograder/graders.php'))->out(false),
             'strings' => self::strings(),
         ];
@@ -155,10 +155,22 @@ class report_page implements react_component_renderable, \renderable {
      * @return string[] Texts by name.
      */
     public static function strings(): array {
+        global $OUTPUT;
+
         $strings = get_string_manager()->load_component_strings('report_autograder', current_language());
         foreach ($strings as $name => $value) {
             $strings[$name] = preg_replace(['/\{\$a->([a-z]+)\}/', '/\{\$a\}/'], ['{$1}', '{n}'], $value);
         }
+
+        // The icons of the screens, drawn with the icon map of the theme, so each Moodle version shows its own.
+        $icons = [
+            'a/search', 'i/previous', 'i/next', 'i/info', 'i/warning', 'i/reload', 'i/grades', 'i/report', 'i/users',
+            'e/cancel', 'i/filter',
+        ];
+        foreach ($icons as $icon) {
+            $strings['pix:' . $icon] = $OUTPUT->pix_icon($icon, '', 'core');
+        }
+
         return $strings;
     }
 }

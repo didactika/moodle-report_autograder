@@ -38,3 +38,5 @@ El informe no añade ninguna tabla: el modelo muestra lo que lee.
 | UC-001 | [Ver el informe de una actividad o de un curso](./use-cases/viewReport/README.md) | [secuencia](./use-cases/viewReport/sequence.svg) |
 | UC-002 | [Ver el informe del sitio](./use-cases/viewSiteReport/README.md) | [secuencia](./use-cases/viewSiteReport/sequence.svg) |
 | UC-003 | [Ver quién calificaría cada curso](./use-cases/viewGraders/README.md) | [secuencia](./use-cases/viewGraders/sequence.svg) |
+| UC-004 | [Acotar el informe](./use-cases/narrowReport/README.md) | [secuencia](./use-cases/narrowReport/sequence.svg) |
+| UC-005 | [Calificar a un estudiante desde el informe](./use-cases/gradeFromReport/README.md) | [secuencia](./use-cases/gradeFromReport/sequence.svg) |

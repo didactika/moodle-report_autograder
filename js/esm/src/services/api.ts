@@ -11,7 +11,8 @@
  */
 import {fetchOne} from '@moodle/lms/core/ajax';
 import {toRequest} from '../lib/filters';
-import type {Filters, GradersResponse, OptionsResponse, ReportProps, ReportResponse, Sort} from '../types';
+import type {Filters, GradersOverview, GradersResponse, OptionsResponse, ReportProps, ReportResponse, Sort, StudentFilter} from '../types';
+import {ALL_ROWS} from '../lib/paging';
 
 /** Which report is asked for. */
 export type Scope = ReportProps['scope'];
@@ -40,7 +41,8 @@ export const getReport = (request: PageRequest): Promise<ReportResponse> => fetc
         cmid: request.scope.cmid ?? 0,
         courseid: request.scope.courseid ?? 0,
         page: request.page,
-        limit: request.limit,
+        // Every row at once is asked for with the size of All, which the service caps.
+        limit: request.limit || ALL_ROWS,
         filters: toRequest(request.filters),
         sortcolumn: request.sort.column,
         sortdir: request.sort.direction,
@@ -81,10 +83,22 @@ export const searchOptions = (type: PickerType, query: string, scope: Scope, fil
  * @param perpage Students on a page.
  * @returns The graders and the students.
  */
-export const getGraders = (courseid: number, students: boolean, page: number, perpage: number): Promise<GradersResponse> =>
-    fetchOne<GradersResponse>({
-        methodname: 'report_autograder_get_graders',
-        args: {courseid, students, page, perpage},
+export const getGraders = (
+    courseid: number,
+    students: boolean,
+    page: number,
+    perpage: number,
+    search: string,
+    filter: StudentFilter
+): Promise<GradersResponse> => fetchOne<GradersResponse>({
+    methodname: 'report_autograder_get_graders',
+    args: {courseid, students, page, perpage: perpage || ALL_ROWS, search, filter},
+});
+
+export const getGradersOverview = (search: string, page: number, perpage: number): Promise<GradersOverview> =>
+    fetchOne<GradersOverview>({
+        methodname: 'report_autograder_get_graders_overview',
+        args: {search, page, perpage: perpage || ALL_ROWS},
     });
 
 /**

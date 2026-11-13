@@ -26,6 +26,11 @@ export interface StatusOption {
     label: string;
 }
 
+/** The students of one status, inside the other filters of the report. */
+export interface StatusCount extends StatusOption {
+    count: number;
+}
+
 /** What the report is narrowed to. */
 export interface Filters {
     searchname: string;
@@ -111,6 +116,8 @@ export interface ReportResponse {
     limit: number;
     page: number;
     needsfilter?: boolean;
+    /** Counted with the total, so it is empty when the page is not the first. */
+    statuscounts?: StatusCount[];
     data: Row[];
 }
 
@@ -159,10 +166,38 @@ export interface GradersResponse {
     };
 }
 
+export type GradingState = 'ready' | 'fallback' | 'nobody';
+
+export interface CourseGraders {
+    id: number;
+    name: string;
+    fullname: string;
+    activities: number;
+    gradercount: number;
+    studentcount: number;
+    state: GradingState;
+    graders: string[];
+    moregraders: number;
+    reporturl: string;
+    studentsurl: string;
+}
+
+export interface GradersOverview {
+    courses: CourseGraders[];
+    total: number;
+    page: number;
+    perpage: number;
+    from: number;
+    to: number;
+}
+
+export type StudentFilter = 'all' | 'fallback' | 'nobody';
+
 export interface GradersProps {
     courseid: number;
     students: boolean;
     pagesizes: number[];
     perpage: number;
+    overviewurl: string;
     strings: Record<string, string>;
 }

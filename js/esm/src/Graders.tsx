@@ -2,8 +2,10 @@
  * This file is part of Moodle - https://moodle.org/
  * Moodle is free software under the GNU General Public License, version 3 or later.
  *
- * Who Autograder would grade as in one course, before it grades anything: the people who could grade there and, on request, the
- * grader that each student would get.
+ * Who Autograder would grade as. Without a course it is the list of the courses where Autograder is switched on, each with the
+ * people who could grade there and a state that says whether grading would work; with a course it is that course, its graders and
+ * its students with the teacher each would get, which can be searched and narrowed to the ones that would be graded by the fallback
+ * grader or by nobody.
  *
  * Mounted by core/react_autoinit from the data-react-component that the page writes.
  *
@@ -12,63 +14,66 @@
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {useEffect, useMemo, useState} from 'react';
-import {IconCourse} from './components/common/Icons';
-import Pagination from './components/Pagination';
-import PickerFilter from './components/PickerFilter';
+import {useEffect, useMemo, useRef, useState} from 'react';
+import type {ReactNode} from 'react';
+import {Empty, Icon, Pager, SearchBox, SelectMenu, TableBox, useStableColumns} from './components/ui';
 import {createText} from './engine/text';
-import {describeError, getGraders} from './services/api';
-import type {GradersProps, GradersResponse, Option} from './types';
+import {DEFAULT_PAGE_SIZE} from './lib/paging';
+import {useDebounced} from './hooks/useDebounced';
+import {describeError, getGraders, getGradersOverview} from './services/api';
+import type {GradersOverview, GradersProps, GradersResponse, GradingState, StudentFilter, Text} from './types';
+
+/** The colour of Bootstrap that each state of grading takes. */
+const TONES: Record<GradingState, string> = {ready: 'success', fallback: 'warning', nobody: 'danger'};
 
 /**
- * Write the course and the list of students in the address, so the page can be shared and reloaded.
+ * The state of grading in a course as a badge.
  *
- * @param courseid The course, or 0.
- * @param students Whether the list of students is open.
+ * @param props The state and the texts.
+ * @returns The badge.
  */
-const remember = (courseid: number, students: boolean): void => {
-    const url = new URL(window.location.href);
-    url.searchParams.delete('courseid');
-    url.searchParams.delete('students');
-    if (courseid > 0) {
-        url.searchParams.set('courseid', String(courseid));
-    }
-    if (students) {
-        url.searchParams.set('students', '1');
-    }
-    window.history.replaceState(null, '', url);
-};
+const State = ({state, text}: {state: GradingState; text: Text}) => <span className={`badge badge-soft badge-dot rounded-pill text-bg-${TONES[state]}`}>
+    {text(`graders:state_${state}`)}
+</span>;
 
 /**
- * The page of the graders.
+ * Rows of a table while it loads.
  *
- * @param props What the server gives the page to start from: the course, the page sizes and the text.
- * @returns The page.
+ * @param props How many columns.
+ * @returns The rows.
  */
-export default function Graders(props: GradersProps) {
-    const text = useMemo(() => createText(props.strings), [props.strings]);
-    const [courseid, setCourseid] = useState(props.courseid);
-    const [students, setStudents] = useState(props.students);
+const Skeleton = ({columns}: {columns: number}) => <>
+    {Array.from({length: 6}, (_, row) => <tr key={row} aria-hidden="true">
+        {Array.from({length: columns}, (__, cell) => <td key={cell}><span className="dd-skeleton" /></td>)}
+    </tr>)}
+</>;
+
+/**
+ * The courses where Autograder is switched on.
+ *
+ * @param props The page sizes and the texts.
+ * @returns The list.
+ */
+const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
+    const [typed, setTyped] = useState('');
+    const search = useDebounced(typed.trim(), 300);
     const [page, setPage] = useState(0);
-    const [perpage, setPerpage] = useState(props.perpage);
-    const [data, setData] = useState<GradersResponse | null>(null);
-    const [loading, setLoading] = useState(props.courseid > 0);
+    const [perpage, setPerpage] = useState(DEFAULT_PAGE_SIZE);
+    const [data, setData] = useState<GradersOverview | null>(null);
     const [failed, setFailed] = useState('');
-    const [chosen, setChosen] = useState<Option | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (courseid <= 0) {
-            setData(null);
-            setLoading(false);
-            return undefined;
-        }
+        setPage(0);
+    }, [search, perpage]);
+
+    useEffect(() => {
         let current = true;
         setLoading(true);
         setFailed('');
-        getGraders(courseid, students, page, perpage).then((response) => {
+        getGradersOverview(search, page, perpage).then((response) => {
             if (current) {
                 setData(response);
-                setChosen({id: courseid, name: response.course});
                 setLoading(false);
             }
         }).catch((error: unknown) => {
@@ -80,108 +85,251 @@ export default function Graders(props: GradersProps) {
         return () => {
             current = false;
         };
-    }, [courseid, students, page, perpage]);
+    }, [search, page, perpage]);
 
-    const pick = (option: Option | null): void => {
-        const id = option?.id ?? 0;
-        setChosen(option);
-        setCourseid(id);
-        setStudents(false);
-        setPage(0);
-        remember(id, false);
-    };
-    const open = (show: boolean): void => {
-        setStudents(show);
-        setPage(0);
-        remember(courseid, show);
-    };
+    const courses = data?.courses ?? [];
+    const coursesTable = useRef<HTMLTableElement>(null);
+    useStableColumns(coursesTable, courses.length > 0);
+    let overviewEmpty: ReactNode = null;
+    if (failed !== '') {
+        overviewEmpty = <Empty icon="i/warning" message={text('error:apirequest', failed)} action={text('error:retry')}
+            onAction={() => setPage(page)} text={text} />;
+    } else if (!loading && courses.length === 0) {
+        overviewEmpty = <Empty icon={search === '' ? 'i/report' : 'a/search'}
+            message={search === '' ? text('graders:empty') : text('graders:emptysearch')} text={text} />;
+    }
 
-    return <div className="arp arp-graders">
-        <div className="arp-toolbar">
-            <div className="arp-filters">
-                <PickerFilter
-                    type="anycourse"
-                    icon={<IconCourse />}
-                    label={text('graders:pickcourse')}
-                    chosen={chosen}
-                    scope={{}}
-                    courseid={0}
-                    text={text}
-                    onChange={pick}
-                />
+    return <div className="card">
+        <div className="table-toolbar">
+            <div className="table-toolbar-start">
+                <SearchBox value={typed} onChange={setTyped} label={text('graders:search')} text={text} />
             </div>
         </div>
-        {courseid <= 0 && <p className="arp-intro">{text('graders:intro')}</p>}
-        {failed !== '' && <div className="arp-empty" role="alert"><p className="arp-empty-text">{text('error:apirequest', failed)}</p></div>}
-        {loading && data === null && <p className="arp-intro" role="status">{text('graders:loading')}</p>}
-        {data && <section className="arp-card" aria-busy={loading}>
-            <header className="arp-card-head">
-                <div>
-                    <h3 className="arp-card-title">{data.course}</h3>
-                    <p className="arp-counts">
-                        <span><strong>{data.gradercount}</strong> {text('graders:gradercount')}</span>
-                        <span><strong>{data.studentcount}</strong> {text('graders:studentcount')}</span>
-                    </p>
-                </div>
-                <a className="arp-action arp-action-quiet" href={data.reporturl}>{text('graders:openreport')}</a>
-            </header>
-            {!data.hasgraders && <p className="arp-alert arp-alert-danger" role="alert">{text('graders:nograders')}</p>}
-            {data.hasgraders && <div className="arp-panel">
-                <h4 className="arp-panel-title">{text('graders:possible')}</h4>
-                <ul className="arp-graders-names">
+        <TableBox busy={loading} empty={overviewEmpty}>
+            <table className="table" ref={coursesTable}>
+                <caption className="visually-hidden sr-only">{text('graders:heading')}</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">{text('graders:course')}</th>
+                        <th scope="col" data-col="count">{text('graders:activities')}</th>
+                        <th scope="col">{text('graders:graders')}</th>
+                        <th scope="col" data-col="count">{text('graders:students')}</th>
+                        <th scope="col" data-col="status">{text('graders:state')}</th>
+                        <th scope="col" className="table-actions"><span className="visually-hidden">{text('graders:openreport')}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {loading && data === null && <Skeleton columns={6} />}
+                    {courses.map((course) => <tr key={course.id}>
+                        <td>
+                            <a className="fw-bold" href={course.studentsurl}>{course.name}</a>
+                            <div className="small text-muted text-truncate">{course.fullname}</div>
+                        </td>
+                        <td>{course.activities}</td>
+                        <td>
+                            {course.graders.length === 0 && <span className="text-muted">—</span>}
+                            {course.graders.join(', ')}
+                            {course.moregraders > 0 && <span className="text-muted">{' '}{text('graders:more', course.moregraders)}</span>}
+                        </td>
+                        <td>{course.studentcount}</td>
+                        <td><State state={course.state} text={text} /></td>
+                        <td className="table-actions">
+                            <a
+                                className="btn btn-link btn-icon btn-sm text-primary"
+                                href={course.studentsurl}
+                                title={text('graders:seestudents')}
+                                aria-label={text('graders:seestudents')}
+                            ><Icon name="i/users" text={text} /></a>
+                            <a
+                                className="btn btn-link btn-icon btn-sm text-info"
+                                href={course.reporturl}
+                                title={text('graders:openreport')}
+                                aria-label={text('graders:openreport')}
+                            ><Icon name="i/report" text={text} /></a>
+                        </td>
+                    </tr>)}
+                </tbody>
+            </table>
+        </TableBox>
+        <Pager
+            page={data?.page ?? 0}
+            perpage={perpage}
+            total={data?.total ?? 0}
+            disabled={loading}
+            text={text}
+            onChange={({page: next, perpage: size}) => {
+                if (size !== undefined) {
+                    setPerpage(size);
+                } else if (next !== undefined) {
+                    setPage(next);
+                }
+            }}
+        />
+    </div>;
+};
+
+/**
+ * One course: who could grade there and who would grade each student.
+ *
+ * @param props The course, the page sizes and the texts.
+ * @returns The page of the course.
+ */
+const Course = ({props, text}: {props: GradersProps; text: Text}) => {
+    const [typed, setTyped] = useState('');
+    const search = useDebounced(typed.trim(), 300);
+    const [filter, setFilter] = useState<StudentFilter>('all');
+    const [page, setPage] = useState(0);
+    const [perpage, setPerpage] = useState(DEFAULT_PAGE_SIZE);
+    const [data, setData] = useState<GradersResponse | null>(null);
+    const [failed, setFailed] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setPage(0);
+    }, [search, filter, perpage]);
+
+    useEffect(() => {
+        let current = true;
+        setLoading(true);
+        setFailed('');
+        getGraders(props.courseid, true, page, perpage, search, filter).then((response) => {
+            if (current) {
+                setData(response);
+                setLoading(false);
+            }
+        }).catch((error: unknown) => {
+            if (current) {
+                setFailed(describeError(error));
+                setLoading(false);
+            }
+        });
+        return () => {
+            current = false;
+        };
+    }, [props.courseid, search, filter, page, perpage]);
+
+    const students = data?.studentlist.students ?? [];
+    const studentsTable = useRef<HTMLTableElement>(null);
+    useStableColumns(studentsTable, students.length > 0);
+    let studentsEmpty: ReactNode = null;
+    if (failed !== '') {
+        studentsEmpty = <Empty icon="i/warning" message={text('error:apirequest', failed)} action={text('error:retry')}
+            onAction={() => setPage(page)} text={text} />;
+    } else if (!loading && students.length === 0) {
+        studentsEmpty = <Empty icon={search !== '' || filter !== 'all' ? 'a/search' : 'i/users'}
+            message={search !== '' || filter !== 'all' ? text('graders:emptysearch') : text('graders:none')} text={text} />;
+    }
+    const teachers = data?.graders.filter((grader) => !grader.isfallback) ?? [];
+    let alert = '';
+    if (data && !data.hasgraders) {
+        alert = text('graders:nograders');
+    } else if (data && teachers.length === 0) {
+        alert = text('graders:onlyfallback');
+    }
+
+    return <>
+        <div className="d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <a className="btn btn-link px-0" href={props.overviewurl}>
+                <Icon name="i/previous" text={text} /> {text('graders:back')}
+            </a>
+            {data && <a
+                className="btn btn-link btn-icon text-info"
+                href={data.reporturl}
+                title={text('graders:openreport')}
+                aria-label={text('graders:openreport')}
+            ><Icon name="i/report" text={text} /></a>}
+        </div>
+        {data && <div className="d-flex flex-wrap align-items-baseline gap-3">
+            <h3 className="h4 mb-0">{data.course}</h3>
+            <span className="text-muted">
+                <strong className="text-body">{data.gradercount}</strong> {text('graders:gradercount')}
+                {' · '}
+                <strong className="text-body">{data.studentcount}</strong> {text('graders:studentcount')}
+            </span>
+        </div>}
+        {alert !== '' && <div className={`alert ${data && !data.hasgraders ? 'alert-danger' : 'alert-warning'} mb-0`} role="alert">{alert}</div>}
+        {data && data.hasgraders && <div className="card">
+            <div className="card-body">
+                <h4 className="h6 mb-2">{text('graders:possible')}</h4>
+                <ul className="list-unstyled d-flex flex-wrap gap-2 mb-2">
                     {data.graders.map((grader) => <li key={grader.id}>
-                        {grader.name}
-                        {grader.isfallback && <span className="arp-badge arp-badge-manual">{text('graders:viafallback')}</span>}
+                        <span className={`badge badge-soft rounded-pill ${grader.isfallback ? 'text-bg-secondary' : 'text-bg-primary'}`}>
+                            {grader.name}{grader.isfallback && <> · {text('graders:viafallback')}</>}
+                        </span>
                     </li>)}
                 </ul>
-                <p className="arp-note">{text('graders:associationnote')}</p>
-            </div>}
-            <div className="arp-students-toggle">
-                <button type="button" className="arp-action" onClick={() => open(!students)}>
-                    {students ? text('graders:hidestudents') : text('graders:seestudents')}
-                </button>
+                <p className="small text-muted mb-0">{text('graders:associationnote')}</p>
             </div>
-            {students && data.hasstudents && <>
-                {data.studentlist.students.length === 0 && <p className="arp-intro">{text('graders:none')}</p>}
-                {data.studentlist.students.length > 0 && <div className="arp-table-scroll" tabIndex={0} role="region" aria-label={text('graders:students')}>
-                    <table className="arp-table">
-                        <thead>
-                            <tr>
-                                <th scope="col">{text('graders:student')}</th>
-                                <th scope="col">{text('graders:grader')}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.studentlist.students.map((student, index) => <tr key={`${student.name}-${index}`}>
-                                <td data-label={text('graders:student')}>{student.name}</td>
-                                <td data-label={text('graders:grader')}>
-                                    {student.hasgrader ? student.grader : <span className="arp-badge arp-badge-failed">
-                                        <span className="arp-dot" />
-                                        {text('graders:nobodyfor')}
-                                    </span>}
-                                    {student.viafallback && <span className="arp-badge arp-badge-manual">{text('graders:viafallback')}</span>}
-                                </td>
-                            </tr>)}
-                        </tbody>
-                    </table>
-                </div>}
-                <Pagination
-                    page={data.studentlist.page}
-                    limit={data.studentlist.perpage}
-                    total={data.studentlist.total}
-                    sizes={props.pagesizes}
-                    showing={text('graders:showing', {
-                        from: data.studentlist.from, to: data.studentlist.to, total: data.studentlist.total,
-                    })}
-                    disabled={loading}
-                    text={text}
-                    onPage={setPage}
-                    onSize={(size) => {
+        </div>}
+        <div className="card">
+            <div className="table-toolbar">
+                <div className="table-toolbar-start">
+                    <SearchBox value={typed} onChange={setTyped} label={text('graders:search_students')} text={text} />
+                    <SelectMenu
+                        label={text('graders:show')}
+                        value={filter}
+                        base="all"
+                        text={text}
+                        options={(['all', 'fallback', 'nobody'] as StudentFilter[]).map((option) => ({
+                            value: option,
+                            label: text(`graders:filter_${option}`),
+                        }))}
+                        onChange={(option) => setFilter(option as StudentFilter)}
+                    />
+                </div>
+            </div>
+            <TableBox busy={loading} empty={studentsEmpty}>
+                <table className="table" ref={studentsTable}>
+                    <caption className="visually-hidden sr-only">{text('graders:students')}</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">{text('graders:student')}</th>
+                            <th scope="col">{text('graders:grader')}</th>
+                            <th scope="col">{text('graders:note')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {loading && data === null && <Skeleton columns={3} />}
+                        {students.map((student, index) => <tr key={`${student.name}-${index}`}>
+                            <td className="fw-bold">{student.name}</td>
+                            <td>{student.hasgrader ? student.grader : <span className="text-muted">—</span>}</td>
+                            <td>
+                                {!student.hasgrader && <span className="badge badge-soft badge-dot rounded-pill text-bg-danger">{text('graders:nobodyfor')}</span>}
+                                {student.viafallback && student.hasgrader && <span className="badge badge-soft rounded-pill text-bg-secondary">{text('graders:viafallback')}</span>}
+                            </td>
+                        </tr>)}
+                    </tbody>
+                </table>
+            </TableBox>
+            <Pager
+                page={data?.studentlist.page ?? 0}
+                perpage={perpage}
+                total={data?.studentlist.total ?? 0}
+                disabled={loading}
+                text={text}
+                onChange={({page: next, perpage: size}) => {
+                    if (size !== undefined) {
                         setPerpage(size);
-                        setPage(0);
-                    }}
-                />
-            </>}
-        </section>}
+                    } else if (next !== undefined) {
+                        setPage(next);
+                    }
+                }}
+            />
+        </div>
+    </>;
+};
+
+/**
+ * The page.
+ *
+ * @param props What the server gives the page to start from.
+ * @returns The courses, or one course when it was asked for.
+ */
+export default function Graders(props: GradersProps) {
+    const text = useMemo(() => createText(props.strings), [props.strings]);
+
+    return <div id="autograder-report-container" className="arp arp-graders">
+        <p className="text-muted mb-0">{text('lead_graders')}</p>
+        {props.courseid > 0 ? <Course props={props} text={text} /> : <Overview props={props} text={text} />}
     </div>;
 }

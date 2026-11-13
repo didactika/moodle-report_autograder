@@ -1,4 +1,4 @@
-import{fetchOne as s}from"@moodle/lms/core/ajax";import{toRequest as i}from"../lib/filters";/**
+import{fetchOne as o}from"@moodle/lms/core/ajax";import{toRequest as a}from"../lib/filters";import{ALL_ROWS as i}from"../lib/paging";/**
  * This file is part of Moodle - https://moodle.org/
  * Moodle is free software under the GNU General Public License, version 3 or later.
  *
@@ -8,4 +8,4 @@ import{fetchOne as s}from"@moodle/lms/core/ajax";import{toRequest as i}from"../l
  * @copyright  2026 Didactika.org
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */const a=e=>s({methodname:"report_autograder_get_report",args:{cmid:e.scope.cmid??0,courseid:e.scope.courseid??0,page:e.page,limit:e.limit,filters:i(e.filters),sortcolumn:e.sort.column,sortdir:e.sort.direction,withtotal:e.withtotal}}),c=(e,t,o,r)=>s({methodname:"report_autograder_search_filter_options",args:{type:e,query:t,cmid:o.cmid??0,courseid:o.courseid??0,filtercourseid:e==="activity"?r:0}}),m=(e,t,o,r)=>s({methodname:"report_autograder_get_graders",args:{courseid:e,students:t,page:o,perpage:r}}),g=e=>e instanceof Error?e.message:e!==null&&typeof e=="object"&&"message"in e?String(e.message):String(e);export{g as describeError,m as getGraders,a as getReport,c as searchOptions};
+ */const d=e=>o({methodname:"report_autograder_get_report",args:{cmid:e.scope.cmid??0,courseid:e.scope.courseid??0,page:e.page,limit:e.limit||i,filters:a(e.filters),sortcolumn:e.sort.column,sortdir:e.sort.direction,withtotal:e.withtotal}}),u=(e,t,r,s)=>o({methodname:"report_autograder_search_filter_options",args:{type:e,query:t,cmid:r.cmid??0,courseid:r.courseid??0,filtercourseid:e==="activity"?s:0}}),l=(e,t,r,s,n,p)=>o({methodname:"report_autograder_get_graders",args:{courseid:e,students:t,page:r,perpage:s||i,search:n,filter:p}}),R=(e,t,r)=>o({methodname:"report_autograder_get_graders_overview",args:{search:e,page:t,perpage:r||i}}),f=e=>e instanceof Error?e.message:e!==null&&typeof e=="object"&&"message"in e?String(e.message):String(e);export{f as describeError,l as getGraders,R as getGradersOverview,d as getReport,u as searchOptions};

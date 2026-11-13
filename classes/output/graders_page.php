@@ -77,6 +77,7 @@ class graders_page implements react_component_renderable, \renderable {
             'students' => $this->students,
             'pagesizes' => grader_list::PER_PAGE_OPTIONS,
             'perpage' => grader_list::PER_PAGE,
+            'overviewurl' => (new \moodle_url('/report/autograder/graders.php'))->out(false),
             'strings' => report_page::strings(),
         ];
     }

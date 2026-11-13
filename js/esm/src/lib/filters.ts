@@ -56,6 +56,21 @@ export const countFilters = (filters: Filters): number => [
  * @param filters What the report is narrowed to.
  * @returns True when the search box or a filter is on.
  */
+/**
+ * How many filters are applied among the ones the report offers: a report of one activity is not narrowed by that activity.
+ *
+ * @param filters What the report is narrowed to.
+ * @param offered Which of the pickers and the group menu the report has.
+ * @returns The number of filters.
+ */
+export const countApplied = (filters: Filters, offered: {course: boolean; activity: boolean; group: boolean}): number => [
+    filters.status.length > 0,
+    filters.datefrom !== '' || filters.dateto !== '',
+    offered.course && filters.courseid > 0,
+    offered.activity && filters.cmid > 0,
+    offered.group && filters.groupid > 0,
+].filter(Boolean).length;
+
 export const isNarrowed = (filters: Filters): boolean => filters.searchname.trim() !== '' || countFilters(filters) > 0;
 
 /**

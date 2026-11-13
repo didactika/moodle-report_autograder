@@ -176,4 +176,84 @@ final class grader_list_test extends \advanced_testcase {
 
         $this->assertSame(48, grader_list::students_of((int) $course->id, 0, 48)['perpage']);
     }
+
+    /**
+     * The students of a course can be searched by name.
+     */
+    public function test_the_students_can_be_searched_by_name(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $generator->create_and_enrol($course, 'student', ['firstname' => 'Alba', 'lastname' => 'Rivas']);
+        $generator->create_and_enrol($course, 'student', ['firstname' => 'Bruno', 'lastname' => 'Marti']);
+
+        $found = grader_list::students_of((int) $course->id, 0, grader_list::PER_PAGE, 'marti');
+
+        $this->assertSame(1, $found['total']);
+        $this->assertSame('Bruno Marti', $found['students'][0]['name']);
+        $this->assertSame(1, grader_list::count_students((int) $course->id, 'alba'));
+    }
+
+    /**
+     * The filter by who would grade keeps only the students nobody would grade, and counts them.
+     */
+    public function test_the_filter_keeps_the_students_nobody_would_grade(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $generator->create_and_enrol($course, 'student');
+        $generator->create_and_enrol($course, 'student');
+        set_config('fallback_grader', 0, 'local_autograder');
+        \cache_helper::purge_all();
+
+        $nobody = grader_list::students_of((int) $course->id, 0, grader_list::PER_PAGE, '', grader_list::FILTER_NOBODY);
+        $fallback = grader_list::students_of((int) $course->id, 0, grader_list::PER_PAGE, '', grader_list::FILTER_FALLBACK);
+
+        $this->assertSame(2, $nobody['total']);
+        $this->assertFalse($nobody['students'][0]['hasgrader']);
+        $this->assertSame(0, $fallback['total']);
+    }
+
+    /**
+     * The overview lists the courses where Autograder is on, and says whether grading there would work.
+     */
+    public function test_the_overview_says_which_courses_would_fail(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $withteacher = $generator->create_course(['shortname' => 'WITH']);
+        $generator->create_and_enrol($withteacher, 'editingteacher');
+        $without = $generator->create_course(['shortname' => 'WITHOUT']);
+        $off = $generator->create_course(['shortname' => 'OFF']);
+        set_config('fallback_grader', 0, 'local_autograder');
+        \cache_helper::purge_all();
+        $now = time();
+
+        foreach ([[$withteacher, 1], [$without, 1], [$off, 0]] as $position => [$course, $enabled]) {
+            $DB->insert_record('local_autograder_config', (object) [
+                'cmid' => 1000 + $position,
+                'courseid' => $course->id,
+                'enabled' => $enabled,
+                'grademethod' => 'point',
+                'gradevalue' => 8,
+                'delayseconds' => 0,
+                'usermodified' => 2,
+                'timecreated' => $now,
+                'timemodified' => $now,
+            ]);
+        }
+
+        $overview = grader_list::overview('', 0);
+        $states = array_column($overview['courses'], 'state', 'name');
+
+        $this->assertSame(2, $overview['total']);
+        $this->assertSame(grader_list::STATE_READY, $states['WITH']);
+        $this->assertSame(grader_list::STATE_NOBODY, $states['WITHOUT']);
+        $this->assertArrayNotHasKey('OFF', $states);
+        $this->assertSame(1, grader_list::overview('without', 0)['total']);
+    }
 }

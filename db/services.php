@@ -40,6 +40,13 @@ $functions = [
         'ajax' => true,
         'loginrequired' => true,
     ],
+    'report_autograder_get_graders_overview' => [
+        'classname' => 'report_autograder\external\get_graders_overview',
+        'description' => 'The courses where Autograder is switched on, and whether grading there would work.',
+        'type' => 'read',
+        'ajax' => true,
+        'loginrequired' => true,
+    ],
     'report_autograder_get_graders' => [
         'classname' => 'report_autograder\external\get_graders',
         'description' => 'Who Autograder would grade as in one course, and for which students.',

@@ -24,6 +24,7 @@ use core_external\external_value;
 use report_autograder\local\query\filters;
 use report_autograder\local\query\report_query;
 use report_autograder\local\format\row_formatter;
+use report_autograder\local\format\status;
 use report_autograder\local\query\scope;
 
 /**
@@ -45,6 +46,12 @@ class get_report extends external_api {
     /** @var int The most rows one call will ever return. */
     private const MAX_LIMIT = 200;
 
+    /** @var int The limit that asks for every row at once (All). */
+    public const ALL = -1;
+
+    /** @var int The most rows All returns in one call; a longer report still has a next page. */
+    private const ALL_LIMIT = 1000;
+
     /**
      * What this service accepts.
      *
@@ -55,7 +62,7 @@ class get_report extends external_api {
             'cmid' => new external_value(PARAM_INT, 'One activity, or 0', VALUE_DEFAULT, 0),
             'courseid' => new external_value(PARAM_INT, 'One course, or 0', VALUE_DEFAULT, 0),
             'page' => new external_value(PARAM_INT, 'Zero-based page number', VALUE_DEFAULT, 0),
-            'limit' => new external_value(PARAM_INT, 'Rows per page (0 = default)', VALUE_DEFAULT, 0),
+            'limit' => new external_value(PARAM_INT, 'Rows per page (0 = default, -1 = all, up to 1000)', VALUE_DEFAULT, 0),
             'filters' => new external_multiple_structure(
                 new external_single_structure([
                     'name' => new external_value(PARAM_ALPHANUMEXT, 'Which filter'),
@@ -158,7 +165,33 @@ class get_report extends external_api {
             'page' => $page,
             'data' => row_formatter::format_all($rows, $scope),
             'needsfilter' => false,
+            // Like the total, counted once per set of filters: turning a page cannot change it.
+            'statuscounts' => $params['withtotal'] ? self::status_counts($scope, $filters) : [],
         ];
+    }
+
+    /**
+     * The students of each status, in the order that the status filter lists them.
+     *
+     * @param scope $scope
+     * @param filters $filters
+     * @return array[] The key, the label and the count of each status.
+     */
+    private static function status_counts(scope $scope, filters $filters): array {
+        $canseefailures = $scope->can_see_failures();
+        $totals = [];
+
+        foreach (report_query::status_counts($scope, $filters) as $decisionstatus => $count) {
+            $key = status::from_decision($decisionstatus, $canseefailures);
+            $totals[$key] = ($totals[$key] ?? 0) + $count;
+        }
+
+        $counts = [];
+        foreach (status::filterable($canseefailures) as $key) {
+            $counts[] = ['key' => $key, 'label' => status::label($key), 'count' => $totals[$key] ?? 0];
+        }
+
+        return $counts;
     }
 
     /**
@@ -188,6 +221,10 @@ class get_report extends external_api {
      * @return int
      */
     private static function normalise_limit(int $limit): int {
+        if ($limit === self::ALL) {
+            return self::ALL_LIMIT;
+        }
+
         if ($limit <= 0) {
             return self::DEFAULT_LIMIT;
         }
@@ -220,6 +257,15 @@ class get_report extends external_api {
             'needsfilter' => new external_value(
                 PARAM_BOOL,
                 'The report is waiting for a filter before it will run',
+                VALUE_OPTIONAL
+            ),
+            'statuscounts' => new external_multiple_structure(
+                new external_single_structure([
+                    'key' => new external_value(PARAM_ALPHANUMEXT, 'The status'),
+                    'label' => new external_value(PARAM_TEXT, 'What the status is called'),
+                    'count' => new external_value(PARAM_INT, 'Students in it, inside the other filters'),
+                ]),
+                'The students of each status, counted with the total and left out when turning a page',
                 VALUE_OPTIONAL
             ),
             'data' => new external_multiple_structure(
