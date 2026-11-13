@@ -55,6 +55,9 @@ The vertical position of an entity expresses its importance to the project objec
 | RN-009 | The pager offers only the sizes of page smaller than the list, and All: up to 12 rows, All; 13 to 24, 12 and All; and so on up to 12, 24, 48, 96 and All. A list starts with 12 rows; All is sent to the services as -1, which they cap. | Filter | `amd/src/ui/pagination.js`, `get_report::normalise_limit`, `grader_list::page_size` |
 | RN-010 | Each filter is a menu that never offers its base state as an option; once a value is chosen, the menu is highlighted and a cross takes the place of its arrow to clear it. A button at the end of the row clears every filter. | Filter | `amd/src/ui/toolbar.js` |
 | RN-011 | The first time a person opens the report of an activity or of a course, a guided tour presents it; when the site requires it, the tour cannot be skipped before its last step. | Scope | `tours/report.json`, `report_autograder_import_tours`, `report_autograder/tourrequired` |
+| RN-012 | The button that opens the details of a row takes the colour of the most serious thing in them: information, a problem that can still be solved, or a failed grading. A grade that is not in the gradebook yet carries the label Provisional, and a row without a grade shows a dash. | ReportRow | `templates/table/_row.mustache`, `templates/table/row_details.mustache`, `amd/src/ui/report.js` |
+| RN-013 | The columns of the table keep the width they had the first time the table had rows; a filter, a sort or another page never moves them. They are measured again only when the box of the table changes width. | ReportRow | `amd/src/ui/report.js` |
+| RN-014 | The row of filters is never split in two lines: when the menus do not fit beside the search (10 rem), they are gathered in one menu, Filters, with the number of filters in use, and they come apart again when there is room. | Filter | `amd/src/ui/toolbar.js` |
 
 ## Lifecycles
 

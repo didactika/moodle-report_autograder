@@ -66,7 +66,8 @@ A report can list thousands of rows. The toolbar narrows it with the search and 
 | --- | --- |
 | RN-008 | The count of each status is computed inside every other filter except the status, so that choosing a status does not hide the numbers of the others. |
 | RN-009 | The pager offers only the sizes of page smaller than the list, and All: up to 12 rows, All; 13 to 24, 12 and All; and so on up to 12, 24, 48, 96 and All. A list starts with 12 rows; All is sent to the services as -1, which they cap. |
-| RN-010 | Each filter is a menu that never offers its base state as an option; once a value is chosen, the menu is highlighted and a cross takes the place of its arrow to clear it. A button at the end of the row clears every filter. |
+| RN-010 | Each filter is a menu that never offers its base state as an option; once a value is chosen, the menu is highlighted and a cross takes the place of its arrow to clear it. A button at the end of the row clears every filter. A chosen menu shows only its value, or the name of the filter and how many values are chosen. |
+| RN-014 | The row of filters is never split in two lines: when the menus do not fit beside the search (10 rem), they are gathered in one menu, Filters, with the number of filters in use, and they come apart again when there is room. |
 | RN-002 | The report of the site does not run without a filter. |
 | RN-003 | Failures are shown only to readers who can see them. |
 | RN-004 | A teacher sees only the groups they can see. |

@@ -40,7 +40,9 @@ $perpage = optional_param('perpage', grader_list::PER_PAGE, PARAM_INT);
 $filter = optional_param('filter', grader_list::FILTER_ALL, PARAM_ALPHA);
 
 require_login();
-admin_externalpage_setup('reportautogradergraders');
+// The page of one course is the same node of the administration tree as the list of courses, so the breadcrumb stays.
+navigation_node::override_active_url(new moodle_url('/report/autograder/graders.php'));
+admin_externalpage_setup('reportautogradergraders', '', null, new moodle_url('/report/autograder/graders.php'));
 
 $baseurl = new moodle_url('/report/autograder/graders.php', array_filter(['courseid' => $courseid]));
 
