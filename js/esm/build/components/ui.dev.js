@@ -339,33 +339,63 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
 }
 __name(Pager, "Pager");
 function Hint({ message, label, icon, tone = "info", text }) {
-  const [open, setOpen] = useState(false);
+  const [place, setPlace] = useState(null);
   const root = useRef(null);
+  const button = useRef(null);
+  const open = place !== null;
+  const show = /* @__PURE__ */ __name(() => {
+    const box = button.current?.getBoundingClientRect();
+    if (!box) {
+      return;
+    }
+    const width = Math.min(288, window.innerWidth - 16);
+    const up = box.bottom + 160 > window.innerHeight && box.top > 160;
+    setPlace({
+      top: up ? box.top - 6 : box.bottom + 6,
+      left: Math.max(8, Math.min(box.left, window.innerWidth - width - 8)),
+      up
+    });
+  }, "show");
   useEffect(() => {
     if (!open) {
       return void 0;
     }
-    const outside = /* @__PURE__ */ __name((event) => {
-      if (!root.current?.contains(event.target)) {
-        setOpen(false);
+    const close = /* @__PURE__ */ __name((event) => {
+      if (event.type !== "pointerdown" || !root.current?.contains(event.target)) {
+        setPlace(null);
       }
-    }, "outside");
-    document.addEventListener("pointerdown", outside, true);
-    return () => document.removeEventListener("pointerdown", outside, true);
+    }, "close");
+    const keys = /* @__PURE__ */ __name((event) => {
+      if (event.key === "Escape") {
+        setPlace(null);
+        button.current?.focus();
+      }
+    }, "keys");
+    document.addEventListener("pointerdown", close, true);
+    document.addEventListener("keydown", keys, true);
+    window.addEventListener("scroll", close, { capture: true, passive: true });
+    window.addEventListener("resize", close);
+    return () => {
+      document.removeEventListener("pointerdown", close, true);
+      document.removeEventListener("keydown", keys, true);
+      window.removeEventListener("scroll", close, { capture: true });
+      window.removeEventListener("resize", close);
+    };
   }, [open]);
-  return /* @__PURE__ */ jsxDEV("span", { className: "position-relative d-inline-block", ref: root, children: [
+  return /* @__PURE__ */ jsxDEV("span", { className: "d-inline-block", ref: root, children: [
     /* @__PURE__ */ jsxDEV(
       "button",
       {
+        ref: button,
         type: "button",
         className: `btn btn-link btn-icon btn-sm btn-hint text-${tone}`,
         title: label,
         "aria-label": label,
         "aria-expanded": open,
-        onClick: () => setOpen(!open),
+        onClick: () => open ? setPlace(null) : show(),
         children: /* @__PURE__ */ jsxDEV(Icon, { name: icon, text }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 296,
+          lineNumber: 329,
           columnNumber: 13
         }, this)
       },
@@ -373,23 +403,36 @@ function Hint({ message, label, icon, tone = "info", text }) {
       false,
       {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 288,
+        lineNumber: 320,
         columnNumber: 9
       },
       this
     ),
-    open && /* @__PURE__ */ jsxDEV("div", { className: "popover show bs-popover-bottom", role: "dialog", "aria-label": label, children: /* @__PURE__ */ jsxDEV("div", { className: "popover-body", children: message }, void 0, false, {
-      fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 299,
-      columnNumber: 13
-    }, this) }, void 0, false, {
-      fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 298,
-      columnNumber: 18
-    }, this)
+    place && /* @__PURE__ */ jsxDEV(
+      "div",
+      {
+        className: `popover show ${place.up ? "bs-popover-top" : "bs-popover-bottom"}`,
+        role: "dialog",
+        "aria-label": label,
+        style: { top: place.top, left: place.left, transform: place.up ? "translateY(-100%)" : "none" },
+        children: /* @__PURE__ */ jsxDEV("div", { className: "popover-body", children: message }, void 0, false, {
+          fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+          lineNumber: 337,
+          columnNumber: 13
+        }, this)
+      },
+      void 0,
+      false,
+      {
+        fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+        lineNumber: 331,
+        columnNumber: 19
+      },
+      this
+    )
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 287,
+    lineNumber: 319,
     columnNumber: 12
   }, this);
 }
@@ -397,7 +440,7 @@ __name(Hint, "Hint");
 function TableBox({ busy, empty, children }) {
   return /* @__PURE__ */ jsxDEV("div", { className: "table-responsive", "data-region": "tablewrap", "aria-busy": busy, children: empty || children }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 312,
+    lineNumber: 350,
     columnNumber: 12
   }, this);
 }
@@ -406,26 +449,26 @@ function Empty({ icon, message, action, onAction, text }) {
   return /* @__PURE__ */ jsxDEV("div", { className: "dd-empty", "data-region": "empty", role: "status", children: [
     /* @__PURE__ */ jsxDEV("span", { className: "dd-tile dd-tile-lg", children: /* @__PURE__ */ jsxDEV(Icon, { name: icon, text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 332,
+      lineNumber: 370,
       columnNumber: 46
     }, this) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 332,
+      lineNumber: 370,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("p", { className: "dd-empty-text", children: message }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 333,
+      lineNumber: 371,
       columnNumber: 9
     }, this),
     action && onAction && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-outline-secondary btn-sm", onClick: onAction, children: action }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 334,
+      lineNumber: 372,
       columnNumber: 32
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 331,
+    lineNumber: 369,
     columnNumber: 12
   }, this);
 }

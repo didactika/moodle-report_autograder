@@ -268,34 +268,72 @@ export function Pager({page, perpage, total, disabled, text, onChange}: {
  * @returns The button and, once pressed, the explanation.
  */
 export function Hint({message, label, icon, tone = 'info', text}: {message: string; label: string; icon: string; tone?: string; text: Text}) {
-    const [open, setOpen] = useState(false);
+    const [place, setPlace] = useState<{top: number; left: number; up: boolean} | null>(null);
     const root = useRef<HTMLSpanElement>(null);
+    const button = useRef<HTMLButtonElement>(null);
+    const open = place !== null;
+
+    // The explanation floats over the page, next to its button: it never takes room in the cell, so the columns do not move, and
+    // the box of the table does not cut it. Under the button when it fits, above it otherwise.
+    const show = (): void => {
+        const box = button.current?.getBoundingClientRect();
+        if (!box) {
+            return;
+        }
+        const width = Math.min(288, window.innerWidth - 16);
+        const up = box.bottom + 160 > window.innerHeight && box.top > 160;
+        setPlace({
+            top: up ? box.top - 6 : box.bottom + 6,
+            left: Math.max(8, Math.min(box.left, window.innerWidth - width - 8)),
+            up,
+        });
+    };
 
     useEffect(() => {
         if (!open) {
             return undefined;
         }
-        const outside = (event: PointerEvent): void => {
-            if (!root.current?.contains(event.target as Node)) {
-                setOpen(false);
+        const close = (event: Event): void => {
+            if (event.type !== 'pointerdown' || !root.current?.contains(event.target as Node)) {
+                setPlace(null);
             }
         };
-        document.addEventListener('pointerdown', outside, true);
-        return () => document.removeEventListener('pointerdown', outside, true);
+        const keys = (event: KeyboardEvent): void => {
+            if (event.key === 'Escape') {
+                setPlace(null);
+                button.current?.focus();
+            }
+        };
+        document.addEventListener('pointerdown', close, true);
+        document.addEventListener('keydown', keys, true);
+        window.addEventListener('scroll', close, {capture: true, passive: true});
+        window.addEventListener('resize', close);
+        return () => {
+            document.removeEventListener('pointerdown', close, true);
+            document.removeEventListener('keydown', keys, true);
+            window.removeEventListener('scroll', close, {capture: true});
+            window.removeEventListener('resize', close);
+        };
     }, [open]);
 
-    return <span className="position-relative d-inline-block" ref={root}>
+    return <span className="d-inline-block" ref={root}>
         <button
+            ref={button}
             type="button"
             className={`btn btn-link btn-icon btn-sm btn-hint text-${tone}`}
             title={label}
             aria-label={label}
             aria-expanded={open}
-            onClick={() => setOpen(!open)}
+            onClick={() => (open ? setPlace(null) : show())}
         >
             <Icon name={icon} text={text} />
         </button>
-        {open && <div className="popover show bs-popover-bottom" role="dialog" aria-label={label}>
+        {place && <div
+            className={`popover show ${place.up ? 'bs-popover-top' : 'bs-popover-bottom'}`}
+            role="dialog"
+            aria-label={label}
+            style={{top: place.top, left: place.left, transform: place.up ? 'translateY(-100%)' : 'none'}}
+        >
             <div className="popover-body">{message}</div>
         </div>}
     </span>;

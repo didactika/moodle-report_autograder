@@ -6,8 +6,9 @@
 // @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
 // @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
-// The dialogs of the report, where the sheets of the design system also apply.
-$arp-modal: ".arp-modal";
+// The dialogues of Bootstrap that open on the pages of the report (the grading of a student, the explanations), restyled where
+// they open rather than given a class of their own.
+$arp-modal: ".report-autograder-page .modal";
 
 @import 'scss/tokens';
 @import 'scss/chrome';
