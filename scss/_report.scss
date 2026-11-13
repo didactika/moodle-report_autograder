@@ -112,7 +112,31 @@
     // places it), so it never takes room in the cell and the columns do not move.
     // The icon of the button of a row takes the colour of the button, the one of its most serious explanation; Moodle paints
     // some icons with a colour of their own, with the weight of a utility of Bootstrap.
-    & .btn-hint .icon {
+    // The button that explains a row is a little smaller than the actions beside it, and its ring of focus is drawn inside it, so
+    // the header of the table does not cover it on the first row.
+    & .table-actions .btn-hint {
+        width: 1.75rem;
+        height: 1.75rem;
+        font-size: 0.875rem;
+
+        &:focus-visible {
+            box-shadow: inset 0 0 0 2px currentcolor;
+        }
+    }
+
+    // The icons of the explanations, and the hourglass of a provisional grade, are the size of the text.
+    & .btn-hint + .popover .icon,
+    & .table td:not(.table-actions) .icon {
+        width: 1em;
+        height: 1em;
+        margin: 0;
+        font-size: 0.875em;
+    }
+
+    & .btn-hint .icon,
+    & .btn-hint + .popover .text-info .icon,
+    & .btn-hint + .popover .text-warning .icon,
+    & .btn-hint + .popover .text-danger .icon {
         /* stylelint-disable-next-line declaration-no-important */
         color: inherit !important;
     }

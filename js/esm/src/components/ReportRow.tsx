@@ -20,11 +20,12 @@ interface ReportRowProps {
     text: Text;
 }
 
-/** One explanation of a row: what it is about, what it says and the colour of its meaning. */
+/** One explanation of a row: what it is about, what it says, the colour of its meaning and the icon of its kind. */
 interface Note {
     title: string;
     message: string;
     tone: 'info' | 'warning' | 'danger';
+    icon: string;
 }
 
 /** The colour of Bootstrap that each status takes. */
@@ -48,22 +49,22 @@ const TONES: Record<string, string> = {
 const notesOf = (row: Row, text: Text): Note[] => {
     const notes: Note[] = [];
     if (row.failure_reason) {
-        notes.push({title: text('info:failure'), message: row.failure_reason, tone: 'danger'});
+        notes.push({title: text('info:failure'), message: row.failure_reason, tone: 'danger', icon: 'i/invalid'});
     }
     if (!row.grade && row.grade_problem) {
-        notes.push({title: text('info:problem'), message: row.grade_problem, tone: 'warning'});
+        notes.push({title: text('info:problem'), message: row.grade_problem, tone: 'warning', icon: 'i/warning'});
     }
     if (!row.graded_by && row.will_grade_problem) {
-        notes.push({title: text('info:grader'), message: row.will_grade_problem, tone: 'warning'});
+        notes.push({title: text('info:grader'), message: row.will_grade_problem, tone: 'warning', icon: 'i/warning'});
     }
     if (row.date_reason) {
-        notes.push({title: text('info:date'), message: row.date_reason, tone: 'info'});
+        notes.push({title: text('info:date'), message: row.date_reason, tone: 'info', icon: 'i/calendar'});
     }
     if (!row.grade && row.provisional_grade) {
-        notes.push({title: text('info:grade'), message: text('grade_provisional_help'), tone: 'info'});
+        notes.push({title: text('info:grade'), message: text('grade_provisional_help'), tone: 'info', icon: 'i/duration'});
     }
     if (!row.graded_by && row.will_grade) {
-        notes.push({title: text('gradedby_prospective'), message: text('gradedby_prospective_help'), tone: 'info'});
+        notes.push({title: text('gradedby_prospective'), message: text('gradedby_prospective_help'), tone: 'info', icon: 'i/user'});
     }
     return notes;
 };
@@ -84,10 +85,13 @@ const Notes = ({notes, text}: {notes: Note[]; text: Text}) => {
         icon={tone === 'info' ? 'i/info' : 'i/warning'}
         tone={tone}
         text={text}
-        message={<ul className="list-unstyled d-grid gap-2 mb-0">
-            {notes.map((note) => <li key={note.title} className={`border-start border-3 border-${note.tone} ps-2`}>
-                <strong className={`d-block text-${note.tone}`}>{note.title}</strong>
-                <span className="text-body">{note.message}</span>
+        message={<ul className="list-unstyled d-grid gap-3 mb-0">
+            {notes.map((note) => <li key={note.title} className="d-flex gap-2">
+                <span className={`flex-shrink-0 text-${note.tone}`}><Icon name={note.icon} text={text} /></span>
+                <span>
+                    <strong className={`d-block text-${note.tone}`}>{note.title}</strong>
+                    <span className="text-body">{note.message}</span>
+                </span>
             </li>)}
         </ul>}
     />;
@@ -115,7 +119,9 @@ export default function ReportRow({row, columns, forumgrade, text}: ReportRowPro
         <td className="text-nowrap" data-sort-value={row.completed_at_sort}>{row.completed_at}</td>
         <td>
             {row.grade && <strong>{row.grade}</strong>}
-            {!row.grade && row.provisional_grade && <span className="fst-italic text-muted">{row.provisional_grade}</span>}
+            {!row.grade && row.provisional_grade && <span className="text-muted text-nowrap" title={text('info:grade')}>
+                <Icon name="i/duration" text={text} /> <span className="fst-italic">{row.provisional_grade}</span>
+            </span>}
             {!row.grade && !row.provisional_grade && <span className="text-muted">—</span>}
         </td>
         <td className="text-nowrap">
