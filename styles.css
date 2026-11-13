@@ -1123,31 +1123,9 @@
     box-shadow: inset 0 0 0 2px currentcolor;
 }
 
-.arp .btn-hint + .popover .icon,
-.arp .table td:not(.table-actions) .icon {
-    width: 1em;
-    height: 1em;
-    margin: 0;
-    font-size: 0.875em;
-}
-
-.arp .btn-hint .icon,
-.arp .btn-hint + .popover .text-info .icon,
-.arp .btn-hint + .popover .text-warning .icon,
-.arp .btn-hint + .popover .text-danger .icon {
+.arp .btn-hint .icon {
     /* stylelint-disable-next-line declaration-no-important */
     color: inherit !important;
-}
-
-.arp .btn-hint + .popover {
-    position: fixed;
-    z-index: 1030;
-    width: 18rem;
-    max-width: calc(100vw - 1rem);
-    text-align: start;
-    white-space: normal;
-    border-radius: var(--dd-radius);
-    box-shadow: var(--dd-shadow-md);
 }
 
 .arp .alert {

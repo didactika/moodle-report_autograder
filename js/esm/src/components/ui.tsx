@@ -13,6 +13,7 @@
  */
 import {useEffect, useId, useRef, useState} from 'react';
 import type {ReactNode} from 'react';
+import {createPortal} from 'react-dom';
 import {fitPageSizes, pageRange} from '../lib/paging';
 import type {Text} from '../types';
 
@@ -262,91 +263,6 @@ export function Pager({page, perpage, total, disabled, text, onChange}: {
 }
 
 /**
- * A short explanation that opens on a button, as a popover of Bootstrap.
- *
- * @param props The explanation, the label of the button, its icon and its colour.
- * @returns The button and, once pressed, the explanation.
- */
-export function Hint({message, label, icon, tone = 'info', text}: {
-    message: ReactNode;
-    label: string;
-    icon: string;
-    tone?: string;
-    text: Text;
-}) {
-    const [place, setPlace] = useState<{top: number; left: number; up: boolean} | null>(null);
-    const root = useRef<HTMLSpanElement>(null);
-    const button = useRef<HTMLButtonElement>(null);
-    const open = place !== null;
-
-    // The explanation floats over the page, next to its button: it never takes room in the cell, so the columns do not move, and
-    // the box of the table does not cut it. Under the button when it fits, above it otherwise.
-    const show = (): void => {
-        const box = button.current?.getBoundingClientRect();
-        if (!box) {
-            return;
-        }
-        const width = Math.min(288, window.innerWidth - 16);
-        const up = box.bottom + 160 > window.innerHeight && box.top > 160;
-        setPlace({
-            top: up ? box.top - 6 : box.bottom + 6,
-            left: Math.max(8, Math.min(box.left, window.innerWidth - width - 8)),
-            up,
-        });
-    };
-
-    useEffect(() => {
-        if (!open) {
-            return undefined;
-        }
-        const close = (event: Event): void => {
-            if (event.type !== 'pointerdown' || !root.current?.contains(event.target as Node)) {
-                setPlace(null);
-            }
-        };
-        const keys = (event: KeyboardEvent): void => {
-            if (event.key === 'Escape') {
-                setPlace(null);
-                button.current?.focus();
-            }
-        };
-        document.addEventListener('pointerdown', close, true);
-        document.addEventListener('keydown', keys, true);
-        window.addEventListener('scroll', close, {capture: true, passive: true});
-        window.addEventListener('resize', close);
-        return () => {
-            document.removeEventListener('pointerdown', close, true);
-            document.removeEventListener('keydown', keys, true);
-            window.removeEventListener('scroll', close, {capture: true});
-            window.removeEventListener('resize', close);
-        };
-    }, [open]);
-
-    return <span className="d-inline-block" ref={root}>
-        <button
-            ref={button}
-            type="button"
-            className={`btn btn-link btn-icon btn-sm btn-hint text-${tone}`}
-            title={label}
-            aria-label={label}
-            aria-expanded={open}
-            onClick={() => (open ? setPlace(null) : show())}
-        >
-            <Icon name={icon} text={text} />
-        </button>
-        {place && <div
-            className={`popover show ${place.up ? 'bs-popover-top' : 'bs-popover-bottom'}`}
-            role="dialog"
-            aria-label={label}
-            style={{top: place.top, left: place.left, transform: place.up ? 'translateY(-100%)' : 'none'}}
-        >
-            <div className="popover-header">{label}</div>
-            <div className="popover-body">{message}</div>
-        </div>}
-    </span>;
-}
-
-/**
  * The box a table lives in: it keeps one height whatever the table holds and scrolls inside it, and with nothing to show it holds
  * the empty state instead of the table.
  *
@@ -378,4 +294,51 @@ export function Empty({icon, message, action, onAction, text}: {
         <p className="dd-empty-text">{message}</p>
         {action && onAction && <button type="button" className="btn btn-outline-secondary btn-sm" onClick={onAction}>{action}</button>}
     </div>;
+}
+
+/**
+ * A dialog as Moodle and Bootstrap draw it: the focus enters on its close button and goes back where it was when it closes, and
+ * Escape or a click outside it closes it.
+ *
+ * @param props The title, the body, what to do on closing and the texts.
+ * @returns The dialog.
+ */
+export function Dialog({title, children, onClose, text}: {title: string; children: ReactNode; onClose: () => void; text: Text}) {
+    const root = useRef<HTMLDivElement>(null);
+    const titleId = useId();
+    useEffect(() => {
+        const previous = document.activeElement as HTMLElement | null;
+        document.body.classList.add('modal-open');
+        root.current?.querySelector<HTMLElement>('.modal-footer .btn')?.focus();
+        return () => {
+            document.body.classList.remove('modal-open');
+            previous?.focus();
+        };
+    }, []);
+    return createPortal(<>
+        <div
+            ref={root}
+            className="modal show d-block"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            tabIndex={-1}
+            onKeyDown={(event) => event.key === 'Escape' && onClose()}
+            onMouseDown={(event) => event.target === event.currentTarget && onClose()}
+        >
+            <div className="modal-dialog modal-dialog-scrollable">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id={titleId}>{title}</h5>
+                        <button type="button" className="btn-close" aria-label={text('details:close')} onClick={onClose} />
+                    </div>
+                    <div className="modal-body">{children}</div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" onClick={onClose}>{text('details:close')}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div className="modal-backdrop show" />
+    </>, document.body);
 }

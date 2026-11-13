@@ -1,6 +1,6 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
-import { jsxDEV } from "react/jsx-dev-runtime";
+import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
 /**
  * This file is part of Moodle - https://moodle.org/
  * Moodle is free software under the GNU General Public License, version 3 or later.
@@ -15,11 +15,12 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { fitPageSizes, pageRange } from "../lib/paging";
 function Icon({ name, text }) {
   return /* @__PURE__ */ jsxDEV("span", { className: "d-inline-flex", "aria-hidden": "true", dangerouslySetInnerHTML: { __html: text(`pix:${name}`) } }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 26,
+    lineNumber: 27,
     columnNumber: 12
   }, this);
 }
@@ -29,12 +30,12 @@ function SearchBox({ value, onChange, label, text }) {
   return /* @__PURE__ */ jsxDEV("div", { className: "dd-searchbox", role: "search", children: [
     /* @__PURE__ */ jsxDEV(Icon, { name: "a/search", text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 38,
+      lineNumber: 39,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("label", { className: "visually-hidden", htmlFor: id, children: label }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 39,
+      lineNumber: 40,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV(
@@ -53,14 +54,14 @@ function SearchBox({ value, onChange, label, text }) {
       false,
       {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 40,
+        lineNumber: 41,
         columnNumber: 9
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 37,
+    lineNumber: 38,
     columnNumber: 12
   }, this);
 }
@@ -112,7 +113,7 @@ function Menu({ button, label, name, active = false, small = false, place = "", 
       false,
       {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 104,
+        lineNumber: 105,
         columnNumber: 9
       },
       this
@@ -131,7 +132,7 @@ function Menu({ button, label, name, active = false, small = false, place = "", 
         },
         children: text && /* @__PURE__ */ jsxDEV(Icon, { name: "e/cancel", text }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 124,
+          lineNumber: 125,
           columnNumber: 19
         }, this)
       },
@@ -139,7 +140,7 @@ function Menu({ button, label, name, active = false, small = false, place = "", 
       false,
       {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 114,
+        lineNumber: 115,
         columnNumber: 23
       },
       this
@@ -149,12 +150,12 @@ function Menu({ button, label, name, active = false, small = false, place = "", 
       toggle.current?.focus();
     }) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 125,
+      lineNumber: 126,
       columnNumber: 18
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 103,
+    lineNumber: 104,
     columnNumber: 12
   }, this);
 }
@@ -192,7 +193,7 @@ function SelectMenu({ options: all, value, label, small = false, place = "", bas
         false,
         {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 163,
+          lineNumber: 164,
           columnNumber: 45
         },
         this
@@ -202,7 +203,7 @@ function SelectMenu({ options: all, value, label, small = false, place = "", bas
     false,
     {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 154,
+      lineNumber: 155,
       columnNumber: 12
     },
     this
@@ -216,11 +217,11 @@ function SortHeader({ label, help, active, direction, onSort }) {
   }
   return /* @__PURE__ */ jsxDEV("th", { scope: "col", "aria-sort": ariaSort, children: /* @__PURE__ */ jsxDEV("button", { type: "button", className: "table-sort", title: help, onClick: onSort, children: label }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 197,
+    lineNumber: 198,
     columnNumber: 9
   }, this) }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 196,
+    lineNumber: 197,
     columnNumber: 12
   }, this);
 }
@@ -235,7 +236,7 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
     /* @__PURE__ */ jsxDEV("div", { className: "dd-pager-size", children: [
       /* @__PURE__ */ jsxDEV("span", { children: text("pagination:results_per_page") }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 225,
+        lineNumber: 226,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -252,20 +253,20 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
         false,
         {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 226,
+          lineNumber: 227,
           columnNumber: 17
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 224,
+      lineNumber: 225,
       columnNumber: 13
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "dd-pager-end", children: [
       /* @__PURE__ */ jsxDEV("span", { className: "dd-pager-range", role: "status", children: text("pagination:range", { from, to, total }) }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 236,
+        lineNumber: 237,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV("div", { className: "dd-pager-arrows", children: [
@@ -280,7 +281,7 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
             onClick: () => onChange({ page: page - 1 }),
             children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/previous", text }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-              lineNumber: 246,
+              lineNumber: 247,
               columnNumber: 25
             }, this)
           },
@@ -288,7 +289,7 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
           false,
           {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 238,
+            lineNumber: 239,
             columnNumber: 21
           },
           this
@@ -304,7 +305,7 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
             onClick: () => onChange({ page: page + 1 }),
             children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/next", text }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-              lineNumber: 256,
+              lineNumber: 257,
               columnNumber: 25
             }, this)
           },
@@ -312,142 +313,36 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
           false,
           {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 248,
+            lineNumber: 249,
             columnNumber: 21
           },
           this
         )
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 237,
+        lineNumber: 238,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 235,
+      lineNumber: 236,
       columnNumber: 13
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 223,
+    lineNumber: 224,
     columnNumber: 9
   }, this) }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 222,
+    lineNumber: 223,
     columnNumber: 12
   }, this);
 }
 __name(Pager, "Pager");
-function Hint({ message, label, icon, tone = "info", text }) {
-  const [place, setPlace] = useState(null);
-  const root = useRef(null);
-  const button = useRef(null);
-  const open = place !== null;
-  const show = /* @__PURE__ */ __name(() => {
-    const box = button.current?.getBoundingClientRect();
-    if (!box) {
-      return;
-    }
-    const width = Math.min(288, window.innerWidth - 16);
-    const up = box.bottom + 160 > window.innerHeight && box.top > 160;
-    setPlace({
-      top: up ? box.top - 6 : box.bottom + 6,
-      left: Math.max(8, Math.min(box.left, window.innerWidth - width - 8)),
-      up
-    });
-  }, "show");
-  useEffect(() => {
-    if (!open) {
-      return void 0;
-    }
-    const close = /* @__PURE__ */ __name((event) => {
-      if (event.type !== "pointerdown" || !root.current?.contains(event.target)) {
-        setPlace(null);
-      }
-    }, "close");
-    const keys = /* @__PURE__ */ __name((event) => {
-      if (event.key === "Escape") {
-        setPlace(null);
-        button.current?.focus();
-      }
-    }, "keys");
-    document.addEventListener("pointerdown", close, true);
-    document.addEventListener("keydown", keys, true);
-    window.addEventListener("scroll", close, { capture: true, passive: true });
-    window.addEventListener("resize", close);
-    return () => {
-      document.removeEventListener("pointerdown", close, true);
-      document.removeEventListener("keydown", keys, true);
-      window.removeEventListener("scroll", close, { capture: true });
-      window.removeEventListener("resize", close);
-    };
-  }, [open]);
-  return /* @__PURE__ */ jsxDEV("span", { className: "d-inline-block", ref: root, children: [
-    /* @__PURE__ */ jsxDEV(
-      "button",
-      {
-        ref: button,
-        type: "button",
-        className: `btn btn-link btn-icon btn-sm btn-hint text-${tone}`,
-        title: label,
-        "aria-label": label,
-        "aria-expanded": open,
-        onClick: () => open ? setPlace(null) : show(),
-        children: /* @__PURE__ */ jsxDEV(Icon, { name: icon, text }, void 0, false, {
-          fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 335,
-          columnNumber: 13
-        }, this)
-      },
-      void 0,
-      false,
-      {
-        fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 326,
-        columnNumber: 9
-      },
-      this
-    ),
-    place && /* @__PURE__ */ jsxDEV(
-      "div",
-      {
-        className: `popover show ${place.up ? "bs-popover-top" : "bs-popover-bottom"}`,
-        role: "dialog",
-        "aria-label": label,
-        style: { top: place.top, left: place.left, transform: place.up ? "translateY(-100%)" : "none" },
-        children: [
-          /* @__PURE__ */ jsxDEV("div", { className: "popover-header", children: label }, void 0, false, {
-            fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 343,
-            columnNumber: 13
-          }, this),
-          /* @__PURE__ */ jsxDEV("div", { className: "popover-body", children: message }, void 0, false, {
-            fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 344,
-            columnNumber: 13
-          }, this)
-        ]
-      },
-      void 0,
-      true,
-      {
-        fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 337,
-        columnNumber: 19
-      },
-      this
-    )
-  ] }, void 0, true, {
-    fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 325,
-    columnNumber: 12
-  }, this);
-}
-__name(Hint, "Hint");
 function TableBox({ busy, empty, children }) {
   return /* @__PURE__ */ jsxDEV("div", { className: "table-responsive", "data-region": "tablewrap", "aria-busy": busy, children: empty || children }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 357,
+    lineNumber: 273,
     columnNumber: 12
   }, this);
 }
@@ -456,33 +351,119 @@ function Empty({ icon, message, action, onAction, text }) {
   return /* @__PURE__ */ jsxDEV("div", { className: "dd-empty", "data-region": "empty", role: "status", children: [
     /* @__PURE__ */ jsxDEV("span", { className: "dd-tile dd-tile-lg", children: /* @__PURE__ */ jsxDEV(Icon, { name: icon, text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 377,
+      lineNumber: 293,
       columnNumber: 46
     }, this) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 377,
+      lineNumber: 293,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("p", { className: "dd-empty-text", children: message }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 378,
+      lineNumber: 294,
       columnNumber: 9
     }, this),
     action && onAction && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-outline-secondary btn-sm", onClick: onAction, children: action }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 379,
+      lineNumber: 295,
       columnNumber: 32
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 376,
+    lineNumber: 292,
     columnNumber: 12
   }, this);
 }
 __name(Empty, "Empty");
+function Dialog({ title, children, onClose, text }) {
+  const root = useRef(null);
+  const titleId = useId();
+  useEffect(() => {
+    const previous = document.activeElement;
+    document.body.classList.add("modal-open");
+    root.current?.querySelector(".modal-footer .btn")?.focus();
+    return () => {
+      document.body.classList.remove("modal-open");
+      previous?.focus();
+    };
+  }, []);
+  return createPortal(/* @__PURE__ */ jsxDEV(Fragment, { children: [
+    /* @__PURE__ */ jsxDEV(
+      "div",
+      {
+        ref: root,
+        className: "modal show d-block",
+        role: "dialog",
+        "aria-modal": "true",
+        "aria-labelledby": titleId,
+        tabIndex: -1,
+        onKeyDown: (event) => event.key === "Escape" && onClose(),
+        onMouseDown: (event) => event.target === event.currentTarget && onClose(),
+        children: /* @__PURE__ */ jsxDEV("div", { className: "modal-dialog modal-dialog-scrollable", children: /* @__PURE__ */ jsxDEV("div", { className: "modal-content", children: [
+          /* @__PURE__ */ jsxDEV("div", { className: "modal-header", children: [
+            /* @__PURE__ */ jsxDEV("h5", { className: "modal-title", id: titleId, children: title }, void 0, false, {
+              fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+              lineNumber: 332,
+              columnNumber: 25
+            }, this),
+            /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn-close", "aria-label": text("details:close"), onClick: onClose }, void 0, false, {
+              fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+              lineNumber: 333,
+              columnNumber: 25
+            }, this)
+          ] }, void 0, true, {
+            fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+            lineNumber: 331,
+            columnNumber: 21
+          }, this),
+          /* @__PURE__ */ jsxDEV("div", { className: "modal-body", children }, void 0, false, {
+            fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+            lineNumber: 335,
+            columnNumber: 21
+          }, this),
+          /* @__PURE__ */ jsxDEV("div", { className: "modal-footer", children: /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-secondary", onClick: onClose, children: text("details:close") }, void 0, false, {
+            fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+            lineNumber: 337,
+            columnNumber: 25
+          }, this) }, void 0, false, {
+            fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+            lineNumber: 336,
+            columnNumber: 21
+          }, this)
+        ] }, void 0, true, {
+          fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+          lineNumber: 330,
+          columnNumber: 17
+        }, this) }, void 0, false, {
+          fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+          lineNumber: 329,
+          columnNumber: 13
+        }, this)
+      },
+      void 0,
+      false,
+      {
+        fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+        lineNumber: 319,
+        columnNumber: 9
+      },
+      this
+    ),
+    /* @__PURE__ */ jsxDEV("div", { className: "modal-backdrop show" }, void 0, false, {
+      fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+      lineNumber: 342,
+      columnNumber: 9
+    }, this)
+  ] }, void 0, true, {
+    fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+    lineNumber: 318,
+    columnNumber: 25
+  }, this), document.body);
+}
+__name(Dialog, "Dialog");
 export {
+  Dialog,
   Empty,
-  Hint,
   Icon,
   Menu,
   Pager,

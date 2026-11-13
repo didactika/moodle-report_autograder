@@ -165,7 +165,7 @@ class report_page implements react_component_renderable, \renderable {
         // The icons of the screens, drawn with the icon map of the theme, so each Moodle version shows its own.
         $icons = [
             'a/search', 'i/previous', 'i/next', 'i/info', 'i/warning', 'i/reload', 'i/grades', 'i/report', 'i/users',
-            'e/cancel', 'i/filter', 'i/calendar', 'i/duration', 'i/user', 'i/invalid',
+            'e/cancel', 'i/filter',
         ];
         foreach ($icons as $icon) {
             $strings['pix:' . $icon] = $OUTPUT->pix_icon($icon, '', 'core');
