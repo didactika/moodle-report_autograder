@@ -58,6 +58,49 @@ export const showEmpty = (icon, message = '') => {
     empty.find('[data-empty-text]').text(message);
 };
 
+/**
+ * Keeps the columns of the table still: once the table has rows, the width the browser gives each column is measured and kept, so a
+ * filter, a sort or another page never moves them. They are measured again only when the box of the table changes width.
+ *
+ * @param {HTMLTableElement} table The table.
+ */
+const freezeColumns = (table) => {
+    const heads = Array.from(table.tHead?.rows[0]?.cells ?? []);
+    table.style.tableLayout = '';
+    heads.forEach((head) => {
+        head.style.width = '';
+    });
+    const widths = heads.map((head) => head.getBoundingClientRect().width);
+    heads.forEach((head, index) => {
+        head.style.width = `${widths[index]}px`;
+    });
+    table.style.tableLayout = 'fixed';
+};
+
+/** Whether the columns are kept, and the width of the box they were measured in. */
+const columns = {frozen: false, width: 0, observer: null};
+
+/**
+ * Keeps the columns once the table has rows, and measures them again when its box changes width.
+ */
+const keepColumns = () => {
+    const table = document.querySelector(`${ROOT} table`);
+    const box = table?.parentElement;
+    if (!table || !box || columns.frozen) {
+        return;
+    }
+    freezeColumns(table);
+    columns.frozen = true;
+    columns.width = box.clientWidth;
+    columns.observer = new ResizeObserver(() => {
+        if (Math.abs(box.clientWidth - columns.width) > 1) {
+            columns.width = box.clientWidth;
+            freezeColumns(table);
+        }
+    });
+    columns.observer.observe(box);
+};
+
 /** The rows of the page that is shown, by their key, for their details. */
 const shown = new Map();
 
@@ -152,6 +195,7 @@ export const renderTable = (records, onRenderComplete, isCurrent = () => true) =
             }
             showEmpty(null);
             container.html(html);
+            keepColumns();
             finishRendering();
 
             return null;

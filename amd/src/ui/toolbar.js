@@ -119,7 +119,7 @@ export const paint = () => {
     let status = form.data('labelStatus');
 
     if (statuses.length === 1) {
-        status += `: ${$(`#status-${statuses[0]}`).data('label')}`;
+        status = $(`#status-${statuses[0]}`).data('label');
     } else if (statuses.length > 1) {
         status += `: ${statuses.length}`;
     }
@@ -130,7 +130,7 @@ export const paint = () => {
         const field = $(`#autograder-filter-${name}`);
 
         if (field.length) {
-            set(name, field.val() ? `${form.data(text)}: ${field.data('name')}` : form.data(text), Boolean(field.val()));
+            set(name, field.val() ? field.data('name') : form.data(text), Boolean(field.val()));
         }
     });
 
@@ -140,13 +140,13 @@ export const paint = () => {
     const preset = Object.entries(presets()).find(([, range]) => range[0] === from && range[1] === to);
 
     if (preset) {
-        date += `: ${menu('date').find(`[data-preset="${preset[0]}"]`).text()}`;
+        date = menu('date').find(`[data-preset="${preset[0]}"]`).text();
     } else if (from && to) {
-        date += `: ${form.data('range').replace('__from__', from).replace('__to__', to)}`;
+        date = form.data('range').replace('__from__', from).replace('__to__', to);
     } else if (from) {
-        date += `: ${form.data('since').replace('__a__', from)}`;
+        date = form.data('since').replace('__a__', from);
     } else if (to) {
-        date += `: ${form.data('until').replace('__a__', to)}`;
+        date = form.data('until').replace('__a__', to);
     }
 
     set('date', date, Boolean(from || to));
@@ -165,6 +165,51 @@ export const paint = () => {
         || String($('#searchname').val() || '').trim() !== '';
 
     $('#autograder-filter-clear').prop('disabled', !narrowed);
+
+    // The menu that groups the filters says how many narrow the report.
+    const count = [statuses.length > 0, Boolean(from || to), groupNarrows, Boolean($('#autograder-filter-course').val()),
+        menu('activity').length > 0 && Boolean($('#autograder-filter-activity').val())].filter(Boolean).length;
+    const grouping = menu('filters').children('[data-menu-toggle]');
+    grouping.text(count > 0 ? `${grouping.data('label')} (${count})` : grouping.data('label'))
+        .toggleClass('border-primary', count > 0);
+    fitFilters();
+};
+
+/** The width the search keeps beside the filters before they are grouped, in pixels (10rem). */
+const SEARCH_ROOM = 160;
+
+/** Whether the filters are grouped, and the width they need to come back to the row. */
+const fitting = {grouped: false, needed: 0};
+
+/**
+ * Keeps the toolbar in one row: when the filters do not fit beside the search, on a narrow screen or when the values chosen are
+ * long, they move into one menu, Filters; they come back to the row when there is room again.
+ */
+const fitFilters = () => {
+    const box = document.querySelector(`${FORM} [data-region="filter-menus"]`);
+    const row = box?.parentElement;
+    if (!box || !row) {
+        return;
+    }
+    const panel = box.querySelector('[data-region="filter-panel"]');
+    const group = box.querySelector('[data-menu="filters"]');
+    const gap = parseFloat(window.getComputedStyle(row).columnGap) || 0;
+    const room = row.clientWidth - SEARCH_ROOM - gap;
+    if (!fitting.grouped) {
+        const filters = Array.from(box.children).filter((child) => child !== group);
+        const width = filters.reduce((sum, child) => sum + child.offsetWidth, 0) + gap * Math.max(0, filters.length - 1);
+        if (width > room) {
+            fitting.needed = width;
+            fitting.grouped = true;
+            filters.forEach((child) => panel.appendChild(child));
+            group.hidden = false;
+        }
+    } else if (room >= fitting.needed) {
+        fitting.grouped = false;
+        open($(), false);
+        Array.from(panel.children).forEach((child) => box.insertBefore(child, group));
+        group.hidden = true;
+    }
 };
 
 /**
@@ -187,10 +232,11 @@ export const renderCounts = (counts) => {
 const open = (which, show) => {
     $(`${FORM} [data-menu]`).each(function() {
         const mine = $(this);
-        const shown = show && this === which.get(0);
+        // A menu inside the one that groups the filters opens without closing it.
+        const shown = show && (this === which.get(0) || this.contains(which.get(0)));
 
-        mine.find('.dd-select-menu').prop('hidden', !shown);
-        mine.find('[data-menu-toggle]').attr('aria-expanded', shown ? 'true' : 'false');
+        mine.children('.dd-select-menu').prop('hidden', !shown);
+        mine.children('[data-menu-toggle]').attr('aria-expanded', shown ? 'true' : 'false');
     });
 };
 
@@ -304,7 +350,7 @@ export const init = (onChange, onClear) => {
     form.on('click', '[data-menu-toggle]', function() {
         const which = $(this).closest('[data-menu]');
 
-        open(which, which.find('.dd-select-menu').prop('hidden'));
+        open(which, which.children('.dd-select-menu').prop('hidden'));
     });
 
     $(document).on('pointerdown', (event) => {
@@ -382,4 +428,5 @@ export const init = (onChange, onClear) => {
     });
 
     paint();
+    new ResizeObserver(() => fitFilters()).observe(form.get(0));
 };
