@@ -17,10 +17,10 @@
 /**
  * Who autograder would grade as, before it grades anything.
  *
- * Without a course it lists the courses where Autograder is switched on, each with the people who could grade there and whether grading
- * would work; with a course it shows that course, its graders and its students with the teacher each would get, which can be searched
- * and narrowed to the ones that would be graded by the fallback grader or by nobody. Who would grade a student is worked out from that
- * student's own teachers, so it is asked for one page of students at a time.
+ * Without a course it lists the courses where Autograder is switched on, each with the people who could grade there and
+ * whether grading would work; with a course it shows that course, its graders and its students with the teacher each would
+ * get, which can be searched and narrowed to the ones that would be graded by the fallback grader or by nobody. Who would
+ * grade a student is worked out from that student's own teachers, so it is asked for one page of students at a time.
  *
  * @package     report_autograder
  * @copyright   2026 Didactika.org
@@ -49,14 +49,8 @@ $PAGE->add_body_class('report-autograder-page');
 $PAGE->set_title(get_string('graders:heading', 'report_autograder'));
 $PAGE->set_heading(get_string('graders:heading', 'report_autograder'));
 
-/**
- * The address of a page of the list, keeping what was searched and chosen.
- *
- * @param int $courseid The course, or 0 for the list of courses.
- * @param array $keep What the page keeps besides the page.
- * @param int $page The page.
- * @return string The address.
- */
+// The address of a page of the list, keeping what was searched and chosen: the course, or 0 for the list of courses, what the
+// page keeps besides the page, and the page.
 $pageurl = static function (int $courseid, array $keep, int $page): string {
     return (new moodle_url('/report/autograder/graders.php', array_filter($keep + ['courseid' => $courseid, 'page' => $page])))
         ->out(false);

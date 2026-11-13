@@ -20,10 +20,9 @@
     The bar above the table: the search, one menu for each filter and the button that clears them all.
 
     It is written with the classes of Bootstrap, Moodle and the Didactika design system, which carry both names where Bootstrap 4
-    and Bootstrap 5 differ, and it is the top of the card that the table closes: this template opens it and report_table closes it.
+    and Bootstrap 5 differ. The page puts it at the top of the card that holds the table.
 
     Context variables required for this template:
-    * lead - What this report is about, in a line
     * filter_action_url - Where the form points
     * statuses - The states this viewer may filter by
     * shows_course_filter / selected_course - The course picker, at site level
@@ -33,7 +32,6 @@
 
     Example context (json):
     {
-        "lead": "What Autograder decided for each student of this activity",
         "filter_action_url": "/report/autograder/index.php",
         "statuses": [{"key": "pending", "label": "Pending"}],
         "filters": {"searchname": "", "status": "", "grading_date_from": "", "grading_date_to": ""},
@@ -46,8 +44,6 @@
         "groups": [{"id": 4, "name": "Group A", "selected": false}]
     }
 }}
-<p class="text-muted mb-0">{{lead}}</p>
-<div class="card">
 <form method="get" action="{{filter_action_url}}" id="autograder-filter-form" class="table-toolbar" role="search" data-region="filters"
     data-label-status="{{#str}}filter_status, report_autograder{{/str}}"
     data-label-course="{{#str}}filter_course, report_autograder{{/str}}"
@@ -66,7 +62,7 @@
             <input type="search" class="form-control" name="searchname" id="searchname" value="{{filters.searchname}}"
                 autocomplete="off" placeholder="{{#str}}filter_search, report_autograder{{/str}}">
         </div>
-        <span class="dd-menu dd-select-filter" data-menu="status">
+        <div class="dd-menu dd-select-filter" data-menu="status">
             <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
                 aria-label="{{#str}}filter_status, report_autograder{{/str}}">{{#str}}filter_status, report_autograder{{/str}}</button>
             <button type="button" class="dd-select-clear" data-menu-clear hidden
@@ -82,9 +78,9 @@
                 {{/statuses}}
             </div>
             <input type="hidden" name="status" id="status" value="{{filters.status}}">
-        </span>
+        </div>
         {{#shows_course_filter}}
-        <span class="dd-menu dd-select-filter" data-menu="course" data-picker="course" data-optiontype="course"
+        <div class="dd-menu dd-select-filter" data-menu="course" data-picker="course" data-optiontype="course"
             data-scopecmid="{{scope_cmid}}" data-scopecourseid="{{scope_courseid}}">
             <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
                 aria-label="{{#str}}filter_course, report_autograder{{/str}}">{{#str}}filter_course, report_autograder{{/str}}</button>
@@ -100,10 +96,10 @@
                 <div data-picker-options></div>
             </div>
             <input type="hidden" name="courseid" id="autograder-filter-course" value="{{selected_course.id}}" data-name="{{selected_course.name}}">
-        </span>
+        </div>
         {{/shows_course_filter}}
         {{#shows_activity_filter}}
-        <span class="dd-menu dd-select-filter" data-menu="activity" data-picker="activity" data-optiontype="activity"
+        <div class="dd-menu dd-select-filter" data-menu="activity" data-picker="activity" data-optiontype="activity"
             data-scopecmid="{{scope_cmid}}" data-scopecourseid="{{scope_courseid}}">
             <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
                 aria-label="{{#str}}filter_activity, report_autograder{{/str}}">{{#str}}filter_activity, report_autograder{{/str}}</button>
@@ -119,7 +115,7 @@
                 <div data-picker-options></div>
             </div>
             <input type="hidden" name="cmid" id="autograder-filter-activity" value="{{selected_activity.id}}" data-name="{{selected_activity.name}}">
-        </span>
+        </div>
         {{/shows_activity_filter}}
         {{#shows_group_filter}}
         <label class="sr-only visually-hidden" for="autograder-filter-group">{{#str}}filter_group, report_autograder{{/str}}</label>
@@ -139,7 +135,7 @@
             {{/offers_all_groups}}
         </span>
         {{/shows_group_filter}}
-        <span class="dd-menu dd-select-filter" data-menu="date">
+        <div class="dd-menu dd-select-filter" data-menu="date">
             <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
                 aria-label="{{#str}}filter_grading_date, report_autograder{{/str}}">{{#str}}filter_grading_date, report_autograder{{/str}}</button>
             <button type="button" class="dd-select-clear" data-menu-clear hidden
@@ -164,7 +160,7 @@
                     </div>
                 </div>
             </div>
-        </span>
+        </div>
     </div>
     <div class="table-toolbar-end">
         <button type="button" class="btn btn-link btn-icon" id="autograder-filter-clear" disabled

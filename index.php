@@ -121,15 +121,17 @@ $openingfilters = filters::from_request(
     $scope->can_see_failures()
 );
 
+// The lead of the report, then one card with the filters on top and the table under them.
+$filterscontext = page_context::filters($scope, $openingfilters);
 echo html_writer::start_div('arp');
-echo $OUTPUT->render_from_template(
-    'report_autograder/partials/filters',
-    page_context::filters($scope, $openingfilters)
-);
+echo html_writer::tag('p', $filterscontext['lead'], ['class' => 'text-muted mb-0']);
+echo html_writer::start_div('card');
+echo $OUTPUT->render_from_template('report_autograder/partials/filters', $filterscontext);
 echo $OUTPUT->render_from_template(
     'report_autograder/report_table',
     page_context::table($scope, $forumgrade)
 );
+echo html_writer::end_div();
 echo html_writer::end_div();
 
 // A link can still arrive with a state in it (a bookmark, or a link from

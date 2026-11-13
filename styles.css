@@ -296,6 +296,7 @@
     block-size: var(--dd-table-h);
     overflow-y: auto;
     overscroll-behavior: contain;
+    /* stylelint-disable-next-line csstree/validator */
     scrollbar-gutter: stable;
 }
 
