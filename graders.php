@@ -35,7 +35,9 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $students = optional_param('students', 0, PARAM_BOOL);
 
 require_login();
-admin_externalpage_setup('reportautogradergraders');
+// The page of one course is the same node of the administration tree as the list of courses, so the breadcrumb stays.
+navigation_node::override_active_url(new moodle_url('/report/autograder/graders.php'));
+admin_externalpage_setup('reportautogradergraders', '', null, new moodle_url('/report/autograder/graders.php'));
 
 if ($courseid > 0) {
     require_capability('report/autograder:viewcourse', context_course::instance($courseid));
