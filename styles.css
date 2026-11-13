@@ -295,8 +295,6 @@
     block-size: var(--dd-table-h);
     overflow-y: auto;
     overscroll-behavior: contain;
-    /* stylelint-disable-next-line csstree/validator */
-    scrollbar-gutter: stable;
 }
 
 .arp .table-responsive[data-region=tablewrap] thead th {
@@ -343,6 +341,10 @@
 
 .arp .table tbody tr:hover > * {
     background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
+}
+
+.arp .table tbody tr:last-child > * {
+    border-bottom: 1px solid var(--dd-hairline);
 }
 
 .arp .table tbody tr.table-active > * {

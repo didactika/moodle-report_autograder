@@ -194,6 +194,12 @@ const PickerList = /* @__PURE__ */ __name(({ type, label, chosen, scope, coursei
     columnNumber: 12
   });
 }, "PickerList");
+const orderedDays = /* @__PURE__ */ __name((from, to, changed) => {
+  if (from === "" || to === "" || from <= to) {
+    return [from, to];
+  }
+  return changed === "from" ? [from, from] : [to, to];
+}, "orderedDays");
 function DateMenu({ from, to, text, onChange }) {
   const fromId = useId();
   const toId = useId();
@@ -228,21 +234,21 @@ function DateMenu({ from, to, text, onChange }) {
       false,
       {
         fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-        lineNumber: 200,
+        lineNumber: 216,
         columnNumber: 36
       },
       this
     )),
     /* @__PURE__ */ jsxDEV("hr", {}, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-      lineNumber: 211,
+      lineNumber: 227,
       columnNumber: 13
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "dd-menu-form", children: /* @__PURE__ */ jsxDEV("div", { className: "dd-menu-dates", children: [
       /* @__PURE__ */ jsxDEV("div", { children: [
         /* @__PURE__ */ jsxDEV("label", { className: "form-label small mb-1", htmlFor: fromId, children: text("datepicker_from") }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-          lineNumber: 215,
+          lineNumber: 231,
           columnNumber: 25
         }, this),
         /* @__PURE__ */ jsxDEV(
@@ -253,26 +259,26 @@ function DateMenu({ from, to, text, onChange }) {
             className: "form-control form-control-sm",
             value: from,
             max: to || void 0,
-            onChange: (event) => onChange(event.target.value, to)
+            onChange: (event) => onChange(...orderedDays(event.target.value, to, "from"))
           },
           void 0,
           false,
           {
             fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-            lineNumber: 216,
+            lineNumber: 232,
             columnNumber: 25
           },
           this
         )
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-        lineNumber: 214,
+        lineNumber: 230,
         columnNumber: 21
       }, this),
       /* @__PURE__ */ jsxDEV("div", { children: [
         /* @__PURE__ */ jsxDEV("label", { className: "form-label small mb-1", htmlFor: toId, children: text("datepicker_to") }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-          lineNumber: 220,
+          lineNumber: 236,
           columnNumber: 25
         }, this),
         /* @__PURE__ */ jsxDEV(
@@ -283,38 +289,38 @@ function DateMenu({ from, to, text, onChange }) {
             className: "form-control form-control-sm",
             value: to,
             min: from || void 0,
-            onChange: (event) => onChange(from, event.target.value)
+            onChange: (event) => onChange(...orderedDays(from, event.target.value, "to"))
           },
           void 0,
           false,
           {
             fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-            lineNumber: 221,
+            lineNumber: 237,
             columnNumber: 25
           },
           this
         )
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-        lineNumber: 219,
+        lineNumber: 235,
         columnNumber: 21
       }, this)
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-      lineNumber: 213,
+      lineNumber: 229,
       columnNumber: 17
     }, this) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-      lineNumber: 212,
+      lineNumber: 228,
       columnNumber: 13
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-    lineNumber: 199,
+    lineNumber: 215,
     columnNumber: 21
   }, this) }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-    lineNumber: 198,
+    lineNumber: 214,
     columnNumber: 12
   }, this);
 }
@@ -354,14 +360,14 @@ function FilterGroup({ count, text, children }) {
       button: /* @__PURE__ */ jsxDEV(Fragment, { children: [
         /* @__PURE__ */ jsxDEV(Icon, { name: "i/filter", text }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-          lineNumber: 273,
+          lineNumber: 289,
           columnNumber: 23
         }, this),
         " ",
         count > 0 ? `${text("filters")} (${count})` : text("filters")
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-        lineNumber: 273,
+        lineNumber: 289,
         columnNumber: 21
       }, this),
       label: text("filters"),
@@ -370,7 +376,7 @@ function FilterGroup({ count, text, children }) {
       place: "end",
       children: () => /* @__PURE__ */ jsxDEV("div", { "data-region": "filter-panel", children }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-        lineNumber: 279,
+        lineNumber: 295,
         columnNumber: 20
       }, this)
     },
@@ -378,13 +384,13 @@ function FilterGroup({ count, text, children }) {
     false,
     {
       fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-      lineNumber: 272,
+      lineNumber: 288,
       columnNumber: 20
     },
     this
   ) : children }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/Filters.tsx",
-    lineNumber: 271,
+    lineNumber: 287,
     columnNumber: 12
   }, this);
 }
@@ -393,6 +399,7 @@ export {
   DateMenu,
   FilterGroup,
   PickerMenu,
-  StatusMenu
+  StatusMenu,
+  orderedDays
 };
 //# sourceMappingURL=Filters.dev.js.map

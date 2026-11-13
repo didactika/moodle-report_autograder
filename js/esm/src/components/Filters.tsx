@@ -173,6 +173,22 @@ const PickerList = ({type, label, chosen, scope, courseid, text, onPick}: {
 };
 
 /**
+ * Two days that bound a period, never the wrong way round: when the day just chosen passes the other one, the other one moves to
+ * it, so the first day is never after the last one, however the day was written.
+ *
+ * @param from The first day, or empty.
+ * @param to The last day, or empty.
+ * @param changed Which of the two was just chosen.
+ * @returns The two days, in order.
+ */
+export const orderedDays = (from: string, to: string, changed: 'from' | 'to'): [string, string] => {
+    if (from === '' || to === '' || from <= to) {
+        return [from, to];
+    }
+    return changed === 'from' ? [from, from] : [to, to];
+};
+
+/**
  * The grading date: a period among the usual ones, or the two days that bound it.
  *
  * @param props The period chosen and what to do when it changes.
@@ -214,12 +230,12 @@ export function DateMenu({from, to, text, onChange}: {from: string; to: string; 
                     <div>
                         <label className="form-label small mb-1" htmlFor={fromId}>{text('datepicker_from')}</label>
                         <input id={fromId} type="date" className="form-control form-control-sm" value={from} max={to || undefined}
-                            onChange={(event) => onChange(event.target.value, to)} />
+                            onChange={(event) => onChange(...orderedDays(event.target.value, to, 'from'))} />
                     </div>
                     <div>
                         <label className="form-label small mb-1" htmlFor={toId}>{text('datepicker_to')}</label>
                         <input id={toId} type="date" className="form-control form-control-sm" value={to} min={from || undefined}
-                            onChange={(event) => onChange(from, event.target.value)} />
+                            onChange={(event) => onChange(...orderedDays(from, event.target.value, 'to'))} />
                     </div>
                 </div>
             </div>
