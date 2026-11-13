@@ -67,7 +67,7 @@ Un informe puede enumerar miles de filas. La barra de herramientas lo acota con 
 | RN-008 | El recuento de cada estado se calcula dentro de todos los demás filtros salvo el propio estado, de modo que elegir un estado no oculte los números de los demás. |
 | RN-009 | El paginador ofrece solo los tamaños de página menores que la lista, y Todos: hasta 12 filas, Todos; de 13 a 24, 12 y Todos; y así hasta 12, 24, 48, 96 y Todos. Una lista empieza con 12 filas; Todos se envía a los servicios como -1, que estos limitan. |
 | RN-010 | Cada filtro es un menú que nunca ofrece su estado base como opción; al elegir un valor, el menú se resalta y una cruz ocupa el lugar de su flecha para quitarlo. Un botón al final de la fila quita todos los filtros. Un menú elegido muestra solo su valor, o el nombre del filtro y cuántos valores hay elegidos. |
-| RN-014 | La fila de filtros nunca se divide en dos líneas: cuando los menús no caben junto a la búsqueda (10 rem), se reúnen en un único menú, Filtros, con el número de filtros en uso, y se separan de nuevo cuando hay espacio. |
+| RN-014 | La fila de filtros nunca se divide en dos líneas: cuando los menús no caben junto a la búsqueda (10 rem), se reúnen en un único menú, Filtros, con el icono del embudo y el número de filtros en uso, y se separan de nuevo cuando hay espacio. Un valor largo se corta con puntos suspensivos antes de la cruz de su menú. |
 | RN-002 | El informe del sitio no se ejecuta sin un filtro. |
 | RN-003 | Los fallos se muestran solo a los lectores que pueden verlos. |
 | RN-004 | Un docente ve solo los grupos que puede ver. |

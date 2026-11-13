@@ -155,8 +155,9 @@ export const paint = () => {
 
     // The menu that groups the filters says how many narrow the report.
     const grouping = menu('filters').children('[data-menu-toggle]');
-    grouping.text(count > 0 ? `${grouping.data('label')} (${count})` : grouping.data('label'))
-        .toggleClass('border-primary', count > 0);
+    const name = grouping.data('label');
+    grouping.find('[data-region="filters-label"]').text(count > 0 ? `${name} (${count})` : name);
+    grouping.toggleClass('border-primary', count > 0);
     fitFilters();
 };
 

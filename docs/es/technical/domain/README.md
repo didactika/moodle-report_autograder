@@ -57,7 +57,7 @@ La posición vertical de una entidad expresa su importancia para el objetivo del
 | RN-011 | La primera vez que una persona abre el informe de una actividad o de un curso, un recorrido guiado lo presenta; cuando el sitio lo exige, el recorrido no puede omitirse antes de su último paso. | Scope | `tours/report.json`, `report_autograder_import_tours`, `report_autograder/tourrequired` |
 | RN-012 | El botón que abre el detalle de una fila toma el color de lo más grave que contiene: información, un problema que aún puede resolverse o una calificación con error. Una calificación que aún no está en el libro de calificaciones lleva la etiqueta Provisional, y una fila sin calificación muestra un guion. | ReportRow | `templates/table/_row.mustache`, `templates/table/row_details.mustache`, `amd/src/ui/report.js` |
 | RN-013 | Las columnas de la tabla conservan el ancho que tenían la primera vez que la tabla tuvo filas; un filtro, una ordenación u otra página nunca las mueven. Se miden de nuevo solo cuando cambia el ancho del recuadro de la tabla. | ReportRow | `amd/src/ui/report.js` |
-| RN-014 | La fila de filtros nunca se divide en dos líneas: cuando los menús no caben junto a la búsqueda (10 rem), se reúnen en un único menú, Filtros, con el número de filtros en uso, y se separan de nuevo cuando hay espacio. | Filter | `amd/src/ui/toolbar.js` |
+| RN-014 | La fila de filtros nunca se divide en dos líneas: cuando los menús no caben junto a la búsqueda (10 rem), se reúnen en un único menú, Filtros, con el icono del embudo y el número de filtros en uso, y se separan de nuevo cuando hay espacio. Un valor largo se corta con puntos suspensivos antes de la cruz de su menú. | Filter | `amd/src/ui/toolbar.js` |
 
 ## Ciclos de vida
 
