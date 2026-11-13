@@ -1158,6 +1158,13 @@
     min-width: 10rem;
 }
 
+@media (max-width: 400px) {
+
+    .arp [data-region=filters] > .table-toolbar-start > .dd-searchbox {
+        min-width: 7rem;
+    }
+}
+
 .arp [data-region=filter-menus] {
     display: flex;
     flex: none;
@@ -1170,6 +1177,10 @@
     max-width: 14rem;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.arp [data-menu=filters] > button.dd-select {
+    min-width: 0;
 }
 
 .arp [data-menu=filters] > .dd-select-menu {
