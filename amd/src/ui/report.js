@@ -23,7 +23,7 @@
 
 import $ from 'jquery';
 import templates from 'core/templates';
-import {get_string as getString} from 'core/str';
+import {get_string as getString, get_strings as getStrings} from 'core/str';
 import notification from 'core/notification';
 
 /** The table's own root, which every helper here works inside. */
@@ -54,6 +54,50 @@ export const showEmpty = (icon, message = '') => {
         this.hidden = this.getAttribute('data-empty-icon') !== icon;
     });
     empty.find('[data-empty-text]').text(message);
+};
+
+/** The texts of the explanations of a row, read once. */
+let noteStrings = null;
+
+/**
+ * Adds to each row what it explains, from the most serious: why it failed, why there is no grade or no grader, then why the date,
+ * what the provisional grade is and whose name the grade will carry.
+ *
+ * @param {Array} records The rows.
+ * @returns {Promise<Array>} The rows with their explanations.
+ */
+const withNotes = async(records) => {
+    if (!noteStrings) {
+        const keys = ['info:failure', 'info:problem', 'info:grader', 'info:date', 'info:grade', 'gradedby_prospective',
+            'grade_provisional_help', 'gradedby_prospective_help'];
+        const texts = await getStrings(keys.map((key) => ({key, component: 'report_autograder'})));
+        noteStrings = Object.fromEntries(keys.map((key, index) => [key, texts[index]]));
+    }
+    const t = noteStrings;
+    return records.map((row) => {
+        const notes = [];
+        const add = (title, message, tone) => notes.push({title, message, tone});
+        if (row.failure_reason) {
+            add(t['info:failure'], row.failure_reason, 'danger');
+        }
+        if (!row.grade && row.grade_problem) {
+            add(t['info:problem'], row.grade_problem, 'warning');
+        }
+        if (!row.graded_by && row.will_grade_problem) {
+            add(t['info:grader'], row.will_grade_problem, 'warning');
+        }
+        if (row.date_reason) {
+            add(t['info:date'], row.date_reason, 'info');
+        }
+        if (!row.grade && row.provisional_grade) {
+            add(t['info:grade'], t.grade_provisional_help, 'info');
+        }
+        if (!row.graded_by && row.will_grade) {
+            add(t.gradedby_prospective, t.gradedby_prospective_help, 'info');
+        }
+        const tone = notes.length ? notes[0].tone : 'info';
+        return {...row, notes, hasnotes: notes.length > 0, notestone: tone, notesinfo: tone === 'info'};
+    });
 };
 
 /**
@@ -100,7 +144,8 @@ export const renderTable = (records, onRenderComplete, isCurrent = () => true) =
         return;
     }
 
-    templates.render('report_autograder/table_rows', {records})
+    withNotes(records)
+        .then((rows) => templates.render('report_autograder/table_rows', {records: rows}))
         .then(html => {
             if (!isCurrent()) {
                 return null;

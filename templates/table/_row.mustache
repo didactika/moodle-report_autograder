@@ -19,7 +19,8 @@
 
     One student's row.
 
-    The popovers carry each attribute twice, once for Bootstrap 4 and once
+    The explanations of the row open from one button at its end, in the colour of the most serious one. The popover carries each
+    attribute twice, once for Bootstrap 4 and once
     for Bootstrap 5: Moodle 4.5 reads data-toggle and Moodle 5.0 onwards
     reads data-bs-toggle, and each ignores the other's. Both are needed
     because these rows arrive after the page has loaded, so they are picked
@@ -36,6 +37,8 @@
     * completed_at_sort - The date, for sorting
     * shows_groups / groups - The student's groups, where the table names them
     * graded_by / will_grade - Who graded it, or who is going to
+    * hasnotes / notes / notestone / notesinfo - What the row explains (each with a title, a message and a colour), the colour of
+      the most serious one and whether all of them only inform
 
     Example context (json):
     {
@@ -48,11 +51,15 @@
         "provisional_grade": "70",
         "shows_groups": true,
         "groups": "Group A",
-        "will_grade": "Elena Ruiz"
+        "will_grade": "Elena Ruiz",
+        "hasnotes": true,
+        "notestone": "info",
+        "notesinfo": true,
+        "notes": [{"title": "Why this date", "message": "Counted from the close date of the activity.", "tone": "info"}]
     }
 }}
 <tr data-record-id="{{rowkey}}">
-    <td>
+    <td class="text-nowrap">
         {{{user_col}}}
     </td>
 
@@ -69,120 +76,46 @@
     {{/activity_name}}
 
     {{#shows_groups}}
-    <td>{{groups}}</td>
+    <td class="text-nowrap">{{groups}}</td>
     {{/shows_groups}}
 
-    <td>
-        <span class="{{status_class}}">{{status}}</span>
-        {{#failure_reason}}
-        <a class="btn btn-link p-0 ml-1 icon-no-margin"
-           role="button"
-           data-container="body" data-bs-container="body"
-           data-toggle="popover" data-bs-toggle="popover"
-           data-placement="right" data-bs-placement="right"
-           data-content="{{failure_reason}}" data-bs-content="{{failure_reason}}"
-           data-html="true" data-bs-html="true"
-           tabindex="0"
-           data-trigger="focus" data-bs-trigger="focus"
-           aria-label="{{status}}">
-            <i class="icon fa fa-circle-exclamation text-danger fa-fw" title="{{status}}" aria-hidden="true"></i>
-        </a>
-        {{/failure_reason}}
-    </td>
+    <td><span class="{{status_class}}">{{status}}</span></td>
 
-    <td data-sort-value="{{completed_at_sort}}">
-        {{completed_at}}
-        {{#date_reason}}
-        <a class="btn btn-link p-0 ml-1 icon-no-margin"
-           role="button"
-           data-container="body" data-bs-container="body"
-           data-toggle="popover" data-bs-toggle="popover"
-           data-placement="right" data-bs-placement="right"
-           data-content="{{date_reason}}" data-bs-content="{{date_reason}}"
-           data-html="true" data-bs-html="true"
-           tabindex="0"
-           data-trigger="focus" data-bs-trigger="focus"
-           aria-label="{{#str}}helper, report_autograder{{/str}}">
-            <i class="icon fa fa-circle-info text-muted fa-fw" aria-hidden="true"></i>
-        </a>
-        {{/date_reason}}
-    </td>
+    <td class="text-nowrap" data-sort-value="{{completed_at_sort}}">{{completed_at}}</td>
 
     <td>
-        {{#grade}}
-            {{.}}
-        {{/grade}}
+        {{#grade}}<strong>{{.}}</strong>{{/grade}}
         {{^grade}}
-            {{#provisional_grade}}
-            {{.}} <a class="btn btn-link p-0 me-2 icon-no-margin"
-                            role="button"
-                            data-container="body" data-bs-container="body"
-                            data-toggle="popover" data-bs-toggle="popover"
-                            data-placement="right" data-bs-placement="right"
-                            data-content="{{#str}}grade_provisional_help, report_autograder{{/str}}" data-bs-content="{{#str}}grade_provisional_help, report_autograder{{/str}}"
-                            data-html="true" data-bs-html="true"
-                            tabindex="0"
-                            data-trigger="focus" data-bs-trigger="focus"
-                            aria-label="{{#str}}helper, report_autograder{{/str}}">
-
-            <i class="icon fa fa-circle-info text-info fa-fw " title="{{#str}}helper, report_autograder{{/str}}" aria-hidden="true"></i>
-        </a>
-            {{/provisional_grade}}
-            {{#grade_problem}}
-            <a class="btn btn-link p-0 icon-no-margin"
-               role="button"
-               data-container="body" data-bs-container="body"
-               data-toggle="popover" data-bs-toggle="popover"
-               data-placement="right" data-bs-placement="right"
-               data-content="{{grade_problem}}" data-bs-content="{{grade_problem}}"
-               data-html="true" data-bs-html="true"
-               tabindex="0"
-               data-trigger="focus" data-bs-trigger="focus"
-               aria-label="{{grade_problem}}">
-                <i class="icon fa fa-triangle-exclamation text-warning fa-fw" aria-hidden="true"></i>
-            </a>
-            {{/grade_problem}}
+            {{#provisional_grade}}<span class="font-italic fst-italic text-muted">{{.}}</span>{{/provisional_grade}}
+            {{^provisional_grade}}<span class="text-muted">—</span>{{/provisional_grade}}
         {{/grade}}
     </td>
 
-    <td>
-        {{#graded_by}}
-            {{.}}
-        {{/graded_by}}
+    <td class="text-nowrap">
+        {{#graded_by}}{{.}}{{/graded_by}}
         {{^graded_by}}
-            {{#will_grade}}
-            <span class="text-muted">{{.}}</span>
-            <a class="btn btn-link p-0 ml-1 icon-no-margin"
-               role="button"
-               data-container="body" data-bs-container="body"
-               data-toggle="popover" data-bs-toggle="popover"
-               data-placement="left" data-bs-placement="left"
-               data-content="{{#str}}gradedby_prospective_help, report_autograder{{/str}}" data-bs-content="{{#str}}gradedby_prospective_help, report_autograder{{/str}}"
-               data-html="true" data-bs-html="true"
-               tabindex="0"
-               data-trigger="focus" data-bs-trigger="focus"
-               aria-label="{{#str}}gradedby_prospective, report_autograder{{/str}}">
-                <i class="icon fa fa-circle-info text-info fa-fw" aria-hidden="true"></i>
-            </a>
-            {{/will_grade}}
-            {{#will_grade_problem}}
-            <a class="btn btn-link p-0 icon-no-margin"
-               role="button"
-               data-container="body" data-bs-container="body"
-               data-toggle="popover" data-bs-toggle="popover"
-               data-placement="left" data-bs-placement="left"
-               data-content="{{will_grade_problem}}" data-bs-content="{{will_grade_problem}}"
-               data-html="true" data-bs-html="true"
-               tabindex="0"
-               data-trigger="focus" data-bs-trigger="focus"
-               aria-label="{{will_grade_problem}}">
-                <i class="icon fa fa-triangle-exclamation text-warning fa-fw" aria-hidden="true"></i>
-            </a>
-            {{/will_grade_problem}}
+            {{#will_grade}}<span class="font-italic fst-italic text-muted">{{.}}</span>{{/will_grade}}
+            {{^will_grade}}<span class="text-muted">—</span>{{/will_grade}}
         {{/graded_by}}
     </td>
 
     <td class="table-actions">
+        {{#hasnotes}}
+        <a class="btn btn-link btn-icon btn-sm btn-hint text-{{notestone}}"
+           role="button"
+           data-container="body" data-bs-container="body"
+           data-toggle="popover" data-bs-toggle="popover"
+           data-placement="left" data-bs-placement="left"
+           data-content="<ul class='list-unstyled mb-0'>{{#notes}}<li class='border-left border-start border-{{tone}} pl-2 ps-2 mb-2'><strong class='d-block text-{{tone}}'>{{title}}</strong>{{message}}</li>{{/notes}}</ul>"
+           data-bs-content="<ul class='list-unstyled mb-0'>{{#notes}}<li class='border-left border-start border-{{tone}} pl-2 ps-2 mb-2'><strong class='d-block text-{{tone}}'>{{title}}</strong>{{message}}</li>{{/notes}}</ul>"
+           data-html="true" data-bs-html="true"
+           tabindex="0"
+           data-trigger="focus" data-bs-trigger="focus"
+           title="{{#str}}info:row, report_autograder{{/str}}"
+           aria-label="{{#str}}info:row, report_autograder{{/str}}">
+            {{#notesinfo}}{{#pix}}i/info, core{{/pix}}{{/notesinfo}}{{^notesinfo}}{{#pix}}i/warning, core{{/pix}}{{/notesinfo}}
+        </a>
+        {{/hasnotes}}
         {{#grade_user_url}}
         <a class="btn btn-link btn-icon btn-sm text-primary" href="{{grade_user_url}}" title="{{#str}}gradeuser, report_autograder{{/str}}"
             aria-label="{{#str}}gradeuser, report_autograder{{/str}}">{{#pix}}i/grades, core{{/pix}}</a>
