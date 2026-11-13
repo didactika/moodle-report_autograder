@@ -13,7 +13,7 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import {useEffect, useMemo, useState} from 'react';
-import {DateMenu, PickerMenu, StatusMenu} from './components/Filters';
+import {DateMenu, FilterGroup, PickerMenu, StatusMenu} from './components/Filters';
 import ReportTable from './components/ReportTable';
 import {Icon, Pager, SearchBox, SelectMenu} from './components/ui';
 import {useDebounced} from './hooks/useDebounced';
@@ -116,53 +116,55 @@ export default function Report(props: ReportProps) {
             <div className="table-toolbar" data-region="filters">
                 <div className="table-toolbar-start">
                     <SearchBox value={searchText} onChange={setSearchText} label={text('filter_search')} text={text} />
-                    <StatusMenu
-                        statuses={props.statuses}
-                        counts={state.counts}
-                        chosen={filters.status}
-                        text={text}
-                        onChange={(status) => change({status})}
-                    />
-                    {props.showscoursefilter && <PickerMenu
-                        type="course"
-                        label={text('filter_course')}
-                        chosen={course}
-                        scope={props.scope}
-                        courseid={0}
-                        text={text}
-                        onPick={(option) => {
-                            setCourse(option);
-                            // The activity that was chosen may not belong to the new course.
-                            setActivity(null);
-                            change({courseid: option?.id ?? 0, cmid: 0});
-                        }}
-                    />}
-                    {props.showsactivityfilter && <PickerMenu
-                        type="activity"
-                        label={text('filter_activity')}
-                        chosen={activity}
-                        scope={props.scope}
-                        courseid={filters.courseid}
-                        text={text}
-                        onPick={(option) => {
-                            setActivity(option);
-                            change({cmid: option?.id ?? 0});
-                        }}
-                    />}
-                    {props.showsgroupfilter && <SelectMenu
-                        label={text('filter_group')}
-                        options={groups}
-                        value={String(filters.groupid)}
-                        base={props.offersallgroups ? '0' : undefined}
-                        text={text}
-                        onChange={(groupid) => change({groupid: Number(groupid)})}
-                    />}
-                    <DateMenu
-                        from={filters.datefrom}
-                        to={filters.dateto}
-                        text={text}
-                        onChange={(datefrom, dateto) => change({datefrom, dateto})}
-                    />
+                    <FilterGroup count={applied} text={text}>
+                        <StatusMenu
+                            statuses={props.statuses}
+                            counts={state.counts}
+                            chosen={filters.status}
+                            text={text}
+                            onChange={(status) => change({status})}
+                        />
+                        {props.showscoursefilter && <PickerMenu
+                            type="course"
+                            label={text('filter_course')}
+                            chosen={course}
+                            scope={props.scope}
+                            courseid={0}
+                            text={text}
+                            onPick={(option) => {
+                                setCourse(option);
+                                // The activity that was chosen may not belong to the new course.
+                                setActivity(null);
+                                change({courseid: option?.id ?? 0, cmid: 0});
+                            }}
+                        />}
+                        {props.showsactivityfilter && <PickerMenu
+                            type="activity"
+                            label={text('filter_activity')}
+                            chosen={activity}
+                            scope={props.scope}
+                            courseid={filters.courseid}
+                            text={text}
+                            onPick={(option) => {
+                                setActivity(option);
+                                change({cmid: option?.id ?? 0});
+                            }}
+                        />}
+                        {props.showsgroupfilter && <SelectMenu
+                            label={text('filter_group')}
+                            options={groups}
+                            value={String(filters.groupid)}
+                            base={props.offersallgroups ? '0' : undefined}
+                            text={text}
+                            onChange={(groupid) => change({groupid: Number(groupid)})}
+                        />}
+                        <DateMenu
+                            from={filters.datefrom}
+                            to={filters.dateto}
+                            text={text}
+                            onChange={(datefrom, dateto) => change({datefrom, dateto})}
+                        />
+                    </FilterGroup>
                 </div>
                 <div className="table-toolbar-end">
                     <button

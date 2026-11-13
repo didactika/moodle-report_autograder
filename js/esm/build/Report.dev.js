@@ -16,7 +16,7 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import { useEffect, useMemo, useState } from "react";
-import { DateMenu, PickerMenu, StatusMenu } from "./components/Filters";
+import { DateMenu, FilterGroup, PickerMenu, StatusMenu } from "./components/Filters";
 import ReportTable from "./components/ReportTable";
 import { Icon, Pager, SearchBox, SelectMenu } from "./components/ui";
 import { useDebounced } from "./hooks/useDebounced";
@@ -106,107 +106,113 @@ function Report(props) {
                 lineNumber: 118,
                 columnNumber: 21
               }, this),
-              /* @__PURE__ */ jsxDEV(
-                StatusMenu,
-                {
-                  statuses: props.statuses,
-                  counts: state.counts,
-                  chosen: filters.status,
-                  text,
-                  onChange: (status) => change({ status })
-                },
-                void 0,
-                false,
-                {
-                  fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 119,
-                  columnNumber: 21
-                },
-                this
-              ),
-              props.showscoursefilter && /* @__PURE__ */ jsxDEV(
-                PickerMenu,
-                {
-                  type: "course",
-                  label: text("filter_course"),
-                  chosen: course,
-                  scope: props.scope,
-                  courseid: 0,
-                  text,
-                  onPick: (option) => {
-                    setCourse(option);
-                    setActivity(null);
-                    change({ courseid: option?.id ?? 0, cmid: 0 });
-                  }
-                },
-                void 0,
-                false,
-                {
-                  fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 126,
-                  columnNumber: 49
-                },
-                this
-              ),
-              props.showsactivityfilter && /* @__PURE__ */ jsxDEV(
-                PickerMenu,
-                {
-                  type: "activity",
-                  label: text("filter_activity"),
-                  chosen: activity,
-                  scope: props.scope,
-                  courseid: filters.courseid,
-                  text,
-                  onPick: (option) => {
-                    setActivity(option);
-                    change({ cmid: option?.id ?? 0 });
-                  }
-                },
-                void 0,
-                false,
-                {
-                  fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 140,
-                  columnNumber: 51
-                },
-                this
-              ),
-              props.showsgroupfilter && /* @__PURE__ */ jsxDEV(
-                SelectMenu,
-                {
-                  label: text("filter_group"),
-                  options: groups,
-                  value: String(filters.groupid),
-                  base: props.offersallgroups ? "0" : void 0,
-                  text,
-                  onChange: (groupid) => change({ groupid: Number(groupid) })
-                },
-                void 0,
-                false,
-                {
-                  fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 152,
-                  columnNumber: 48
-                },
-                this
-              ),
-              /* @__PURE__ */ jsxDEV(
-                DateMenu,
-                {
-                  from: filters.datefrom,
-                  to: filters.dateto,
-                  text,
-                  onChange: (datefrom, dateto) => change({ datefrom, dateto })
-                },
-                void 0,
-                false,
-                {
-                  fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 160,
-                  columnNumber: 21
-                },
-                this
-              )
+              /* @__PURE__ */ jsxDEV(FilterGroup, { count: applied, text, children: [
+                /* @__PURE__ */ jsxDEV(
+                  StatusMenu,
+                  {
+                    statuses: props.statuses,
+                    counts: state.counts,
+                    chosen: filters.status,
+                    text,
+                    onChange: (status) => change({ status })
+                  },
+                  void 0,
+                  false,
+                  {
+                    fileName: "public/report/autograder/js/esm/src/Report.tsx",
+                    lineNumber: 120,
+                    columnNumber: 25
+                  },
+                  this
+                ),
+                props.showscoursefilter && /* @__PURE__ */ jsxDEV(
+                  PickerMenu,
+                  {
+                    type: "course",
+                    label: text("filter_course"),
+                    chosen: course,
+                    scope: props.scope,
+                    courseid: 0,
+                    text,
+                    onPick: (option) => {
+                      setCourse(option);
+                      setActivity(null);
+                      change({ courseid: option?.id ?? 0, cmid: 0 });
+                    }
+                  },
+                  void 0,
+                  false,
+                  {
+                    fileName: "public/report/autograder/js/esm/src/Report.tsx",
+                    lineNumber: 127,
+                    columnNumber: 53
+                  },
+                  this
+                ),
+                props.showsactivityfilter && /* @__PURE__ */ jsxDEV(
+                  PickerMenu,
+                  {
+                    type: "activity",
+                    label: text("filter_activity"),
+                    chosen: activity,
+                    scope: props.scope,
+                    courseid: filters.courseid,
+                    text,
+                    onPick: (option) => {
+                      setActivity(option);
+                      change({ cmid: option?.id ?? 0 });
+                    }
+                  },
+                  void 0,
+                  false,
+                  {
+                    fileName: "public/report/autograder/js/esm/src/Report.tsx",
+                    lineNumber: 141,
+                    columnNumber: 55
+                  },
+                  this
+                ),
+                props.showsgroupfilter && /* @__PURE__ */ jsxDEV(
+                  SelectMenu,
+                  {
+                    label: text("filter_group"),
+                    options: groups,
+                    value: String(filters.groupid),
+                    base: props.offersallgroups ? "0" : void 0,
+                    text,
+                    onChange: (groupid) => change({ groupid: Number(groupid) })
+                  },
+                  void 0,
+                  false,
+                  {
+                    fileName: "public/report/autograder/js/esm/src/Report.tsx",
+                    lineNumber: 153,
+                    columnNumber: 52
+                  },
+                  this
+                ),
+                /* @__PURE__ */ jsxDEV(
+                  DateMenu,
+                  {
+                    from: filters.datefrom,
+                    to: filters.dateto,
+                    text,
+                    onChange: (datefrom, dateto) => change({ datefrom, dateto })
+                  },
+                  void 0,
+                  false,
+                  {
+                    fileName: "public/report/autograder/js/esm/src/Report.tsx",
+                    lineNumber: 161,
+                    columnNumber: 25
+                  },
+                  this
+                )
+              ] }, void 0, true, {
+                fileName: "public/report/autograder/js/esm/src/Report.tsx",
+                lineNumber: 119,
+                columnNumber: 21
+              }, this)
             ] }, void 0, true, {
               fileName: "public/report/autograder/js/esm/src/Report.tsx",
               lineNumber: 117,
@@ -224,7 +230,7 @@ function Report(props) {
                 onClick: reset,
                 children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/reload", text }, void 0, false, {
                   fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 177,
+                  lineNumber: 179,
                   columnNumber: 25
                 }, this)
               },
@@ -232,13 +238,13 @@ function Report(props) {
               false,
               {
                 fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                lineNumber: 168,
+                lineNumber: 170,
                 columnNumber: 21
               },
               this
             ) }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/Report.tsx",
-              lineNumber: 167,
+              lineNumber: 169,
               columnNumber: 17
             }, this)
           ] }, void 0, true, {
@@ -263,7 +269,7 @@ function Report(props) {
             false,
             {
               fileName: "public/report/autograder/js/esm/src/Report.tsx",
-              lineNumber: 181,
+              lineNumber: 183,
               columnNumber: 13
             },
             this
@@ -288,7 +294,7 @@ function Report(props) {
             false,
             {
               fileName: "public/report/autograder/js/esm/src/Report.tsx",
-              lineNumber: 192,
+              lineNumber: 194,
               columnNumber: 13
             },
             this

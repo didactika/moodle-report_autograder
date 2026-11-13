@@ -173,7 +173,7 @@ export default function ReportRow({row, columns, forumgrade, text}: ReportRowPro
             {!row.grade && row.provisional_grade && <Expected grade={row.provisional_grade} text={text} />}
             {!row.grade && !row.provisional_grade && <span className="text-muted">—</span>}
         </td>
-        <td className="text-nowrap">
+        <td>
             {row.graded_by}
             {!row.graded_by && row.will_grade && <span className="text-muted">{row.will_grade}</span>}
             {!row.graded_by && !row.will_grade && <span className="text-muted">—</span>}

@@ -342,7 +342,7 @@ function ReportRow({ row, columns, forumgrade, text }) {
       lineNumber: 171,
       columnNumber: 9
     }, this),
-    /* @__PURE__ */ jsxDEV("td", { className: "text-nowrap", children: [
+    /* @__PURE__ */ jsxDEV("td", { children: [
       row.graded_by,
       !row.graded_by && row.will_grade && /* @__PURE__ */ jsxDEV("span", { className: "text-muted", children: row.will_grade }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",

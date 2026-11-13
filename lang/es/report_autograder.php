@@ -54,6 +54,7 @@ $string['filter_group'] = 'Grupo';
 $string['filter_group_placeholder'] = 'Todos los grupos';
 $string['filter_search'] = 'Buscar';
 $string['filter_status'] = 'Estado';
+$string['filters'] = 'Filtros';
 $string['filters_reset'] = 'Limpiar todos los filtros';
 $string['grade_expected'] = 'Provisional';
 $string['grade_provisional_help'] = 'La calificación indicada es provisional y no se guardará hasta la fecha que muestra la columna «Fecha de calificación».';

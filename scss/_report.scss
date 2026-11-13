@@ -138,6 +138,69 @@
     }
 }
 
+.arp {
+    // The toolbar keeps one row: the search shrinks down to its own room and the filters keep their width beside it. When they
+    // do not fit, the component groups them in one menu, Filters, so the row never breaks in two.
+    & [data-region="filters"] > .table-toolbar-start {
+        flex-wrap: nowrap;
+        min-width: 0;
+
+        & > .dd-searchbox {
+            flex: 1 1 10rem;
+            min-width: 10rem;
+        }
+    }
+
+    & [data-region="filter-menus"] {
+        display: flex;
+        flex: none;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 0.5rem;
+
+        & button.dd-select {
+            max-width: 14rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+
+    // The menu that groups the filters holds them one under the other, each as wide as the menu, and lets their own lists show.
+    & [data-menu="filters"] > .dd-select-menu {
+        min-width: 17rem;
+        max-height: none;
+        overflow: visible;
+    }
+
+    & [data-region="filter-panel"] {
+        display: grid;
+        gap: 0.5rem;
+        padding: 0.5rem;
+
+        & .dd-menu,
+        & .dd-select-filter,
+        & button.dd-select {
+            width: 100%;
+            max-width: none;
+        }
+    }
+
+    // The columns keep their width whatever the page shows: the component measures them once the table has rows and keeps them
+    // (table-layout: fixed), so a filter, a sort or another page moves nothing. What does not fit wraps, or ends with an ellipsis
+    // in the cells that keep one line.
+    & .table-responsive[data-region="tablewrap"] > .table {
+        & td {
+            overflow-wrap: break-word;
+        }
+
+        & td.text-nowrap {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}
+
+
 // When the site requires the guided tour, its steps have no button that skips it; the last step still ends it.
 .report-autograder-tour-required [data-role="flexitour-step"] [data-role="end"].btn-secondary {
     display: none;

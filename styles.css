@@ -1139,6 +1139,58 @@
     }
 }
 
+.arp [data-region=filters] > .table-toolbar-start {
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+
+.arp [data-region=filters] > .table-toolbar-start > .dd-searchbox {
+    flex: 1 1 10rem;
+    min-width: 10rem;
+}
+
+.arp [data-region=filter-menus] {
+    display: flex;
+    flex: none;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.arp [data-region=filter-menus] button.dd-select {
+    max-width: 14rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.arp [data-menu=filters] > .dd-select-menu {
+    min-width: 17rem;
+    max-height: none;
+    overflow: visible;
+}
+
+.arp [data-region=filter-panel] {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.5rem;
+}
+
+.arp [data-region=filter-panel] .dd-menu,
+.arp [data-region=filter-panel] .dd-select-filter,
+.arp [data-region=filter-panel] button.dd-select {
+    width: 100%;
+    max-width: none;
+}
+
+.arp .table-responsive[data-region=tablewrap] > .table td {
+    overflow-wrap: break-word;
+}
+
+.arp .table-responsive[data-region=tablewrap] > .table td.text-nowrap {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .report-autograder-tour-required [data-role=flexitour-step] [data-role=end].btn-secondary {
     display: none;
 }

@@ -14,9 +14,9 @@
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import type {ReactNode} from 'react';
-import {Empty, Icon, Pager, SearchBox, SelectMenu, TableBox} from './components/ui';
+import {Empty, Icon, Pager, SearchBox, SelectMenu, TableBox, useStableColumns} from './components/ui';
 import {createText} from './engine/text';
 import {DEFAULT_PAGE_SIZE} from './lib/paging';
 import {useDebounced} from './hooks/useDebounced';
@@ -88,6 +88,8 @@ const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
     }, [search, page, perpage]);
 
     const courses = data?.courses ?? [];
+    const coursesTable = useRef<HTMLTableElement>(null);
+    useStableColumns(coursesTable, courses.length > 0);
     let overviewEmpty: ReactNode = null;
     if (failed !== '') {
         overviewEmpty = <Empty icon="i/warning" message={text('error:apirequest', failed)} action={text('error:retry')}
@@ -104,15 +106,15 @@ const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
             </div>
         </div>
         <TableBox busy={loading} empty={overviewEmpty}>
-            <table className="table">
+            <table className="table" ref={coursesTable}>
                 <caption className="visually-hidden sr-only">{text('graders:heading')}</caption>
                 <thead>
                     <tr>
                         <th scope="col">{text('graders:course')}</th>
-                        <th scope="col">{text('graders:activities')}</th>
+                        <th scope="col" data-col="count">{text('graders:activities')}</th>
                         <th scope="col">{text('graders:graders')}</th>
-                        <th scope="col">{text('graders:students')}</th>
-                        <th scope="col">{text('graders:state')}</th>
+                        <th scope="col" data-col="count">{text('graders:students')}</th>
+                        <th scope="col" data-col="status">{text('graders:state')}</th>
                         <th scope="col" className="table-actions"><span className="visually-hidden">{text('graders:openreport')}</span></th>
                     </tr>
                 </thead>
@@ -207,6 +209,8 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
     }, [props.courseid, search, filter, page, perpage]);
 
     const students = data?.studentlist.students ?? [];
+    const studentsTable = useRef<HTMLTableElement>(null);
+    useStableColumns(studentsTable, students.length > 0);
     let studentsEmpty: ReactNode = null;
     if (failed !== '') {
         studentsEmpty = <Empty icon="i/warning" message={text('error:apirequest', failed)} action={text('error:retry')}
@@ -275,7 +279,7 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
                 </div>
             </div>
             <TableBox busy={loading} empty={studentsEmpty}>
-                <table className="table">
+                <table className="table" ref={studentsTable}>
                     <caption className="visually-hidden sr-only">{text('graders:students')}</caption>
                     <thead>
                         <tr>

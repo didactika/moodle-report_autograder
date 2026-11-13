@@ -17,8 +17,8 @@ import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import { useEffect, useMemo, useState } from "react";
-import { Empty, Icon, Pager, SearchBox, SelectMenu, TableBox } from "./components/ui";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Empty, Icon, Pager, SearchBox, SelectMenu, TableBox, useStableColumns } from "./components/ui";
 import { createText } from "./engine/text";
 import { DEFAULT_PAGE_SIZE } from "./lib/paging";
 import { useDebounced } from "./hooks/useDebounced";
@@ -77,6 +77,8 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
     };
   }, [search, page, perpage]);
   const courses = data?.courses ?? [];
+  const coursesTable = useRef(null);
+  useStableColumns(coursesTable, courses.length > 0);
   let overviewEmpty = null;
   if (failed !== "") {
     overviewEmpty = /* @__PURE__ */ jsxDEV(
@@ -92,7 +94,7 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
       false,
       {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 93,
+        lineNumber: 95,
         columnNumber: 25
       }
     );
@@ -108,7 +110,7 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
       false,
       {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 96,
+        lineNumber: 98,
         columnNumber: 25
       }
     );
@@ -116,99 +118,99 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
   return /* @__PURE__ */ jsxDEV("div", { className: "card", children: [
     /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar", children: /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-start", children: /* @__PURE__ */ jsxDEV(SearchBox, { value: typed, onChange: setTyped, label: text("graders:search"), text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 103,
+      lineNumber: 105,
       columnNumber: 17
     }) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 102,
+      lineNumber: 104,
       columnNumber: 13
     }) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 101,
+      lineNumber: 103,
       columnNumber: 9
     }),
-    /* @__PURE__ */ jsxDEV(TableBox, { busy: loading, empty: overviewEmpty, children: /* @__PURE__ */ jsxDEV("table", { className: "table", children: [
+    /* @__PURE__ */ jsxDEV(TableBox, { busy: loading, empty: overviewEmpty, children: /* @__PURE__ */ jsxDEV("table", { className: "table", ref: coursesTable, children: [
       /* @__PURE__ */ jsxDEV("caption", { className: "visually-hidden sr-only", children: text("graders:heading") }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 108,
+        lineNumber: 110,
         columnNumber: 17
       }),
       /* @__PURE__ */ jsxDEV("thead", { children: /* @__PURE__ */ jsxDEV("tr", { children: [
         /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("graders:course") }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 111,
-          columnNumber: 25
-        }),
-        /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("graders:activities") }, void 0, false, {
-          fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 112,
-          columnNumber: 25
-        }),
-        /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("graders:graders") }, void 0, false, {
-          fileName: "public/report/autograder/js/esm/src/Graders.tsx",
           lineNumber: 113,
           columnNumber: 25
         }),
-        /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("graders:students") }, void 0, false, {
+        /* @__PURE__ */ jsxDEV("th", { scope: "col", "data-col": "count", children: text("graders:activities") }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
           lineNumber: 114,
           columnNumber: 25
         }),
-        /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("graders:state") }, void 0, false, {
+        /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("graders:graders") }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
           lineNumber: 115,
           columnNumber: 25
         }),
-        /* @__PURE__ */ jsxDEV("th", { scope: "col", className: "table-actions", children: /* @__PURE__ */ jsxDEV("span", { className: "visually-hidden", children: text("graders:openreport") }, void 0, false, {
+        /* @__PURE__ */ jsxDEV("th", { scope: "col", "data-col": "count", children: text("graders:students") }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
           lineNumber: 116,
+          columnNumber: 25
+        }),
+        /* @__PURE__ */ jsxDEV("th", { scope: "col", "data-col": "status", children: text("graders:state") }, void 0, false, {
+          fileName: "public/report/autograder/js/esm/src/Graders.tsx",
+          lineNumber: 117,
+          columnNumber: 25
+        }),
+        /* @__PURE__ */ jsxDEV("th", { scope: "col", className: "table-actions", children: /* @__PURE__ */ jsxDEV("span", { className: "visually-hidden", children: text("graders:openreport") }, void 0, false, {
+          fileName: "public/report/autograder/js/esm/src/Graders.tsx",
+          lineNumber: 118,
           columnNumber: 67
         }) }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 116,
+          lineNumber: 118,
           columnNumber: 25
         })
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 110,
+        lineNumber: 112,
         columnNumber: 21
       }) }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 109,
+        lineNumber: 111,
         columnNumber: 17
       }),
       /* @__PURE__ */ jsxDEV("tbody", { children: [
         loading && data === null && /* @__PURE__ */ jsxDEV(Skeleton, { columns: 6 }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 120,
+          lineNumber: 122,
           columnNumber: 50
         }),
         courses.map((course) => /* @__PURE__ */ jsxDEV("tr", { children: [
           /* @__PURE__ */ jsxDEV("td", { children: [
             /* @__PURE__ */ jsxDEV("a", { className: "fw-bold", href: course.studentsurl, children: course.name }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-              lineNumber: 123,
+              lineNumber: 125,
               columnNumber: 29
             }),
             /* @__PURE__ */ jsxDEV("div", { className: "small text-muted text-truncate", children: course.fullname }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-              lineNumber: 124,
+              lineNumber: 126,
               columnNumber: 29
             })
           ] }, void 0, true, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 122,
+            lineNumber: 124,
             columnNumber: 25
           }),
           /* @__PURE__ */ jsxDEV("td", { children: course.activities }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 126,
+            lineNumber: 128,
             columnNumber: 25
           }),
           /* @__PURE__ */ jsxDEV("td", { children: [
             course.graders.length === 0 && /* @__PURE__ */ jsxDEV("span", { className: "text-muted", children: "\u2014" }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-              lineNumber: 128,
+              lineNumber: 130,
               columnNumber: 61
             }),
             course.graders.join(", "),
@@ -217,26 +219,26 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
               text("graders:more", course.moregraders)
             ] }, void 0, true, {
               fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-              lineNumber: 130,
+              lineNumber: 132,
               columnNumber: 56
             })
           ] }, void 0, true, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 127,
+            lineNumber: 129,
             columnNumber: 25
           }),
           /* @__PURE__ */ jsxDEV("td", { children: course.studentcount }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 132,
+            lineNumber: 134,
             columnNumber: 25
           }),
           /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV(State, { state: course.state, text }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 133,
+            lineNumber: 135,
             columnNumber: 29
           }) }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 133,
+            lineNumber: 135,
             columnNumber: 25
           }),
           /* @__PURE__ */ jsxDEV("td", { className: "table-actions", children: [
@@ -249,7 +251,7 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
                 "aria-label": text("graders:seestudents"),
                 children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/users", text }, void 0, false, {
                   fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-                  lineNumber: 140,
+                  lineNumber: 142,
                   columnNumber: 30
                 })
               },
@@ -257,7 +259,7 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
               false,
               {
                 fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-                lineNumber: 135,
+                lineNumber: 137,
                 columnNumber: 29
               }
             ),
@@ -270,7 +272,7 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
                 "aria-label": text("graders:openreport"),
                 children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/report", text }, void 0, false, {
                   fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-                  lineNumber: 146,
+                  lineNumber: 148,
                   columnNumber: 30
                 })
               },
@@ -278,32 +280,32 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
               false,
               {
                 fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-                lineNumber: 141,
+                lineNumber: 143,
                 columnNumber: 29
               }
             )
           ] }, void 0, true, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 134,
+            lineNumber: 136,
             columnNumber: 25
           })
         ] }, course.id, true, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 121,
+          lineNumber: 123,
           columnNumber: 46
         }))
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 119,
+        lineNumber: 121,
         columnNumber: 17
       })
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 107,
+      lineNumber: 109,
       columnNumber: 13
     }) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 106,
+      lineNumber: 108,
       columnNumber: 9
     }),
     /* @__PURE__ */ jsxDEV(
@@ -326,13 +328,13 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
       false,
       {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 152,
+        lineNumber: 154,
         columnNumber: 9
       }
     )
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-    lineNumber: 100,
+    lineNumber: 102,
     columnNumber: 12
   });
 }, "Overview");
@@ -368,6 +370,8 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
     };
   }, [props.courseid, search, filter, page, perpage]);
   const students = data?.studentlist.students ?? [];
+  const studentsTable = useRef(null);
+  useStableColumns(studentsTable, students.length > 0);
   let studentsEmpty = null;
   if (failed !== "") {
     studentsEmpty = /* @__PURE__ */ jsxDEV(
@@ -383,7 +387,7 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
       false,
       {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 212,
+        lineNumber: 216,
         columnNumber: 25
       }
     );
@@ -399,7 +403,7 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
       false,
       {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 215,
+        lineNumber: 219,
         columnNumber: 25
       }
     );
@@ -416,14 +420,14 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
       /* @__PURE__ */ jsxDEV("a", { className: "btn btn-link px-0", href: props.overviewurl, children: [
         /* @__PURE__ */ jsxDEV(Icon, { name: "i/previous", text }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 229,
+          lineNumber: 233,
           columnNumber: 17
         }),
         " ",
         text("graders:back")
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 228,
+        lineNumber: 232,
         columnNumber: 13
       }),
       data && /* @__PURE__ */ jsxDEV(
@@ -435,7 +439,7 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
           "aria-label": text("graders:openreport"),
           children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/report", text }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 236,
+            lineNumber: 240,
             columnNumber: 14
           })
         },
@@ -443,25 +447,25 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
         false,
         {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 231,
+          lineNumber: 235,
           columnNumber: 22
         }
       )
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 227,
+      lineNumber: 231,
       columnNumber: 9
     }),
     data && /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-wrap align-items-baseline gap-3", children: [
       /* @__PURE__ */ jsxDEV("h3", { className: "h4 mb-0", children: data.course }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 239,
+        lineNumber: 243,
         columnNumber: 13
       }),
       /* @__PURE__ */ jsxDEV("span", { className: "text-muted", children: [
         /* @__PURE__ */ jsxDEV("strong", { className: "text-body", children: data.gradercount }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 241,
+          lineNumber: 245,
           columnNumber: 17
         }),
         " ",
@@ -469,30 +473,30 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
         " \xB7 ",
         /* @__PURE__ */ jsxDEV("strong", { className: "text-body", children: data.studentcount }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 243,
+          lineNumber: 247,
           columnNumber: 17
         }),
         " ",
         text("graders:studentcount")
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 240,
+        lineNumber: 244,
         columnNumber: 13
       })
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 238,
+      lineNumber: 242,
       columnNumber: 18
     }),
     alert !== "" && /* @__PURE__ */ jsxDEV("div", { className: `alert ${data && !data.hasgraders ? "alert-danger" : "alert-warning"} mb-0`, role: "alert", children: alert }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 246,
+      lineNumber: 250,
       columnNumber: 26
     }),
     data && data.hasgraders && /* @__PURE__ */ jsxDEV("div", { className: "card", children: /* @__PURE__ */ jsxDEV("div", { className: "card-body", children: [
       /* @__PURE__ */ jsxDEV("h4", { className: "h6 mb-2", children: text("graders:possible") }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 249,
+        lineNumber: 253,
         columnNumber: 17
       }),
       /* @__PURE__ */ jsxDEV("ul", { className: "list-unstyled d-flex flex-wrap gap-2 mb-2", children: data.graders.map((grader) => /* @__PURE__ */ jsxDEV("li", { children: /* @__PURE__ */ jsxDEV("span", { className: `badge badge-soft rounded-pill ${grader.isfallback ? "text-bg-secondary" : "text-bg-primary"}`, children: [
@@ -502,41 +506,41 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
           text("graders:viafallback")
         ] }, void 0, true, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 253,
+          lineNumber: 257,
           columnNumber: 64
         })
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 252,
+        lineNumber: 256,
         columnNumber: 25
       }) }, grader.id, false, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 251,
+        lineNumber: 255,
         columnNumber: 51
       })) }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 250,
+        lineNumber: 254,
         columnNumber: 17
       }),
       /* @__PURE__ */ jsxDEV("p", { className: "small text-muted mb-0", children: text("graders:associationnote") }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 257,
+        lineNumber: 261,
         columnNumber: 17
       })
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 248,
+      lineNumber: 252,
       columnNumber: 13
     }) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 247,
+      lineNumber: 251,
       columnNumber: 37
     }),
     /* @__PURE__ */ jsxDEV("div", { className: "card", children: [
       /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar", children: /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-start", children: [
         /* @__PURE__ */ jsxDEV(SearchBox, { value: typed, onChange: setTyped, label: text("graders:search_students"), text }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 263,
+          lineNumber: 267,
           columnNumber: 21
         }),
         /* @__PURE__ */ jsxDEV(
@@ -556,104 +560,104 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
           false,
           {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 264,
+            lineNumber: 268,
             columnNumber: 21
           }
         )
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 262,
+        lineNumber: 266,
         columnNumber: 17
       }) }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 261,
+        lineNumber: 265,
         columnNumber: 13
       }),
-      /* @__PURE__ */ jsxDEV(TableBox, { busy: loading, empty: studentsEmpty, children: /* @__PURE__ */ jsxDEV("table", { className: "table", children: [
+      /* @__PURE__ */ jsxDEV(TableBox, { busy: loading, empty: studentsEmpty, children: /* @__PURE__ */ jsxDEV("table", { className: "table", ref: studentsTable, children: [
         /* @__PURE__ */ jsxDEV("caption", { className: "visually-hidden sr-only", children: text("graders:students") }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 279,
+          lineNumber: 283,
           columnNumber: 21
         }),
         /* @__PURE__ */ jsxDEV("thead", { children: /* @__PURE__ */ jsxDEV("tr", { children: [
           /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("graders:student") }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 282,
+            lineNumber: 286,
             columnNumber: 29
           }),
           /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("graders:grader") }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 283,
+            lineNumber: 287,
             columnNumber: 29
           }),
           /* @__PURE__ */ jsxDEV("th", { scope: "col", children: text("graders:note") }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 284,
+            lineNumber: 288,
             columnNumber: 29
           })
         ] }, void 0, true, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 281,
+          lineNumber: 285,
           columnNumber: 25
         }) }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 280,
+          lineNumber: 284,
           columnNumber: 21
         }),
         /* @__PURE__ */ jsxDEV("tbody", { children: [
           loading && data === null && /* @__PURE__ */ jsxDEV(Skeleton, { columns: 3 }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 288,
+            lineNumber: 292,
             columnNumber: 54
           }),
           students.map((student, index) => /* @__PURE__ */ jsxDEV("tr", { children: [
             /* @__PURE__ */ jsxDEV("td", { className: "fw-bold", children: student.name }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-              lineNumber: 290,
+              lineNumber: 294,
               columnNumber: 29
             }),
             /* @__PURE__ */ jsxDEV("td", { children: student.hasgrader ? student.grader : /* @__PURE__ */ jsxDEV("span", { className: "text-muted", children: "\u2014" }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-              lineNumber: 291,
+              lineNumber: 295,
               columnNumber: 71
             }) }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-              lineNumber: 291,
+              lineNumber: 295,
               columnNumber: 29
             }),
             /* @__PURE__ */ jsxDEV("td", { children: [
               !student.hasgrader && /* @__PURE__ */ jsxDEV("span", { className: "badge badge-soft badge-dot rounded-pill text-bg-danger", children: text("graders:nobodyfor") }, void 0, false, {
                 fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-                lineNumber: 293,
+                lineNumber: 297,
                 columnNumber: 56
               }),
               student.viafallback && student.hasgrader && /* @__PURE__ */ jsxDEV("span", { className: "badge badge-soft rounded-pill text-bg-secondary", children: text("graders:viafallback") }, void 0, false, {
                 fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-                lineNumber: 294,
+                lineNumber: 298,
                 columnNumber: 78
               })
             ] }, void 0, true, {
               fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-              lineNumber: 292,
+              lineNumber: 296,
               columnNumber: 29
             })
           ] }, `${student.name}-${index}`, true, {
             fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-            lineNumber: 289,
+            lineNumber: 293,
             columnNumber: 59
           }))
         ] }, void 0, true, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 287,
+          lineNumber: 291,
           columnNumber: 21
         })
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 278,
+        lineNumber: 282,
         columnNumber: 17
       }) }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-        lineNumber: 277,
+        lineNumber: 281,
         columnNumber: 13
       }),
       /* @__PURE__ */ jsxDEV(
@@ -676,18 +680,18 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
         false,
         {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-          lineNumber: 300,
+          lineNumber: 304,
           columnNumber: 13
         }
       )
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 260,
+      lineNumber: 264,
       columnNumber: 9
     })
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-    lineNumber: 226,
+    lineNumber: 230,
     columnNumber: 12
   });
 }, "Course");
@@ -696,21 +700,21 @@ function Graders(props) {
   return /* @__PURE__ */ jsxDEV("div", { id: "autograder-report-container", className: "arp arp-graders", children: [
     /* @__PURE__ */ jsxDEV("p", { className: "text-muted mb-0", children: text("lead_graders") }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 328,
+      lineNumber: 332,
       columnNumber: 9
     }, this),
     props.courseid > 0 ? /* @__PURE__ */ jsxDEV(Course, { props, text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 329,
+      lineNumber: 333,
       columnNumber: 31
     }, this) : /* @__PURE__ */ jsxDEV(Overview, { props, text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-      lineNumber: 329,
+      lineNumber: 333,
       columnNumber: 70
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/Graders.tsx",
-    lineNumber: 327,
+    lineNumber: 331,
     columnNumber: 12
   }, this);
 }

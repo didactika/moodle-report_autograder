@@ -9,9 +9,10 @@
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+import {useRef} from 'react';
 import type {ReactNode} from 'react';
 import ReportRow from './ReportRow';
-import {Empty, SortHeader, TableBox} from './ui';
+import {Empty, SortHeader, TableBox, useStableColumns} from './ui';
 import type {ReportState} from '../hooks/useReport';
 import type {ForumGrade, ReportProps, Sort, SortColumn, Text} from '../types';
 
@@ -38,6 +39,8 @@ export default function ReportTable({state, columns, forumgrade, sort, narrowed,
     const count = 5 + Number(columns.course) + Number(columns.activity) + Number(columns.group) + 1;
     const failed = state.failed !== '';
     const empty = !failed && !state.needsfilter && !state.loading && state.rows.length === 0;
+    const table = useRef<HTMLTableElement>(null);
+    useStableColumns(table, state.rows.length > 0);
 
     let blank: ReactNode = null;
     if (failed) {
@@ -56,17 +59,17 @@ export default function ReportTable({state, columns, forumgrade, sort, narrowed,
     }
 
     return <TableBox busy={state.loading} empty={blank}>
-        <table className="table">
+        <table className="table" ref={table}>
             <caption className="visually-hidden sr-only">{text('pluginname')}</caption>
             <thead>
                 <tr>
                     <SortHeader label={text('header:student')} help={text('sortby_name')} {...sorted('user_name')} />
                     {columns.course && <th scope="col">{text('header:course')}</th>}
                     {columns.activity && <th scope="col">{text('header:activity')}</th>}
-                    {columns.group && <th scope="col">{text('header:groups')}</th>}
-                    <th scope="col">{text('header:external_status')}</th>
-                    <SortHeader label={text('header:completed_at')} help={text('sortby_date')} {...sorted('completed_at_sort')} />
-                    <th scope="col">{text('header:grade')}</th>
+                    {columns.group && <th scope="col" data-col="groups">{text('header:groups')}</th>}
+                    <th scope="col" data-col="status">{text('header:external_status')}</th>
+                    <SortHeader label={text('header:completed_at')} help={text('sortby_date')} col="date" {...sorted('completed_at_sort')} />
+                    <th scope="col" data-col="grade">{text('header:grade')}</th>
                     <th scope="col">{text('header:gradedby')}</th>
                     <th scope="col" className="table-actions"><span className="visually-hidden">{text('gradeuser')}</span></th>
                 </tr>

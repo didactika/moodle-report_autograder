@@ -54,6 +54,7 @@ $string['filter_group'] = 'Groupe';
 $string['filter_group_placeholder'] = 'Tous les groupes';
 $string['filter_search'] = 'Rechercher';
 $string['filter_status'] = 'Statut';
+$string['filters'] = 'Filtres';
 $string['filters_reset'] = 'Effacer tous les filtres';
 $string['grade_expected'] = 'Provisoire';
 $string['grade_provisional_help'] = 'La note indiquée est provisoire et ne sera enregistrée qu’à la date affichée dans la colonne « Date de notation ».';

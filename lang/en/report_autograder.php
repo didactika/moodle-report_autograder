@@ -54,6 +54,7 @@ $string['filter_group'] = 'Group';
 $string['filter_group_placeholder'] = 'All groups';
 $string['filter_search'] = 'Search';
 $string['filter_status'] = 'Status';
+$string['filters'] = 'Filters';
 $string['filters_reset'] = 'Clear every filter';
 $string['grade_expected'] = 'Provisional';
 $string['grade_provisional_help'] = 'The indicated grade is provisional and will not be saved until the date shown in the \'Grading date\' column.';

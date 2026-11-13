@@ -54,6 +54,7 @@ $string['filter_group'] = 'Gruppo';
 $string['filter_group_placeholder'] = 'Tutti i gruppi';
 $string['filter_search'] = 'Cerca';
 $string['filter_status'] = 'Stato';
+$string['filters'] = 'Filtri';
 $string['filters_reset'] = 'Cancella tutti i filtri';
 $string['grade_expected'] = 'Provvisorio';
 $string['grade_provisional_help'] = 'Il voto indicato è provvisorio e non verrà salvato fino alla data mostrata nella colonna «Data di valutazione».';
