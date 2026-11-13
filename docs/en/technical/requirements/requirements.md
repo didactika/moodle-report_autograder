@@ -17,6 +17,7 @@ sourceOfTruth: code
 | RF-004 | Failed gradings and their reasons are shown only to readers with the capability to see failures. | Must | `classes/local/format/status.php` | UC-001, UC-002 |
 | RF-005 | A reader can narrow the report by name, status, group, grading date, activity and course, and see how many students are in each status. | Must | `classes/local/query/filters.php`, `classes/external/search_filter_options.php` | UC-004 |
 | RF-006 | A teacher can go from a row of the report to the grading screen of the activity. | Should | `classes/local/page/grader_ui.php` | UC-005 |
+| RF-007 | A teacher who opens the report of an activity or of a course for the first time is presented the report with a guided tour, which an administrator can make required. | Should | `tours/report.json`, `lib.php`, `settings.php` | UC-001 |
 
 ## Non-functional
 

@@ -52,6 +52,9 @@ The vertical position of an entity expresses its importance to the project objec
 | RN-006 | The report only reads: it never grades, cancels or changes a decision. | all | read-only web services |
 | RN-007 | A student that the access restrictions of the activity leave out is not listed as not submitted: they cannot open the activity, so the report says nothing about them. | ReportRow, Scope | `availability_access::for_scope` |
 | RN-008 | The count of each status is computed inside every other filter except the status, so that choosing a status does not hide the numbers of the others. | Filter, Status | `report_query::status_counts` |
+| RN-009 | The pager offers only the sizes of page smaller than the list, and All: up to 12 rows, All; 13 to 24, 12 and All; and so on up to 12, 24, 48, 96 and All. A list starts with 12 rows; All is sent to the services as -1, which they cap. | Filter | `amd/src/ui/pagination.js`, `get_report::normalise_limit`, `grader_list::page_size` |
+| RN-010 | Each filter is a menu that never offers its base state as an option; once a value is chosen, the menu is highlighted and a cross takes the place of its arrow to clear it. A button at the end of the row clears every filter. | Filter | `amd/src/ui/toolbar.js` |
+| RN-011 | The first time a person opens the report of an activity or of a course, a guided tour presents it; when the site requires it, the tour cannot be skipped before its last step. | Scope | `tours/report.json`, `report_autograder_import_tours`, `report_autograder/tourrequired` |
 
 ## Lifecycles
 

@@ -8,13 +8,25 @@ Abra la actividad y seleccione **Informe de Autograder** en su menú. Se necesit
 
 <Screenshot src="asset:rp-activity.webp" alt="El informe de Autograder de una tarea, con una fila por estudiante" caption="Una fila por estudiante de la actividad." url="/report/autograder/index.php" />
 
-La tabla lista a todos los estudiantes de la actividad con sus grupos, estado, fecha de calificación, calificación y calificador. Sobre ella:
+La tabla muestra a cada estudiante de la actividad con sus grupos, su estado, la fecha de calificación, la calificación y el calificador. La primera vez que abre el informe, un [recorrido guiado](page:guides/guided-tour) presenta cada una de sus partes.
 
-- el **cuadro de búsqueda** busca a un estudiante por nombre;
-- el filtro de **grupo** acota la lista a un grupo, y solo aparece cuando la actividad usa grupos;
-- los chips de **estado** indican cuántos estudiantes hay en cada estado; seleccione uno para ver solo a esos estudiantes y vuelva a seleccionarlo para ver a todos;
-- el filtro de **fecha de calificación** limita la lista a un periodo.
+## Acotar la lista
 
-Seleccione el encabezado de una columna ordenable para ordenar por ella. Use **Borrar todos los filtros** para empezar de nuevo.
+La fila situada sobre la tabla contiene la búsqueda y un menú para cada filtro:
+
+- el **campo de búsqueda** localiza a un estudiante por su nombre a medida que escribe;
+- **Estado** muestra cada estado con el número de estudiantes que tiene; marque uno o varios para ver solo a esos estudiantes;
+- el menú de grupos, que indica **Todos los grupos** mientras no se elige ninguno, acota la lista a un grupo, y solo aparece cuando la actividad usa grupos;
+- **Fecha de calificación** limita la lista a un periodo: hoy, los últimos siete días, el mes en curso, los últimos treinta días o dos fechas a su elección.
+
+Un menú que acota la lista aparece resaltado e indica a qué está acotada, por ejemplo **Estado: Pendiente**. La cruz que sustituye a su flecha quita ese filtro. El botón con el icono de recargar, al final de la fila, quita a la vez la búsqueda y todos los filtros.
+
+<Screenshot src="asset:rp-filters.webp" alt="El menú Estado del informe abierto, con el número de estudiantes de cada estado" caption="Cada estado indica cuántos estudiantes tiene dentro de los demás filtros." url="/report/autograder/index.php" />
+
+## Leer la lista y desplazarse por ella
+
+Seleccione el encabezado de una columna ordenable para ordenar por ella, y selecciónelo de nuevo para invertir el orden. La tabla conserva la misma altura sea cual sea su contenido: cuando tiene más filas de las que caben, se desplaza dentro de su caja y los encabezados permanecen a la vista.
+
+Bajo la tabla, **Resultados por página** ofrece los tamaños menores que la lista, y **Todos**: una lista de hasta 12 estudiantes los muestra a todos; una de 13 a 24 ofrece 12 o todos; y así sucesivamente hasta 12, 24, 48 y 96. Las flechas llevan a la página anterior y a la siguiente.
 
 El informe solo aparece en el menú de la actividad cuando Autograder está activado en ella. Para el significado de cada columna, consulte [Estados, fechas y calificadores](page:concepts/statuses-and-dates).

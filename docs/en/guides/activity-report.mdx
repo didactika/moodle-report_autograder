@@ -8,13 +8,25 @@ Open the activity and select **Autograder report** in its menu. You need the cap
 
 <Screenshot src="asset:rp-activity.webp" alt="The Autograder report of an assignment, with one row per student" caption="One row per student of the activity." url="/report/autograder/index.php" />
 
-The table lists every student of the activity with their groups, status, grading date, grade and grader. Above it:
+The table lists every student of the activity with their groups, status, grading date, grade and grader. The first time you open the report, a [guided tour](page:guides/guided-tour) presents each part of it.
 
-- the **search box** looks for a student by name;
-- the **group** filter narrows the list to one group, and only appears when the activity uses groups;
-- the **status** chips show how many students are in each status; select one to see only those students, and select it again to see everyone;
-- the **grading date** filter limits the list to a period.
+## Narrow the list
 
-Select the heading of a sortable column to sort by it. Use **Clear every filter** to start again.
+The row above the table holds the search and one menu for each filter:
+
+- the **search box** looks for a student by name as you type;
+- **Status** lists every status with the number of students in it; tick one or more to see only those students;
+- the group menu, which reads **All groups** until a group is chosen, narrows the list to one group, and only appears when the activity uses groups;
+- **Grading date** limits the list to a period: today, the last seven days, the current month, the last thirty days or two dates of your choice.
+
+A menu that narrows the list is highlighted and says what it is narrowed to, for example **Status: Pending**. The cross that replaces its arrow removes that filter. The button with the reload icon at the end of the row removes the search and every filter at once.
+
+<Screenshot src="asset:rp-filters.webp" alt="The Status menu of the report open, with the number of students in each status" caption="Each status shows how many students it has inside the other filters." url="/report/autograder/index.php" />
+
+## Read and move through the list
+
+Select the heading of a sortable column to sort by it, and select it again to reverse the order. The table keeps the same height whatever it holds: when it has more rows than fit, it scrolls inside its box and the headings stay in view.
+
+Under the table, **Results per page** offers the sizes smaller than the list, and **All**: a list of up to 12 students shows all of them; one of 13 to 24 offers 12 or all; and so on up to 12, 24, 48 and 96. The arrows move to the previous and the next page.
 
 The report only appears in the menu of the activity when Autograder is enabled in it. For the meaning of each column, see [Statuses, dates and graders](page:concepts/statuses-and-dates).

@@ -22,7 +22,8 @@ Diseño: [README](../../../design/use-cases/narrowReport/README.md)
 | `filters` | clase | `classes/local/query/filters.php` | sí |
 | `report_query` | clase | `classes/local/query/report_query.php` | sí |
 | `search_filter_options` | servicio web | `classes/external/search_filter_options.php` | sí |
-| Status chips and filters | archivo | `amd/src/ui/status_chips.js`, `amd/src/ui/filters.js` | sí |
+| Menús de filtro y el botón que los quita | módulo AMD | `amd/src/ui/toolbar.js`, `templates/partials/filters.mustache` | sí |
+| Paginador | módulo AMD | `amd/src/ui/pagination.js`, `templates/pagination.mustache` | sí |
 
 ## Pruebas
 
@@ -30,4 +31,3 @@ Diseño: [README](../../../design/use-cases/narrowReport/README.md)
 | --- | --- | --- |
 | Los recuentos de los estados, dentro de los filtros | flujo principal, RN-008 | `tests/external/get_report_test.php` |
 | Las opciones de los selectores | flujo principal | `tests/external/search_filter_options_test.php` |
-| Un estado puede elegirse y volver a limpiarse | flujo principal | `tests/behat/report.feature` |

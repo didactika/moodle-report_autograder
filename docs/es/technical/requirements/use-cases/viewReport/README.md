@@ -51,7 +51,7 @@ Un docente necesita ver, para cada estudiante, lo que Autograder decidió: el es
 | 1 | Abre **Informe de Autograder** en el menú de la actividad o del curso. | Comprueba la capacidad del nivel. |
 | 2 |  | Lee la primera página de filas, limitada a los grupos que el docente puede ver. |
 | 3 | Busca, filtra u ordena. | Vuelve a leer la página con los nuevos filtros. |
-| 4 |  | Muestra cada fila con su estado, fecha, calificación y calificador; una fila pendiente muestra la calificación y el docente que tendría ahora; sobre las filas, un chip de cada estado indica cuántos estudiantes hay en él, contados dentro de los demás filtros. |
+| 4 |  | Muestra cada fila con su estado, fecha, calificación y calificador; una fila pendiente muestra la calificación y el docente que tendría ahora; sobre las filas, el menú de los estados indica cuántos estudiantes hay en cada uno, contados dentro de los demás filtros; debajo, el paginador ofrece los tamaños de página que caben en la lista. |
 
 ## Flujos alternativos
 
@@ -60,6 +60,7 @@ Un docente necesita ver, para cada estudiante, lo que Autograder decidió: el es
 | A1 | 1 | El docente no tiene la capacidad. | Rechaza la página. | Fin |
 | A2 | 2 | La actividad tiene grupos separados. | Deja fuera a los estudiantes de los grupos que el docente no puede ver. | Paso 3 |
 | A3 | 4 | El lector no puede ver los fallos. | Muestra a un estudiante con error como no autocalificado. | Paso 3 |
+| A4 | 1 | Es la primera vez que el lector abre el informe de una actividad o de un curso. | Presenta el informe con un recorrido guiado de siete pasos; cuando el sitio exige el recorrido, este no tiene botón para omitirlo antes de su último paso. | Paso 2 |
 
 ## Reglas de negocio
 
@@ -70,6 +71,8 @@ Un docente necesita ver, para cada estudiante, lo que Autograder decidió: el es
 | RN-004 | Un docente ve solo los grupos que puede ver. |
 | RN-005 | Una fila pendiente muestra la calificación y el calificador provisionales. |
 | RN-007 | Un estudiante al que las restricciones de acceso de la actividad dejan fuera no se enumera como sin entregar: no puede abrir la actividad, de modo que el informe no dice nada de él. |
+| RN-009 | El paginador ofrece solo los tamaños de página menores que la lista, y Todos: hasta 12 filas, Todos; de 13 a 24, 12 y Todos; y así hasta 12, 24, 48, 96 y Todos. Una lista empieza con 12 filas; Todos se envía a los servicios como -1, que estos limitan. |
+| RN-011 | La primera vez que una persona abre el informe de una actividad o de un curso, un recorrido guiado lo presenta; cuando el sitio lo exige, el recorrido no puede omitirse antes de su último paso. |
 
 ## Especificación
 

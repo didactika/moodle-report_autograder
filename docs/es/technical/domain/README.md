@@ -52,6 +52,9 @@ La posición vertical de una entidad expresa su importancia para el objetivo del
 | RN-006 | El informe solo lee: nunca califica, cancela ni cambia una decisión. | todas | servicios web de solo lectura |
 | RN-007 | Un estudiante al que las restricciones de acceso de la actividad dejan fuera no se enumera como sin entregar: no puede abrir la actividad, de modo que el informe no dice nada de él. | ReportRow, Scope | `availability_access::for_scope` |
 | RN-008 | El recuento de cada estado se calcula dentro de todos los demás filtros salvo el propio estado, de modo que elegir un estado no oculte los números de los demás. | Filter, Status | `report_query::status_counts` |
+| RN-009 | El paginador ofrece solo los tamaños de página menores que la lista, y Todos: hasta 12 filas, Todos; de 13 a 24, 12 y Todos; y así hasta 12, 24, 48, 96 y Todos. Una lista empieza con 12 filas; Todos se envía a los servicios como -1, que estos limitan. | Filter | `amd/src/ui/pagination.js`, `get_report::normalise_limit`, `grader_list::page_size` |
+| RN-010 | Cada filtro es un menú que nunca ofrece su estado base como opción; al elegir un valor, el menú se resalta y una cruz ocupa el lugar de su flecha para quitarlo. Un botón al final de la fila quita todos los filtros. | Filter | `amd/src/ui/toolbar.js` |
+| RN-011 | La primera vez que una persona abre el informe de una actividad o de un curso, un recorrido guiado lo presenta; cuando el sitio lo exige, el recorrido no puede omitirse antes de su último paso. | Scope | `tours/report.json`, `report_autograder_import_tours`, `report_autograder/tourrequired` |
 
 ## Ciclos de vida
 

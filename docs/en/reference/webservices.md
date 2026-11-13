@@ -8,7 +8,7 @@ The pages of the report read their data through two web-service functions. They 
 
 | Function | Reads | Parameters |
 |---|---|---|
-| `report_autograder_get_report` | One page of the report of an activity, a course or the site | `cmid`, `courseid`, `page`, `limit`, `filters` (a list of name and value), `sortcolumn`, `sortdir`, `withtotal` |
+| `report_autograder_get_report` | One page of the report of an activity, a course or the site | `cmid`, `courseid`, `page`, `limit` (0 for 12 rows, -1 for every row up to 1000), `filters` (a list of name and value), `sortcolumn`, `sortdir`, `withtotal` |
 | `report_autograder_search_filter_options` | The options of the course and activity pickers of the filter bar | `type` (course or activity), `query`, `cmid`, `courseid`, `filtercourseid` |
 
 The page **Graders by course** is drawn by the server and needs no web service.

@@ -11,8 +11,8 @@ state "narrowReport" as narrowReport {
   [*] --> Showing : Reader opens a report
   Showing --> Searching : Reader types in an activity or course picker
   Searching --> Showing : System lists the options the reader may see
-  Showing --> Narrowed : Reader chooses a filter or a status chip
-  Narrowed --> Showing : System shows the rows, the total and the chips
+  Showing --> Narrowed : Reader chooses a value in the menu of a filter
+  Narrowed --> Showing : System shows the rows, the total and the counts
   Narrowed --> Showing : Reader lifts a filter or clears every filter
   Showing --> [*] : Reader leaves the report
 

@@ -19,7 +19,7 @@ Requirements: [README](../../../requirements/use-cases/narrowReport/README.md)
 
 | Class | Stereotype | Responsibility |
 | --- | --- | --- |
-| Toolbar | boundary | Collects the filters and the chip that is chosen. |
+| Toolbar | boundary | Collects the search and the value of each filter menu, and clears one filter or all of them. |
 | Option search | control | Lists the courses and activities the reader may see. |
 | Report query | control | Counts the rows and each status inside the filters. |
 | Filter | entity | What the report is narrowed to. |

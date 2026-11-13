@@ -19,7 +19,7 @@ Requisitos: [README](../../../requirements/use-cases/narrowReport/README.md)
 
 | Clase | Estereotipo | Responsabilidad |
 | --- | --- | --- |
-| Barra de herramientas | frontera | Recoge los filtros y el chip elegido. |
+| Barra de herramientas | frontera | Recoge la búsqueda y el valor de cada menú de filtro, y quita un filtro o todos. |
 | Búsqueda de opciones | control | Enumera los cursos y actividades que el lector puede ver. |
 | Consulta del informe | control | Cuenta las filas y cada estado dentro de los filtros. |
 | Filtro | entidad | A qué se acota el informe. |

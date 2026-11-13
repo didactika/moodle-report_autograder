@@ -8,7 +8,7 @@ Las páginas del informe leen sus datos mediante dos funciones de servicio web. 
 
 | Función | Lee | Parámetros |
 |---|---|---|
-| `report_autograder_get_report` | Una página del informe de una actividad, un curso o el sitio | `cmid`, `courseid`, `page`, `limit`, `filters` (una lista de nombre y valor), `sortcolumn`, `sortdir`, `withtotal` |
+| `report_autograder_get_report` | Una página del informe de una actividad, un curso o el sitio | `cmid`, `courseid`, `page`, `limit` (0 para 12 filas, -1 para todas las filas hasta 1000), `filters` (una lista de nombre y valor), `sortcolumn`, `sortdir`, `withtotal` |
 | `report_autograder_search_filter_options` | Las opciones de los selectores de curso y de actividad de la barra de filtros | `type` (curso o actividad), `query`, `cmid`, `courseid`, `filtercourseid` |
 
 La página **Calificadores por curso** la dibuja el servidor y no necesita ningún servicio web.
