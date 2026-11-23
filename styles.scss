@@ -13,4 +13,12 @@ $arp-modal: ".report-autograder-page .modal";
 @import 'scss/tokens';
 @import 'scss/chrome';
 @import 'scss/feedback';
+@import 'scss/lists';
+@import 'scss/content';
+@import 'scss/states';
 @import 'scss/report';
+
+.arp,
+#{$arp-modal} {
+    @include dd-states;
+}

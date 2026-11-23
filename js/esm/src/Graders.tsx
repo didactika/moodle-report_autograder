@@ -32,7 +32,7 @@ const TONES: Record<GradingState, string> = {ready: 'success', fallback: 'warnin
  * @param props The state and the texts.
  * @returns The badge.
  */
-const State = ({state, text}: {state: GradingState; text: Text}) => <span className={`badge badge-soft badge-dot rounded-pill text-bg-${TONES[state]}`}>
+const State = ({state, text}: {state: GradingState; text: Text}) => <span className={`badge rounded-pill text-bg-${TONES[state]}`}>
     {text(`graders:state_${state}`)}
 </span>;
 
@@ -44,7 +44,7 @@ const State = ({state, text}: {state: GradingState; text: Text}) => <span classN
  */
 const Skeleton = ({columns}: {columns: number}) => <>
     {Array.from({length: 6}, (_, row) => <tr key={row} aria-hidden="true">
-        {Array.from({length: columns}, (__, cell) => <td key={cell}><span className="dd-skeleton" /></td>)}
+        {Array.from({length: columns}, (__, cell) => <td key={cell}><span className="placeholder w-75" /></td>)}
     </tr>)}
 </>;
 
@@ -100,8 +100,8 @@ const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
     }
 
     return <div className="card">
-        <div className="table-toolbar">
-            <div className="table-toolbar-start">
+        <div className="d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom" data-region="filters">
+            <div className="d-flex align-items-center gap-2 flex-grow-1">
                 <SearchBox value={typed} onChange={setTyped} label={text('graders:search')} text={text} />
             </div>
         </div>
@@ -115,7 +115,7 @@ const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
                         <th scope="col">{text('graders:graders')}</th>
                         <th scope="col" data-col="count">{text('graders:students')}</th>
                         <th scope="col" data-col="status">{text('graders:state')}</th>
-                        <th scope="col" className="table-actions"><span className="visually-hidden">{text('graders:openreport')}</span></th>
+                        <th scope="col" className="text-end" data-column="actions"><span className="visually-hidden">{text('graders:openreport')}</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -133,7 +133,7 @@ const Overview = ({props, text}: {props: GradersProps; text: Text}) => {
                         </td>
                         <td>{course.studentcount}</td>
                         <td><State state={course.state} text={text} /></td>
-                        <td className="table-actions">
+                        <td className="text-end text-nowrap" data-column="actions">
                             <a
                                 className="btn btn-link btn-icon btn-sm text-primary"
                                 href={course.studentsurl}
@@ -253,7 +253,7 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
                 <h4 className="h6 mb-2">{text('graders:possible')}</h4>
                 <ul className="list-unstyled d-flex flex-wrap gap-2 mb-2">
                     {data.graders.map((grader) => <li key={grader.id}>
-                        <span className={`badge badge-soft rounded-pill ${grader.isfallback ? 'text-bg-secondary' : 'text-bg-primary'}`}>
+                        <span className={`badge rounded-pill ${grader.isfallback ? 'text-bg-secondary' : 'text-bg-primary'}`}>
                             {grader.name}{grader.isfallback && <> · {text('graders:viafallback')}</>}
                         </span>
                     </li>)}
@@ -262,8 +262,8 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
             </div>
         </div>}
         <div className="card">
-            <div className="table-toolbar">
-                <div className="table-toolbar-start">
+            <div className="d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom" data-region="filters">
+                <div className="d-flex align-items-center gap-2 flex-grow-1">
                     <SearchBox value={typed} onChange={setTyped} label={text('graders:search_students')} text={text} />
                     <SelectMenu
                         label={text('graders:show')}
@@ -294,8 +294,8 @@ const Course = ({props, text}: {props: GradersProps; text: Text}) => {
                             <td className="fw-bold">{student.name}</td>
                             <td>{student.hasgrader ? student.grader : <span className="text-muted">—</span>}</td>
                             <td>
-                                {!student.hasgrader && <span className="badge badge-soft badge-dot rounded-pill text-bg-danger">{text('graders:nobodyfor')}</span>}
-                                {student.viafallback && student.hasgrader && <span className="badge badge-soft rounded-pill text-bg-secondary">{text('graders:viafallback')}</span>}
+                                {!student.hasgrader && <span className="badge rounded-pill text-bg-danger">{text('graders:nobodyfor')}</span>}
+                                {student.viafallback && student.hasgrader && <span className="badge rounded-pill text-bg-secondary">{text('graders:viafallback')}</span>}
                             </td>
                         </tr>)}
                     </tbody>

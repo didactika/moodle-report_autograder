@@ -65,7 +65,7 @@ const explains = (row: Row): boolean => Boolean(row.failure_reason || row.grade_
  */
 const Expected = ({grade, text}: {grade: string; text: Text}) => <>
     <span className="text-muted">{grade}</span>
-    {' '}<span className="badge badge-soft rounded-pill text-bg-secondary">{text('grade_expected')}</span>
+    {' '}<span className="badge rounded-pill text-bg-secondary">{text('grade_expected')}</span>
 </>;
 
 /**
@@ -91,7 +91,7 @@ const Details = ({row, text}: {row: Row; text: Text}) => <>
         </>}
         <dt className="col-sm-4">{text('header:external_status')}</dt>
         <dd className="col-sm-8">
-            <span className={`badge badge-soft badge-dot rounded-pill text-bg-${TONES[row.status_key] ?? 'secondary'}`}>
+            <span className={`badge rounded-pill text-bg-${TONES[row.status_key] ?? 'secondary'}`}>
                 {row.status}
             </span>
         </dd>
@@ -136,7 +136,7 @@ const RowDetails = ({row, text}: {row: Row; text: Text}) => {
     return <>
         <button
             type="button"
-            className={`btn btn-link btn-icon btn-sm btn-hint text-${tone}`}
+            className={`btn btn-link btn-icon btn-sm text-${tone}`}
             title={text('info:row')}
             aria-label={text('info:row')}
             aria-haspopup="dialog"
@@ -166,7 +166,7 @@ export default function ReportRow({row, columns, forumgrade, text}: ReportRowPro
         {columns.course && <td>{row.course_name && <a href={row.course_url}>{row.course_name}</a>}</td>}
         {columns.activity && <td>{row.activity_name && <a href={row.activity_url}>{row.activity_name}</a>}</td>}
         {columns.group && <td className="text-nowrap">{row.groups}</td>}
-        <td><span className={`badge badge-soft badge-dot rounded-pill text-bg-${tone}`}>{row.status}</span></td>
+        <td><span className={`badge rounded-pill text-bg-${tone}`}>{row.status}</span></td>
         <td className="text-nowrap" data-sort-value={row.completed_at_sort}>{row.completed_at}</td>
         <td className="text-nowrap">
             {row.grade && <strong>{row.grade}</strong>}
@@ -178,7 +178,7 @@ export default function ReportRow({row, columns, forumgrade, text}: ReportRowPro
             {!row.graded_by && row.will_grade && <span className="text-muted">{row.will_grade}</span>}
             {!row.graded_by && !row.will_grade && <span className="text-muted">—</span>}
         </td>
-        <td className="table-actions">
+        <td className="text-end text-nowrap" data-column="actions">
             <RowDetails row={row} text={text} />
             {row.grade_user_url && <a
                 className="btn btn-link btn-icon btn-sm text-primary"

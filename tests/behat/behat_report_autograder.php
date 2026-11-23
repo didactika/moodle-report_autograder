@@ -135,7 +135,7 @@ class behat_report_autograder extends behat_base {
         $this->getSession()->wait(
             15000,
             "document.querySelectorAll('#autograder-report-container tbody tr[data-record-id]').length > 0"
-            . " || document.querySelector('#autograder-report-container .dd-empty') !== null"
+            . " || document.querySelector('#autograder-report-container [data-region=empty]') !== null"
         );
     }
 

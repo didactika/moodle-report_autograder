@@ -100,6 +100,11 @@ export default function Report(props: ReportProps) {
         setFilters({...NO_FILTERS, groupid: props.offersallgroups ? 0 : filters.groupid});
         setSort({column: '', direction: 'asc'});
     };
+    // The button that clears the search and every filter: at the end of the row, or at the end of the group of filters.
+    const resetButton = (id?: string) => <button type="button" id={id} className="btn btn-link btn-icon" disabled={!narrowed}
+        title={text('filters_reset')} aria-label={text('filters_reset')} onClick={reset} data-action="reset-filters">
+        <Icon name="i/reload" text={text} />
+    </button>;
     const groups = [
         ...(props.offersallgroups ? [{value: '0', label: text('filter_group_placeholder')}] : []),
         ...props.groups.map((group) => ({value: String(group.id), label: group.name})),
@@ -113,10 +118,10 @@ export default function Report(props: ReportProps) {
     >
         <p className="text-muted mb-0">{text(`lead_${props.level}`)}</p>
         <div className="card">
-            <div className="table-toolbar" data-region="filters">
-                <div className="table-toolbar-start">
+            <div className="d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom" data-region="filters">
+                <div className="d-flex align-items-center gap-2 flex-grow-1">
                     <SearchBox value={searchText} onChange={setSearchText} label={text('filter_search')} text={text} />
-                    <FilterGroup count={applied} text={text}>
+                    <FilterGroup count={applied} text={text} reset={resetButton()}>
                         <StatusMenu
                             statuses={props.statuses}
                             counts={state.counts}
@@ -166,18 +171,8 @@ export default function Report(props: ReportProps) {
                         />
                     </FilterGroup>
                 </div>
-                <div className="table-toolbar-end">
-                    <button
-                        type="button"
-                        id="autograder-filter-clear"
-                        className="btn btn-link btn-icon"
-                        disabled={!narrowed}
-                        title={text('filters_reset')}
-                        aria-label={text('filters_reset')}
-                        onClick={reset}
-                    >
-                        <Icon name="i/reload" text={text} />
-                    </button>
+                <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                    {resetButton('autograder-filter-clear')}
                 </div>
             </div>
             <ReportTable

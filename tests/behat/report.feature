@@ -44,7 +44,7 @@ Feature: The autograder report
 
   Scenario: The search box narrows the table as the name is typed
     When I wait for the report rows
-    And I set the field with xpath "//div[contains(@class, 'dd-searchbox')]//input" to "Bruno"
+    And I set the field with xpath "//div[@role='search']//input" to "Bruno"
     And I wait "1" seconds
     And I wait for the report rows
     Then the report should show 1 row
@@ -53,7 +53,7 @@ Feature: The autograder report
   Scenario: A state can be chosen in the filter and cleared again
     When I wait for the report rows
     And I click on "Status" "button" in the "[data-menu='status']" "css_element"
-    And I click on "Pending" "text" in the "[data-menu='status'] .dd-select-menu" "css_element"
+    And I click on "Pending" "text" in the "[data-menu='status'] .dropdown-menu" "css_element"
     And I wait for the report rows
     Then the report should show 1 row
     And I click on "Clear every filter" "button"

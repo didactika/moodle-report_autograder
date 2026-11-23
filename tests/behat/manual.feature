@@ -64,7 +64,7 @@ Feature: The screenshots of the user manual
     When I open the autograder report of "essay"
     And I wait for the report rows
     And I click on "Status" "button" in the "[data-menu='status']" "css_element"
-    And I click on "Pending" "text" in the "[data-menu='status'] .dd-select-menu" "css_element"
+    And I click on "Pending" "text" in the "[data-menu='status'] .dropdown-menu" "css_element"
     And I wait for the report rows
     And I wait "1" seconds
     Then I capture the report as "report-status-filter"

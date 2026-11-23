@@ -71,13 +71,13 @@ export default function ReportTable({state, columns, forumgrade, sort, narrowed,
                     <SortHeader label={text('header:completed_at')} help={text('sortby_date')} col="date" {...sorted('completed_at_sort')} />
                     <th scope="col" data-col="grade">{text('header:grade')}</th>
                     <th scope="col">{text('header:gradedby')}</th>
-                    <th scope="col" className="table-actions"><span className="visually-hidden">{text('gradeuser')}</span></th>
+                    <th scope="col" className="text-end" data-column="actions"><span className="visually-hidden">{text('gradeuser')}</span></th>
                 </tr>
             </thead>
             <tbody>
                 {state.rows.map((row) => <ReportRow key={row.rowkey} row={row} columns={columns} forumgrade={forumgrade} text={text} />)}
                 {state.loading && state.rows.length === 0 && Array.from({length: 6}, (_, index) => <tr key={`sk${index}`} aria-hidden="true">
-                    {Array.from({length: count}, (__, cell) => <td key={cell}><span className="dd-skeleton" /></td>)}
+                    {Array.from({length: count}, (__, cell) => <td key={cell}><span className="placeholder w-75" /></td>)}
                 </tr>)}
             </tbody>
         </table>
