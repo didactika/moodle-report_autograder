@@ -46,19 +46,19 @@
         ]
     }
 }}
-<div class="table-foot">
-    <nav class="dd-pager" aria-label="{{#str}}pagination:label, report_autograder{{/str}}">
-        <div class="dd-pager-size">
+<div class="px-3 py-2 border-top" data-region="pager">
+    <nav class="d-flex flex-wrap align-items-center justify-content-between gap-3 small text-muted" aria-label="{{#str}}pagination:label, report_autograder{{/str}}">
+        <div class="d-none d-sm-flex align-items-center gap-2">
             <label for="autograder-per-page" class="mb-0">{{#str}}pagination:results_per_page, report_autograder{{/str}}</label>
-            <select id="autograder-per-page" class="custom-select form-select form-select-sm custom-select-sm dd-select">
+            <select id="autograder-per-page" class="custom-select form-select form-select-sm custom-select-sm">
                 {{#peroptions}}
                 <option value="{{value}}" {{#selected}}selected{{/selected}}>{{#is_all}}{{#all_results_label}}{{.}}{{/all_results_label}}{{^all_results_label}}{{#str}}pagination:all_results, report_autograder{{/str}}{{/all_results_label}}{{/is_all}}{{^is_all}}{{value}}{{/is_all}}</option>
                 {{/peroptions}}
             </select>
         </div>
-        <div class="dd-pager-end">
-            <span class="dd-pager-range" role="status" aria-live="polite">{{from}}–{{to}} {{#str}}pagination:of, report_autograder{{/str}} {{total}}</span>
-            <div class="dd-pager-arrows">
+        <div class="d-flex flex-wrap align-items-center gap-3 ms-auto ml-auto">
+            <span class="text-body text-nowrap" data-region="range" role="status" aria-live="polite">{{from}}–{{to}} {{#str}}pagination:of, report_autograder{{/str}} {{total}}</span>
+            <div class="d-flex gap-1">
                 <button type="button" class="autograder-page-nav btn btn-outline-secondary btn-sm btn-icon" data-page="{{prevpage}}"
                     title="{{#str}}pagination:previous, report_autograder{{/str}}" aria-label="{{#str}}pagination:previous, report_autograder{{/str}}"{{^hasprev}} disabled{{/hasprev}}>{{#pix}}i/previous, core{{/pix}}</button>
                 <button type="button" class="autograder-page-nav btn btn-outline-secondary btn-sm btn-icon" data-page="{{nextpage}}"

@@ -44,7 +44,7 @@
         "groups": [{"id": 4, "name": "Group A", "selected": false}]
     }
 }}
-<form method="get" action="{{filter_action_url}}" id="autograder-filter-form" class="table-toolbar" role="search" data-region="filters"
+<form method="get" action="{{filter_action_url}}" id="autograder-filter-form" class="d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom" data-region="filters"
     data-label-status="{{#str}}filter_status, report_autograder{{/str}}"
     data-label-course="{{#str}}filter_course, report_autograder{{/str}}"
     data-label-activity="{{#str}}filter_activity, report_autograder{{/str}}"
@@ -55,41 +55,41 @@
     data-nomatches="{{#str}}search:nomatches, report_autograder{{/str}}"
     data-loading="{{#str}}search:loading, report_autograder{{/str}}"
     data-clear="{{#str}}filter_clear, report_autograder{{/str}}">
-    <div class="table-toolbar-start">
-        <div class="dd-searchbox">
+    <div class="d-flex align-items-center gap-2 flex-grow-1">
+        <div class="position-relative d-flex align-items-center" role="search">
             {{#pix}}a/search, core{{/pix}}
             <label class="sr-only visually-hidden" for="searchname">{{#str}}filter_search, report_autograder{{/str}}</label>
             <input type="search" class="form-control" name="searchname" id="searchname" value="{{filters.searchname}}"
                 autocomplete="off" placeholder="{{#str}}filter_search, report_autograder{{/str}}">
         </div>
         <div data-region="filter-menus">
-            <div class="dd-menu dd-select-filter" data-menu="status">
-                <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
+            <div class="dropdown d-inline-flex" data-menu="status">
+                <button type="button" class="custom-select form-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
                     aria-label="{{#str}}filter_status, report_autograder{{/str}}">{{#str}}filter_status, report_autograder{{/str}}</button>
-                <button type="button" class="dd-select-clear" data-menu-clear hidden
+                <button type="button" class="btn btn-link p-0" data-menu-clear data-menu-clear hidden
                     title="{{#str}}filter_clear, report_autograder{{/str}}: {{#str}}filter_status, report_autograder{{/str}}"
                     aria-label="{{#str}}filter_clear, report_autograder{{/str}}: {{#str}}filter_status, report_autograder{{/str}}">{{#pix}}e/cancel, core{{/pix}}</button>
-                <div class="dd-select-menu" role="group" aria-label="{{#str}}filter_status, report_autograder{{/str}}" hidden>
+                <div class="dropdown-menu" role="group" aria-label="{{#str}}filter_status, report_autograder{{/str}}" hidden>
                     {{#statuses}}
                     <label class="dropdown-item" for="status-{{key}}">
                         <input type="checkbox" class="form-check-input" id="status-{{key}}" value="{{key}}" data-label="{{label}}">
                         <span>{{label}}</span>
-                        <span class="dd-chip-count" data-status-count="{{key}}"></span>
+                        <span class="badge badge-secondary text-bg-secondary ms-auto ml-auto" data-status-count="{{key}}"></span>
                     </label>
                     {{/statuses}}
                 </div>
                 <input type="hidden" name="status" id="status" value="{{filters.status}}">
             </div>
             {{#shows_course_filter}}
-            <div class="dd-menu dd-select-filter" data-menu="course" data-picker="course" data-optiontype="course"
+            <div class="dropdown d-inline-flex" data-menu="course" data-picker="course" data-optiontype="course"
                 data-scopecmid="{{scope_cmid}}" data-scopecourseid="{{scope_courseid}}">
-                <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
+                <button type="button" class="custom-select form-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
                     aria-label="{{#str}}filter_course, report_autograder{{/str}}">{{#str}}filter_course, report_autograder{{/str}}</button>
-                <button type="button" class="dd-select-clear" data-menu-clear hidden
+                <button type="button" class="btn btn-link p-0" data-menu-clear data-menu-clear hidden
                     title="{{#str}}filter_clear, report_autograder{{/str}}: {{#str}}filter_course, report_autograder{{/str}}"
                     aria-label="{{#str}}filter_clear, report_autograder{{/str}}: {{#str}}filter_course, report_autograder{{/str}}">{{#pix}}e/cancel, core{{/pix}}</button>
-                <div class="dd-select-menu" role="group" aria-label="{{#str}}filter_course, report_autograder{{/str}}" hidden>
-                    <div class="dd-menu-form">
+                <div class="dropdown-menu" role="group" aria-label="{{#str}}filter_course, report_autograder{{/str}}" hidden>
+                    <div class="px-3 pt-2 pb-3">
                         <input type="search" class="form-control form-control-sm" autocomplete="off" data-picker-search
                             aria-label="{{#str}}filter_course, report_autograder{{/str}}"
                             placeholder="{{#str}}search:typetosearch, report_autograder{{/str}}">
@@ -100,15 +100,15 @@
             </div>
             {{/shows_course_filter}}
             {{#shows_activity_filter}}
-            <div class="dd-menu dd-select-filter" data-menu="activity" data-picker="activity" data-optiontype="activity"
+            <div class="dropdown d-inline-flex" data-menu="activity" data-picker="activity" data-optiontype="activity"
                 data-scopecmid="{{scope_cmid}}" data-scopecourseid="{{scope_courseid}}">
-                <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
+                <button type="button" class="custom-select form-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
                     aria-label="{{#str}}filter_activity, report_autograder{{/str}}">{{#str}}filter_activity, report_autograder{{/str}}</button>
-                <button type="button" class="dd-select-clear" data-menu-clear hidden
+                <button type="button" class="btn btn-link p-0" data-menu-clear data-menu-clear hidden
                     title="{{#str}}filter_clear, report_autograder{{/str}}: {{#str}}filter_activity, report_autograder{{/str}}"
                     aria-label="{{#str}}filter_clear, report_autograder{{/str}}: {{#str}}filter_activity, report_autograder{{/str}}">{{#pix}}e/cancel, core{{/pix}}</button>
-                <div class="dd-select-menu" role="group" aria-label="{{#str}}filter_activity, report_autograder{{/str}}" hidden>
-                    <div class="dd-menu-form">
+                <div class="dropdown-menu" role="group" aria-label="{{#str}}filter_activity, report_autograder{{/str}}" hidden>
+                    <div class="px-3 pt-2 pb-3">
                         <input type="search" class="form-control form-control-sm" autocomplete="off" data-picker-search
                             aria-label="{{#str}}filter_activity, report_autograder{{/str}}"
                             placeholder="{{#str}}search:typetosearch, report_autograder{{/str}}">
@@ -120,8 +120,8 @@
             {{/shows_activity_filter}}
             {{#shows_group_filter}}
             <label class="sr-only visually-hidden" for="autograder-filter-group">{{#str}}filter_group, report_autograder{{/str}}</label>
-            <span class="dd-select-filter">
-                <select class="custom-select form-select dd-select" id="autograder-filter-group" name="groupid">
+            <span class="dropdown d-inline-flex">
+                <select class="custom-select form-select" id="autograder-filter-group" name="groupid">
                     {{#offers_all_groups}}
                     <option value="" hidden>{{#str}}filter_group_placeholder, report_autograder{{/str}}</option>
                     {{/offers_all_groups}}
@@ -130,26 +130,26 @@
                     {{/groups}}
                 </select>
                 {{#offers_all_groups}}
-                <button type="button" class="dd-select-clear" data-group-clear hidden
+                <button type="button" class="btn btn-link p-0" data-menu-clear data-group-clear hidden
                     title="{{#str}}filter_clear, report_autograder{{/str}}: {{#str}}filter_group, report_autograder{{/str}}"
                     aria-label="{{#str}}filter_clear, report_autograder{{/str}}: {{#str}}filter_group, report_autograder{{/str}}">{{#pix}}e/cancel, core{{/pix}}</button>
                 {{/offers_all_groups}}
             </span>
             {{/shows_group_filter}}
-            <div class="dd-menu dd-select-filter" data-menu="date">
-                <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
+            <div class="dropdown d-inline-flex" data-menu="date">
+                <button type="button" class="custom-select form-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
                     aria-label="{{#str}}filter_grading_date, report_autograder{{/str}}">{{#str}}filter_grading_date, report_autograder{{/str}}</button>
-                <button type="button" class="dd-select-clear" data-menu-clear hidden
+                <button type="button" class="btn btn-link p-0" data-menu-clear data-menu-clear hidden
                     title="{{#str}}filter_clear, report_autograder{{/str}}: {{#str}}filter_grading_date, report_autograder{{/str}}"
                     aria-label="{{#str}}filter_clear, report_autograder{{/str}}: {{#str}}filter_grading_date, report_autograder{{/str}}">{{#pix}}e/cancel, core{{/pix}}</button>
-                <div class="dd-select-menu" role="group" aria-label="{{#str}}filter_grading_date, report_autograder{{/str}}" hidden>
+                <div class="dropdown-menu" role="group" aria-label="{{#str}}filter_grading_date, report_autograder{{/str}}" hidden>
                     <button type="button" class="dropdown-item" data-preset="today">{{#str}}filter_date_today, report_autograder{{/str}}</button>
                     <button type="button" class="dropdown-item" data-preset="week">{{#str}}filter_date_week, report_autograder{{/str}}</button>
                     <button type="button" class="dropdown-item" data-preset="month">{{#str}}filter_date_month, report_autograder{{/str}}</button>
                     <button type="button" class="dropdown-item" data-preset="last30">{{#str}}filter_date_last30, report_autograder{{/str}}</button>
                     <hr>
-                    <div class="dd-menu-form">
-                        <div class="dd-menu-dates">
+                    <div class="px-3 pt-2 pb-3">
+                        <div class="d-flex">
                             <div>
                                 <label class="small mb-1" for="grading_date_from">{{#str}}datepicker_from, report_autograder{{/str}}</label>
                                 <input type="date" class="form-control form-control-sm" name="grading_date_from" id="grading_date_from" value="{{filters.grading_date_from}}">
@@ -162,17 +162,17 @@
                     </div>
                 </div>
             </div>
-            <div class="dd-menu" data-menu="filters" hidden>
-                <button type="button" class="custom-select form-select dd-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
-                    aria-label="{{#str}}filters, report_autograder{{/str}}" data-label="{{#str}}filters, report_autograder{{/str}}">{{#pix}}i/filter, core{{/pix}} <span data-region="filters-label">{{#str}}filters, report_autograder{{/str}}</span></button>
-                <div class="dd-select-menu" role="group" aria-label="{{#str}}filters, report_autograder{{/str}}" hidden>
+            <div class="dropdown d-inline-flex" data-menu="filters" hidden>
+                <button type="button" class="custom-select form-select" data-menu-toggle aria-haspopup="true" aria-expanded="false"
+                    aria-label="{{#str}}filters, report_autograder{{/str}}" data-label="{{#str}}filters, report_autograder{{/str}}"><span class="d-inline-flex mr-1 me-1">{{#pix}}i/filter, core{{/pix}}</span><span data-region="filters-label">{{#str}}filters, report_autograder{{/str}}</span></button>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-right" role="group" aria-label="{{#str}}filters, report_autograder{{/str}}" hidden>
                     <div data-region="filter-panel"></div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="table-toolbar-end">
-        <button type="button" class="btn btn-link btn-icon" id="autograder-filter-clear" disabled
+    <div class="d-flex align-items-center justify-content-end gap-2 flex-shrink-0">
+        <button type="button" class="btn btn-link btn-icon" id="autograder-filter-clear" data-action="reset-filters" disabled
             title="{{#str}}filters_reset, report_autograder{{/str}}" aria-label="{{#str}}filters_reset, report_autograder{{/str}}">{{#pix}}i/reload, core{{/pix}}</button>
     </div>
 </form>

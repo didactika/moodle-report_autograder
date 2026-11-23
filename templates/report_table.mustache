@@ -50,18 +50,20 @@
     {{/forum_grade}}
 >
 <div class="table-responsive" data-region="tablewrap" tabindex="0" role="region" aria-label="{{#str}}pluginname, report_autograder{{/str}}">
-<div class="dd-empty" data-region="empty" role="status" hidden>
-    <span class="dd-tile dd-tile-lg" data-empty-icon="search" hidden>{{#pix}}a/search, core{{/pix}}</span>
-    <span class="dd-tile dd-tile-lg" data-empty-icon="filter" hidden>{{#pix}}i/filter, core{{/pix}}</span>
-    <span class="dd-tile dd-tile-lg" data-empty-icon="grades" hidden>{{#pix}}i/grades, core{{/pix}}</span>
-    <p class="dd-empty-text" data-empty-text></p>
+<div data-region="empty" role="status" hidden>
+    <div class="d-flex flex-column align-items-center gap-2 px-4 py-5 text-center">
+    <span class="icon-box" data-empty-icon="search" hidden>{{#pix}}a/search, core{{/pix}}</span>
+    <span class="icon-box" data-empty-icon="filter" hidden>{{#pix}}i/filter, core{{/pix}}</span>
+    <span class="icon-box" data-empty-icon="grades" hidden>{{#pix}}i/grades, core{{/pix}}</span>
+    <p class="text-muted mb-0" data-empty-text></p>
+    </div>
 </div>
 <table class="table">
     <caption class="sr-only visually-hidden">{{#str}}pluginname, report_autograder{{/str}}</caption>
     <thead>
         <tr>
             <th scope="col">
-                <button type="button" class="table-sort" data-autograder-sort="user_name"
+                <button type="button" class="btn btn-link" data-autograder-sort="user_name"
                     aria-label="{{#str}} sortby_name, report_autograder {{/str}}">{{#str}} header:student, report_autograder {{/str}}</button>
             </th>
             {{#shows_course_column}}
@@ -75,12 +77,12 @@
             {{/shows_group_column}}
             <th scope="col">{{#str}} header:external_status, report_autograder {{/str}}</th>
             <th scope="col">
-                <button type="button" class="table-sort" data-autograder-sort="completed_at_sort"
+                <button type="button" class="btn btn-link" data-autograder-sort="completed_at_sort"
                     aria-label="{{#str}} sortby_date, report_autograder {{/str}}">{{#str}} header:completed_at, report_autograder {{/str}}</button>
             </th>
             <th scope="col">{{#str}} header:grade, report_autograder {{/str}}</th>
             <th scope="col">{{#str}} header:gradedby, report_autograder {{/str}}</th>
-            <th scope="col" class="table-actions"><span class="sr-only visually-hidden">{{#str}} gradeuser, report_autograder {{/str}}</span></th>
+            <th scope="col" class="text-end" data-column="actions"><span class="sr-only visually-hidden">{{#str}} gradeuser, report_autograder {{/str}}</span></th>
         </tr>
     </thead>
     <tbody id="autograder-table-body">

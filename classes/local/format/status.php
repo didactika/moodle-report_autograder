@@ -176,7 +176,7 @@ final class status {
         ];
         $tone = $tones[$status] ?? 'secondary';
 
-        return "badge badge-soft badge-dot rounded-pill text-bg-{$tone}";
+        return "badge rounded-pill text-bg-{$tone}";
     }
 
     /**

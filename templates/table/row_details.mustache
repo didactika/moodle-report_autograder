@@ -30,7 +30,7 @@
     Example context (json):
     {
         "status": "Pending",
-        "status_class": "badge badge-soft badge-dot rounded-pill text-bg-primary",
+        "status_class": "badge rounded-pill text-bg-primary",
         "completed_at": "15/11/26, 12:22",
         "date_reason": "Counted from the close date of the activity.",
         "provisional_grade": "100",
@@ -63,7 +63,7 @@
         {{#grade}}<strong>{{.}}</strong>{{/grade}}
         {{^grade}}
             {{#provisional_grade}}
-            <span class="text-muted">{{.}}</span> <span class="badge badge-soft rounded-pill text-bg-secondary">{{#str}}grade_expected, report_autograder{{/str}}</span>
+            <span class="text-muted">{{.}}</span> <span class="badge rounded-pill text-bg-secondary">{{#str}}grade_expected, report_autograder{{/str}}</span>
             <div class="small text-muted">{{#str}}details:grade_expected, report_autograder, {{completed_at}}{{/str}}</div>
             {{/provisional_grade}}
             {{^provisional_grade}}<span class="text-muted">—</span>{{/provisional_grade}}

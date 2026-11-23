@@ -22,10 +22,15 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import {init as initSearchClear} from './search_clear';
+import {init as initSelectMenus} from './select_menu';
+
 /**
  * Starts listening.
  */
 export const init = () => {
+    initSearchClear();
+    initSelectMenus();
     document.addEventListener('change', (event) => {
         const field = event.target.closest('[data-submit-on-change]');
 

@@ -38,7 +38,7 @@
         "rowkey": "12-3",
         "user_col": "Ana Lopez",
         "status": "Pending",
-        "status_class": "badge badge-soft badge-dot rounded-pill text-bg-primary",
+        "status_class": "badge rounded-pill text-bg-primary",
         "completed_at": "5 Mar 2030, 10:00",
         "completed_at_sort": 1898236800,
         "provisional_grade": "70",
@@ -78,7 +78,7 @@
     <td class="text-nowrap">
         {{#grade}}<strong>{{.}}</strong>{{/grade}}
         {{^grade}}
-            {{#provisional_grade}}<span class="text-muted">{{.}}</span> <span class="badge badge-soft rounded-pill text-bg-secondary">{{#str}}grade_expected, report_autograder{{/str}}</span>{{/provisional_grade}}
+            {{#provisional_grade}}<span class="text-muted">{{.}}</span> <span class="badge rounded-pill text-bg-secondary">{{#str}}grade_expected, report_autograder{{/str}}</span>{{/provisional_grade}}
             {{^provisional_grade}}<span class="text-muted">—</span>{{/provisional_grade}}
         {{/grade}}
     </td>
@@ -91,9 +91,9 @@
         {{/graded_by}}
     </td>
 
-    <td class="table-actions">
+    <td class="text-end text-nowrap" data-column="actions">
         {{#hasdetails}}
-        <button type="button" class="btn btn-link btn-icon btn-sm btn-hint text-{{detailstone}}" data-action="row-details"
+        <button type="button" class="btn btn-link btn-icon btn-sm text-{{detailstone}}" data-action="row-details"
             data-rowkey="{{rowkey}}" aria-haspopup="dialog"
             title="{{#str}}info:row, report_autograder{{/str}}" aria-label="{{#str}}info:row, report_autograder{{/str}}">
             {{#detailsinfo}}{{#pix}}i/info, core{{/pix}}{{/detailsinfo}}{{^detailsinfo}}{{#pix}}i/warning, core{{/pix}}{{/detailsinfo}}

@@ -214,7 +214,7 @@ export const showLoading = () => {
     $(ROOT).attr('aria-busy', 'true');
     showEmpty(null);
     const container = $(`${ROOT} tbody`);
-    const row = `<tr aria-hidden="true">${'<td><span class="dd-skeleton"></span></td>'.repeat(columnCount())}</tr>`;
+    const row = `<tr aria-hidden="true">${'<td><span class="placeholder w-75"></span></td>'.repeat(columnCount())}</tr>`;
 
     container.html(row.repeat(4));
 };

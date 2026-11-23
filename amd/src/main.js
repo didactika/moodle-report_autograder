@@ -24,7 +24,7 @@
 import $ from 'jquery';
 import {get_string as getString} from 'core/str';
 import notification from 'core/notification';
-import IconSystem from 'core/icon_system';
+import Templates from 'core/templates';
 
 import {
     init as initState,
@@ -46,6 +46,8 @@ import {showLoading, renderTable, showEmpty, showDetails} from './ui/report';
 import {renderPagination} from './ui/pagination';
 import {collectFilters, init as initToolbar, renderCounts} from './ui/toolbar';
 import {updateSortHeaderUI} from './ui/table_sort';
+import {init as initSearchClear} from './ui/search_clear';
+import {init as initSelectMenus} from './ui/select_menu';
 import {init as fitTables} from 'report_autograder/fit_tables';
 
 let requestId = 0;
@@ -182,6 +184,8 @@ const fetchAndRenderReport = (page) => {
  *        was reached from one of the summary tiles.
  */
 export const init = (scope, presetStatus) => {
+    initSearchClear();
+    initSelectMenus();
     // The box of the table takes the height the window leaves it.
     fitTables();
     initState(scope);
@@ -248,7 +252,8 @@ export const init = (scope, presetStatus) => {
         fetchAndRenderReport(getCurrentPage());
     });
 
-    IconSystem.instance().then(() => {
+    // The icons are drawn by the icon system of the theme, which every Moodle loads the first time one is asked for.
+    Templates.renderPix('i/info', 'core').catch(() => null).then(() => {
         fetchAndRenderReport(0);
 
         return null;

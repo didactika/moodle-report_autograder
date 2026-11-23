@@ -110,8 +110,7 @@ export const paint = () => {
     const form = $(FORM);
     const set = (name, label, active) => {
         menu(name).find('[data-menu-toggle]').text(label)
-            .toggleClass('border-primary', active)
-            .toggleClass('dd-select-set', active);
+            .toggleClass('border-primary', active);
         menu(name).find('[data-menu-clear]').prop('hidden', !active);
     };
 
@@ -146,7 +145,7 @@ export const paint = () => {
     const group = $('#autograder-filter-group');
     const groupNarrows = group.length > 0 && group.find('option[value=""]').length > 0 && Boolean(group.val());
 
-    group.toggleClass('border-primary', groupNarrows).toggleClass('dd-select-set', groupNarrows);
+    group.toggleClass('border-primary', groupNarrows);
     $('[data-group-clear]').prop('hidden', !groupNarrows);
 
     const count = countApplied(statuses.length > 0, Boolean(from || to), groupNarrows);
@@ -229,12 +228,15 @@ const fitFilters = () => {
             fitting.needed = width;
             fitting.grouped = true;
             filters.forEach((child) => panel.appendChild(child));
+            panel.appendChild(row.parentElement.lastElementChild);
             group.hidden = false;
         }
     } else if (room >= fitting.needed) {
         fitting.grouped = false;
         open($(), false);
-        Array.from(panel.children).forEach((child) => box.insertBefore(child, group));
+        const reset = panel.lastElementChild;
+        Array.from(panel.children).slice(0, -1).forEach((child) => box.insertBefore(child, group));
+        row.parentElement.appendChild(reset);
         group.hidden = true;
     }
 };
@@ -262,7 +264,7 @@ const open = (which, show) => {
         // A menu inside the one that groups the filters opens without closing it.
         const shown = show && (this === which.get(0) || this.contains(which.get(0)));
 
-        mine.children('.dd-select-menu').prop('hidden', !shown);
+        mine.children('.dropdown-menu').prop('hidden', !shown).toggleClass('show', shown);
         mine.children('[data-menu-toggle]').attr('aria-expanded', shown ? 'true' : 'false');
     });
 };
@@ -377,7 +379,7 @@ export const init = (onChange, onClear) => {
     form.on('click', '[data-menu-toggle]', function() {
         const which = $(this).closest('[data-menu]');
 
-        open(which, which.children('.dd-select-menu').prop('hidden'));
+        open(which, which.children('.dropdown-menu').prop('hidden'));
     });
 
     $(document).on('pointerdown', (event) => {
@@ -388,7 +390,7 @@ export const init = (onChange, onClear) => {
 
     $(document).on('keydown', (event) => {
         if (event.key === 'Escape') {
-            const shown = $(`${FORM} .dd-select-menu:not([hidden])`).closest('[data-menu]');
+            const shown = $(`${FORM} .dropdown-menu:not([hidden])`).closest('[data-menu]');
 
             if (shown.length) {
                 open(shown, false);
