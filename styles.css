@@ -1219,6 +1219,25 @@
         z-index: 2;
     }
 }
+/* stylelint-disable declaration-no-important */
+
+.arp .gap-1 {
+    gap: 0.25rem !important;
+}
+
+.arp .gap-2 {
+    gap: 0.5rem !important;
+}
+
+.arp .gap-3 {
+    gap: 1rem !important;
+}
+
+.arp .gap-4 {
+    gap: 1.5rem !important;
+}
+
+/* stylelint-enable declaration-no-important */
 
 .arp .btn.btn:focus:not(:focus-visible),
 .arp .btn.btn:active:focus:not(:focus-visible),

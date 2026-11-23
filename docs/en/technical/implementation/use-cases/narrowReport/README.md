@@ -24,6 +24,7 @@ Design: [README](../../../design/use-cases/narrowReport/README.md)
 | `search_filter_options` | web service | `classes/external/search_filter_options.php` | yes |
 | Filter menus and the button that clears them | AMD module | `amd/src/ui/toolbar.js`, `templates/partials/filters.mustache` | yes |
 | Pager | AMD module | `amd/src/ui/pagination.js`, `templates/pagination.mustache` | yes |
+| Search field that empties and selects drawn as menus | AMD modules | `amd/src/ui/search_clear.js`, `amd/src/ui/select_menu.js` | yes |
 
 ## Tests
 

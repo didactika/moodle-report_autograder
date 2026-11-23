@@ -24,6 +24,7 @@ Diseño: [README](../../../design/use-cases/narrowReport/README.md)
 | `search_filter_options` | servicio web | `classes/external/search_filter_options.php` | sí |
 | Menús de filtro y el botón que los quita | módulo AMD | `amd/src/ui/toolbar.js`, `templates/partials/filters.mustache` | sí |
 | Paginador | módulo AMD | `amd/src/ui/pagination.js`, `templates/pagination.mustache` | sí |
+| Campo de búsqueda que se vacía y selectores dibujados como menús | Módulos AMD | `amd/src/ui/search_clear.js`, `amd/src/ui/select_menu.js` | sí |
 
 ## Pruebas
 
