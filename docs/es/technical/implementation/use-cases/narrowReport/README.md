@@ -24,6 +24,7 @@ Diseño: [README](../../../design/use-cases/narrowReport/README.md)
 | `search_filter_options` | servicio web | `classes/external/search_filter_options.php` | sí |
 | Menús de filtro y el botón que los quita | componente React | `js/esm/src/components/Filters.tsx`, `js/esm/src/components/ui.tsx` (`Menu`, `SelectMenu`), `js/esm/src/Report.tsx` | sí |
 | Paginador | componente React | `js/esm/src/components/ui.tsx` (`Pager`), `js/esm/src/lib/paging.ts` | sí |
+| Campo de búsqueda con el botón que lo vacía | Componente React | `js/esm/src/components/ui.tsx` (`SearchBox`) | sí |
 
 ## Pruebas
 

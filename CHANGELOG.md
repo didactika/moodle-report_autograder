@@ -21,6 +21,10 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+### Fixed
+
+- Closing a menu of the filters with the Escape key raises no error in the console on Moodle 5.3.
+
 ## [1.3.0-m503] - 2026-11-24
 
 The report is drawn only with the classes of Bootstrap and of Moodle, and every filter is a menu.

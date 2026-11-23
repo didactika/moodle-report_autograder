@@ -24,6 +24,7 @@ Design: [README](../../../design/use-cases/narrowReport/README.md)
 | `search_filter_options` | web service | `classes/external/search_filter_options.php` | yes |
 | Filter menus and the button that clears them | React component | `js/esm/src/components/Filters.tsx`, `js/esm/src/components/ui.tsx` (`Menu`, `SelectMenu`), `js/esm/src/Report.tsx` | yes |
 | Pager | React component | `js/esm/src/components/ui.tsx` (`Pager`), `js/esm/src/lib/paging.ts` | yes |
+| Search field with the button that empties it | React component | `js/esm/src/components/ui.tsx` (`SearchBox`) | yes |
 
 ## Tests
 

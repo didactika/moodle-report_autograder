@@ -13,6 +13,11 @@
         overflow: visible;
     }
 
+    // The menu that groups the filters is hidden until the filters do not fit; its display would beat the attribute.
+    & .dropdown[hidden] {
+        display: none;
+    }
+
     // A person in a row.
     & .table .userpicture {
         margin: 0 0.75rem 0 0;
@@ -74,3 +79,24 @@
         }
     }
 }
+
+// The gaps of Bootstrap 5, which Bootstrap 4 (Moodle 4.0 to 4.3) does not have, so the markup of the 4.x line is the same on both.
+/* stylelint-disable declaration-no-important */
+.arp {
+    & .gap-1 {
+        gap: 0.25rem !important;
+    }
+
+    & .gap-2 {
+        gap: 0.5rem !important;
+    }
+
+    & .gap-3 {
+        gap: 1rem !important;
+    }
+
+    & .gap-4 {
+        gap: 1.5rem !important;
+    }
+}
+/* stylelint-enable declaration-no-important */
