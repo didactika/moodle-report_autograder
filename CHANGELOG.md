@@ -39,6 +39,7 @@ The report follows the Didactika design system, every filter is a menu, and its 
 
 ### Fixed
 
+- The button that clears a search field no longer moves when the pointer is over it: it is centred with auto margins and keeps its place whatever the theme does to a button on hover.
 - The report opens on Moodle 4.0, whose icon system has no `instance()` and raised an error that left the table empty.
 
 ## [1.1.0-m400] - 2026-10-19
