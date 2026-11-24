@@ -41,7 +41,7 @@ const Expected = /* @__PURE__ */ __name(({ grade, text }) => /* @__PURE__ */ jsx
     columnNumber: 5
   }),
   " ",
-  /* @__PURE__ */ jsxDEV("span", { className: "badge badge-soft rounded-pill text-bg-secondary", children: text("grade_expected") }, void 0, false, {
+  /* @__PURE__ */ jsxDEV("span", { className: "badge rounded-pill text-bg-secondary", children: text("grade_expected") }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
     lineNumber: 68,
     columnNumber: 10
@@ -110,7 +110,7 @@ const Details = /* @__PURE__ */ __name(({ row, text }) => /* @__PURE__ */ jsxDEV
       lineNumber: 92,
       columnNumber: 9
     }),
-    /* @__PURE__ */ jsxDEV("dd", { className: "col-sm-8", children: /* @__PURE__ */ jsxDEV("span", { className: `badge badge-soft badge-dot rounded-pill text-bg-${TONES[row.status_key] ?? "secondary"}`, children: row.status }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("dd", { className: "col-sm-8", children: /* @__PURE__ */ jsxDEV("span", { className: `badge rounded-pill text-bg-${TONES[row.status_key] ?? "secondary"}`, children: row.status }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
       lineNumber: 94,
       columnNumber: 13
@@ -227,7 +227,7 @@ const RowDetails = /* @__PURE__ */ __name(({ row, text }) => {
       "button",
       {
         type: "button",
-        className: `btn btn-link btn-icon btn-sm btn-hint text-${tone}`,
+        className: `btn btn-link btn-icon btn-sm text-${tone}`,
         title: text("info:row"),
         "aria-label": text("info:row"),
         "aria-haspopup": "dialog",
@@ -307,7 +307,7 @@ function ReportRow({ row, columns, forumgrade, text }) {
       lineNumber: 168,
       columnNumber: 27
     }, this),
-    /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("span", { className: `badge badge-soft badge-dot rounded-pill text-bg-${tone}`, children: row.status }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("span", { className: `badge rounded-pill text-bg-${tone}`, children: row.status }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
       lineNumber: 169,
       columnNumber: 13
@@ -359,7 +359,7 @@ function ReportRow({ row, columns, forumgrade, text }) {
       lineNumber: 176,
       columnNumber: 9
     }, this),
-    /* @__PURE__ */ jsxDEV("td", { className: "table-actions", children: [
+    /* @__PURE__ */ jsxDEV("td", { className: "text-end text-nowrap", "data-column": "actions", children: [
       /* @__PURE__ */ jsxDEV(RowDetails, { row, text }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportRow.tsx",
         lineNumber: 182,

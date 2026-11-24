@@ -15,7 +15,7 @@
  */
 import {useEffect, useId, useLayoutEffect, useRef, useState} from 'react';
 import type {ReactNode} from 'react';
-import {Menu} from './ui';
+import {Icon, Menu} from './ui';
 import {useDebounced} from '../hooks/useDebounced';
 import {datePresets} from '../lib/filters';
 import {searchOptions, type PickerType, type Scope} from '../services/api';
@@ -56,7 +56,7 @@ export function StatusMenu({statuses, counts, chosen, text, onChange}: {
                     : [...chosen, option.key])}
             />
             <span>{option.label}</span>
-            {option.count >= 0 && <span className="dd-chip-count">{option.count}</span>}
+            {option.count >= 0 && <span className="badge text-bg-secondary ms-auto">{option.count}</span>}
         </label>)}
     </Menu>;
 }
@@ -146,7 +146,7 @@ const PickerList = ({type, label, chosen, scope, courseid, text, onPick}: {
     }, [type, typed, courseid, scope.cmid, scope.courseid]);
 
     return <>
-        <div className="dd-menu-form">
+        <div className="d-grid gap-2 px-3 pt-2 pb-3">
             <input
                 ref={field}
                 type="search"
@@ -170,6 +170,22 @@ const PickerList = ({type, label, chosen, scope, courseid, text, onPick}: {
             {found.loading ? text('search:loading') : text('search:nomatches')}
         </span>}
     </>;
+};
+
+/**
+ * Two days that bound a period, never the wrong way round: when the day just chosen passes the other one, the other one moves to
+ * it, so the first day is never after the last one, however the day was written.
+ *
+ * @param from The first day, or empty.
+ * @param to The last day, or empty.
+ * @param changed Which of the two was just chosen.
+ * @returns The two days, in order.
+ */
+export const orderedDays = (from: string, to: string, changed: 'from' | 'to'): [string, string] => {
+    if (from === '' || to === '' || from <= to) {
+        return [from, to];
+    }
+    return changed === 'from' ? [from, from] : [to, to];
 };
 
 /**
@@ -209,17 +225,17 @@ export function DateMenu({from, to, text, onChange}: {from: string; to: string; 
                 }}
             >{text(`filter_date_${item.key}`)}</button>)}
             <hr />
-            <div className="dd-menu-form">
-                <div className="dd-menu-dates">
+            <div className="d-grid gap-2 px-3 pt-2 pb-3">
+                <div className="d-flex gap-2">
                     <div>
                         <label className="form-label small mb-1" htmlFor={fromId}>{text('datepicker_from')}</label>
                         <input id={fromId} type="date" className="form-control form-control-sm" value={from} max={to || undefined}
-                            onChange={(event) => onChange(event.target.value, to)} />
+                            onChange={(event) => onChange(...orderedDays(event.target.value, to, 'from'))} />
                     </div>
                     <div>
                         <label className="form-label small mb-1" htmlFor={toId}>{text('datepicker_to')}</label>
                         <input id={toId} type="date" className="form-control form-control-sm" value={to} min={from || undefined}
-                            onChange={(event) => onChange(from, event.target.value)} />
+                            onChange={(event) => onChange(...orderedDays(from, event.target.value, 'to'))} />
                     </div>
                 </div>
             </div>
@@ -233,12 +249,13 @@ const SEARCH_ROOM = 160;
 /**
  * The filters of the toolbar, in one row beside the search. When they do not fit, on a narrow screen or when the values chosen are
  * long, they are grouped in one menu, Filters, which says how many narrow the report and holds them; they come back to the row when
- * there is room again.
+ * there is room again. While they are grouped, the button that clears every filter is the last thing of the group, and the row
+ * hides its own.
  *
- * @param props How many filters narrow the report, the texts and the filters.
+ * @param props How many filters narrow the report, the texts, the button that clears every filter and the filters.
  * @returns The filters, in the row or grouped.
  */
-export function FilterGroup({count, text, children}: {count: number; text: Text; children: ReactNode}) {
+export function FilterGroup({count, text, reset, children}: {count: number; text: Text; reset?: ReactNode; children: ReactNode}) {
     const [grouped, setGrouped] = useState(false);
     const box = useRef<HTMLDivElement>(null);
     const needed = useRef(0);
@@ -270,13 +287,16 @@ export function FilterGroup({count, text, children}: {count: number; text: Text;
 
     return <div ref={box} data-region="filter-menus">
         {grouped ? <Menu
-            button={count > 0 ? `${text('filters')} (${count})` : text('filters')}
+            button={<><Icon name="i/filter" text={text} /> {count > 0 ? `${text('filters')} (${count})` : text('filters')}</>}
             label={text('filters')}
             name="filters"
             active={count > 0}
             place="end"
         >
-            {() => <div data-region="filter-panel">{children}</div>}
+            {() => <div data-region="filter-panel">
+                {children}
+                {reset && <div className="d-flex justify-content-end">{reset}</div>}
+            </div>}
         </Menu> : children}
     </div>;
 }

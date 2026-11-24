@@ -17,25 +17,26 @@ import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { fitPageSizes, pageRange } from "../lib/paging";
+import { place as float } from "../hooks/useDropdown";
 function Icon({ name, text }) {
   return /* @__PURE__ */ jsxDEV("span", { className: "d-inline-flex", "aria-hidden": "true", dangerouslySetInnerHTML: { __html: text(`pix:${name}`) } }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 27,
+    lineNumber: 28,
     columnNumber: 12
   }, this);
 }
 __name(Icon, "Icon");
 function SearchBox({ value, onChange, label, text }) {
   const id = useId();
-  return /* @__PURE__ */ jsxDEV("div", { className: "dd-searchbox", role: "search", children: [
+  return /* @__PURE__ */ jsxDEV("div", { className: "position-relative d-flex align-items-center", role: "search", children: [
     /* @__PURE__ */ jsxDEV(Icon, { name: "a/search", text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 39,
+      lineNumber: 40,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("label", { className: "visually-hidden", htmlFor: id, children: label }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 40,
+      lineNumber: 41,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV(
@@ -54,25 +55,57 @@ function SearchBox({ value, onChange, label, text }) {
       false,
       {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 41,
+        lineNumber: 42,
         columnNumber: 9
+      },
+      this
+    ),
+    value !== "" && /* @__PURE__ */ jsxDEV(
+      "button",
+      {
+        type: "button",
+        className: "btn btn-link btn-icon btn-sm",
+        "data-action": "clear-search",
+        title: text("filter_clear"),
+        "aria-label": text("filter_clear"),
+        onClick: (event) => {
+          onChange("");
+          event.currentTarget.parentElement?.querySelector("input")?.focus();
+        },
+        children: /* @__PURE__ */ jsxDEV(Icon, { name: "e/cancel", text }, void 0, false, {
+          fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+          lineNumber: 58,
+          columnNumber: 13
+        }, this)
+      },
+      void 0,
+      false,
+      {
+        fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
+        lineNumber: 53,
+        columnNumber: 26
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 38,
+    lineNumber: 39,
     columnNumber: 12
   }, this);
 }
 __name(SearchBox, "SearchBox");
-function Menu({ button, label, name, active = false, small = false, place = "", onClear, text, children }) {
+function Menu({ button, label, name, active = false, small = false, place = "", icon = false, onClear, text, children }) {
   const clearable = active && onClear !== void 0;
   const clear = text ? `${text("filter_clear")}: ${label}` : label;
   const [open, setOpen] = useState(false);
   const root = useRef(null);
   const toggle = useRef(null);
   const id = useId();
+  useLayoutEffect(() => {
+    if (root.current) {
+      float(root.current);
+    }
+  }, [open]);
   useEffect(() => {
     if (!open) {
       return void 0;
@@ -84,24 +117,37 @@ function Menu({ button, label, name, active = false, small = false, place = "", 
     }, "outside");
     const keys = /* @__PURE__ */ __name((event) => {
       if (event.key === "Escape") {
+        event.stopPropagation();
         setOpen(false);
         toggle.current?.focus();
       }
     }, "keys");
+    const scrolled = /* @__PURE__ */ __name((event) => {
+      const box = event.target instanceof Element ? event.target : null;
+      if (box && box.classList.contains("table-responsive") && box.contains(root.current)) {
+        setOpen(false);
+      }
+    }, "scrolled");
+    const resized = /* @__PURE__ */ __name(() => setOpen(false), "resized");
     document.addEventListener("pointerdown", outside, true);
-    document.addEventListener("keydown", keys, true);
+    window.addEventListener("keydown", keys, true);
+    document.addEventListener("scroll", scrolled, true);
+    window.addEventListener("resize", resized);
     return () => {
       document.removeEventListener("pointerdown", outside, true);
-      document.removeEventListener("keydown", keys, true);
+      window.removeEventListener("keydown", keys, true);
+      document.removeEventListener("scroll", scrolled, true);
+      window.removeEventListener("resize", resized);
     };
   }, [open]);
-  return /* @__PURE__ */ jsxDEV("span", { className: `dd-menu${place ? ` dd-menu-${place}` : ""}${onClear ? " dd-select-filter" : ""}`, "data-menu": name, ref: root, children: [
+  return /* @__PURE__ */ jsxDEV("span", { className: `${place === "up" ? "dropup" : "dropdown"} d-inline-flex`, "data-menu": name, ref: root, children: [
     /* @__PURE__ */ jsxDEV(
       "button",
       {
         ref: toggle,
         type: "button",
-        className: `form-select dd-select${small ? " form-select-sm" : ""}${active ? " border-primary" : ""}${clearable ? " dd-select-set" : ""}`,
+        className: icon ? "btn btn-link btn-icon btn-sm" : `form-select${small ? " form-select-sm" : ""}${active ? " border-primary" : ""}`,
+        title: icon ? label : void 0,
         "aria-label": label,
         "aria-haspopup": "true",
         "aria-expanded": open,
@@ -113,7 +159,7 @@ function Menu({ button, label, name, active = false, small = false, place = "", 
       false,
       {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 105,
+        lineNumber: 138,
         columnNumber: 9
       },
       this
@@ -122,7 +168,8 @@ function Menu({ button, label, name, active = false, small = false, place = "", 
       "button",
       {
         type: "button",
-        className: "dd-select-clear",
+        className: "btn btn-link p-0",
+        "data-menu-clear": true,
         title: clear,
         "aria-label": clear,
         onClick: () => {
@@ -132,7 +179,7 @@ function Menu({ button, label, name, active = false, small = false, place = "", 
         },
         children: text && /* @__PURE__ */ jsxDEV(Icon, { name: "e/cancel", text }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 125,
+          lineNumber: 160,
           columnNumber: 19
         }, this)
       },
@@ -140,22 +187,22 @@ function Menu({ button, label, name, active = false, small = false, place = "", 
       false,
       {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 115,
+        lineNumber: 150,
         columnNumber: 23
       },
       this
     ),
-    open && /* @__PURE__ */ jsxDEV("div", { id, className: "dd-select-menu", role: "group", "aria-label": label, children: children(() => {
+    open && /* @__PURE__ */ jsxDEV("div", { id, className: `dropdown-menu show${place === "end" ? " dropdown-menu-end" : ""}`, role: "group", "aria-label": label, children: children(() => {
       setOpen(false);
       toggle.current?.focus();
     }) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 126,
+      lineNumber: 161,
       columnNumber: 18
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 104,
+    lineNumber: 137,
     columnNumber: 12
   }, this);
 }
@@ -193,7 +240,7 @@ function SelectMenu({ options: all, value, label, small = false, place = "", bas
         false,
         {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 164,
+          lineNumber: 199,
           columnNumber: 45
         },
         this
@@ -203,7 +250,7 @@ function SelectMenu({ options: all, value, label, small = false, place = "", bas
     false,
     {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 155,
+      lineNumber: 190,
       columnNumber: 12
     },
     this
@@ -215,13 +262,13 @@ function SortHeader({ label, help, active, direction, onSort, col }) {
   if (active) {
     ariaSort = direction === "asc" ? "ascending" : "descending";
   }
-  return /* @__PURE__ */ jsxDEV("th", { scope: "col", "aria-sort": ariaSort, "data-col": col, children: /* @__PURE__ */ jsxDEV("button", { type: "button", className: "table-sort", title: help, onClick: onSort, children: label }, void 0, false, {
+  return /* @__PURE__ */ jsxDEV("th", { scope: "col", "aria-sort": ariaSort, "data-col": col, children: /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-link", title: help, onClick: onSort, children: label }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 199,
+    lineNumber: 234,
     columnNumber: 9
   }, this) }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 198,
+    lineNumber: 233,
     columnNumber: 12
   }, this);
 }
@@ -232,11 +279,11 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
   }
   const { from, to } = pageRange(page, perpage, total);
   const { sizes, shown } = fitPageSizes(perpage, total);
-  return /* @__PURE__ */ jsxDEV("div", { className: "table-foot", children: /* @__PURE__ */ jsxDEV("div", { className: "dd-pager", children: [
-    /* @__PURE__ */ jsxDEV("div", { className: "dd-pager-size", children: [
+  return /* @__PURE__ */ jsxDEV("div", { className: "px-3 py-2 border-top", "data-region": "pager", children: /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-wrap align-items-center justify-content-between gap-3 small text-muted", children: [
+    /* @__PURE__ */ jsxDEV("div", { className: "d-none d-sm-flex align-items-center gap-2", children: [
       /* @__PURE__ */ jsxDEV("span", { children: text("pagination:results_per_page") }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 227,
+        lineNumber: 262,
         columnNumber: 17
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -253,23 +300,23 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
         false,
         {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 228,
+          lineNumber: 263,
           columnNumber: 17
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 226,
+      lineNumber: 261,
       columnNumber: 13
     }, this),
-    /* @__PURE__ */ jsxDEV("div", { className: "dd-pager-end", children: [
-      /* @__PURE__ */ jsxDEV("span", { className: "dd-pager-range", role: "status", children: text("pagination:range", { from, to, total }) }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-wrap align-items-center gap-3 ms-auto", children: [
+      /* @__PURE__ */ jsxDEV("span", { className: "text-body text-nowrap", role: "status", "data-region": "range", children: text("pagination:range", { from, to, total }) }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 238,
+        lineNumber: 273,
         columnNumber: 17
       }, this),
-      /* @__PURE__ */ jsxDEV("div", { className: "dd-pager-arrows", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "d-flex gap-1", children: [
         /* @__PURE__ */ jsxDEV(
           "button",
           {
@@ -281,7 +328,7 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
             onClick: () => onChange({ page: page - 1 }),
             children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/previous", text }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-              lineNumber: 248,
+              lineNumber: 283,
               columnNumber: 25
             }, this)
           },
@@ -289,7 +336,7 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
           false,
           {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 240,
+            lineNumber: 275,
             columnNumber: 21
           },
           this
@@ -305,7 +352,7 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
             onClick: () => onChange({ page: page + 1 }),
             children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/next", text }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-              lineNumber: 258,
+              lineNumber: 293,
               columnNumber: 25
             }, this)
           },
@@ -313,69 +360,106 @@ function Pager({ page, perpage, total, disabled, text, onChange }) {
           false,
           {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 250,
+            lineNumber: 285,
             columnNumber: 21
           },
           this
         )
       ] }, void 0, true, {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 239,
+        lineNumber: 274,
         columnNumber: 17
       }, this)
     ] }, void 0, true, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 237,
+      lineNumber: 272,
       columnNumber: 13
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 225,
+    lineNumber: 260,
     columnNumber: 9
   }, this) }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 224,
+    lineNumber: 259,
     columnNumber: 12
   }, this);
 }
 __name(Pager, "Pager");
+const TABLE_MIN = 288;
+const TABLE_ROOM = 24;
+function useFitHeight(box) {
+  useLayoutEffect(() => {
+    const fit = /* @__PURE__ */ __name(() => {
+      const element = box.current;
+      if (!element || element.querySelector('[data-region="empty"]')) {
+        return;
+      }
+      const rect = element.getBoundingClientRect();
+      const top = rect.top + window.scrollY;
+      const frame = element.closest(".card");
+      const card2 = frame?.getBoundingClientRect();
+      const line = frame ? parseFloat(getComputedStyle(frame).borderBottomWidth) || 0 : 0;
+      const below = card2 ? Math.max(0, card2.bottom - rect.bottom - line) : 0;
+      const height = Math.max(TABLE_MIN, window.innerHeight - top - below - TABLE_ROOM);
+      const holder = frame ?? element;
+      holder.style.setProperty("--dd-table-h", height + "px");
+      holder.style.setProperty("--dd-foot-n", String(below));
+    }, "fit");
+    fit();
+    const observer = new ResizeObserver(() => fit());
+    observer.observe(document.body);
+    const card = box.current?.closest(".card");
+    if (card) {
+      observer.observe(card);
+    }
+    window.addEventListener("resize", fit);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", fit);
+    };
+  }, []);
+}
+__name(useFitHeight, "useFitHeight");
 function TableBox({ busy, empty, children }) {
-  return /* @__PURE__ */ jsxDEV("div", { className: "table-responsive", "data-region": "tablewrap", "aria-busy": busy, children: empty || children }, void 0, false, {
+  const box = useRef(null);
+  useFitHeight(box);
+  return /* @__PURE__ */ jsxDEV("div", { ref: box, className: "table-responsive", "data-region": "tablewrap", "aria-busy": busy, children: empty || children }, void 0, false, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 274,
+    lineNumber: 363,
     columnNumber: 12
   }, this);
 }
 __name(TableBox, "TableBox");
 function Empty({ icon, message, action, onAction, text }) {
-  return /* @__PURE__ */ jsxDEV("div", { className: "dd-empty", "data-region": "empty", role: "status", children: [
-    /* @__PURE__ */ jsxDEV("span", { className: "dd-tile dd-tile-lg", children: /* @__PURE__ */ jsxDEV(Icon, { name: icon, text }, void 0, false, {
+  return /* @__PURE__ */ jsxDEV("div", { className: "d-flex flex-column align-items-center gap-2 px-4 py-5 text-center", "data-region": "empty", role: "status", children: [
+    /* @__PURE__ */ jsxDEV("span", { className: "icon-box", children: /* @__PURE__ */ jsxDEV(Icon, { name: icon, text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 294,
-      columnNumber: 46
+      lineNumber: 383,
+      columnNumber: 36
     }, this) }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 294,
+      lineNumber: 383,
       columnNumber: 9
     }, this),
-    /* @__PURE__ */ jsxDEV("p", { className: "dd-empty-text", children: message }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("p", { className: "text-muted mb-0", children: message }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 295,
+      lineNumber: 384,
       columnNumber: 9
     }, this),
     action && onAction && /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-outline-secondary btn-sm", onClick: onAction, children: action }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 296,
+      lineNumber: 385,
       columnNumber: 32
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 293,
+    lineNumber: 382,
     columnNumber: 12
   }, this);
 }
 __name(Empty, "Empty");
-function Dialog({ title, children, onClose, text }) {
+function Dialog({ title, children, footer, onClose, text }) {
   const root = useRef(null);
   const titleId = useId();
   useEffect(() => {
@@ -403,40 +487,40 @@ function Dialog({ title, children, onClose, text }) {
           /* @__PURE__ */ jsxDEV("div", { className: "modal-header", children: [
             /* @__PURE__ */ jsxDEV("h5", { className: "modal-title", id: titleId, children: title }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-              lineNumber: 333,
+              lineNumber: 428,
               columnNumber: 25
             }, this),
             /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn-close", "aria-label": text("details:close"), onClick: onClose }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-              lineNumber: 334,
+              lineNumber: 429,
               columnNumber: 25
             }, this)
           ] }, void 0, true, {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 332,
+            lineNumber: 427,
             columnNumber: 21
           }, this),
           /* @__PURE__ */ jsxDEV("div", { className: "modal-body", children }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 336,
+            lineNumber: 431,
             columnNumber: 21
           }, this),
-          /* @__PURE__ */ jsxDEV("div", { className: "modal-footer", children: /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-secondary", onClick: onClose, children: text("details:close") }, void 0, false, {
+          /* @__PURE__ */ jsxDEV("div", { className: "modal-footer", children: footer ?? /* @__PURE__ */ jsxDEV("button", { type: "button", className: "btn btn-secondary", onClick: onClose, children: text("details:close") }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 338,
-            columnNumber: 25
+            lineNumber: 433,
+            columnNumber: 36
           }, this) }, void 0, false, {
             fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-            lineNumber: 337,
+            lineNumber: 432,
             columnNumber: 21
           }, this)
         ] }, void 0, true, {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 331,
+          lineNumber: 426,
           columnNumber: 17
         }, this) }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-          lineNumber: 330,
+          lineNumber: 425,
           columnNumber: 13
         }, this)
       },
@@ -444,19 +528,19 @@ function Dialog({ title, children, onClose, text }) {
       false,
       {
         fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-        lineNumber: 320,
+        lineNumber: 415,
         columnNumber: 9
       },
       this
     ),
     /* @__PURE__ */ jsxDEV("div", { className: "modal-backdrop show" }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-      lineNumber: 343,
+      lineNumber: 438,
       columnNumber: 9
     }, this)
   ] }, void 0, true, {
     fileName: "public/report/autograder/js/esm/src/components/ui.tsx",
-    lineNumber: 319,
+    lineNumber: 414,
     columnNumber: 25
   }, this), document.body);
 }
@@ -503,6 +587,7 @@ export {
   SelectMenu,
   SortHeader,
   TableBox,
+  useFitHeight,
   useStableColumns
 };
 //# sourceMappingURL=ui.dev.js.map

@@ -21,6 +21,26 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+### Fixed
+
+- Closing a menu of the filters with the Escape key raises no error in the console on Moodle 5.3.
+
+## [1.3.0-m503] - 2026-11-24
+
+### Fixed
+
+- The button that clears a search field no longer moves when the pointer is over it: it is centred with auto margins and keeps its place whatever the theme does to a button on hover.
+
+The report is drawn only with the classes of Bootstrap and of Moodle, and every filter is a menu.
+
+### Changed
+
+- Every filter is a menu with the shape of a select (status with checkboxes and the number of students of each, course and activity with a search inside, group and date), none of them offers its base state, and a chosen one shows a cross that takes it back to it. The chips of the statuses are replaced by that menu.
+- When the filters are grouped in one menu, Filters, the button that clears every filter is the last thing of the group.
+- The pager offers only the sizes smaller than the list, and All; a list starts with 12 rows.
+- The search field empties with a small button of its own instead of the cross the browser draws.
+- The statuses and the counts are Bootstrap badges, and the rows, the toolbar and the pager are Bootstrap components restyled inside the report, so a theme restyles them with Bootstrap.
+
 ## [1.2.0-m503] - 2026-11-12
 
 The report follows the Didactika design system, and its statuses show how many students each has.

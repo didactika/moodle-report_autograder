@@ -115,10 +115,10 @@ function ReportTable({ state, columns, forumgrade, sort, narrowed, text, onSort,
         lineNumber: 73,
         columnNumber: 21
       }, this),
-      /* @__PURE__ */ jsxDEV("th", { scope: "col", className: "table-actions", children: /* @__PURE__ */ jsxDEV("span", { className: "visually-hidden", children: text("gradeuser") }, void 0, false, {
+      /* @__PURE__ */ jsxDEV("th", { scope: "col", className: "text-end", "data-column": "actions", children: /* @__PURE__ */ jsxDEV("span", { className: "visually-hidden", children: text("gradeuser") }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportTable.tsx",
         lineNumber: 74,
-        columnNumber: 63
+        columnNumber: 80
       }, this) }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportTable.tsx",
         lineNumber: 74,
@@ -139,7 +139,7 @@ function ReportTable({ state, columns, forumgrade, sort, narrowed, text, onSort,
         lineNumber: 78,
         columnNumber: 42
       }, this)),
-      state.loading && state.rows.length === 0 && Array.from({ length: 6 }, (_, index) => /* @__PURE__ */ jsxDEV("tr", { "aria-hidden": "true", children: Array.from({ length: count }, (__, cell) => /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("span", { className: "dd-skeleton" }, void 0, false, {
+      state.loading && state.rows.length === 0 && Array.from({ length: 6 }, (_, index) => /* @__PURE__ */ jsxDEV("tr", { "aria-hidden": "true", children: Array.from({ length: count }, (__, cell) => /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("span", { className: "placeholder w-75" }, void 0, false, {
         fileName: "public/report/autograder/js/esm/src/components/ReportTable.tsx",
         lineNumber: 80,
         columnNumber: 79

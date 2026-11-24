@@ -24,12 +24,12 @@ import { DEFAULT_PAGE_SIZE } from "./lib/paging";
 import { useDebounced } from "./hooks/useDebounced";
 import { describeError, getGraders, getGradersOverview } from "./services/api";
 const TONES = { ready: "success", fallback: "warning", nobody: "danger" };
-const State = /* @__PURE__ */ __name(({ state, text }) => /* @__PURE__ */ jsxDEV("span", { className: `badge badge-soft badge-dot rounded-pill text-bg-${TONES[state]}`, children: text(`graders:state_${state}`) }, void 0, false, {
+const State = /* @__PURE__ */ __name(({ state, text }) => /* @__PURE__ */ jsxDEV("span", { className: `badge rounded-pill text-bg-${TONES[state]}`, children: text(`graders:state_${state}`) }, void 0, false, {
   fileName: "public/report/autograder/js/esm/src/Graders.tsx",
   lineNumber: 35,
   columnNumber: 69
 }), "State");
-const Skeleton = /* @__PURE__ */ __name(({ columns }) => /* @__PURE__ */ jsxDEV(Fragment, { children: Array.from({ length: 6 }, (_, row) => /* @__PURE__ */ jsxDEV("tr", { "aria-hidden": "true", children: Array.from({ length: columns }, (__, cell) => /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("span", { className: "dd-skeleton" }, void 0, false, {
+const Skeleton = /* @__PURE__ */ __name(({ columns }) => /* @__PURE__ */ jsxDEV(Fragment, { children: Array.from({ length: 6 }, (_, row) => /* @__PURE__ */ jsxDEV("tr", { "aria-hidden": "true", children: Array.from({ length: columns }, (__, cell) => /* @__PURE__ */ jsxDEV("td", { children: /* @__PURE__ */ jsxDEV("span", { className: "placeholder w-75" }, void 0, false, {
   fileName: "public/report/autograder/js/esm/src/Graders.tsx",
   lineNumber: 47,
   columnNumber: 69
@@ -116,7 +116,7 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
     );
   }
   return /* @__PURE__ */ jsxDEV("div", { className: "card", children: [
-    /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar", children: /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-start", children: /* @__PURE__ */ jsxDEV(SearchBox, { value: typed, onChange: setTyped, label: text("graders:search"), text }, void 0, false, {
+    /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom", "data-region": "filters", children: /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center gap-2 flex-grow-1", children: /* @__PURE__ */ jsxDEV(SearchBox, { value: typed, onChange: setTyped, label: text("graders:search"), text }, void 0, false, {
       fileName: "public/report/autograder/js/esm/src/Graders.tsx",
       lineNumber: 105,
       columnNumber: 17
@@ -161,10 +161,10 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
           lineNumber: 117,
           columnNumber: 25
         }),
-        /* @__PURE__ */ jsxDEV("th", { scope: "col", className: "table-actions", children: /* @__PURE__ */ jsxDEV("span", { className: "visually-hidden", children: text("graders:openreport") }, void 0, false, {
+        /* @__PURE__ */ jsxDEV("th", { scope: "col", className: "text-end", "data-column": "actions", children: /* @__PURE__ */ jsxDEV("span", { className: "visually-hidden", children: text("graders:openreport") }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
           lineNumber: 118,
-          columnNumber: 67
+          columnNumber: 84
         }) }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
           lineNumber: 118,
@@ -241,7 +241,7 @@ const Overview = /* @__PURE__ */ __name(({ props, text }) => {
             lineNumber: 135,
             columnNumber: 25
           }),
-          /* @__PURE__ */ jsxDEV("td", { className: "table-actions", children: [
+          /* @__PURE__ */ jsxDEV("td", { className: "text-end text-nowrap", "data-column": "actions", children: [
             /* @__PURE__ */ jsxDEV(
               "a",
               {
@@ -499,7 +499,7 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
         lineNumber: 253,
         columnNumber: 17
       }),
-      /* @__PURE__ */ jsxDEV("ul", { className: "list-unstyled d-flex flex-wrap gap-2 mb-2", children: data.graders.map((grader) => /* @__PURE__ */ jsxDEV("li", { children: /* @__PURE__ */ jsxDEV("span", { className: `badge badge-soft rounded-pill ${grader.isfallback ? "text-bg-secondary" : "text-bg-primary"}`, children: [
+      /* @__PURE__ */ jsxDEV("ul", { className: "list-unstyled d-flex flex-wrap gap-2 mb-2", children: data.graders.map((grader) => /* @__PURE__ */ jsxDEV("li", { children: /* @__PURE__ */ jsxDEV("span", { className: `badge rounded-pill ${grader.isfallback ? "text-bg-secondary" : "text-bg-primary"}`, children: [
         grader.name,
         grader.isfallback && /* @__PURE__ */ jsxDEV(Fragment, { children: [
           " \xB7 ",
@@ -537,7 +537,7 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
       columnNumber: 37
     }),
     /* @__PURE__ */ jsxDEV("div", { className: "card", children: [
-      /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar", children: /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-start", children: [
+      /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom", "data-region": "filters", children: /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center gap-2 flex-grow-1", children: [
         /* @__PURE__ */ jsxDEV(SearchBox, { value: typed, onChange: setTyped, label: text("graders:search_students"), text }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Graders.tsx",
           lineNumber: 267,
@@ -626,12 +626,12 @@ const Course = /* @__PURE__ */ __name(({ props, text }) => {
               columnNumber: 29
             }),
             /* @__PURE__ */ jsxDEV("td", { children: [
-              !student.hasgrader && /* @__PURE__ */ jsxDEV("span", { className: "badge badge-soft badge-dot rounded-pill text-bg-danger", children: text("graders:nobodyfor") }, void 0, false, {
+              !student.hasgrader && /* @__PURE__ */ jsxDEV("span", { className: "badge rounded-pill text-bg-danger", children: text("graders:nobodyfor") }, void 0, false, {
                 fileName: "public/report/autograder/js/esm/src/Graders.tsx",
                 lineNumber: 297,
                 columnNumber: 56
               }),
-              student.viafallback && student.hasgrader && /* @__PURE__ */ jsxDEV("span", { className: "badge badge-soft rounded-pill text-bg-secondary", children: text("graders:viafallback") }, void 0, false, {
+              student.viafallback && student.hasgrader && /* @__PURE__ */ jsxDEV("span", { className: "badge rounded-pill text-bg-secondary", children: text("graders:viafallback") }, void 0, false, {
                 fileName: "public/report/autograder/js/esm/src/Graders.tsx",
                 lineNumber: 298,
                 columnNumber: 78

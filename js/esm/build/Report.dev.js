@@ -81,6 +81,32 @@ function Report(props) {
     setFilters({ ...NO_FILTERS, groupid: props.offersallgroups ? 0 : filters.groupid });
     setSort({ column: "", direction: "asc" });
   }, "reset");
+  const resetButton = /* @__PURE__ */ __name((id) => /* @__PURE__ */ jsxDEV(
+    "button",
+    {
+      type: "button",
+      id,
+      className: "btn btn-link btn-icon",
+      disabled: !narrowed,
+      title: text("filters_reset"),
+      "aria-label": text("filters_reset"),
+      onClick: reset,
+      "data-action": "reset-filters",
+      children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/reload", text }, void 0, false, {
+        fileName: "public/report/autograder/js/esm/src/Report.tsx",
+        lineNumber: 106,
+        columnNumber: 9
+      }, this)
+    },
+    void 0,
+    false,
+    {
+      fileName: "public/report/autograder/js/esm/src/Report.tsx",
+      lineNumber: 104,
+      columnNumber: 42
+    },
+    this
+  ), "resetButton");
   const groups = [
     ...props.offersallgroups ? [{ value: "0", label: text("filter_group_placeholder") }] : [],
     ...props.groups.map((group) => ({ value: String(group.id), label: group.name }))
@@ -95,18 +121,18 @@ function Report(props) {
       children: [
         /* @__PURE__ */ jsxDEV("p", { className: "text-muted mb-0", children: text(`lead_${props.level}`) }, void 0, false, {
           fileName: "public/report/autograder/js/esm/src/Report.tsx",
-          lineNumber: 114,
+          lineNumber: 119,
           columnNumber: 9
         }, this),
         /* @__PURE__ */ jsxDEV("div", { className: "card", children: [
-          /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar", "data-region": "filters", children: [
-            /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-start", children: [
+          /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center justify-content-between gap-3 px-3 py-2 border-bottom", "data-region": "filters", children: [
+            /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center gap-2 flex-grow-1", children: [
               /* @__PURE__ */ jsxDEV(SearchBox, { value: searchText, onChange: setSearchText, label: text("filter_search"), text }, void 0, false, {
                 fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                lineNumber: 118,
+                lineNumber: 123,
                 columnNumber: 21
               }, this),
-              /* @__PURE__ */ jsxDEV(FilterGroup, { count: applied, text, children: [
+              /* @__PURE__ */ jsxDEV(FilterGroup, { count: applied, text, reset: resetButton(), children: [
                 /* @__PURE__ */ jsxDEV(
                   StatusMenu,
                   {
@@ -120,7 +146,7 @@ function Report(props) {
                   false,
                   {
                     fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                    lineNumber: 120,
+                    lineNumber: 125,
                     columnNumber: 25
                   },
                   this
@@ -144,7 +170,7 @@ function Report(props) {
                   false,
                   {
                     fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                    lineNumber: 127,
+                    lineNumber: 132,
                     columnNumber: 53
                   },
                   this
@@ -167,7 +193,7 @@ function Report(props) {
                   false,
                   {
                     fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                    lineNumber: 141,
+                    lineNumber: 146,
                     columnNumber: 55
                   },
                   this
@@ -186,7 +212,7 @@ function Report(props) {
                   false,
                   {
                     fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                    lineNumber: 153,
+                    lineNumber: 158,
                     columnNumber: 52
                   },
                   this
@@ -203,53 +229,29 @@ function Report(props) {
                   false,
                   {
                     fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                    lineNumber: 161,
+                    lineNumber: 166,
                     columnNumber: 25
                   },
                   this
                 )
               ] }, void 0, true, {
                 fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                lineNumber: 119,
+                lineNumber: 124,
                 columnNumber: 21
               }, this)
             ] }, void 0, true, {
               fileName: "public/report/autograder/js/esm/src/Report.tsx",
-              lineNumber: 117,
+              lineNumber: 122,
               columnNumber: 17
             }, this),
-            /* @__PURE__ */ jsxDEV("div", { className: "table-toolbar-end", children: /* @__PURE__ */ jsxDEV(
-              "button",
-              {
-                type: "button",
-                id: "autograder-filter-clear",
-                className: "btn btn-link btn-icon",
-                disabled: !narrowed,
-                title: text("filters_reset"),
-                "aria-label": text("filters_reset"),
-                onClick: reset,
-                children: /* @__PURE__ */ jsxDEV(Icon, { name: "i/reload", text }, void 0, false, {
-                  fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                  lineNumber: 179,
-                  columnNumber: 25
-                }, this)
-              },
-              void 0,
-              false,
-              {
-                fileName: "public/report/autograder/js/esm/src/Report.tsx",
-                lineNumber: 170,
-                columnNumber: 21
-              },
-              this
-            ) }, void 0, false, {
+            /* @__PURE__ */ jsxDEV("div", { className: "d-flex align-items-center gap-2 flex-shrink-0", children: resetButton("autograder-filter-clear") }, void 0, false, {
               fileName: "public/report/autograder/js/esm/src/Report.tsx",
-              lineNumber: 169,
+              lineNumber: 174,
               columnNumber: 17
             }, this)
           ] }, void 0, true, {
             fileName: "public/report/autograder/js/esm/src/Report.tsx",
-            lineNumber: 116,
+            lineNumber: 121,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV(
@@ -269,7 +271,7 @@ function Report(props) {
             false,
             {
               fileName: "public/report/autograder/js/esm/src/Report.tsx",
-              lineNumber: 183,
+              lineNumber: 178,
               columnNumber: 13
             },
             this
@@ -294,14 +296,14 @@ function Report(props) {
             false,
             {
               fileName: "public/report/autograder/js/esm/src/Report.tsx",
-              lineNumber: 194,
+              lineNumber: 189,
               columnNumber: 13
             },
             this
           )
         ] }, void 0, true, {
           fileName: "public/report/autograder/js/esm/src/Report.tsx",
-          lineNumber: 115,
+          lineNumber: 120,
           columnNumber: 9
         }, this)
       ]
@@ -310,7 +312,7 @@ function Report(props) {
     true,
     {
       fileName: "public/report/autograder/js/esm/src/Report.tsx",
-      lineNumber: 108,
+      lineNumber: 113,
       columnNumber: 12
     },
     this

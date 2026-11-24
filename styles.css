@@ -2,6 +2,8 @@
 /* Moodle 4.0 and later cores disagree on decimal formatting; use the current leading-zero style. */
 /* stylelint-disable number-leading-zero */
 
+/* stylelint-disable max-line-length */
+
 .arp,
 .report-autograder-page .modal {
     --dd-primary: var(--bs-primary, var(--primary, #0f6cbf));
@@ -37,10 +39,10 @@
 
 .arp .btn,
 .arp .badge,
-.arp .dd-tile,
+.arp .icon-box,
 .report-autograder-page .modal .btn,
 .report-autograder-page .modal .badge,
-.report-autograder-page .modal .dd-tile {
+.report-autograder-page .modal .icon-box {
     --dd-c: var(--dd-primary);
 }
 
@@ -76,7 +78,7 @@
 
 .arp .btn,
 .arp .badge,
-.arp .dd-tile,
+.arp .icon-box,
 .arp [class*=-primary],
 .arp [class*=-secondary],
 .arp [class*=-success],
@@ -85,7 +87,7 @@
 .arp [class*=-danger],
 .report-autograder-page .modal .btn,
 .report-autograder-page .modal .badge,
-.report-autograder-page .modal .dd-tile,
+.report-autograder-page .modal .icon-box,
 .report-autograder-page .modal [class*=-primary],
 .report-autograder-page .modal [class*=-secondary],
 .report-autograder-page .modal [class*=-success],
@@ -110,135 +112,70 @@
     min-width: 0;
 }
 
-.arp .dd-page-header {
-    display: grid;
-    gap: 0.75rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--dd-hairline);
-}
-
-.arp .dd-page-header-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem 1.5rem;
-}
-
-.arp .dd-page-header-main {
-    display: flex;
-    align-items: center;
-    gap: 0.875rem;
+.arp > * {
     min-width: 0;
 }
 
-.arp .dd-page-title {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 700;
-    line-height: 1.25;
-    color: var(--dd-ink);
-}
-
-.arp .dd-page-subtitle {
-    margin: 0;
-    color: var(--dd-muted);
-    font-size: 0.9375rem;
-}
-
-.arp .dd-page-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.arp .nav-tabs {
+.arp .nav-tabs.nav-tabs {
+    flex-wrap: nowrap;
     gap: 0.25rem;
-    border-bottom: 1px solid var(--dd-hairline);
-}
-
-.arp .nav-tabs .nav-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: -1px;
-    padding: 0.625rem 1rem;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
     border: 0;
-    border-bottom: 2px solid transparent;
-    border-radius: var(--dd-radius-sm) var(--dd-radius-sm) 0 0;
-    background: none;
-    color: var(--dd-muted);
-    font-weight: 500;
-    transition: border-color var(--dd-ease), background-color var(--dd-ease), color var(--dd-ease);
+    background-color: transparent;
+    box-shadow: inset 0 -1px 0 var(--dd-hairline);
+    scrollbar-width: none;
 }
 
-.arp .nav-tabs .nav-link:hover {
-    border-bottom-color: var(--dd-line);
-    color: var(--dd-ink);
+.arp .nav-tabs.nav-tabs::-webkit-scrollbar {
+    display: none;
 }
 
-.arp .nav-tabs .nav-link.active {
-    border-bottom-color: var(--dd-primary);
-    background-color: var(--dd-primary-soft);
-    color: var(--dd-primary-ink);
-    font-weight: 600;
+.arp .nav-tabs.nav-tabs .nav-item {
+    flex: none;
 }
 
-.arp .dd-chips {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.arp .dd-chip {
+.arp .nav-tabs.nav-tabs .nav-link.nav-link {
     display: inline-flex;
     align-items: center;
-    gap: 0.4375rem;
-    min-height: 2rem;
-    padding: 0.1875rem 0.75rem;
-    border: 1px solid var(--dd-line);
-    border-radius: 999px;
-    background: var(--dd-surface);
-    color: var(--dd-ink);
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.4;
-    cursor: pointer;
-    transition: background-color var(--dd-ease), border-color var(--dd-ease), color var(--dd-ease);
-}
-
-.arp .dd-chip:hover {
-    border-color: var(--dd-line-hover);
-    background: var(--dd-surface-2);
-}
-
-.arp .dd-chip:focus-visible {
-    outline: 0;
-    box-shadow: 0 0 0 3px var(--dd-ring);
-}
-
-.arp .dd-chip[aria-pressed=true] {
-    border-color: var(--dd-primary);
-    background: var(--dd-primary-soft);
-    color: var(--dd-primary-ink);
-    font-weight: 600;
-}
-
-.arp .dd-chip[aria-pressed=true] .dd-chip-count {
-    background: var(--dd-primary);
-    color: #fff;
-}
-
-.arp .dd-chip-count {
-    padding: 0 0.4rem;
-    border-radius: 999px;
-    background: var(--dd-surface-3);
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
     color: var(--dd-muted);
-    font-size: 0.75rem;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: box-shadow var(--dd-ease), color var(--dd-ease);
+}
+
+.arp .nav-tabs.nav-tabs .nav-link.nav-link:hover {
+    box-shadow: inset 0 -2px 0 var(--dd-line);
+    color: var(--dd-ink);
+}
+
+.arp .nav-tabs.nav-tabs .nav-link.nav-link:focus {
+    outline: 0;
+}
+
+.arp .nav-tabs.nav-tabs .nav-link.nav-link:focus-visible {
+    border-radius: var(--dd-radius-sm);
+    box-shadow: inset 0 0 0 2px var(--dd-primary);
+}
+
+.arp .nav-tabs.nav-tabs .nav-link.nav-link.active:not(:disabled):not(.disabled) {
+    border: 0;
+    background: none;
+    box-shadow: inset 0 -3px 0 var(--dd-primary);
+    color: var(--dd-primary-ink);
+}
+
+.arp .nav-tabs.nav-tabs .nav-link.nav-link.active:focus-visible {
+    box-shadow: inset 0 -3px 0 var(--dd-primary), inset 0 0 0 2px var(--dd-primary);
 }
 
 .arp .card {
@@ -260,28 +197,6 @@
     font-weight: 700;
 }
 
-.arp .table-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem 1rem;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--dd-hairline);
-}
-
-.arp .table-toolbar-start,
-.arp .table-toolbar-end {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.arp .table-toolbar-start {
-    flex: 1 1 18rem;
-}
-
 .arp .table-responsive {
     margin: 0;
     transition: opacity var(--dd-ease);
@@ -295,8 +210,6 @@
     block-size: var(--dd-table-h);
     overflow-y: auto;
     overscroll-behavior: contain;
-    /* stylelint-disable-next-line csstree/validator */
-    scrollbar-gutter: stable;
 }
 
 .arp .table-responsive[data-region=tablewrap] thead th {
@@ -309,8 +222,14 @@
 .arp [data-region=empty]:not([hidden]),
 .arp [data-region=error]:not([hidden]) {
     display: grid;
-    min-block-size: var(--dd-table-h);
+    min-block-size: calc(var(--dd-table-h) + var(--dd-foot-n, 0) * 1px);
     place-content: center;
+}
+
+.arp [data-region=tablewrap]:has(> :is([data-region=empty], [data-region=empty-state]):not([hidden])) {
+    display: grid;
+    place-content: center;
+    block-size: calc(var(--dd-table-h) + var(--dd-foot-n, 0) * 1px);
 }
 
 .arp .table {
@@ -345,16 +264,21 @@
     background-color: color-mix(in srgb, var(--dd-primary) 5%, var(--dd-surface));
 }
 
-.arp .table tbody tr.table-active > * {
-    background-color: var(--dd-primary-soft);
+.arp .table tbody tr:last-child > * {
+    border-bottom: 1px solid var(--dd-hairline);
 }
 
-.arp .table .table-select {
+.arp .table tbody tr.table-active > * {
+    background-color: var(--dd-primary-soft);
+    box-shadow: none;
+}
+
+.arp .table [data-column=select] {
     width: 2.75rem;
     padding-right: 0;
 }
 
-.arp .table .table-select .form-check-input {
+.arp .table [data-column=select] .form-check-input {
     position: static;
     display: block;
     width: 1.125rem;
@@ -363,7 +287,7 @@
     cursor: pointer;
 }
 
-.arp .table .table-actions {
+.arp .table [data-column=actions] {
     width: 1%;
     text-align: right;
     white-space: nowrap;
@@ -379,7 +303,7 @@
     max-width: 16rem;
 }
 
-.arp .table-sort {
+.arp thead th > .btn.btn-link {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
@@ -393,7 +317,7 @@
     cursor: pointer;
 }
 
-.arp .table-sort::after {
+.arp thead th > .btn.btn-link::after {
     content: "";
     flex: none;
     width: 0.4375rem;
@@ -405,15 +329,15 @@
     transition: transform 200ms cubic-bezier(0.2, 0, 0, 1), opacity 150ms;
 }
 
-.arp .table-sort:hover {
+.arp thead th > .btn.btn-link:hover {
     color: var(--dd-ink);
 }
 
-.arp .table-sort:hover::after {
+.arp thead th > .btn.btn-link:hover::after {
     opacity: 0.8;
 }
 
-.arp .table-sort:focus-visible {
+.arp thead th > .btn.btn-link:focus-visible {
     outline: 0;
     border-radius: 0.25rem;
     box-shadow: 0 0 0 3px var(--dd-ring);
@@ -423,104 +347,29 @@
     color: var(--dd-ink);
 }
 
-.arp th[aria-sort] .table-sort {
+.arp th[aria-sort] thead th > .btn.btn-link {
     color: var(--dd-primary-ink);
 }
 
-.arp th[aria-sort] .table-sort::after {
+.arp th[aria-sort] thead th > .btn.btn-link::after {
     opacity: 1;
     color: var(--dd-primary);
 }
 
-.arp th[aria-sort=ascending] .table-sort::after {
+.arp th[aria-sort=ascending] > .btn.btn-link::after {
     transform: translateY(2px) rotate(-135deg);
 }
 
-.arp .table-foot {
-    padding: 0.75rem 1rem;
-    border-top: 1px solid var(--dd-hairline);
-}
-
-.arp .dd-pager {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem 1.5rem;
-    color: var(--dd-muted);
-    font-size: 0.875rem;
-}
-
-.arp .dd-pager-size {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-}
-
-.arp .dd-pager-size select {
-    width: auto;
-}
-
-.arp .dd-pager-end {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 1rem;
-}
-
-.arp .dd-pager-range {
-    color: var(--dd-ink);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-}
-
-.arp .dd-pager-arrows {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.arp .dd-skeleton {
+.arp .placeholder {
     display: block;
+    min-height: 0;
+    opacity: 1;
+    cursor: default;
     height: 0.875rem;
     border-radius: 0.375rem;
     background: linear-gradient(90deg, var(--dd-hairline) 0%, var(--dd-surface-3) 50%, var(--dd-hairline) 100%);
     background-size: 200% 100%;
     animation: arp-shimmer 1.4s linear infinite;
-}
-
-.arp .dd-empty {
-    display: grid;
-    justify-items: center;
-    gap: 0.5rem;
-    padding: 2.5rem 1.5rem;
-    text-align: center;
-}
-
-.arp .dd-empty .dd-tile {
-    width: 3.5rem;
-    height: 3.5rem;
-    margin-bottom: 0.5rem;
-    border-radius: 1rem;
-    font-size: 1.5rem;
-}
-
-.arp .dd-empty .btn {
-    margin-top: 0.75rem;
-}
-
-.arp .dd-empty-title {
-    margin: 0;
-    color: var(--dd-ink);
-    font-size: 1.0625rem;
-    font-weight: 700;
-}
-
-.arp .dd-empty-text {
-    max-width: 28rem;
-    margin: 0;
-    color: var(--dd-muted);
-    font-size: 0.9375rem;
-    line-height: 1.5;
 }
 
 .arp .card > .alert {
@@ -540,24 +389,20 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-    .arp .dd-skeleton {
+    .arp .placeholder {
         animation: none;
     }
 }
 
 @media (max-width: 576px) {
 
-    .arp .dd-searchbox {
+    .arp [role=search] {
         max-width: none;
-    }
-
-    .arp .dd-pager-size {
-        display: none;
     }
 }
 
-.arp .dd-searchbox,
-.report-autograder-page .modal .dd-searchbox {
+.arp [role=search],
+.report-autograder-page .modal [role=search] {
     position: relative;
     display: flex;
     align-items: center;
@@ -565,13 +410,78 @@
     max-width: 22rem;
 }
 
-.arp .dd-searchbox.mw-100,
-.report-autograder-page .modal .dd-searchbox.mw-100 {
+.arp [role=search].mw-100,
+.report-autograder-page .modal [role=search].mw-100 {
     max-width: 100%;
 }
 
-.arp .dd-searchbox .icon,
-.report-autograder-page .modal .dd-searchbox .icon {
+.arp [role=search] .form-control,
+.report-autograder-page .modal [role=search] .form-control {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+}
+
+.arp [role=search] input[type=search]::-webkit-search-cancel-button,
+.report-autograder-page .modal [role=search] input[type=search]::-webkit-search-cancel-button {
+    display: none;
+    appearance: none;
+}
+
+.arp [role=search] input[type=search]:has(~ [data-action=clear-search]:not([hidden])),
+.report-autograder-page .modal [role=search] input[type=search]:has(~ [data-action=clear-search]:not([hidden])) {
+    padding-right: 2.5rem;
+}
+
+.arp [role=search] > [data-action=clear-search].btn-link.btn-icon,
+.report-autograder-page .modal [role=search] > [data-action=clear-search].btn-link.btn-icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0.375rem;
+    margin-block: auto;
+    width: 1.5rem;
+    min-width: 0;
+    height: 1.5rem;
+    padding: 0;
+    border-radius: 50%;
+    background-color: transparent;
+    color: var(--dd-muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transform: none;
+}
+
+.arp [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+.arp [role=search] > [data-action=clear-search].btn-link.btn-icon:focus,
+.arp [role=search] > [data-action=clear-search].btn-link.btn-icon:active,
+.report-autograder-page .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+.report-autograder-page .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:focus,
+.report-autograder-page .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:active {
+    transform: none;
+}
+
+.arp [role=search] > [data-action=clear-search].btn-link.btn-icon:hover,
+.report-autograder-page .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:hover {
+    background-color: color-mix(in srgb, var(--dd-ink) 10%, transparent);
+    color: var(--dd-ink);
+}
+
+.arp [role=search] > [data-action=clear-search].btn-link.btn-icon:focus-visible,
+.report-autograder-page .modal [role=search] > [data-action=clear-search].btn-link.btn-icon:focus-visible {
+    box-shadow: 0 0 0 2px var(--dd-ring);
+}
+
+.arp [role=search] > [data-action=clear-search].btn-link.btn-icon .icon,
+.report-autograder-page .modal [role=search] > [data-action=clear-search].btn-link.btn-icon .icon {
+    position: static;
+    margin: 0;
+    color: inherit;
+    pointer-events: none;
+}
+
+.arp [role=search] .icon,
+.report-autograder-page .modal [role=search] .icon {
     position: absolute;
     left: 0.75rem;
     margin: 0;
@@ -579,18 +489,18 @@
     pointer-events: none;
 }
 
-.arp .dd-searchbox .form-control,
-.report-autograder-page .modal .dd-searchbox .form-control {
+.arp [role=search] .form-control,
+.report-autograder-page .modal [role=search] .form-control {
     min-height: var(--dd-h);
     padding-left: 2.25rem;
     border-color: var(--dd-line);
     border-radius: 999px;
 }
 
-.arp .dd-select,
-.report-autograder-page .modal .dd-select {
+.arp :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select),
+.report-autograder-page .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select) {
     width: auto;
-    min-width: 12rem;
+    min-width: 0;
     max-width: 20rem;
     min-height: var(--dd-h);
     padding-left: 1rem;
@@ -603,41 +513,55 @@
     transition: border-color var(--dd-ease), box-shadow var(--dd-ease);
 }
 
-.arp .dd-select:hover,
-.report-autograder-page .modal .dd-select:hover {
+.arp :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):is(select):not(.form-select-sm),
+.report-autograder-page .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):is(select):not(.form-select-sm) {
+    min-width: 12rem;
+}
+
+.arp :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):hover,
+.report-autograder-page .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):hover {
     border-color: var(--dd-line-hover);
 }
 
-.arp .dd-select:focus,
-.report-autograder-page .modal .dd-select:focus {
+.arp :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):focus,
+.report-autograder-page .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):focus {
     border-color: var(--dd-primary);
     outline: 0;
     box-shadow: 0 0 0 3px var(--dd-ring);
 }
 
-.arp .dd-select.border-primary,
-.report-autograder-page .modal .dd-select.border-primary {
+.arp :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select).border-primary,
+.report-autograder-page .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select).border-primary {
     border-color: var(--dd-primary);
     background-color: var(--dd-primary-soft);
     color: var(--dd-primary-ink);
     font-weight: 600;
 }
 
-.arp .dd-select.dd-select-set,
-.report-autograder-page .modal .dd-select.dd-select-set {
+.arp :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select).border-primary,
+.report-autograder-page .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select).border-primary {
     padding-right: 2.5rem;
     background-image: none;
 }
 
-.arp .dd-select-filter,
-.report-autograder-page .modal .dd-select-filter {
+.arp :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):is(button),
+.report-autograder-page .modal :is([data-region=filters], [data-region=foot]) :is(.form-select, .custom-select):is(button) {
+    display: block;
+    overflow: hidden;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.arp .dropdown,
+.report-autograder-page .modal .dropdown {
     position: relative;
     display: inline-flex;
     max-width: 100%;
 }
 
-.arp .dd-select-clear,
-.report-autograder-page .modal .dd-select-clear {
+.arp [data-menu-clear],
+.report-autograder-page .modal [data-menu-clear] {
     position: absolute;
     top: 50%;
     right: 0.5rem;
@@ -655,21 +579,21 @@
     transition: background-color var(--dd-ease);
 }
 
-.arp .dd-select-clear .icon,
-.report-autograder-page .modal .dd-select-clear .icon {
+.arp [data-menu-clear] .icon,
+.report-autograder-page .modal [data-menu-clear] .icon {
     width: 0.875rem;
     height: 0.875rem;
     margin: 0;
     font-size: 0.875rem;
 }
 
-.arp .dd-select-clear:hover,
-.report-autograder-page .modal .dd-select-clear:hover {
+.arp [data-menu-clear]:hover,
+.report-autograder-page .modal [data-menu-clear]:hover {
     background-color: color-mix(in srgb, var(--dd-primary) 14%, transparent);
 }
 
-.arp .dd-select-clear:focus-visible,
-.report-autograder-page .modal .dd-select-clear:focus-visible {
+.arp [data-menu-clear]:focus-visible,
+.report-autograder-page .modal [data-menu-clear]:focus-visible {
     outline: 0;
     box-shadow: 0 0 0 3px var(--dd-ring);
 }
@@ -731,15 +655,15 @@
     --dd-c: var(--dd-danger);
 }
 
-.arp .btn-link.btn-icon:not(.disabled, :disabled),
-.report-autograder-page .modal .btn-link.btn-icon:not(.disabled, :disabled) {
+.arp .btn-link.btn-icon:not(.disabled):not(:disabled),
+.report-autograder-page .modal .btn-link.btn-icon:not(.disabled):not(:disabled) {
     background-color: color-mix(in srgb, var(--dd-c) 9%, var(--dd-surface));
 }
 
-.arp .btn-link.btn-icon:not(.disabled, :disabled):hover,
-.arp .btn-link.btn-icon:not(.disabled, :disabled):focus-visible,
-.report-autograder-page .modal .btn-link.btn-icon:not(.disabled, :disabled):hover,
-.report-autograder-page .modal .btn-link.btn-icon:not(.disabled, :disabled):focus-visible {
+.arp .btn-link.btn-icon:not(.disabled):not(:disabled):hover,
+.arp .btn-link.btn-icon:not(.disabled):not(:disabled):focus-visible,
+.report-autograder-page .modal .btn-link.btn-icon:not(.disabled):not(:disabled):hover,
+.report-autograder-page .modal .btn-link.btn-icon:not(.disabled):not(:disabled):focus-visible {
     outline: 0;
     background-color: color-mix(in srgb, var(--dd-c) 18%, var(--dd-surface));
     color: color-mix(in srgb, var(--dd-c) 80%, var(--dd-ink));
@@ -761,84 +685,43 @@
     pointer-events: auto;
 }
 
-.arp .table-actions,
-.report-autograder-page .modal .table-actions {
+.arp [data-column=actions],
+.report-autograder-page .modal [data-column=actions] {
     white-space: nowrap;
 }
 
-.arp .table-actions .btn-icon + .btn-icon,
-.report-autograder-page .modal .table-actions .btn-icon + .btn-icon {
+.arp [data-column=actions] .btn-icon + .btn-icon,
+.report-autograder-page .modal [data-column=actions] .btn-icon + .btn-icon {
     margin-left: 0.25rem;
 }
 
-.arp .btn.btn-tonal,
-.report-autograder-page .modal .btn.btn-tonal {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    border-color: transparent;
-    background-color: var(--dd-c-soft);
-    box-shadow: none;
-    color: var(--dd-c-ink);
-}
-
-.arp .btn.btn-tonal:hover,
-.arp .btn.btn-tonal:focus-visible,
-.report-autograder-page .modal .btn.btn-tonal:hover,
-.report-autograder-page .modal .btn.btn-tonal:focus-visible {
+.arp .icon-box,
+.report-autograder-page .modal .icon-box {
+    flex: none;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    border-radius: 1rem;
     background-color: var(--dd-c-soft-2);
     color: var(--dd-c-ink);
-}
-
-.arp .btn.btn-tonal .icon,
-.report-autograder-page .modal .btn.btn-tonal .icon {
-    margin: 0;
-    color: inherit;
-}
-
-.arp .badge-dot::before,
-.report-autograder-page .modal .badge-dot::before {
-    content: "";
-    flex: none;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 50%;
-    background-color: var(--dd-c);
-}
-
-.arp .dd-tile,
-.report-autograder-page .modal .dd-tile {
-    display: inline-grid;
-    flex: none;
-    place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 0.75rem;
-    background-color: var(--dd-c-soft-2);
-    color: var(--dd-c-ink);
-    font-size: 1.0625rem;
+    font-size: 1.375rem;
     line-height: 1;
 }
 
-.arp .dd-tile .icon,
-.report-autograder-page .modal .dd-tile .icon {
+.arp .icon-box .icon,
+.report-autograder-page .modal .icon-box .icon {
+    width: auto;
+    height: auto;
     margin: 0;
     color: inherit;
+    font-size: inherit;
 }
 
-.arp .dd-tile-lg,
-.report-autograder-page .modal .dd-tile-lg {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 1rem;
-    font-size: 1.375rem;
-}
-
-.arp .dd-select-menu,
-.report-autograder-page .modal .dd-select-menu {
+.arp .dropdown-menu,
+.report-autograder-page .modal .dropdown-menu {
     position: fixed;
     z-index: 1060;
-    display: block;
+    display: none;
     min-width: 10rem;
     margin: 0;
     padding: 0.375rem;
@@ -852,8 +735,13 @@
     animation: arp-pop 140ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-.arp .dd-select-menu .dropdown-header,
-.report-autograder-page .modal .dd-select-menu .dropdown-header {
+.arp .dropdown-menu.show:not([hidden]),
+.report-autograder-page .modal .dropdown-menu.show:not([hidden]) {
+    display: block;
+}
+
+.arp .dropdown-menu .dropdown-header,
+.report-autograder-page .modal .dropdown-menu .dropdown-header {
     padding: 0.5rem 0.75rem 0.25rem;
     color: var(--dd-muted);
     font-size: 0.75rem;
@@ -862,11 +750,11 @@
     text-transform: uppercase;
 }
 
-.arp .dd-select-menu .dropdown-item,
-.report-autograder-page .modal .dd-select-menu .dropdown-item {
+.arp .dropdown-menu .dropdown-item,
+.report-autograder-page .modal .dropdown-menu .dropdown-item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 0.625rem;
     width: 100%;
     padding: 0.5rem 0.75rem;
@@ -880,31 +768,31 @@
     transition: background-color var(--dd-ease), color var(--dd-ease);
 }
 
-.arp .dd-select-menu .dropdown-item + .dropdown-item,
-.report-autograder-page .modal .dd-select-menu .dropdown-item + .dropdown-item {
+.arp .dropdown-menu .dropdown-item + .dropdown-item,
+.report-autograder-page .modal .dropdown-menu .dropdown-item + .dropdown-item {
     margin-top: 2px;
 }
 
-.arp .dd-select-menu .dropdown-item:hover,
-.arp .dd-select-menu .dropdown-item:focus,
-.arp .dd-select-menu .dropdown-item.active,
-.report-autograder-page .modal .dd-select-menu .dropdown-item:hover,
-.report-autograder-page .modal .dd-select-menu .dropdown-item:focus,
-.report-autograder-page .modal .dd-select-menu .dropdown-item.active {
+.arp .dropdown-menu .dropdown-item:hover,
+.arp .dropdown-menu .dropdown-item:focus,
+.arp .dropdown-menu .dropdown-item.active,
+.report-autograder-page .modal .dropdown-menu .dropdown-item:hover,
+.report-autograder-page .modal .dropdown-menu .dropdown-item:focus,
+.report-autograder-page .modal .dropdown-menu .dropdown-item.active {
     outline: 0;
     background-color: var(--dd-surface-2);
     color: var(--dd-ink);
 }
 
-.arp .dd-select-menu .dropdown-item[aria-selected=true],
-.report-autograder-page .modal .dd-select-menu .dropdown-item[aria-selected=true] {
+.arp .dropdown-menu .dropdown-item[aria-selected=true],
+.report-autograder-page .modal .dropdown-menu .dropdown-item[aria-selected=true] {
     background-color: var(--dd-primary-soft);
     color: var(--dd-primary-ink);
     font-weight: 600;
 }
 
-.arp .dd-select-menu .dropdown-item[aria-selected=true]::after,
-.report-autograder-page .modal .dd-select-menu .dropdown-item[aria-selected=true]::after {
+.arp .dropdown-menu .dropdown-item[aria-selected=true]::after,
+.report-autograder-page .modal .dropdown-menu .dropdown-item[aria-selected=true]::after {
     content: "";
     flex: none;
     width: 0.3rem;
@@ -915,21 +803,21 @@
     transform: rotate(45deg) translateY(-1px);
 }
 
-.arp .dd-select-menu .dropdown-item[aria-selected=true]:focus,
-.arp .dd-select-menu .dropdown-item[aria-selected=true].active,
-.report-autograder-page .modal .dd-select-menu .dropdown-item[aria-selected=true]:focus,
-.report-autograder-page .modal .dd-select-menu .dropdown-item[aria-selected=true].active {
+.arp .dropdown-menu .dropdown-item[aria-selected=true]:focus,
+.arp .dropdown-menu .dropdown-item[aria-selected=true].active,
+.report-autograder-page .modal .dropdown-menu .dropdown-item[aria-selected=true]:focus,
+.report-autograder-page .modal .dropdown-menu .dropdown-item[aria-selected=true].active {
     background-color: var(--dd-primary-soft-2);
 }
 
-.arp .dd-select-menu .dropdown-item[aria-selected=true]::before,
-.report-autograder-page .modal .dd-select-menu .dropdown-item[aria-selected=true]::before {
+.arp .dropdown-menu .dropdown-item[aria-selected=true]::before,
+.report-autograder-page .modal .dropdown-menu .dropdown-item[aria-selected=true]::before {
     content: none;
     display: none;
 }
 
-.arp .dd-select-menu .dropdown-item.disabled,
-.report-autograder-page .modal .dd-select-menu .dropdown-item.disabled {
+.arp .dropdown-menu .dropdown-item.disabled,
+.report-autograder-page .modal .dropdown-menu .dropdown-item.disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
@@ -955,13 +843,13 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-    .arp .dd-select-menu,
-    .report-autograder-page .modal .dd-select-menu {
+    .arp .dropdown-menu,
+    .report-autograder-page .modal .dropdown-menu {
         animation: none;
     }
 }
 
-.arp .dd-select.form-select-sm {
+.arp :is(.form-select, .custom-select).form-select-sm {
     min-width: 4.75rem;
     min-height: var(--dd-h-sm);
     padding-top: 0.125rem;
@@ -971,8 +859,8 @@
 
 /* stylelint-disable declaration-no-important */
 
-.arp .badge.badge-soft,
-.report-autograder-page .modal .badge.badge-soft {
+.arp .badge,
+.report-autograder-page .modal .badge {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
@@ -985,33 +873,29 @@
     line-height: 1.2;
 }
 
-.arp .badge.badge-outline,
-.report-autograder-page .modal .badge.badge-outline {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.35em 0.8em;
-    border-radius: 999px;
+.arp .badge.border,
+.report-autograder-page .modal .badge.border {
+    border-color: var(--dd-c) !important;
     background-color: transparent !important;
-    box-shadow: inset 0 0 0 1px var(--dd-c);
-    color: var(--dd-c-ink) !important;
-    font-size: 0.75rem;
-    font-weight: 600;
-    line-height: 1.2;
+}
+
+.arp code.badge,
+.report-autograder-page .modal code.badge {
+    gap: 0;
 }
 
 /* stylelint-enable declaration-no-important */
 
-.arp .dd-searchbox > span[aria-hidden=true],
-.report-autograder-page .modal .dd-searchbox > span[aria-hidden=true] {
+.arp [role=search] > span[aria-hidden=true],
+.report-autograder-page .modal [role=search] > span[aria-hidden=true] {
     position: absolute;
     left: 0.75rem;
     color: var(--dd-muted);
     pointer-events: none;
 }
 
-.arp .dd-searchbox > span[aria-hidden=true] .icon,
-.report-autograder-page .modal .dd-searchbox > span[aria-hidden=true] .icon {
+.arp [role=search] > span[aria-hidden=true] .icon,
+.report-autograder-page .modal [role=search] > span[aria-hidden=true] .icon {
     position: static;
     margin: 0;
 }
@@ -1020,23 +904,21 @@
     overflow: visible;
 }
 
-.arp .card > .table-responsive:last-child,
-.arp .card > .table-foot:last-child {
+.arp .card > .table-responsive:last-child {
     border-radius: 0 0 var(--dd-radius-lg) var(--dd-radius-lg);
 }
 
-.arp .table-toolbar-start {
+.arp [data-region=filters] > :first-child {
     gap: 0.5rem;
 }
 
-.arp .dd-menu {
+.arp .dropdown {
     position: relative;
     display: inline-flex;
 }
 
-.arp button.dd-select {
-    display: inline-flex;
-    align-items: center;
+.arp button:is(.form-select, .custom-select) {
+    display: block;
     min-width: 0;
     max-width: 18rem;
     overflow: hidden;
@@ -1045,11 +927,7 @@
     white-space: nowrap;
 }
 
-.arp button.dd-select .dd-chip-count {
-    margin-left: 0.5rem;
-}
-
-.arp .dd-menu > .dd-select-menu {
+.arp .dropdown > .dropdown-menu {
     position: absolute;
     inset: calc(100% + 2px) auto auto 0;
     width: max-content;
@@ -1058,95 +936,69 @@
     max-height: 20rem;
 }
 
-.arp .dd-menu-end > .dd-select-menu {
+.arp .dropdown > .dropdown-menu-end {
     inset: calc(100% + 2px) 0 auto auto;
 }
 
-.arp .dd-menu-up > .dd-select-menu {
+.arp .table-responsive .dropdown > .dropdown-menu {
+    min-width: 10rem;
+}
+
+.arp .dropup > .dropdown-menu {
     inset: auto auto calc(100% + 2px) 0;
 }
 
-.arp .dd-select-menu label.dropdown-item {
+.arp .dropdown-menu label.dropdown-item {
     margin: 0;
     font-weight: 400;
 }
 
-.arp .dd-select-menu .dropdown-item .form-check-input {
+.arp .dropdown-menu .dropdown-item .form-check-input {
     position: static;
     flex: none;
     margin: 0;
 }
 
-.arp .dd-select-menu .dropdown-item > span:first-of-type {
+.arp .dropdown-menu .dropdown-item > span:first-of-type {
     flex: 1 1 auto;
 }
 
-.arp .dd-select-menu .dd-menu-form {
-    display: grid;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem 0.75rem;
-}
-
-.arp .dd-select-menu .dd-menu-dates {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-}
-
-.arp .dd-select-menu hr {
+.arp .dropdown-menu hr {
     margin: 0.375rem 0;
     border-color: var(--dd-hairline);
 }
 
-.arp .dd-chip-count {
-    padding: 0 0.4rem;
-    border-radius: 999px;
-    background: var(--dd-surface-3);
-    color: var(--dd-muted);
-    font-size: 0.75rem;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-}
-
-.arp .table .userpicture {
-    margin: 0 0.75rem 0 0;
-    border-radius: 50%;
-}
-
-.arp .table-actions .btn-hint {
-    width: 1.75rem;
-    height: 1.75rem;
-    font-size: 0.875rem;
-}
-
-.arp .table-actions .btn-hint:focus-visible {
-    box-shadow: inset 0 0 0 2px currentcolor;
-}
-
-.arp .btn-hint .icon {
-    /* stylelint-disable-next-line declaration-no-important */
-    color: inherit !important;
-}
-
-.arp .alert {
-    border-radius: var(--dd-radius);
-}
-
 @media (max-width: 576px) {
 
-    .arp .table-toolbar-start {
+    .arp [data-region=filters] > :first-child {
         flex: 1 1 100%;
     }
 }
 
-.arp [data-region=filters] > .table-toolbar-start {
+.arp [data-region=filters] > :first-child {
     flex-wrap: nowrap;
     min-width: 0;
 }
 
-.arp [data-region=filters] > .table-toolbar-start > .dd-searchbox {
+.arp [data-region=filters] > :first-child > [role=search] {
     flex: 1 1 10rem;
     min-width: 10rem;
+}
+
+@media (max-width: 400px) {
+
+    .arp [data-region=filters] > :first-child > [role=search] {
+        min-width: 7rem;
+    }
+}
+
+.arp [data-region=filters]:has([data-menu=filters]:not([hidden])) > :last-child:not(:first-child) {
+    /* stylelint-disable-next-line declaration-no-important */
+    display: none !important;
+}
+
+.arp [data-region=filter-panel] > :has(> [data-action=reset-all]) {
+    justify-content: flex-end;
 }
 
 .arp [data-region=filter-menus] {
@@ -1157,13 +1009,17 @@
     gap: 0.5rem;
 }
 
-.arp [data-region=filter-menus] button.dd-select {
+.arp [data-region=filter-menus] button:is(.form-select, .custom-select) {
     max-width: 14rem;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
-.arp [data-menu=filters] > .dd-select-menu {
+.arp [data-menu=filters] > button:is(.form-select, .custom-select) {
+    min-width: 0;
+}
+
+.arp [data-menu=filters] > .dropdown-menu {
     min-width: 17rem;
     max-height: none;
     overflow: visible;
@@ -1175,9 +1031,9 @@
     padding: 0.5rem;
 }
 
-.arp [data-region=filter-panel] .dd-menu,
-.arp [data-region=filter-panel] .dd-select-filter,
-.arp [data-region=filter-panel] button.dd-select {
+.arp [data-region=filter-panel] .dropdown,
+.arp [data-region=filter-panel] .dropdown,
+.arp [data-region=filter-panel] button:is(.form-select, .custom-select) {
     width: 100%;
     max-width: none;
 }
@@ -1189,10 +1045,6 @@
 .arp .table-responsive[data-region=tablewrap] > .table td.text-nowrap {
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.report-autograder-tour-required [data-role=flexitour-step] [data-role=end].btn-secondary {
-    display: none;
 }
 
 @media (max-width: 767.98px) {
@@ -1219,29 +1071,322 @@
         z-index: 2;
     }
 
-    .arp .nav-tabs,
-    .arp .dd-chips {
-        flex-wrap: nowrap;
-        overflow-x: auto;
+    .arp .table-responsive .table th[data-column=select],
+    .arp .table-responsive .table td[data-column=select] {
+        width: 2.75rem;
+        min-width: 2.75rem;
+        max-width: 2.75rem;
+        box-shadow: none;
     }
 
-    .arp .nav-tabs .nav-link,
-    .arp .dd-chip {
-        flex: none;
-        white-space: nowrap;
+    .arp .table-responsive .table :is(th, td)[data-column=select] + :is(th, td) {
+        position: sticky;
+        inset-inline-start: 2.75rem;
+        z-index: 1;
+        padding-inline-start: 0.5rem;
+        background-color: var(--dd-surface);
+        box-shadow: inset -1px 0 0 var(--dd-hairline, rgba(0, 0, 0, 0.08));
     }
 
-    .arp .table-toolbar[data-region=filters] {
+    .arp .table-responsive .table thead th[data-column=select] + th {
+        z-index: 2;
+    }
+
+    .arp .table-responsive .table th:first-child:not([data-column=select]),
+    .arp .table-responsive .table td:first-child:not([data-column=select]),
+    .arp .table-responsive .table :is(th, td)[data-column=select] + :is(th, td) {
+        max-width: 12rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .arp .table-responsive .table th:first-child:not([data-column=select]) .text-truncate,
+    .arp .table-responsive .table th:first-child:not([data-column=select]) a,
+    .arp .table-responsive .table td:first-child:not([data-column=select]) .text-truncate,
+    .arp .table-responsive .table td:first-child:not([data-column=select]) a,
+    .arp .table-responsive .table :is(th, td)[data-column=select] + :is(th, td) .text-truncate,
+    .arp .table-responsive .table :is(th, td)[data-column=select] + :is(th, td) a {
+        display: block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .arp [data-region=filters] {
         position: relative;
     }
 
-    .arp .table-toolbar[data-region=filters] > .table-toolbar-start {
+    .arp [data-region=filters] > :first-child {
         padding-inline-end: 3rem;
     }
 
-    .arp .table-toolbar[data-region=filters] > .table-toolbar-end {
+    .arp [data-region=filters] > :last-child:not(:first-child) {
         position: absolute;
         inset-block-start: 0.75rem;
         inset-inline-end: 0.75rem;
     }
+}
+
+.arp > .btn-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    justify-self: start;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.arp [data-region=list] {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.arp .row > li > .card {
+    transition: border-color var(--dd-ease), box-shadow var(--dd-ease);
+}
+
+.arp .row > li > .card:hover {
+    border-color: var(--dd-line);
+    box-shadow: var(--dd-shadow-sm);
+}
+
+.arp .row > li > .card .userpicture,
+.arp .row > li > .card .userinitials {
+    flex: none;
+    margin: 0 0.875rem 0 0;
+}
+
+.arp [data-region=filters] {
+    gap: 0.75rem;
+}
+
+.arp [data-region=filters] label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.arp [data-region=filters] .form-control {
+    border-color: var(--dd-line);
+}
+
+.arp [data-region=filters] .form-control:not([type=search]) {
+    min-width: 10rem;
+}
+
+.arp .card {
+    overflow: visible;
+}
+
+.arp .dropdown[hidden] {
+    display: none;
+}
+
+.arp .table .userpicture {
+    margin: 0 0.75rem 0 0;
+    border-radius: 50%;
+}
+
+.arp .table-responsive[data-region=tablewrap] > .table td {
+    overflow-wrap: break-word;
+}
+
+.arp .table-responsive[data-region=tablewrap] > .table td.text-nowrap {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.arp td .btn-icon .icon {
+    /* stylelint-disable-next-line declaration-no-important */
+    color: inherit !important;
+}
+
+.report-autograder-tour-required [data-role=flexitour-step] [data-role=end].btn-secondary {
+    display: none;
+}
+
+@media (max-width: 767.98px) {
+
+    .arp {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .arp .table-responsive .table th,
+    .arp .table-responsive .table td {
+        white-space: nowrap;
+    }
+
+    .arp .table-responsive .table th:first-child,
+    .arp .table-responsive .table td:first-child {
+        position: sticky;
+        inset-inline-start: 0;
+        z-index: 1;
+        background-color: var(--dd-surface);
+        box-shadow: inset -1px 0 0 var(--dd-hairline);
+    }
+
+    .arp .table-responsive .table thead th:first-child {
+        z-index: 2;
+    }
+}
+/* stylelint-disable declaration-no-important */
+
+.arp .gap-1 {
+    gap: 0.25rem !important;
+}
+
+.arp .gap-2 {
+    gap: 0.5rem !important;
+}
+
+.arp .gap-3 {
+    gap: 1rem !important;
+}
+
+.arp .gap-4 {
+    gap: 1.5rem !important;
+}
+
+/* stylelint-enable declaration-no-important */
+
+.arp .btn.btn:focus:not(:focus-visible),
+.arp .btn.btn:active:focus:not(:focus-visible),
+.arp .page-link.page-link:focus:not(:focus-visible),
+.arp .page-link.page-link:active:focus:not(:focus-visible),
+.arp .dropdown-item.dropdown-item:focus:not(:focus-visible),
+.arp .dropdown-item.dropdown-item:active:focus:not(:focus-visible),
+.arp .list-group-item-action.list-group-item-action:focus:not(:focus-visible),
+.arp .list-group-item-action.list-group-item-action:active:focus:not(:focus-visible),
+.arp button:is(.form-select, .custom-select):focus:not(:focus-visible),
+.arp button:is(.form-select, .custom-select):active:focus:not(:focus-visible),
+.arp [data-menu-clear][data-menu-clear]:focus:not(:focus-visible),
+.arp [data-menu-clear][data-menu-clear]:active:focus:not(:focus-visible),
+.arp select.custom-select:focus:not(:focus-visible),
+.arp select.custom-select:active:focus:not(:focus-visible),
+.arp select.form-select:focus:not(:focus-visible),
+.arp select.form-select:active:focus:not(:focus-visible),
+.report-autograder-page .modal .btn.btn:focus:not(:focus-visible),
+.report-autograder-page .modal .btn.btn:active:focus:not(:focus-visible),
+.report-autograder-page .modal .page-link.page-link:focus:not(:focus-visible),
+.report-autograder-page .modal .page-link.page-link:active:focus:not(:focus-visible),
+.report-autograder-page .modal .dropdown-item.dropdown-item:focus:not(:focus-visible),
+.report-autograder-page .modal .dropdown-item.dropdown-item:active:focus:not(:focus-visible),
+.report-autograder-page .modal .list-group-item-action.list-group-item-action:focus:not(:focus-visible),
+.report-autograder-page .modal .list-group-item-action.list-group-item-action:active:focus:not(:focus-visible),
+.report-autograder-page .modal button:is(.form-select, .custom-select):focus:not(:focus-visible),
+.report-autograder-page .modal button:is(.form-select, .custom-select):active:focus:not(:focus-visible),
+.report-autograder-page .modal [data-menu-clear][data-menu-clear]:focus:not(:focus-visible),
+.report-autograder-page .modal [data-menu-clear][data-menu-clear]:active:focus:not(:focus-visible),
+.report-autograder-page .modal select.custom-select:focus:not(:focus-visible),
+.report-autograder-page .modal select.custom-select:active:focus:not(:focus-visible),
+.report-autograder-page .modal select.form-select:focus:not(:focus-visible),
+.report-autograder-page .modal select.form-select:active:focus:not(:focus-visible) {
+    outline: 0;
+    box-shadow: none;
+}
+
+.arp .btn.btn:focus-visible,
+.arp .page-link.page-link:focus-visible,
+.arp .dropdown-item.dropdown-item:focus-visible,
+.arp .list-group-item-action.list-group-item-action:focus-visible,
+.arp button:is(.form-select, .custom-select):focus-visible,
+.arp [data-menu-clear][data-menu-clear]:focus-visible,
+.arp select.custom-select:focus-visible,
+.arp select.form-select:focus-visible,
+.report-autograder-page .modal .btn.btn:focus-visible,
+.report-autograder-page .modal .page-link.page-link:focus-visible,
+.report-autograder-page .modal .dropdown-item.dropdown-item:focus-visible,
+.report-autograder-page .modal .list-group-item-action.list-group-item-action:focus-visible,
+.report-autograder-page .modal button:is(.form-select, .custom-select):focus-visible,
+.report-autograder-page .modal [data-menu-clear][data-menu-clear]:focus-visible,
+.report-autograder-page .modal select.custom-select:focus-visible,
+.report-autograder-page .modal select.form-select:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+.arp select.custom-select:focus:not(:focus-visible),
+.arp select.form-select:focus:not(:focus-visible),
+.arp button:is(.form-select, .custom-select):focus:not(:focus-visible),
+.report-autograder-page .modal select.custom-select:focus:not(:focus-visible),
+.report-autograder-page .modal select.form-select:focus:not(:focus-visible),
+.report-autograder-page .modal button:is(.form-select, .custom-select):focus:not(:focus-visible) {
+    border-color: var(--dd-line-hover);
+}
+
+.arp .btn.btn:is([class*=btn-outline-], .btn-link):active:not(:disabled):not(.disabled),
+.arp .btn.btn:is([class*=btn-outline-], .btn-link).active:not(:disabled):not(.disabled),
+.report-autograder-page .modal .btn.btn:is([class*=btn-outline-], .btn-link):active:not(:disabled):not(.disabled),
+.report-autograder-page .modal .btn.btn:is([class*=btn-outline-], .btn-link).active:not(:disabled):not(.disabled) {
+    border-color: var(--dd-c);
+    background-color: var(--dd-c-soft-2);
+    box-shadow: none;
+    color: var(--dd-c-ink);
+}
+
+.arp .btn.btn.btn-link:active:not(:disabled):not(.disabled),
+.report-autograder-page .modal .btn.btn.btn-link:active:not(:disabled):not(.disabled) {
+    border-color: transparent;
+}
+
+.arp .btn.btn:is(.btn-primary, .btn-secondary, .btn-danger, .btn-success, .btn-warning, .btn-info):active:not(:disabled):not(.disabled),
+.report-autograder-page .modal .btn.btn:is(.btn-primary, .btn-secondary, .btn-danger, .btn-success, .btn-warning, .btn-info):active:not(:disabled):not(.disabled) {
+    box-shadow: none;
+    filter: brightness(0.94);
+}
+
+.arp input.form-check-input[type]:focus:not(:focus-visible),
+.arp input[type=checkbox].form-check-input:focus:not(:focus-visible),
+.arp input[type=radio].form-check-input:focus:not(:focus-visible),
+.report-autograder-page .modal input.form-check-input[type]:focus:not(:focus-visible),
+.report-autograder-page .modal input[type=checkbox].form-check-input:focus:not(:focus-visible),
+.report-autograder-page .modal input[type=radio].form-check-input:focus:not(:focus-visible) {
+    outline: 0;
+    box-shadow: none;
+}
+
+.arp input.form-check-input[type]:not(:checked):focus:not(:focus-visible),
+.arp input[type=checkbox].form-check-input:not(:checked):focus:not(:focus-visible),
+.arp input[type=radio].form-check-input:not(:checked):focus:not(:focus-visible),
+.report-autograder-page .modal input.form-check-input[type]:not(:checked):focus:not(:focus-visible),
+.report-autograder-page .modal input[type=checkbox].form-check-input:not(:checked):focus:not(:focus-visible),
+.report-autograder-page .modal input[type=radio].form-check-input:not(:checked):focus:not(:focus-visible) {
+    border-color: var(--dd-line-hover);
+}
+
+.arp input.form-check-input[type]:active,
+.arp input[type=checkbox].form-check-input:active,
+.arp input[type=radio].form-check-input:active,
+.report-autograder-page .modal input.form-check-input[type]:active,
+.report-autograder-page .modal input[type=checkbox].form-check-input:active,
+.report-autograder-page .modal input[type=radio].form-check-input:active {
+    filter: none;
+}
+
+.arp input.form-check-input[type]:focus-visible,
+.arp input[type=checkbox].form-check-input:focus-visible,
+.arp input[type=radio].form-check-input:focus-visible,
+.report-autograder-page .modal input.form-check-input[type]:focus-visible,
+.report-autograder-page .modal input[type=checkbox].form-check-input:focus-visible,
+.report-autograder-page .modal input[type=radio].form-check-input:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--dd-ring);
+}
+
+.arp .custom-control-input:focus:not(:focus-visible) ~ .custom-control-label::before,
+.report-autograder-page .modal .custom-control-input:focus:not(:focus-visible) ~ .custom-control-label::before {
+    box-shadow: none;
+}
+
+.arp .custom-control-input:not(:checked):focus:not(:focus-visible) ~ .custom-control-label::before,
+.report-autograder-page .modal .custom-control-input:not(:checked):focus:not(:focus-visible) ~ .custom-control-label::before {
+    border-color: var(--dd-line-hover);
+}
+
+.arp .custom-control-input:not(:disabled):active ~ .custom-control-label::before,
+.report-autograder-page .modal .custom-control-input:not(:disabled):active ~ .custom-control-label::before {
+    border-color: var(--dd-primary);
+    background-color: var(--dd-primary-soft);
 }
