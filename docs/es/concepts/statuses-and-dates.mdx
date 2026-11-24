@@ -17,9 +17,11 @@ Cada fila del informe es un estudiante en una actividad. Sus columnas responden 
 | <Badge text="No autocalificado" variant="caution" /> | Autograder no calificará al estudiante, por ejemplo porque la calificación se canceló |
 | <Badge text="Sin entregar" variant="caution" /> | El estudiante todavía no ha hecho la actividad |
 
+Sobre la tabla, el menú **Estado** indica cuántos estudiantes hay en cada estado. Los números respetan los demás filtros, de modo que siempre suman las filas que mostraría el informe. El estado **Con error** solo aparece a los usuarios que pueden ver los fallos.
+
 ## Fecha
 
-La fecha es el momento en que se calificará al estudiante, o en que se le calificó. El icono que la acompaña indica en qué se basa:
+La fecha es el momento en que se calificará al estudiante, o en que se le calificó. El [detalle de la fila](#el-detalle-de-una-fila) indica en qué se basa:
 
 - la **fecha límite** de la actividad,
 - una **excepción** de un usuario o de un grupo, o
@@ -27,7 +29,13 @@ La fecha es el momento en que se calificará al estudiante, o en que se le calif
 
 ## Calificación
 
-Para un estudiante pendiente, la calificación es la que recibirá y se muestra en cursiva. Para un estudiante calificado, es la calificación que está ahora en el libro de calificaciones.
+Para un estudiante pendiente, la calificación es la que recibirá. Se muestra en gris con la etiqueta **Provisional**, porque aún no está en el libro de calificaciones, y el docente a cuyo nombre se registrará también aparece en gris. Un guion indica que aún no hay calificación.
+
+## El detalle de una fila
+
+El botón situado al final de una fila abre su detalle en un diálogo: primero lo que falló, cuando algo falló, y después el estado, la fecha de calificación con aquello en lo que se basa, la calificación con el día en que se registrará, y el docente con la forma en que se elige. Su color indica la gravedad de lo más importante: azul cuando solo informa, ámbar cuando hay una incidencia y rojo cuando la calificación falló.
+
+<Screenshot src="asset:rp-details.webp" alt="El detalle de una fila con error en un diálogo: por qué falló, el estado, la fecha de calificación, la calificación y el calificador" caption="El detalle de una fila cuya calificación falló." url="/report/autograder/index.php" />
 
 ## Calificador
 

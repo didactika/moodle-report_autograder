@@ -60,6 +60,7 @@ final class page_context {
         }
 
         return [
+            'lead' => get_string('lead_' . $scope->level(), 'report_autograder'),
             'filter_action_url' => $scope->url()->out(false),
             'statuses' => $statuses,
             'filters' => self::chosen_values($filters),
@@ -153,7 +154,7 @@ final class page_context {
      * @return string Empty when that end is open.
      */
     private static function as_date(?int $timestamp): string {
-        return $timestamp === null ? '' : userdate($timestamp, '%d/%m/%Y');
+        return $timestamp === null ? '' : date('Y-m-d', $timestamp);
     }
 
     /**

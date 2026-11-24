@@ -21,6 +21,27 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+## [1.2.0-m400] - 2026-11-24
+
+The report follows the Didactika design system, every filter is a menu, and its statuses show how many students each has.
+
+### Added
+
+- A head with what each report is about, as the other screens of Didactika have.
+- Every filter is a menu with the shape of a select: the status with a checkbox and the number of students of each, counted inside every other filter, the course and the activity with a search inside, the group and the date. None of them offers its base state, and a chosen one shows a cross that takes it back to it.
+- A search field empties with a small button of its own instead of the cross the browser draws.
+
+### Changed
+
+- The report is drawn only with the classes of Bootstrap and of Moodle, restyled inside the report, so a theme restyles it with Bootstrap.
+- When the filters are grouped in one menu, Filters, the button that clears every filter is the last thing of the group.
+- It needs Autograder 1.2.0, which offers Autograder only for the activities that take the work of students.
+
+### Fixed
+
+- The button that clears a search field no longer moves when the pointer is over it: it is centred with auto margins and keeps its place whatever the theme does to a button on hover.
+- The report opens on Moodle 4.0, whose icon system has no `instance()` and raised an error that left the table empty.
+
 ## [1.1.0-m400] - 2026-10-19
 
 First release of the Moodle 4.0 to 5.2 line, on `MOODLE_400_STABLE`. The Moodle 5.3 line is on `main` (1.1.0-m503).

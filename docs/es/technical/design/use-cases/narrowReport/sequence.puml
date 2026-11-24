@@ -1,0 +1,25 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+skinparam responseMessageBelowArrow true
+
+actor "Teacher" as actor
+participant "Toolbar" as ui
+participant "search_filter_options" as search
+participant "get_report" as service
+participant "report_query" as query
+database "local_autograder_decision" as table
+
+actor -> ui : types in a picker
+ui -> search : type, query
+search --> ui : the options the reader may see
+actor -> ui : chooses a value in a filter menu
+ui -> service : filters, page, withtotal
+service -> query : count(scope, filters)
+service -> query : rows(scope, filters, page)
+service -> query : status_counts(scope, filters without the status)
+query -> table : read
+service --> ui : rows, total, the students of each status
+ui --> actor : the table, the counts and the pager
+
+@enduml

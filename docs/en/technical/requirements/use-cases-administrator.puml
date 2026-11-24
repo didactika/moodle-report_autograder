@@ -10,10 +10,12 @@ rectangle "report_autograder" {
   package "Reading" {
     usecase "View the report of the site" as UC_viewSiteReport
     usecase "See who would grade each course" as UC_viewGraders
+    usecase "Narrow the report" as UC_narrowReport
   }
 }
 
 A_Administrator --> UC_viewSiteReport
 A_Administrator --> UC_viewGraders
+A_Administrator --> UC_narrowReport
 
 @enduml

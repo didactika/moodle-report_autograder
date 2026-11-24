@@ -34,23 +34,12 @@ export const updateSortHeaderUI = ($container) => {
     const dir = getSortDirection();
 
     $container.find('[data-autograder-sort]').each(function() {
-        const key = this.getAttribute('data-autograder-sort');
-        const $btn = $(this);
-        const $th = $btn.closest('th');
-        const $wrap = $btn.find('.autograder-sort-icon-wrap');
-        const $icon = $btn.find('.autograder-sort-glyph');
+        const $th = $(this).closest('th');
 
-        $icon.removeClass('fa-sort fa-sort-up fa-sort-down text-muted');
-
-        if (col === key) {
+        if (col === this.getAttribute('data-autograder-sort')) {
             $th.attr('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
-            $btn.attr('aria-pressed', 'true');
-            $wrap.removeClass('d-none');
-            $icon.addClass(dir === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
         } else {
-            $th.attr('aria-sort', 'none');
-            $btn.attr('aria-pressed', 'false');
-            $wrap.addClass('d-none');
+            $th.removeAttr('aria-sort');
         }
     });
 };

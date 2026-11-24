@@ -17,9 +17,7 @@
 /**
  * The site-wide report, in the administration reports menu.
  *
- * There are no settings: with autograder running inside Moodle there is no
- * service to point this report at any more, and everything it needs is
- * already configured on the activities themselves.
+ * One setting: whether the guided tour of the report can be skipped.
  *
  * @package     report_autograder
  * @copyright  2026 Didactika.org
@@ -53,6 +51,21 @@ $ADMIN->add('reportautogradercategory', new admin_externalpage(
     new moodle_url('/report/autograder/graders.php'),
     'report/autograder:viewsite'
 ));
+
+// Whether the guided tour of the report can be skipped. Moodle always lets a tour be closed with the Escape key and finished on
+// its last step; required only takes away the button that skips it on the other steps.
+$tourpage = new admin_settingpage('reportautogradersettings', get_string('settings', 'report_autograder'), 'moodle/site:config');
+
+if ($ADMIN->fulltree) {
+    $tourpage->add(new admin_setting_configcheckbox(
+        'report_autograder/tourrequired',
+        get_string('setting:tourrequired', 'report_autograder'),
+        get_string('setting:tourrequired_desc', 'report_autograder'),
+        0
+    ));
+}
+
+$ADMIN->add('reportautogradercategory', $tourpage);
 
 // Core hands every report plugin a settings page of its own before it includes
 // this file, under the same name. Dropping it is what makes the link above the

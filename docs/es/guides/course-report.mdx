@@ -12,12 +12,12 @@ La tabla muestra una fila por estudiante y actividad, de modo que un estudiante 
 
 ## Filtros
 
-Todos los informes pueden filtrarse por actividad, grupo, estado y fecha de calificación, y buscarse por estudiante. El filtro de actividad ofrece solo las actividades del curso donde Autograder está activado.
+El informe de un curso tiene la misma fila de filtros que el informe de una actividad, con un menú más: **Actividad**, que ofrece solo las actividades del curso en las que Autograder está activado y las busca a medida que escribe. El menú **Estado** indica cuántos estudiantes hay en cada estado, contados dentro de los demás filtros. Un menú que acota la lista aparece resaltado, y la cruz que sustituye a su flecha quita ese filtro; el botón con el icono de recargar, al final de la fila, quita todos los filtros. Consulte [Informe de una actividad](page:guides/activity-report) para la búsqueda, las páginas y el recorrido guiado, que el informe de un curso también tiene.
 
 ## Fallos
 
-Cuando tiene `report/autograder:viewfailed`, el filtro de estado ofrece **Con error**, y las filas con error muestran el motivo: por ejemplo, que ningún docente pudo calificar al estudiante.
+Cuando tiene `report/autograder:viewfailed`, el menú **Estado** ofrece **Con error**, y el botón situado al final de una fila con error es rojo: abre el detalle de la fila, que empieza por el motivo, por ejemplo que ningún docente pudo calificar al estudiante.
 
-<Screenshot src="asset:rp-failed.webp" alt="El informe de Autograder de un curso filtrado por los estudiantes con error, con el motivo de cada fallo" caption="Los estudiantes cuya calificación falló, con el motivo." url="/report/autograder/index.php" />
+<Screenshot src="asset:rp-failed.webp" alt="El informe de Autograder de un curso filtrado por los estudiantes con error, con el botón que abre el detalle de cada fallo" caption="Los estudiantes cuya calificación falló." url="/report/autograder/index.php" />
 
 El informe aparece en el menú **Informes** solo cuando Autograder está activado en al menos una actividad del curso.

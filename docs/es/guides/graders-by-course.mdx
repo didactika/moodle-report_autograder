@@ -1,15 +1,31 @@
 ---
 title: Calificadores por curso
-summary: Vea qué docente calificaría a cada estudiante de un curso antes de que venza ninguna calificación.
+summary: Compruebe qué docente calificaría a cada estudiante de un curso antes de que venza ninguna calificación.
 order: 60
 ---
 
-Vaya a **Administración del sitio > Informes > Informe de Autograder > Calificadores por curso**. Se necesita la capacidad `report/autograder:viewsite` y `report/autograder:viewcourse` en el curso que elija.
+Vaya a **Administración del sitio > Informes > Informe de Autograder > Calificadores por curso**. Se necesita la capacidad `report/autograder:viewsite`, y `report/autograder:viewcourse` en el curso que elija.
 
-<Screenshot src="asset:rp-graders.webp" alt="La página Calificadores por curso, con los docentes que podrían calificar un curso y el calificador de reserva" caption="Los docentes que podrían calificar un curso." url="/report/autograder/graders.php" />
+<Screenshot src="asset:rp-graders.webp" alt="La página Calificadores por curso, con los cursos en los que Autograder está activado y el estado de cada uno" caption="Los cursos en los que Autograder está activado, con quién podría calificar en cada uno." url="/report/autograder/graders.php" />
 
-Elija un curso. La página muestra cuántos docentes podrían calificar allí y cuántos estudiantes podrían calificarse, y lista a los docentes; el calificador de reserva del sitio aparece con una etiqueta. Seleccione **Ver qué calificador tendría cada estudiante** para listar a los estudiantes con el docente con el que se calificaría a cada uno.
+## Los cursos
 
-Es útil para comprobar un curso antes de que venza ninguna calificación. Un curso donde nadie puede calificar queda señalado, ya que todas las calificaciones de ese curso fallarían salvo que haya un calificador de reserva configurado en Autograder.
+La página muestra los cursos en los que Autograder está activado en al menos una actividad. De cada curso indica el número de actividades autocalificadas, los docentes que podrían calificar, el número de estudiantes y un estado:
 
-La página trabaja a partir del curso. El informe de una actividad comprueba los permisos y los grupos de esa actividad antes de mostrar el calificador que realmente se aplica.
+- **Lista**: al menos un docente puede calificar en él;
+- **Solo el calificador de reserva**: solo el calificador de reserva del sitio puede calificar en él;
+- **Nadie puede calificar**: nadie puede calificar en él, y toda calificación fallaría.
+
+Busque un curso por su nombre corto o completo. Al final de cada fila, los botones redondos abren el calificador de cada estudiante de ese curso y el informe del curso.
+
+## Un curso
+
+<Screenshot src="asset:rp-graders-course.webp" alt="Los calificadores de un curso, con los docentes que podrían calificar y el calificador de cada estudiante" caption="Los docentes de un curso y el calificador que correspondería a cada estudiante." url="/report/autograder/graders.php" />
+
+La página de un curso indica cuántos docentes podrían calificar en él y cuántos estudiantes podrían ser calificados, y enumera los docentes; el calificador de reserva del sitio aparece con una etiqueta. Debajo, cada estudiante aparece con el docente en cuyo nombre se le calificaría.
+
+Busque a un estudiante por su nombre, y utilice el menú **Mostrar** para ver solo a los estudiantes que calificaría el calificador de reserva o a los que nadie calificaría. Cuando ese menú acota la lista, la cruz que sustituye a su flecha vuelve a mostrar a todos los estudiantes.
+
+Conviene revisar un curso antes de que venza ninguna calificación. Un curso en el que nadie puede calificar se señala, ya que toda calificación fallaría en él salvo que se configure un calificador de reserva en Autograder.
+
+La página trabaja a partir del curso. El informe de una actividad comprueba los permisos y los grupos de esa actividad antes de mostrar el calificador que realmente corresponde.

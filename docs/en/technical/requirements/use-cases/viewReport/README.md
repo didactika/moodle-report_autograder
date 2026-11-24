@@ -51,7 +51,7 @@ A teacher needs to see, for each student, what Autograder decided: the status, t
 | 1 | Opens **Autograder report** in the menu of the activity or of the course. | Checks the capability of the level. |
 | 2 |  | Reads the first page of rows, limited to the groups the teacher can see. |
 | 3 | Searches, filters or sorts. | Reads the page again with the new filters. |
-| 4 |  | Shows each row with its status, date, grade and grader; a pending row shows the grade and the teacher it would have now. |
+| 4 |  | Shows each row with its status, date, grade and grader; a pending row shows the grade and the teacher it would have now; above the rows, the menu of the statuses shows how many students are in each, counted inside the other filters; under them, the pager offers the sizes of page that fit the list. |
 
 ## Alternative flows
 
@@ -60,6 +60,8 @@ A teacher needs to see, for each student, what Autograder decided: the status, t
 | A1 | 1 | The teacher has no capability. | Refuses the page. | End |
 | A2 | 2 | The activity has separate groups. | Leaves out the students of groups the teacher cannot see. | Step 3 |
 | A3 | 4 | The reader cannot see failures. | Shows a failed student as not autograded. | Step 3 |
+| A4 | 1 | It is the first time the reader opens the report of an activity or of a course. | Presents the report with a guided tour of seven steps; when the site requires the tour, it has no button to skip it before its last step. | Step 2 |
+| A5 | 4 | The reader presses the button at the end of a row. | Opens the details of the row in a dialog: first what went wrong, then the status, the grading date and what it is based on, the grade and the day it will be recorded, and the grader and how that grader is chosen. | Step 3 |
 
 ## Business rules
 
@@ -69,6 +71,12 @@ A teacher needs to see, for each student, what Autograder decided: the status, t
 | RN-003 | Failures are shown only to readers who can see them. |
 | RN-004 | A teacher sees only the groups they can see. |
 | RN-005 | A pending row shows the provisional grade and grader. |
+| RN-007 | A student that the access restrictions of the activity leave out is not listed as not submitted: they cannot open the activity, so the report says nothing about them. |
+| RN-009 | The pager offers only the sizes of page smaller than the list, and All: up to 12 rows, All; 13 to 24, 12 and All; and so on up to 12, 24, 48, 96 and All. A list starts with 12 rows; All is sent to the services as -1, which they cap. |
+| RN-011 | The first time a person opens the report of an activity or of a course, a guided tour presents it; when the site requires it, the tour cannot be skipped before its last step. |
+| RN-012 | The button that opens the details of a row takes the colour of the most serious thing in them: information, a problem that can still be solved, or a failed grading. A grade that is not in the gradebook yet carries the label Provisional, and a row without a grade shows a dash. |
+| RN-013 | The columns of the table keep the width they had the first time the table had rows; a filter, a sort or another page never moves them. They are measured again only when the box of the table changes width. |
+| RN-016 | The box of the table takes the height the window leaves it under the filters, less the pager, and at least 18rem, so on a computer the filters, the table and the pager fit the window. The lines of the rows reach the end of the box and the last row keeps its line. |
 
 ## Specification
 

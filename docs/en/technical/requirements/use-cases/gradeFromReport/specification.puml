@@ -1,0 +1,21 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+hide empty description
+
+state "gradeFromReport" as gradeFromReport {
+  state " " as Rows
+  state " " as Grader
+
+  [*] --> Rows : Reader opens the report of an activity
+  Rows --> Grader : Reader chooses to grade a student
+  Grader --> [*] : System opens the grading screen of the activity
+  Rows --> [*] : Reader leaves the report
+
+  note on link
+    Reader: chooses a student
+    System: hands over to the activity
+  end note
+}
+
+@enduml

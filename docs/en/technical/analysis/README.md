@@ -31,3 +31,5 @@ Stereotypes: `<<boundary>>` interface, `<<control>>` coordination, `<<entity>>` 
 | UC-001 | [View the report of an activity or a course](./use-cases/viewReport/README.md) | [collaboration](./use-cases/viewReport/collaboration.svg) |
 | UC-002 | [View the report of the site](./use-cases/viewSiteReport/README.md) | [collaboration](./use-cases/viewSiteReport/collaboration.svg) |
 | UC-003 | [See who would grade each course](./use-cases/viewGraders/README.md) | [collaboration](./use-cases/viewGraders/collaboration.svg) |
+| UC-004 | [Narrow the report](./use-cases/narrowReport/README.md) | [collaboration](./use-cases/narrowReport/collaboration.svg) |
+| UC-005 | [Grade a student from the report](./use-cases/gradeFromReport/README.md) | [collaboration](./use-cases/gradeFromReport/collaboration.svg) |

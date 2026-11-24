@@ -14,3 +14,5 @@ This folder links the model to the code. The [code map](./code-map.md) lists eac
 | UC-001 | View the report of an activity or a course | [implementation](./use-cases/viewReport/README.md) |
 | UC-002 | View the report of the site | [implementation](./use-cases/viewSiteReport/README.md) |
 | UC-003 | See who would grade each course | [implementation](./use-cases/viewGraders/README.md) |
+| UC-004 | Narrow the report | [implementation](./use-cases/narrowReport/README.md) |
+| UC-005 | Grade a student from the report | [implementation](./use-cases/gradeFromReport/README.md) |

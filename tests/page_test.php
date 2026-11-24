@@ -272,16 +272,14 @@ final class page_test extends \advanced_testcase {
     }
 
     /**
-     * The date filter's calendar is made of two AMD modules that ship with the plugin, and of nothing else.
-     *
-     * Fetching the libraries from a public CDN hands a third party a record of who reads this report from where, and
-     * loading them as plain scripts with define() hidden breaks any other AMD module that is requested meanwhile. They
-     * are wrapped, unchanged, in named modules, declared in thirdpartylibs.xml, and the page no longer carries their
-     * addresses.
+     * The grading date is chosen with the date fields of the browser and with presets, so the page loads no date library and asks
+     * nothing from another site.
      */
-    public function test_the_date_filter_loads_the_bundled_libraries_as_modules(): void {
-        global $CFG, $OUTPUT, $PAGE;
+    public function test_the_date_filter_uses_the_fields_of_the_browser(): void {
+        global $OUTPUT, $PAGE;
 
+        $this->resetAfterTest();
+        $this->setAdminUser();
         $scope = $this->scope_for(scope::LEVEL_ACTIVITY);
         $PAGE->set_url('/report/autograder/index.php');
         $PAGE->set_context($scope->context());
@@ -290,29 +288,12 @@ final class page_test extends \advanced_testcase {
             'report_autograder/partials/filters',
             page_context::filters($scope)
         );
-        $plugin = $CFG->dirroot . '/report/autograder/';
-        $declared = file_get_contents($plugin . 'thirdpartylibs.xml');
 
-        foreach (['moment' => 'lib/moment', 'daterangepicker' => 'lib/daterangepicker'] as $module => $library) {
-            $this->assertFileExists($plugin . 'amd/src/datelib/' . $module . '.js');
-            $this->assertDirectoryExists($plugin . $library);
-            $this->assertStringContainsString($library, $declared, 'Declare it in thirdpartylibs.xml.');
-            $this->assertMatchesRegularExpression(
-                '/^\s+var define = /m',
-                file_get_contents($plugin . 'amd/src/datelib/' . $module . '.js'),
-                'The library gets a define() of its own, not the one of the page.'
-            );
-        }
-        $this->assertStringNotContainsString('data-moment-url', $html);
-        $this->assertStringNotContainsString('data-picker-url', $html);
+        $this->assertStringContainsString('type="date" class="form-control form-control-sm" name="grading_date_from"', $html);
+        $this->assertStringContainsString('type="date" class="form-control form-control-sm" name="grading_date_to"', $html);
+        $this->assertStringContainsString('data-preset="last30"', $html);
+        $this->assertStringNotContainsString('daterangepicker', $html);
         $this->assertStringNotContainsString('//cdn.', $html);
-
-        $filters = file_get_contents($plugin . 'amd/src/ui/filters.js');
-        $this->assertStringNotContainsString('window.define', $filters, 'It must not hide define().');
-        $this->assertStringNotContainsString('window.jQuery', $filters, 'Nor put jQuery in the global scope.');
-
-        // The stylesheet is asked for by the page, so it is not in this markup, but it has to be there to be asked for.
-        $this->assertFileExists($plugin . 'lib/daterangepicker/daterangepicker.css');
     }
 
     /**
@@ -421,7 +402,7 @@ final class page_test extends \advanced_testcase {
 
         $html = $OUTPUT->render_from_template('report_autograder/partials/filters', $context);
 
-        $this->assertStringContainsString('<option value="' . $cm->id . '" selected>', $html);
+        $this->assertStringContainsString('id="autograder-filter-activity" value="' . $cm->id . '"', $html);
         $this->assertStringContainsString('value="Lovelace"', $html);
     }
 

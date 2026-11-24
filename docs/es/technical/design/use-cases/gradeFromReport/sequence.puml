@@ -1,0 +1,22 @@
+@startuml
+!theme plain
+skinparam linetype polyline
+skinparam responseMessageBelowArrow true
+
+actor "Teacher" as actor
+participant "Report row" as row
+participant "row_formatter" as formatter
+participant "grader_ui" as ui
+
+formatter -> ui : can_use_assign_grader(cm)
+alt an assignment
+  formatter --> row : grade_user_url
+  actor -> row : grades the student
+  row --> actor : the grader of the assignment
+else a forum
+  formatter --> row : show_forum_grader
+  actor -> row : grades the student
+  row --> actor : the grader of the forum
+end
+
+@enduml

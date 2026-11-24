@@ -11,7 +11,8 @@ sourceOfTruth: code
 | --- | --- | --- | --- |
 | Scope | clase | `classes/local/query/scope.php:77` | sí |
 | Filters | clase | `classes/local/query/filters.php` | sí |
-| Filas del informe | método | `classes/local/query/report_query.php:79` | sí |
+| Filas del informe | método | `classes/local/query/report_query.php:106` | sí |
+| Estudiantes de cada estado | método | `classes/local/query/report_query.php:77` | sí |
 | Status | clase | `classes/local/format/status.php:64` | sí |
 | Calificación provisional | método | `classes/local/format/provisional_grade.php:46` | sí |
 | Acceso por grupos | método | `classes/local/groups/group_access.php:100` | sí |

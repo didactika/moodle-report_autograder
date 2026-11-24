@@ -18,7 +18,9 @@ service -> groups : for_scope(scope)
 service -> query : rows(scope, filters, groups)
 query -> table : read decisions and the students not yet engaged
 query --> service : rows
-service --> js : formatted rows (status, date, grade, grader)
+service -> query : status_counts(scope, filters without the status)
+query --> service : the students of each status
+service --> js : formatted rows (status, date, grade, grader) and the counts
 js --> actor : the table
 
 @enduml

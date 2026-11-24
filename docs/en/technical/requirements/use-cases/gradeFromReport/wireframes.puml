@@ -1,0 +1,12 @@
+@startsalt
+{
+  {* Autograder report | Assignment }
+  ==
+  Autograder report
+  --
+  {#
+    Student | Status | Grade | Graded as | Action
+    Hugo Castro | Autograded | 8 | Maria Ortega | [Grade]
+  }
+}
+@endsalt
