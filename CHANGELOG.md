@@ -27,6 +27,10 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [1.3.0-m503] - 2026-11-24
 
+### Fixed
+
+- The button that clears a search field no longer moves when the pointer is over it: it is centred with auto margins and keeps its place whatever the theme does to a button on hover.
+
 The report is drawn only with the classes of Bootstrap and of Moodle, and every filter is a menu.
 
 ### Changed
