@@ -21,7 +21,7 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
-## [1.2.0-m400] - 2026-11-24
+## [1.3.0-m400] - 2026-11-24
 
 The report follows the Didactika design system, every filter is a menu, and its statuses show how many students each has.
 
