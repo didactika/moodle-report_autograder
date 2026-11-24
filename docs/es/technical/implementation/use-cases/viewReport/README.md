@@ -23,7 +23,6 @@ Diseño: [README](../../../design/use-cases/viewReport/README.md)
 | Página del informe | página | `index.php` | sí |
 | Tabla en una caja de una sola altura | componente React | `js/esm/src/components/ReportTable.tsx`, `js/esm/src/components/ui.tsx` (`TableBox`, `Empty`) | sí |
 | Recorrido guiado | recorrido de usuario | `tours/report.json`, `lib.php` (`report_autograder_import_tours`), `db/install.php`, `db/upgrade.php` | sí |
-| Ajuste que hace obligatorio el recorrido | ajuste | `settings.php` (`report_autograder/tourrequired`), `index.php` | sí |
 | Pantalla del informe | componente React | `js/esm/src/Report.tsx` | sí |
 
 ## Pruebas
