@@ -22,7 +22,6 @@ Diseño: [README](../../../design/use-cases/viewReport/README.md)
 | `get_report` | servicio web | `classes/external/get_report.php` | sí |
 | Página del informe | página | `index.php` | sí |
 | Recorrido guiado | recorrido de usuario | `tours/report.json`, `lib.php` (`report_autograder_import_tours`), `db/install.php`, `db/upgrade.php` | sí |
-| Ajuste que hace obligatorio el recorrido | ajuste | `settings.php` (`report_autograder/tourrequired`), `index.php` | sí |
 | Pantalla del informe | módulo AMD | `amd/src/ui/report.js` | sí |
 
 ## Pruebas

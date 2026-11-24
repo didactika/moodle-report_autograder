@@ -22,7 +22,6 @@ Design: [README](../../../design/use-cases/viewReport/README.md)
 | `get_report` | web service | `classes/external/get_report.php` | yes |
 | Page of the report | page | `index.php` | yes |
 | Guided tour | user tour | `tours/report.json`, `lib.php` (`report_autograder_import_tours`), `db/install.php`, `db/upgrade.php` | yes |
-| Setting that makes the tour required | setting | `settings.php` (`report_autograder/tourrequired`), `index.php` | yes |
 | Report screen | AMD module | `amd/src/ui/report.js` | yes |
 
 ## Tests

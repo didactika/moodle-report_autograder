@@ -1204,7 +1204,7 @@
     color: inherit !important;
 }
 
-.report-autograder-tour-required [data-role=flexitour-step] [data-role=end].btn-secondary {
+.report-autograder-page [data-role=flexitour-step] [data-role=arrow] {
     display: none;
 }
 
