@@ -6,6 +6,9 @@
 // @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
 // @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
+// Every rule is written once for the pages and the dialogs of the plugin, so Sass joins long lines of selectors in styles.css.
+/* stylelint-disable max-line-length */
+
 // The dialogues of Bootstrap that open on the pages of the report (the grading of a student, the explanations), restyled where
 // they open rather than given a class of their own.
 $arp-modal: ".report-autograder-page .modal";
