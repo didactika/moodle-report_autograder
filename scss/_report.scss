@@ -46,8 +46,9 @@
     }
 }
 
-// When the site requires the guided tour, its steps have no button that skips it; the last step still ends it.
-.report-autograder-tour-required [data-role="flexitour-step"] [data-role="end"].btn-secondary {
+// The steps of the guided tour have no arrow: the box, with its rounded corners, and the element lit around it say where each step
+// points.
+.report-autograder-page [data-role="flexitour-step"] [data-role="arrow"] {
     display: none;
 }
 
